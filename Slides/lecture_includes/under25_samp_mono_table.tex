@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Frandsen, Lefgren, Leslie (2020) Test of Joint Null of Exclusion and Monotonicity}\label{tab:mono}
+\begin{tabular}{p{.5\linewidth}*{1}{c}}
+\toprule
+Outcome & FLL P-Value\\ 
+\midrule
+Recid after current booking   &    0.000 \\
+Recid within 1 year   &    0.000 \\
+Count of future recidivism   &    0.000 \\
+LOS   &    0.000 \\
+Days to recidivism   &    0.000 \\
+Next offense felony   &    0.000 \\
+Next booking mental health score improves   &    0.007 \\
+\bottomrule
+\multicolumn{2}{p{.7\linewidth}}{\footnotesize This table presents results from the test proposed in Frandsen, Lefgren, and Leslie (2020) for the joint null hypothesis that the monotonicity and exclusion restrictions hold.  A failure to reject the null implies that we cannot reject the hypothesis that the monotonicity and exclusion restrictions jointly hold. This test was implemented in Stata via the package testjfe (Frandsen, 2020).}\\
+\end{tabular}
+\end{table}

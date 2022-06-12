@@ -1,0 +1,37 @@
+\begin{table}[htbp]\centering
+\small
+\caption{IVLASSO Results for Initial Assessment of Mental Health Court (Under 25) and Suicidality Outcomes}\label{tab:ivlasso}
+\begin{center}
+\begin{adjustbox}{width=\textwidth, totalheight=\textheight-2\baselineskip,keepaspectratio}
+\begin{threeparttable}
+\begin{tabular}{p{.3\textwidth}*{4}{c}}
+\toprule
+                    &\multicolumn{2}{c}{LASSO}      &\multicolumn{2}{c}{Post-LASSO} \\\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+                    &\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}\\
+\midrule
+{\hangindent=2emRecid after current booking}&       0.246   &       0.553***&       0.168   &       0.327   \\
+                    &     (0.252)   &     (0.211)   &     (0.234)   &     (0.322)   \\
+{\hangindent=2emRecid within 1 year}&       0.223*  &       0.203   &       0.180   &       0.160   \\
+                    &     (0.115)   &     (0.132)   &     (0.112)   &     (0.134)   \\
+{\hangindent=2emCount of future recidivism}&       2.294*  &       4.047***&       1.824   &       2.888   \\
+                    &     (1.379)   &     (1.156)   &     (1.288)   &     (1.810)   \\
+{\hangindent=2emLOS}&       2.922   &       1.257   &       2.810   &      -1.407   \\
+                    &     (2.282)   &     (2.220)   &     (2.396)   &     (4.171)   \\
+{\hangindent=2emDays to recidivism}&     164.253** &     113.031   &     158.323*  &     113.181   \\
+                    &    (76.664)   &   (104.685)   &    (82.467)   &    (87.133)   \\
+{\hangindent=2emNext offense felony}&       0.087   &       0.172***&       0.076   &       0.171***\\
+                    &     (0.062)   &     (0.032)   &     (0.069)   &     (0.040)   \\
+\midrule
+Time fixed effects  &         Yes   &         Yes   &         Yes   &         Yes   \\
+Baseline controls   &          No   &         Yes   &          No   &         Yes   \\
+\bottomrule
+\end{tabular}
+\tiny
+This table reports  the Instrumental Variables LASSO (IVLASSO) estimates of the impact of a clinician's initial assessment of a most severe mental health rating on inmates' subsequent mental health and criminality. The outcome variables of interest are given in each row along with the corresponding estimates of the impacts of an initial assessment of a most severe mental health rating. We include day-of-week-month fixed effects and baseline controls for all specifications; however, the IVLASSO procedure penalizes the controls as well as the instruments and can penalize them to zero as discussed in the text. The IVLASSO procedure is run using both methods: lasso-orthogonalization and post-lasso-orthogonalization. The clinician and inmate robust two-way clustered standard errors are shown in parentheses for IVLASSO. * p$<$0.10, ** p$<$0.05, *** p$<$0.01
+\end{threeparttable}
+\end{adjustbox}
+\end{center}
+\end{table}
+
+

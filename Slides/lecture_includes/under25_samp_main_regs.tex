@@ -1,0 +1,40 @@
+\begin{table}[htbp]\centering
+\small
+\caption{Effects of Initial Assessment of Mental Health Court (Under 25) on Health Outcomes}\label{tab:mainmh}
+\begin{center}
+\begin{adjustbox}{width=\textwidth, totalheight=\textheight-2\baselineskip,keepaspectratio}
+\begin{threeparttable}
+\begin{tabular}{p{.25\textwidth}*{6}{c}}
+\toprule
+                    &\multicolumn{2}{c}{OLS}        &\multicolumn{2}{c}{2SLS}       &\multicolumn{2}{c}{JIVE}       \\\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+                    &\multicolumn{1}{c}{(1)}   &\multicolumn{1}{c}{(2)}   &\multicolumn{1}{c}{(3)}   &\multicolumn{1}{c}{(4)}   &\multicolumn{1}{c}{(5)}   &\multicolumn{1}{c}{(6)}   \\
+\midrule
+{\hangindent=2emRecid after current booking}&       0.149***&       0.105***&       0.424** &       0.403** &       0.469***&       0.444***\\
+                    &     (0.019)   &     (0.012)   &     (0.193)   &     (0.166)   &     (0.070)   &     (0.073)   \\
+                    &            &            &[0.065, 0.784]   &[0.095, 0.711]   &            &            \\
+{\hangindent=2emRecid within 1 year}&       0.100***&       0.110***&       0.404***&       0.465***&       0.390***&       0.481***\\
+                    &     (0.017)   &     (0.017)   &     (0.126)   &     (0.147)   &     (0.079)   &     (0.088)   \\
+                    &            &            &[0.144, 0.664]   &[0.163, 0.738]   &            &            \\
+{\hangindent=2emCount of future recidivism}&       1.358***&       1.186***&       2.152** &       2.261***&       2.835***&       2.999***\\
+                    &     (0.268)   &     (0.223)   &     (0.878)   &     (0.821)   &     (0.335)   &     (0.359)   \\
+                    &            &            &[0.516, 3.787]   &[0.573, 3.789]   &            &            \\
+{\hangindent=2emLOS}&       6.796***&       5.805***&       5.263*  &       4.910*  &       7.665***&       7.671***\\
+                    &     (0.967)   &     (0.986)   &     (2.947)   &     (2.880)   &     (2.459)   &     (2.526)   \\
+                    &            &            &[-0.800, 10.748]   &[-1.010, 10.267]   &            &            \\
+{\hangindent=2emDays to recidivism}&     -41.232***&     -36.629***&      66.584   &      47.245   &      83.932*  &      84.951   \\
+                    &     (9.828)   &     (7.895)   &    (82.581)   &    (61.076)   &    (49.133)   &    (56.420)   \\
+                    &            &            &[-135.476, 220.150]   &[-101.952, 148.700]   &            &            \\
+{\hangindent=2emNext offense felony}&       0.017   &       0.003   &       0.106*  &       0.116** &       0.123***&       0.130** \\
+                    &     (0.011)   &     (0.011)   &     (0.060)   &     (0.055)   &     (0.047)   &     (0.052)   \\
+                    &            &            &[-0.018, 0.218]   &[-0.007, 0.207]   &            &            \\
+\midrule
+Time fixed effects  &         Yes   &         Yes   &         Yes   &         Yes   &         Yes   &         Yes   \\
+Baseline Controls   &          No   &         Yes   &          No   &         Yes   &          No   &         Yes   \\
+\bottomrule
+\end{tabular}
+\tiny
+This table reports the ordinary least squares, two-stage least squares, and jacknived instrumental variables (Angrist et al 1999) estimates of the impact of a clinician's initial assessment of a most severe mental health rating on inmates' subsequent mental health. The outcome variables of interest are given in each row along with the corresponding estimates of the impacts of an initial assessment of a most severe mental health rating. Two-stage least squares specifications instrument for severe mental health rating using a clinician leniency measure that is estimated using data from other cases assigned to a clinician as described in the text. We include day-of-week-month fixed effects for all specifications and baseline controls for Columns (2), (4), and (6). The clinician and inmate robust two-way clustered standard errors are shown in parentheses. For the 2SLS estimates, confidence intervals based on inversion of the Anderson-Rubin test are shown in brackets. * p$<$0.10, ** p$<$0.05, *** p$<$0.01
+\end{threeparttable}
+\end{adjustbox}
+\end{center}
+\end{table}

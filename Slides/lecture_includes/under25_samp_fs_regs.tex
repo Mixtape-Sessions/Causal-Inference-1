@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{First Stage Regressions for Initial Assessment of Mental Health Court (Under 25)}\label{tab:firststage}
+\begin{tabular}{p{.35\linewidth}*{2}{c}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}   &\multicolumn{1}{c}{(2)}   \\
+\midrule
+Z: Clinician's Leave-Out Mean Mental Health Score&       0.627***&       0.588***\\
+                    &     (0.094)   &     (0.092)   \\
+\midrule
+Kleibergen-Paap F   &     44.2100   &     41.0831   \\
+Time Fixed Effects  &         Yes   &         Yes   \\
+Baseline Controls   &          No   &         Yes   \\
+Observations        &       9,532   &       9,532   \\
+\bottomrule
+\multicolumn{3}{p{.7\textwidth}}{\tiny We report the first stage results of a linear probability model with outcome of interest being the initial assessment of an inmate's mental health being moderate to severe relative to none or mild. The propensity to assign a high score is estimated using data from other cases assigned to the clinician following the procedure described in the text. Column (1) shows the results by controlling only for day-of-week-month fixed effects, whereas Column (2) also includes the inmate baseline controls as shown in Table 1. Each column gives the corresponding clinician and inmate robust two-way clustered standard errors in parentheses. Robust (Kleibergen-Paap) first stage F reported (which is equivalent to the effective F-statistic of Montiel Olea and Pflueger (2013) in this case of a single instrument). * p$<$0.10, ** p$<$0.05, *** p$<$0.01}
+\end{tabular}
+\end{table}
