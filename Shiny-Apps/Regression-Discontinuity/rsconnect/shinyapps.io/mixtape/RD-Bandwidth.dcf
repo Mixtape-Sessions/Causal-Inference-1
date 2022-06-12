@@ -1,0 +1,13 @@
+name: RD-Bandwidth
+title: RD-Bandwidth
+username:
+account: mixtape
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6468656
+bundleId: 5997857
+url: https://mixtape.shinyapps.io/RD-Bandwidth/
+when: 1654900416.75026
+lastSyncTime: 1654900416.75027
+asMultiple: FALSE
+asStatic: FALSE

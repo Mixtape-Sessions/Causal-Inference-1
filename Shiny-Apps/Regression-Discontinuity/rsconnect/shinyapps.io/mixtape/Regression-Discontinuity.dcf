@@ -5,9 +5,9 @@ account: mixtape
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6468270
-bundleId: 5997655
+bundleId: 5997849
 url: https://mixtape.shinyapps.io/Regression-Discontinuity/
-when: 1654894773.71081
-lastSyncTime: 1654894773.71082
+when: 1654900231.78783
+lastSyncTime: 1654900231.78785
 asMultiple: FALSE
 asStatic: FALSE

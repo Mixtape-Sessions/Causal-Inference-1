@@ -1,0 +1,43 @@
+/***
+* Update bootstrap's slider input
+*/
+
+.control-label {
+	--tw-text-opacity: 1;
+	color: rgb(17 24 39 / var(--tw-text-opacity));
+	font-weight: 500;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.irs--shiny .irs-bar {
+  top: 25px;
+  height: 8px;
+  border-top: 1px solid #00b7ff;
+  border-bottom: 1px solid #00b7ff;
+  background: #00b7ff;
+}
+.hide_grid .irs-grid {
+	display: none !important;
+}
+.irs--shiny .irs-single {
+	background-color: #00a5e6;
+}
+.irs--shiny .irs-to,
+.irs--shiny .irs-from,
+.irs--shiny .irs-min,
+.irs--shiny .irs-max {
+	background-color: #e6f8ff;
+}
+.irs--shiny .irs-line {
+	background-image: none;
+	background-color: #ededed;
+}
+.irs--shiny .irs-handle {
+	top: 20px;
+	width: 16px;
+	height: 16px;
+	border-radius: 16px;
+}

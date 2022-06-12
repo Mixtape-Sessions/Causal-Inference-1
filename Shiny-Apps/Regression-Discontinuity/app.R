@@ -70,7 +70,7 @@ ui <- wrapper(
       div(
       	twCheckboxInput(
       		"global_polynomial",
-      		label = "Use global polynomial", value = TRUE,
+      		label = "Use global polynomial", value = FALSE,
       		container_class = "flex items-center mt-4",
       		label_class = "ml-2 text-sm font-medium text-gray-900",
       		input_class = "w-4 h-4 bg-gray-100 rounded border-gray-300 focus:ring-[#00b7ff] text-[#00b7ff] focus:ring-2",
@@ -83,7 +83,8 @@ ui <- wrapper(
     	caps_header("Bandwidth Selection"),
     	div(class="slider-wrapper hide_grid",
     		shiny::sliderInput(inputId = "bw", min=0.05, max=1, value = 0.3, step=0.02, label="Bandwidth Selector")
-    	)
+    	),
+    	tags$button(id = "optimal_bw", type = "button", class = "action-button inline-block border-2 border-[#00b7ff] py-1 px-2 rounded-md bg-[#e6f8ff] text-[#006e99]", "Calculate IMSE Optimal BW")
     )
   ),
 
@@ -96,7 +97,7 @@ ui <- wrapper(
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(input, output, session) {
 
   # RD Generation
   cond_expec <- function(R) {
@@ -136,6 +137,16 @@ server <- function(input, output) {
   	df(generate_data(input$sample_size, input$noise))
   })
 
+  # Select optimal bw
+  observeEvent(input$optimal_bw, {
+		temp_df <- df()
+		optimal_bw <- rdrobust::rdbwselect(
+			y = temp_df$y, x = temp_df$R, c = 0, p = input$polynomial_order
+		)[["bws"]]
+
+		updateSliderInput(session, "bw", value = optimal_bw[1])
+  })
+
   output$rd_estimate <- renderPlot({
 
   	# Estimate RD
@@ -151,53 +162,41 @@ server <- function(input, output) {
   	subset = temp_df |> filter(abs(R) <= bw)
 
   	if(input$polynomial_order == 0) {
-  		est <- fixest::feols(
-  			y ~ i(treat),
-  			data = subset
-			)
+  		fmla <- y ~ 1
   	} else if(input$polynomial_order == 1) {
-			est <- fixest::feols(
-				y ~ i(treat) + i(treat, R),
-				data = subset
-			)
+			fmla <- y ~ 1 + x
   	} else if(input$polynomial_order == 2) {
-  		est <- fixest::feols(
-  			y ~ i(treat) + i(treat, R) + i(treat, R^2),
-  			data = subset
-			)
+  		fmla <- y ~ 1 + x + I(x^2)
   	} else if(input$polynomial_order == 3) {
-  		est <- fixest::feols(
-  			y ~ i(treat) + i(treat, R) + i(treat, R^2) + i(treat, R^3),
-  			data = subset
-			)
+  		fmla <- y ~ 1 + x + I(x^2) + I(x^3)
   	} else if(input$polynomial_order == 4) {
-  		est <- fixest::feols(
-  			y ~ i(treat) + i(treat, R) + i(treat, R^2) + i(treat, R^3) + i(treat, R^4) ,
-  			data = subset
-			)
+  		fmla <- y ~ 1 + x + I(x^2) + I(x^3) + I(x^4)
   	} else {
-  		est <- fixest::feols(
-  			y ~ i(treat) + i(treat, R) + i(treat, R^2) + i(treat, R^3) + i(treat, R^4) + i(treat, R^5),
-  			data = subset
-			)
+  		fmla <- y ~ 1 + x + I(x^2) + I(x^3) + I(x^4) + I(x^5)
   	}
+
 
 		predict_df <- tibble(
 			R = seq(-1, 1, 0.01),
 			treat = (R >= 0)
 		)
-
-		predict_df$yhat <- predict(est, newdata = predict_df)
 		predict_df$ytrue <- cond_expec(predict_df$R)
 
   	# Plot
 		ggplot() +
+			# True line
 			geom_line(data = predict_df |> filter(R < 0), aes(x = R, y = ytrue), color = "#cccccc", size = 1.6) +
 			geom_line(data = predict_df |> filter(R > 0), aes(x = R, y = ytrue), color = "#cccccc", size = 1.6) +
+			# Data
 			geom_point(data = temp_df |> filter(abs(R) > bw), aes(x = R, y = y), color = "#e5e7eb") +
 			geom_point(data = temp_df |> filter(abs(R) <= bw), aes(x = R, y = y), color = "#111827") +
-			geom_line(data = predict_df |> filter(R < 0) |> filter(abs(R) <= bw), aes(x = R, y = yhat), color = "#00b7ff", size = 1.6) +
-			geom_line(data = predict_df |> filter(R > 0) |> filter(abs(R) <= bw), aes(x = R, y = yhat), color = "#00b7ff", size = 1.6) +
+			# Fitted line
+			stat_smooth(
+				subset,
+				mapping = aes(x = R,  y = y, group = treat),
+				method = "lm", color = "#00b7ff", size = 1.6,
+				formula = fmla
+			) +
   		# geom_vline(xintercept = 0, color = "#00b7ff", size = 1.2) +
   		labs(x = "Running Variable", y = "Conditional Expectation of Y") +
   		theme_bw(base_size = 16)

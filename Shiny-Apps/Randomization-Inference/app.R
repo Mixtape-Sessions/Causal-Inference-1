@@ -63,6 +63,7 @@ twCheckboxInput <- function(inputId, label = NULL, value = FALSE, width = NULL,
 # Define UI for application that draws a histogram
 ui <- wrapper(
   shiny.tailwind::use_tailwind(
+  	css = "style.css",
     tailwindConfig = "tailwind.config.js"
   ),
   withMathJax(),
