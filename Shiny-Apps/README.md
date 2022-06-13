@@ -6,4 +6,4 @@ This folder contains a set of shiny apps that aim to help build intuition on var
 
 1. [Randomization Inference](https://mixtape.shinyapps.io/Randomization-Inference/)
 
-2. [Regression Discontinuity](https://mixtape.shinyapps.io/Regression-Discontinuity/)
+2. [Regression Discontinuity](https://mixtape.shinyapps.io/RD-Bandwidth/)
