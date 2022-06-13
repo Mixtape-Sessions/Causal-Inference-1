@@ -34,39 +34,36 @@ df_nonexp <- df_nonexp |>
     educsq = educ * educ,
     u74 = case_when(re74 == 0 ~ 1, TRUE ~ 0),
     u75 = case_when(re75 == 0 ~ 1, TRUE ~ 0),
-    interaction1 = educ * re74,
-    re74sq = re74^2,
-    re75sq = re75^2,
-    interaction2 = u74 * hisp
   )
 
+# ---- 2.a. Difference in Means
+
+df_nonexp |> feols(re78 ~ i(treat), vcov = "hc1")
+  
+
+# ---- 2.b. Inverse propensity score weighting
 
 logit_nsw <- feglm(
   treat ~ age + agesq + agecube + educ + educsq +
     marr + nodegree + black + hisp + re74 +
-    re75 + u74 + u75 + interaction1,
+    re75 + u74 + u75,
   family = binomial(link = "logit"),
   data = df_nonexp
 )
 
-df_nonexp$pscore <- predict(logit_nsw)
+df_nonexp$pscore <- predict(logit_nsw, type = "response")
 
 # Poor propensity score match
-ggplot(df_nonexp) +
-  geom_histogram(
-    aes(
-      x = pscore, y = after_stat(density),
-      group = treat, fill = as.factor(treat)
-    ),
-  ) +
-  facet_grid(~ as.factor(treat)) +
-  labs(fill = "Treated", x = "Propensity Score")
+# ggplot(df_nonexp) +
+#   geom_histogram(
+#     aes(
+#       x = pscore, y = after_stat(density),
+#       group = treat, fill = as.factor(treat)
+#     ),
+#   ) +
+#   facet_grid(~ as.factor(treat)) +
+#   labs(fill = "Treated", x = "Propensity Score")
 
-# ---- 2.a. Difference in Means
-
-feols(re78 ~ i(treat), data = df_nonexp, vcov = "hc1")
-
-# ---- 2.b. Inverse propensity score weighting
 
 pscore_model <- feglm(
   treat ~ age + agesq + agecube + educ + educsq +
@@ -109,7 +106,7 @@ df_nonexp |>
 nn_out <- matchit(
   treat ~ age + agesq + agecube + educ + educsq +
     marr + nodegree + black + hisp + re74 +
-    re75 + u74 + u75 + interaction1,
+    re75 + u74 + u75,
   data = df_nonexp, distance = "mahalanobis",
   replace = TRUE, estimand = "ATT"
 )
@@ -127,7 +124,7 @@ feols(
 cem_out <- matchit(
   treat ~ age + agesq + agecube + educ + educsq +
     marr + nodegree + black + hisp + re74 +
-    re75 + u74 + u75 + interaction1,
+    re75 + u74 + u75,
   data = df_nonexp,
   method = "cem", estimand = "ATT"
 )
