@@ -9,7 +9,7 @@ Our two datasets are:
 2. `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta` which contains data from the CPS.
 
 
-## Analysis
+## Part 1: Experimental vs. Observational Analysis
 
 1. We will first perform analysis on the experimental dataset `https://github.com/scunning1975/mixtape/raw/master/nsw_mixtape.dta`
 
@@ -17,15 +17,15 @@ a. Estimate the effect of treatment, `treat`, on real-earnings in 1978, `re78`. 
 
 b. Further, show baseline covariate balance on the following variables: `re74`, `re75`, `marr`, `educ`, `age`, `black`, `hisp`. 
 
-2. Now, take the treated units from the `nsw` dataset and append to it the CPS control sample `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta`. 
+2. Now, take the treated units from the `nsw` dataset and append to it the CPS control sample `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta`. Perform a simple difference-in-means on the combined dataset to estimate the treatment effect with no control group adjustment.
 
-a. First, perform a simple difference-in-means on the combined dataset to estimate the treatment effect with no control group adjustment.
+## Part 2: Selection on Observable Methods
 
-b. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
+1. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
 
-c. Note that the previous estimate was still negative. That is because we have extremem values for pscore. For example, a control unit with pscore $=0.0001$ receives a huge weight: $(1/0.0001) = 1000$. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
+2. Note that the previous estimate was still negative. That is because we have extremem values for pscore. For example, a control unit with pscore $=0.0001$ receives a huge weight: $(1/0.0001) = 1000$. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
 
-d. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement and (ii) coarsened exact matching, estimate a treatment effect. You should use the same covariates as part b. 
+3. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement and (ii) coarsened exact matching, estimate a treatment effect. You should use the same covariates as part b. 
 
 *Note: for Stata, you can use `-teffects-` command for (i) and the `-cem-` package for (ii). For R, you can use the `{MatchIt}` package*
 
