@@ -1,0 +1,157 @@
+---
+output: github_document
+---
+
+```{r setup, include = F}
+# devtools::install_github("Hemken/Statamarkdown")
+library(Statamarkdown)
+```
+# Lalonde
+
+This dataset is one of the most commonly used dataset in econometrics based on [Lalonde (1986)](https://econpapers.repec.org/article/aeaaecrev/v_3a76_3ay_3a1986_3ai_3a4_3ap_3a604-20.htm) and [Dehejia and Wahba (2002)](https://www.uh.edu/~adkugler/Dehejia&Wahba.pdf). Both the paper by Lalonde and Dehejia and Wahba both wanted to evaluate causal inference methods using non-experimental data. Cleverly, they start with an experimental dataset to estimate the 'true' causal effect and then use non-experimental data to evaluate an econometric method.
+
+Our two datasets are:
+
+1. `https://github.com/scunning1975/mixtape/raw/master/nsw_mixtape.dta` which contains data from an experimental sample. In the sample, individuals are offered a job training program and we want to evaluate the effect on future earnings `re78` (real-earnings in 1978).
+
+2. `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta` which contains data from the CPS.
+
+
+## Analysis
+
+1. We will first perform analysis on the experimental dataset `https://github.com/scunning1975/mixtape/raw/master/nsw_mixtape.dta`
+
+```{r load-data}
+library(tidyverse)
+library(fixest)
+library(haven)
+library(MatchIt)
+
+# Experimental data
+df_exp <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta")
+```
+
+  (a) Estimate the effect of treatment, `treat`, on real-earnings in 1978, `re78`. This will be the "true" treatment effect estimate that we will try to recreate with the non-experimental CPS sample. 
+
+```{r experimental-te}
+# Estimate treatment effect
+df_exp |> 
+  feols(re78 ~ i(treat), vcov = "hc1")
+```
+
+  (b) Further, show baseline covariate balance on the following variables: `re74`, `re75`, `marr`, `educ`, `age`, `black`, `hisp`. 
+
+```{r experimental-balance}
+df_exp |> 
+  feols(
+    c(re74, re75, marr, educ, age, black, hisp) ~ i(treat),
+    vcov = "hc1"
+  ) |>
+  etable()
+```
+
+2. Now, take the treated units from the `nsw` dataset and append to it the CPS control sample `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta`. 
+
+```{r nonexperimental-datra}
+df_cps <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/cps_mixtape.dta")
+
+# Treated experimental units with CPS units as controls
+df_nonexp <- bind_rows(df_exp |> filter(treat == 1), df_cps)
+```
+
+  (a) First, perform a simple difference-in-means on the combined dataset to estimate the treatment effect with no control group adjustment.
+
+```{r difference-in-means}
+df_nonexp |> feols(re78 ~ i(treat), vcov = "hc1")
+```
+
+  (b) Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`. Take those weights and calculate the inverse propensity-score weights and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
+
+```{r create-ps-weights}
+df_nonexp <- df_nonexp |>
+  mutate(
+    agesq = age^2,
+    agecube = age^3,
+    educsq = educ * educ,
+    u74 = case_when(re74 == 0 ~ 1, TRUE ~ 0),
+    u75 = case_when(re75 == 0 ~ 1, TRUE ~ 0),
+  )
+
+
+logit_nsw <- feglm(
+  treat ~ age + agesq + agecube + educ + educsq +
+    marr + nodegree + black + hisp + re74 +
+    re75 + u74 + u75,
+  family = binomial(link = "logit"),
+  data = df_nonexp
+)
+
+df_nonexp$pscore <- predict(logit_nsw, type = "response")
+
+# inverse propensity score weights
+df_nonexp <- df_nonexp |> 
+  mutate(
+    inv_ps_weight = treat * 1/pscore + (1-treat) * 1/(1-pscore)
+  )
+```
+
+```{r non-trimmed-estimate}
+# Weights are implicitly normalized when using `feols`,
+# plus it gives standard errors
+df_nonexp |> 
+  feols(re78 ~ i(treat),
+    weights = ~inv_ps_weight, vcov = "hc1"
+  )
+```
+
+  (c) Note that the previous estimate was still negative. That is because we have extremem values for pscore. For example, a control unit with pscore $=0.0001$ receives a huge weight: $(1/0.0001) = 1000$. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
+
+```{r trimmed-estimate}
+df_nonexp |> 
+  filter(pscore > 0.1 & pscore < 0.9) |>
+  feols(re78 ~ i(treat),
+    weights = ~inv_ps_weight, vcov = "hc1"
+  )
+```
+
+  (d) Using (i) 1:1 nearest-neighbor propensity-score matching with replacement and (ii) coarsened exact matching, estimate a treatment effect. You should use the same covariates as part (b) 
+
+  *Note: for Stata, you can use `-teffects-` command for (i) and the `-cem-` package for (ii). For R, you can use the `{MatchIt}` package*
+
+```{r nn-pscore-matching}
+
+# 1:1 nearest neighbor matching with replacement on
+# the Mahalanobis distance
+nn_out <- matchit(
+  treat ~ age + agesq + agecube + educ + educsq +
+    marr + nodegree + black + hisp + re74 +
+    re75 + u74 + u75,
+  data = df_nonexp, distance = "mahalanobis",
+  replace = TRUE, estimand = "ATT"
+)
+
+df_nonexp$nn_weights = nn_out$weights
+
+df_nonexp |> 
+  feols(
+    re78 ~ i(treat), weights = ~nn_weights, vcov = "hc1"
+  )
+```
+
+```{r cem-matching}
+cem_out <- matchit(
+  treat ~ age + agesq + agecube + educ + educsq +
+    marr + nodegree + black + hisp + re74 +
+    re75 + u74 + u75,
+  data = df_nonexp,
+  method = "cem", estimand = "ATT"
+)
+
+df_nonexp$cem_weights = cem_out$weights
+
+feols(
+  re78 ~ i(treat), weights = ~cem_weights,
+  data = df_nonexp,  vcov = "hc1"
+)
+```
+

@@ -1,0 +1,9 @@
+---
+output: github_document
+---
+
+```{r setup, include = F}
+# devtools::install_github("Hemken/Statamarkdown")
+library(Statamarkdown)
+```
+

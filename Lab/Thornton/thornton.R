@@ -9,13 +9,11 @@ df <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/thornt
 # ------------------------------------------------------------------------------
 
 # ---- 1.a. Calculate by hand
-avgs <- df |> 
-  filter(!is.na(any)) |> 
-  group_by(any) |> 
-  summarize(mean_got = mean(got, na.rm = TRUE)) 
 
 # difference between the two means
-avgs[avgs$any == 1, ]$mean_got - avgs[avgs$any == 0, ]$mean_got
+with(df, {
+  mean(got[any == 1], na.rm = TRUE) - mean(got[any == 0], na.rm = TRUE)
+})
 
 # ---- 1.b. Calculate using OLS
 feols(got ~ i(any), data = df, cluster = ~villnum)
@@ -59,57 +57,45 @@ feols(
 
 # ---- 1. Randomization Inference
 
-tb <- NULL
+df <- df |> filter(!is.na(any))
 
-permuteHIV <- function(df, random = TRUE){
-  tb <- df
-  # Number of treated in dataset
-  n_treated <- 2222
-  n_control <- nrow(tb) - n_treated
-  
-  if(random == TRUE){
-    tb <- tb %>%
-      sample_frac(1) %>%
-      mutate(any = c(rep(1, n_treated), rep(0, n_control)))
+permuteHIV <- function(df, random = TRUE) {
+  # Shuffle `any`
+  if(random == TRUE) {
+    df$any <- sample(df$any, replace = FALSE)
   }
   
-  te1 <- tb %>%
-    filter(any == 1) %>%
-    pull(got) %>%
-    mean(na.rm = TRUE)
-  
-  te0 <- tb %>%
-    filter(any == 0) %>%
-    pull(got) %>% 
-    mean(na.rm = TRUE)
-  
-  ate <-  te1 - te0
+  # `with` lets you access variables in tb without doing tb$ a bunch
+  ate <- with(df, {
+    mean(got[any == 1], na.rm = TRUE) - mean(got[any == 0], na.rm = TRUE)
+  })
   
   return(ate)
 }
 
-permuteHIV(hiv, random = FALSE)
+# Observed treatment effect
+permuteHIV(df, random = FALSE)
 
-iterations <- 1000
+n_iterations <- 1000
 
-permutation <- tibble(
-  iteration = c(seq(iterations)), 
-  ate = as.numeric(
-    c(permuteHIV(hiv, random = FALSE), map(seq(iterations-1), ~permuteHIV(hiv, random = TRUE)))
-  )
-)
+# Run iterations
+ate <- c(permuteHIV(df, random = FALSE))
+for(i in 1:(n_iterations - 1)) {
+  ate <- c(ate, permuteHIV(df, random = TRUE))
+}
+
+# Histogram of placebo effects
+hist(ate)
 
 #calculating the p-value
+ate = abs(ate)
+obs_te = ate[1]
 
-permutation <- permutation %>% 
-  arrange(-ate) %>% 
-  mutate(rank = seq(iterations))
+# `ecdf` gives us the empirical CDF of `ate`
+empirical_cdf = ecdf(ate)
 
-p_value <- permutation %>% 
-  filter(iteration == 1) %>% 
-  pull(rank)/iterations
+# percentile of obs_te
+obs_percentile = empirical_cdf(obs_te)
 
-
-
-
-
+# p-value 
+1 - obs_percentile
