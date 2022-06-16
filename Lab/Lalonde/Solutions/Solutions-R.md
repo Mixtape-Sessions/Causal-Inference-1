@@ -22,7 +22,7 @@ Our two datasets are:
 2.  `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta`
     which contains data from the CPS.
 
-## Analysis
+## Part 1: Experimental vs. Observational Analysis
 
 1.  We will first perform analysis on the experimental dataset
     `https://github.com/scunning1975/mixtape/raw/master/nsw_mixtape.dta`
@@ -51,7 +51,7 @@ library(MatchIt)
 df_exp <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta")
 ```
 
-1)  Estimate the effect of treatment, `treat`, on real-earnings in 1978,
+1.  Estimate the effect of treatment, `treat`, on real-earnings in 1978,
     `re78`. This will be the “true” treatment effect estimate that we
     will try to recreate with the non-experimental CPS sample.
 
@@ -71,7 +71,7 @@ df_exp |>
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     RMSE: 6,564.7   Adj. R2: 0.015606
 
-2)  Further, show baseline covariate balance on the following variables:
+2.  Further, show baseline covariate balance on the following variables:
     `re74`, `re75`, `marr`, `educ`, `age`, `black`, `hisp`.
 
 ``` r
@@ -121,6 +121,8 @@ df_exp |>
 2.  Now, take the treated units from the `nsw` dataset and append to it
     the CPS control sample
     `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta`.
+    Perform a simple difference-in-means on the combined dataset to
+    estimate the treatment effect with no control group adjustment.
 
 ``` r
 df_cps <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/cps_mixtape.dta")
@@ -128,9 +130,6 @@ df_cps <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/cp
 # Treated experimental units with CPS units as controls
 df_nonexp <- bind_rows(df_exp |> filter(treat == 1), df_cps)
 ```
-
-1)  First, perform a simple difference-in-means on the combined dataset
-    to estimate the treatment effect with no control group adjustment.
 
 ``` r
 df_nonexp |> feols(re78 ~ i(treat), vcov = "hc1")
@@ -146,11 +145,14 @@ df_nonexp |> feols(re78 ~ i(treat), vcov = "hc1")
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     RMSE: 9,628.4   Adj. R2: 0.008667
 
-2)  Fit a propensity score (logit) model using the following covariates
-    `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`.
-    Take those weights and calculate the inverse propensity-score
-    weights and use these weights in a simple regression of `re78` on
-    the treatment dummy, `treat`.
+## Part 2: Selection on Observable Methods
+
+1.  Fit a propensity score (logit) model using the following covariates
+    `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`,
+    where `u74` and `u75` are indicators for being unemployed in 1974
+    and 1975 (`re74`/`re75` = 0). Take those weights and calculate the
+    inverse propensity-score weights and use these weights in a simple
+    regression of `re78` on the treatment dummy, `treat`.
 
 ``` r
 df_nonexp <- df_nonexp |>
@@ -161,7 +163,6 @@ df_nonexp <- df_nonexp |>
     u74 = case_when(re74 == 0 ~ 1, TRUE ~ 0),
     u75 = case_when(re75 == 0 ~ 1, TRUE ~ 0),
   )
-
 
 logit_nsw <- feglm(
   treat ~ age + agesq + agecube + educ + educsq +
@@ -199,7 +200,7 @@ df_nonexp |>
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     RMSE: 10,447.8   Adj. R2: 0.104767
 
-3)  Note that the previous estimate was still negative. That is because
+2.  Note that the previous estimate was still negative. That is because
     we have extremem values for pscore. For example, a control unit with
     pscore $=0.0001$ receives a huge weight: $(1/0.0001) = 1000$. Trim
     the data to observations with pscore $> 0.1$ and $< 0.9$ and
@@ -224,9 +225,9 @@ df_nonexp |>
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     RMSE: 9,189.1   Adj. R2: 0.008368
 
-4)  Using (i) 1:1 nearest-neighbor propensity-score matching with
+3.  Using (i) 1:1 nearest-neighbor propensity-score matching with
     replacement and (ii) coarsened exact matching, estimate a treatment
-    effect. You should use the same covariates as part (b)
+    effect. You should use the same covariates as part b.
 
 *Note: for Stata, you can use `-teffects-` command for (i) and the
 `-cem-` package for (ii). For R, you can use the `{MatchIt}` package*

@@ -22,136 +22,94 @@ Our two datasets are:
 
 1. We will first perform analysis on the experimental dataset `https://github.com/scunning1975/mixtape/raw/master/nsw_mixtape.dta`
 
-```{r load-data}
-library(tidyverse)
-library(fixest)
-library(haven)
-library(MatchIt)
-
-# Experimental data
-df_exp <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta")
+```{stata load-experimental, collectcode = TRUE}
+use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
+* ssc install cem
 ```
-
 
 a. Estimate the effect of treatment, `treat`, on real-earnings in 1978, `re78`. This will be the "true" treatment effect estimate that we will try to recreate with the non-experimental CPS sample. 
 
-```{r experimental-te}
-# Estimate treatment effect
-df_exp |> 
-  feols(re78 ~ i(treat), vcov = "hc1")
+```{stata expiremental-te}
+*-> Estimate treatment effect
+reg re78 i.treat, r
 ```
 
 b. Further, show baseline covariate balance on the following variables: `re74`, `re75`, `marr`, `educ`, `age`, `black`, `hisp`. 
 
-```{r experimental-balance}
-df_exp |> 
-  feols(
-    c(re74, re75, marr, educ, age, black, hisp) ~ i(treat),
-    vcov = "hc1"
-  ) |>
-  etable()
+```{stata experimental-balance}
+*-> Baseline Covariate Balance
+foreach y of varlist re74 re75 marr educ age black hisp {
+  qui reg `y' i.treat, r
+  est store `y'
+}
+est tab *, keep(1.treat) se
 ```
 
 2. Now, take the treated units from the `nsw` dataset and append to it the CPS control sample `https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta`. Perform a simple difference-in-means on the combined dataset to estimate the treatment effect with no control group adjustment.
 
-```{r nonexperimental-data}
-df_cps <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/cps_mixtape.dta")
-
-# Treated experimental units with CPS units as controls
-df_nonexp <- bind_rows(df_exp |> filter(treat == 1), df_cps)
+```{stata nonexperimental-data, collectcode = TRUE}
+*-> Append in the CPS controls from footnote 2 of Table 2 (Dehejia and Wahba 2002)
+drop if treat==0
+append using "https://github.com/scunning1975/mixtape/raw/master/cps_mixtape.dta"
 ```
 
-```{r difference-in-means}
-df_nonexp |> feols(re78 ~ i(treat), vcov = "hc1")
+```{stata nonexperimental-te}
+*-> "Treatment" effect
+reg re78 i.treat, r
 ```
 
 ## Part 2: Selection on Observable Methods
 
 1. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
 
-```{r create-ps-weights}
-df_nonexp <- df_nonexp |>
-  mutate(
-    agesq = age^2,
-    agecube = age^3,
-    educsq = educ * educ,
-    u74 = case_when(re74 == 0 ~ 1, TRUE ~ 0),
-    u75 = case_when(re75 == 0 ~ 1, TRUE ~ 0),
-  )
+```{stata ips-weights, collectcode = TRUE}
+*-> Create variables
+gen agesq = age^2
+gen agecube = age^3
+gen edusq = educ^2
+gen u74 = (re74 == 0)
+gen u75 = (re75 == 0)
 
-logit_nsw <- feglm(
-  treat ~ age + agesq + agecube + educ + educsq +
-    marr + nodegree + black + hisp + re74 +
-    re75 + u74 + u75,
-  family = binomial(link = "logit"),
-  data = df_nonexp
-)
+*-> 1. Inverse propensity score weighting
+logit treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75
 
-df_nonexp$pscore <- predict(logit_nsw, type = "response")
+* predict propensity score
+predict pscore
 
-# inverse propensity score weights
-df_nonexp <- df_nonexp |> 
-  mutate(
-    inv_ps_weight = treat * 1/pscore + (1-treat) * 1/(1-pscore)
-  )
+* Poor propensity score match
+* hist pscore, by(treat)
+
+* inverse propensity score weights
+gen inv_ps_weight = treat * 1/pscore + (1-treat)*1/(1-pscore)
 ```
 
-```{r non-trimmed-estimate}
-# Weights are implicitly normalized when using `feols`,
-# plus it gives standard errors
-df_nonexp |> 
-  feols(re78 ~ i(treat),
-    weights = ~inv_ps_weight, vcov = "hc1"
-  )
+```{stata ipsw-te}
+reg re78 i.treat [aw=inv_ps_weight], r
 ```
 
 2. Note that the previous estimate was still negative. That is because we have extremem values for pscore. For example, a control unit with pscore $=0.0001$ receives a huge weight: $(1/0.0001) = 1000$. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
 
-```{r trimmed-estimate}
-df_nonexp |> 
-  filter(pscore > 0.1 & pscore < 0.9) |>
-  feols(re78 ~ i(treat),
-    weights = ~inv_ps_weight, vcov = "hc1"
-  )
+```{stata, ipsw-trim-te}
+*-> 2. Inverese propensity score weighting with trimming
+preserve
+drop if pscore < 0.1 | pscore > 0.9
+reg re78 i.treat [aw=inv_ps_weight], r
+restore
 ```
 
 3. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement and (ii) coarsened exact matching, estimate a treatment effect. You should use the same covariates as part b. 
 
+```{stata, psm-te}
+*-> 3. Propensity Score Matching
+teffects psmatch (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, logit), atet gen(ps_cps) nn(1)
+```
+
 *Note: for Stata, you can use `-teffects-` command for (i) and the `-cem-` package for (ii). For R, you can use the `{MatchIt}` package*
 
-```{r nn-pscore-matching}
-
-# 1:1 nearest neighbor matching with replacement on
-# the Mahalanobis distance
-nn_out <- matchit(
-  treat ~ age + agesq + agecube + educ + educsq +
-    marr + nodegree + black + hisp + re74 +
-    re75 + u74 + u75,
-  data = df_nonexp, distance = "mahalanobis",
-  replace = TRUE, estimand = "ATT"
-)
-
-df_nonexp$nn_weights = nn_out$weights
-
-df_nonexp |> 
-  feols(
-    re78 ~ i(treat), weights = ~nn_weights, vcov = "hc1"
-  )
+```{stata cem-te}
+*-> 4. Coarsened Exact Matching
+cem age (10 20 30 40 60) agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, treatment(treat) 
+reg re78 treat [iweight=cem_weights], robust
 ```
 
-```{r cem-matching}
-cem_out <- matchit(
-  treat ~ age + agesq + agecube + educ + educsq +
-    marr + nodegree + black + hisp + re74 +
-    re75 + u74 + u75,
-  data = df_nonexp,
-  method = "cem", estimand = "ATT"
-)
 
-df_nonexp$cem_weights = cem_out$weights
-
-feols(
-  re78 ~ i(treat), weights = ~cem_weights,
-  data = df_nonexp,  vcov = "hc1"
-)
-```
