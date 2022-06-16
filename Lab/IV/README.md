@@ -9,7 +9,7 @@ Q = \alpha + \delta P + \gamma X + \varepsilon
 $$
 Since price and quantity are simultaneous equations, we need an instrument that shocks $P$. Graddy (1995) uses the two-day lagged weather which determines that day's market price for fish.
 
-Load the Fulton Fish Market data from `https://raw.github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta`
+Load the Fulton Fish Market data from `https://github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta`
 
 
 1. Run OLS of `q` on `p` controlling for indicators for day of the week (`Mon`, `Tue`, `Wed`, `Thu`).

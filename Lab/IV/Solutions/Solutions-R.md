@@ -77,6 +77,19 @@ df |>
 
 3.  Argue for or against the validity of the instrument.
 
+*Comment:* In the classical supply and demand IV setting, you want you
+instrument to affect *either* supply *or* demand, but not both. In this
+setting, it would be necessary (and potentially plausible) that stormy
+weather affects the suppliers only since the restaurants and people of
+New York demand isn’t affected by the weather.
+
+However, here are two potential reasons this shock affects demand as
+well. First, the stormy weather could change the composition of fish
+caught. In this case, you’d violate the exclusion restriction since
+demand would be changing. Second, the weather could affect consumers
+decisions if for example, they eat out more in the days following a
+storm.
+
 # Card Replication
 
 Next, we will turn to the classical IV example of Card (1995). Card aims
@@ -160,3 +173,51 @@ df |>
 3.  Compare the two results, does the IV estimate move in the direction
     we predicted above? Use the concept of LATE to describe why the
     coefficient moved in the direction it did.
+
+*Comment:*
+
+In the above description, if ability is correlated with years of
+education, then the OLS regression coefficient for years of education
+will be biased upward since it picks up on the effect of ability
+(omitted variables bias). However, the IV regression coefficient
+actually *increased* which is not what we would expect.
+
+The answer that Card gives is that perhaps the individuals who are
+*induced* into entering college by the instrument (being close to
+college) benefit more from college than the general population. In this
+case the LATE \> ATE which is why the coefficient grows larger.
+
+Though, not covered in the course, it is possible to describe the
+compliers (see [Peter Hull’s
+Slides](https://github.com/Mixtape-Sessions/Instrumental-Variables/raw/main/Slides/03-HeterogeneousFX.pdf)).
+For example, we can see that the compliers tend to have a larger
+proportion of single mothers. These individuals might benefit more from
+attending college than the general population, i.e. the LATE \> ATE
+
+``` r
+df |> 
+  feols(
+    I(sinmom14 * enroll) ~ exper + black + south + married + smsa | 0 | enroll ~ nearc4,
+    vcov = "hc1"
+  )
+```
+
+    ## NOTE: 7 observations removed because of NA values (RHS: 7).
+
+    ## TSLS estimation, Dep. Var.: I(sinmom14 * enroll), Endo.: enroll, Instr.: nearc4
+    ## Second stage: Dep. Var.: I(sinmom14 * enroll)
+    ## Observations: 3,003 
+    ## Standard-errors: Heteroskedasticity-robust 
+    ##              Estimate Std. Error   t value Pr(>|t|)    
+    ## (Intercept) -0.026387   0.035403 -0.745351 0.456118    
+    ## fit_enroll   0.255022   0.223253  1.142302 0.253420    
+    ## exper        0.002063   0.002444  0.844187 0.398632    
+    ## black        0.011307   0.005211  2.169714 0.030107 *  
+    ## south       -0.001975   0.004838 -0.408191 0.683162    
+    ## married     -0.001998   0.000859 -2.327481 0.020006 *  
+    ## smsa        -0.009524   0.008665 -1.099193 0.271772    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## RMSE: 0.092111   Adj. R2: -0.426884
+    ## F-test (1st stage), enroll: stat = 1.94456, p = 0.163278, on 1 and 2,996 DoF.
+    ##                 Wu-Hausman: stat = 1.01735, p = 0.313229, on 1 and 2,995 DoF.

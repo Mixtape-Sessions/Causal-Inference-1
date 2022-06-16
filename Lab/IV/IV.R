@@ -1,17 +1,16 @@
 ## Fulton.R --------------------------------------------------------------------
 ## Kyle Butts, CU Boulder Economics
 ## 
-## replicate figures and tables in Hansen 2015 AER
+## replicate figures and tables in Hansen 2015 AER and Graddy 1995
 
 library(haven)
 library(fixest)
 library(tidyverse)
 
 
-# ---- 1. Fulton Fish Market`Stormy` instrument
+# ---- 1. Fulton Fish Market `Stormy` instrument
 
-df <- haven::read_dta("Lab/IV/Fulton.dta")
-# df <- haven::read_dta("https://raw.github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta")
+df <- haven::read_dta("https://raw.github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta")
 
 # OLS
 df |> 
@@ -48,7 +47,7 @@ df |>
 
 # Describing the compliers
 # df |> 
-#   feols(I(sinmom14 * enroll) ~ nearc4 + exper + black + south + married + smsa | 0 | enroll ~ nearc4,
+#   feols(I(sinmom14 * enroll) ~ exper + black + south + married + smsa | 0 | enroll ~ nearc4,
 #     vcov = "hc1"
 #   )
 
