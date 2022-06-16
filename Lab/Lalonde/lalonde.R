@@ -1,3 +1,8 @@
+## Lalonde.R -------------------------------------------------------------------
+## Kyle Butts, CU Boulder Economics
+## 
+## replicate analysis of Lalonde (1986) and Dehejia and Wahba (2002)
+
 library(tidyverse)
 library(fixest)
 library(haven)

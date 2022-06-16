@@ -1,3 +1,7 @@
+** Lalonde.do ******************************************************************
+** Kyle Butts, CU Boulder Economics
+** 
+** replicate analysis of Lalonde (1986) and Dehejia and Wahba (2002)
 
 use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
 

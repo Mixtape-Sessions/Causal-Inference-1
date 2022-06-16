@@ -1,3 +1,8 @@
+## Thornton.R ------------------------------------------------------------------
+## Kyle Butts, CU Boulder Economics
+## 
+## Analysis of Thornton (2008)
+
 library(tidyverse)
 library(fixest)
 library(haven)
@@ -31,13 +36,13 @@ feols(
 
 # ---- 3. Dose-response function
 
-# high incentive
+# high incentive (>= $2)
 feols(
   got ~ i(any), 
   data = df |> filter(tinc >= 2 | tinc == 0), cluster = ~villnum
 )
 
-# low incentive
+# low incentive (<= $1)
 feols(
   got ~ i(any), 
   data = df |> filter(tinc <= 1 | tinc == 0), cluster = ~villnum
