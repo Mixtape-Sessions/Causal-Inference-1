@@ -6,22 +6,20 @@ output: github_document
 # devtools::install_github("Hemken/Statamarkdown")
 library(Statamarkdown)
 ```
-
 # Hansen DWI Replication
 
 **Directions:** Download `hansen_dwi.dta` from GitHub at the following address. Note these data are not exactly the same as his because of confidentiality issues (so he couldn’t share all of it).
 
-https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi.dta
+https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi
 
 The outcome variable is `recidivism` which is measuring whether the person showed back up in the data within 4 months. Use this data to answer the following questions.
 
-```{r}
+```{r load-data}
 ## hansen.R --------------------------------------------------------------------
 ## Kyle Butts, CU Boulder Economics
 ## 
 ## replicate figures and tables in Hansen 2015 AER
 
-library(data.table)
 library(fixest)
 library(ggplot2)
 library(rdrobust)
@@ -30,24 +28,28 @@ library(binsreg)
 
 # load the data from github
 df <- haven::read_dta("https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi.dta")
-setDT(df)
 ```
 
-
 1. We will only focus on the 0.08 BAC cutoff; not the 0.15 cutoff. Take the following steps.
-    - Create a treatment variable (`dui`) equaling 1 if `bac1 >= 0.08` and 0 otherwise in your do/R file.
-    - Replicate Hansen’s Figure 1 examining whether there is any evidence for manipulation on the running variable. Produce a raw histogram using `bac1`, then use the density test in Cattaneo, Titunik and Farrell’s `rddensity` package. Can you find any evidence for manipulation? What about heaping?
+  a. Create a treatment variable (`dui`) equaling 1 if `bac1 >= 0.08` and 0 otherwise in your do/R file.
 
-```{r}
-# Q1: create some variables
-df[, dui := (bac1 > 0.08)]
-df[, bac1_old := bac1]
+```{r create-dui}
+# 1.a. create dui treatment variable for bac1>=0.08
+df$dui = (df$bac1 > 0.08)
+```
 
-# important to center
-df[, bac1 := bac1-0.08]
-df[, bac1_sq := bac1^2]
+  b. Store `bac1` into `bac1_orig` and then center the `bac1` variable, i.e. subtract $0.08$ so that the cutoff is now zero. 
 
-# First, make it as a discrete variable (bac1), once as continuous (bac1).
+```{r recenter-bac1}
+# 1.b. Re-center our running variable at bac1=0.08
+df$bac1_orig = df$bac1
+df$bac1 = df$bac1 - 0.08
+```
+
+  c. Replicate Hansen’s Figure 1 examining whether there is any evidence for manipulation on the running variable. Produce a raw histogram using `bac1`, then use the density test in Cattaneo, Titunik and Farrell’s `rddensity` package. Can you find any evidence for manipulation? What about heaping?
+
+```{r manipulation-heaping-tests}
+# 1.c. Find evidence for manipulation or heaping using histograms
 ggplot(df) + 
   geom_histogram(
     aes(x = bac1), binwidth = 0.001,
@@ -60,166 +62,53 @@ ggplot(df) +
   ) + 
   theme_bw()
 
-# Second, make it as a continuous variable -- looks like there is heaping that is visible
-
-
-# Third, use rddensity from Cattnaeo, Titunik and Farrell papers
-rdd <- rddensity::rddensity(X = df$bac1)
-
-summary(rdd)
-rddensity::rdplotdensity(rdd, X = df$bac1)
+# Use rddensity from Cattnaeo, Titunik and Farrell papers
+rddensity::rddensity(X = df$bac1, c = 0.08) |> summary()
 ```
 
+2. We are going to test for manipulation around the cutoff (following Table 2 Panel A). Run RD regressions using a local-linear estimator on `white`, `male`, age (`aged`) and accident (`acc`) as dependent variables. Are the covariates balanced at the cutoff? Use data in `bac1_orig` 0.03 to 0.13 (or `bac1` in -0.05 to 0.05). Check if the results are robust to a more narrow bandwidth of `bac1_orig` in 0.055 to 0.105. 
 
-2. Recreate Table 2 Panel A but only `white`, `male`, age (`aged`) and accident (`acc`) as dependent variables. Use your equation 1) for this. Are the covariates balanced at the cutoff? Use two separate bandwidths (0.03 to 0.13; 0.055 to 0.105) for estimation.
-
-
-```{r}
-# Q2: Running regressions on covariates (white, male, age and accident) to see 
-# if there is a jump in average values for each of these at the cutoff.
-# yi = Xi' \gamma + \alpha_1 DUI_i + \alpha_2 BAC_i + \alpha_3 BAC_i x DUI_i + u_i
-
-# not going to cluster on the running variable because of Kolesar and Rothe 
-# (2018) AER that says clustering on the running variable has an extreme
-# over-rejection problem. Technically they recommend honest confidence intervals
-# but that's in R and I'm not going to do it.
-
-# fixest::feols can do four variables at once and create a table with etable
+```{r covariate-balance}
+# 2. Are the covariates balanced at the cutoff? 
+# Use two separate bandwidths (0.03 to 0.13; 0.055 to 0.105)
+# yi = Xi′γ + α1 DUIi + α2 BACi + α3 BACi × DUIi + ui
 feols(
   c(white, male, acc, aged) ~ dui + bac1 + i(dui, bac1), 
-  df[bac1 >= 0.03 & bac1 <= 0.13, ], vcov = "hc1"
+  df[df$bac1_orig >= 0.03 & df$bac1_orig <= 0.13, ], vcov = "hc1"
 ) |> 
   etable()
 
-
-
-```
-
-
-3. Recreate Figure 2 panel A-D. Fit a picture using linear and separately quadratic with confidence intervals.
-
-
-```{r}
-rdplot(df$white, df$bac1, p = 1)
-rdplot(df$white, df$bac1, p = 2)
-```
-
-
-4. Estimate equation (1) with recidivism (`recid`) as the outcome. This corresponds to Table 3 column 1, but since I am missing some of his variables, your sample size will be the entire dataset of 214,558. Nevertheless, replicate Table 3, column 1, Panels A and B. Note that these are local linear regressions and Panel A uses as its bandwidth 0.03 to 0.13. But Panel B has a narrower bandwidth of 0.055 to 0.105. Your table should have three columns and two A and B panels associated with the different bandwidths.:
-    - Column 1: control for the `bac1` linearly
-    - Column 2: interact `bac1` with cutoff linearly
-    - Column 3: interact `bac1` with cutoff linearly and as a quadratic
-    - For all analysis, estimate uncertainty using heteroskedastic robust standard errors. [ed: But if you want to show off, use Kolesár and Rothe’s 2018 "honest" confidence intervals (only available in R).]
-
-
-```{r}
-# Q4a: Our main results. regression of recidivism onto the equation (1) model with linear bac1.
 feols(
-	recidivism ~ i(dui) + bac1, 
-	data = df[bac1_old >= 0.03 & bac1_old <= 0.13],
-	vcov = "hc1"
-)
-
-# Q4b: Our main results. regression of recidivism onto the equation (1) model with interacted linear bac1.
-feols(
-	recidivism ~ i(dui, bac1), 
-	data = df[bac1_old >= 0.03 & bac1_old <= 0.13],
-	vcov = "hc1"
-)
-
-# Q4c: Our main results. regression of recidivism onto the equation (1) model with interacted linear and quadratic bac1. 
-feols(
-	recidivism ~ i(dui, bac1) + i(dui, bac1_sq), 
-	data = df[bac1_old >= 0.03 & bac1_old <= 0.13],
-	vcov = "hc1"
-)
-
-```
-
-
-5. Repeat but drop units in the close vicinity of 0.08 (0.079-0.081) (i.e., the "donut hole" regression).
-
-
-```{r}
-df_donut <- df[bac1_old < 0.079 | bac1_old > 0.081,]
-feols(
-	recidivism ~ i(dui, bac1), 
-	data = df_donut[bac1_old >= 0.03 & bac1_old <= 0.13],
-	vcov = "hc1"
-)
-
-rdrobust(
-	y = df_donut$recidivism, x = df_donut$bac1, p = 1
-)
-```
-
-
-6. Recreate the top panel of Figure 3 according to the following rule:
-    - Fit linear fit using only observations with less than 0.15 BAC on the `bac1`
-    - Fit quadratic fit using only observations with less than 0.15 BAC on the `bac1`
-    - Use `rdplot` to do the same.
-
-
-
-
-7. Estimate local polynomial regressions with triangular kernel and bias correction using `rdrobust`. Experiment with other kernels and polynomials.
-
-
-```{r}
-# Local polynomial regressions with triangular kernel and bias correction
-
-rdrobust(
-  y = df$recidivism, x = df$bac1, kernel = "tri",
-  p = 2, masspoints = "off"
+  c(white, male, acc, aged) ~ dui + bac1 + i(dui, bac1), 
+  df[df$bac1_orig >= 0.055 & df$bac1_orig <= 0.105, ], vcov = "hc1"
 ) |> 
-  summary()
-
-df_donut <- df[donut == FALSE,]
-
-est <- rdrobust(
-  y = df_donut$recidivism, x = df_donut$bac1, kernel = "tri", 
-  p = 2, masspoints = "off"
-) |> 
-  summary()
-
-# Donut nonparameteric presentation
-df_summ <- df_donut[
-  bac1 >= 0.03 & bac1 <= 0.13, 
-  .(recidivism = mean(recidivism)), 
-  by = bac1
-]
-df_summ[, dui := bac1 >= 0.08]
-
-ggplot(df_summ) + 
-  geom_vline(xintercept = 0.08, linetype = "dashed", color = "red") +
-  geom_point(
-    aes(x = bac1, y = recidivism, color = dui)
-  ) + 
-  geom_smooth(
-    aes(x = bac1, y = recidivism, by = dui, color = dui), 
-    se = TRUE, method = "loess"
-  ) + 
-  labs(
-    x = "Blood Alcohol Level", y = "Conditional Mean Recidivism Rate",
-    color = "Received DUI"
-  ) + 
-  scale_color_manual(
-    values = c("steelblue", "red"), 
-    guide = "none"
-  ) + 
-  theme_bw()
-
-
-# rdplot
-df_trimmed <- df[bac1>=0.03 & bac1<=0.13, ]
-rdrobust::rdplot(
-  y = df_trimmed$recidivism, x = df_trimmed$bac1, c = 0.08, kernel = "tri", p = 4,
-  masspoints = "off"
-)
-
+  etable()
 ```
 
+3. Now, we turn our main result, estimating the effect of getting a DUI on recidivism (`recid`).
+  a. Run an RD estimate using the `rdrobust` command (from the `rdrobust` package in R)
 
+```{r rdrobust}
+# 3. Estimate RD of DUI on Recidivism
+rdrobust(
+  y = df$recidivism, x = df$bac1, c = 0
+)
+```
 
+  b. Like all RD applications, you need to include a plot of the underlying data. Plot the RD estimator using the `rdplot` command (from the `rdrobust` package in R).
 
+```{r rdplot}
+rdplot(
+  y = df$recidivism, x = df$bac1, c = 0
+)
+```
+
+4. Repeat but drop units in the close vicinity of 0.08 (0.079-0.081) (i.e., the "donut hole" regression). Do the results stay the same?
+
+```{r donut}
+df_donut <- df[df$bac1_orig <= 0.79 | df$bac1_orig >= 0.081, ]
+rdrobust(
+  y = df_donut$recidivism, x = df_donut$bac1, c = 0
+)
+```
 
