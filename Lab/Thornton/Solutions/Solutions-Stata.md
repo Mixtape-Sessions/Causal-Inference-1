@@ -7,10 +7,10 @@ Load data from the following url:
 `https://raw.github.com/scunning1975/mixtape/master/thornton_hiv.dta`
 
 ``` stata
+* ssc install estout
+
 use "https://raw.github.com/scunning1975/mixtape/master/thornton_hiv.dta", clear
 ```
-
-    end of do-file
 
 Rebecca Thornton’s paper [The Demand for, and Impact of, Learning HIV
 Status](https://www.rebeccathornton.net/wp-content/uploads/2019/08/Thornton-AER2008.pdf)
@@ -87,124 +87,32 @@ reg got i.any, vce(cluster villnum)
 
 ``` stata
 *-> 2. "Check" the experimental design by looking at covariates
+eststo clear
 foreach y of varlist male age hiv2004 educ2004 land2004 usecondom04 {
-  reg `y' i.any tinc i.under i.rumphi i.balaka, vce(cluster villnum)
+  eststo: quietly reg `y' i.any tinc i.under i.rumphi i.balaka, vce(cluster villnum)
 }
+esttab, keep(1.any)
 ```
 
-    Linear regression                               Number of obs     =      2,897
-                                                    F(5, 118)         =       0.63
-                                                    Prob > F          =     0.6774
-                                                    R-squared         =     0.0007
-                                                    Root MSE          =     .49909
+    (est1 stored)
+    (est2 stored)
+    (est3 stored)
+    (est4 stored)
+    (est5 stored)
+    (est6 stored)
 
-                                  (Std. Err. adjusted for 119 clusters in villnum)
-    ------------------------------------------------------------------------------
-                 |               Robust
-            male |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-    -------------+----------------------------------------------------------------
-           1.any |  -.0348545   .0307519    -1.13   0.259    -.0957517    .0260427
-            tinc |   .0129739    .013767     0.94   0.348    -.0142884    .0402363
-         1.under |  -.0019992    .014448    -0.14   0.890    -.0306102    .0266117
-        1.rumphi |   .0052096   .0194574     0.27   0.789    -.0333213    .0437406
-        1.balaka |  -.0023426   .0183367    -0.13   0.899    -.0386543    .0339691
-           _cons |    .478258   .0260329    18.37   0.000     .4267057    .5298103
-    ------------------------------------------------------------------------------
 
-    Linear regression                               Number of obs     =      2,892
-                                                    F(5, 118)         =       3.81
-                                                    Prob > F          =     0.0031
-                                                    R-squared         =     0.0088
-                                                    Root MSE          =     13.591
-
-                                  (Std. Err. adjusted for 119 clusters in villnum)
-    ------------------------------------------------------------------------------
-                 |               Robust
-             age |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-    -------------+----------------------------------------------------------------
-           1.any |   1.898457   .6906109     2.75   0.007     .5308598    3.266055
-            tinc |  -.5110515   .3018288    -1.69   0.093    -1.108755    .0866517
-         1.under |  -.5297772   .6432522    -0.82   0.412    -1.803592    .7440374
-        1.rumphi |   1.788421   .7929398     2.26   0.026     .2181842    3.358658
-        1.balaka |    2.66255   .9284513     2.87   0.005     .8239638    4.501136
-           _cons |   31.13846   .7064498    44.08   0.000     29.73949    32.53742
-    ------------------------------------------------------------------------------
-
-    Linear regression                               Number of obs     =      2,830
-                                                    F(5, 118)         =       3.01
-                                                    Prob > F          =     0.0136
-                                                    R-squared         =     0.0063
-                                                    Root MSE          =      .2514
-
-                                  (Std. Err. adjusted for 119 clusters in villnum)
-    ------------------------------------------------------------------------------
-                 |               Robust
-         hiv2004 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-    -------------+----------------------------------------------------------------
-           1.any |  -.0078547   .0173677    -0.45   0.652    -.0422475    .0265381
-            tinc |  -.0003935   .0070724    -0.06   0.956    -.0143988    .0136118
-         1.under |   .0268185   .0106505     2.52   0.013     .0057276    .0479094
-        1.rumphi |    -.01223   .0123441    -0.99   0.324    -.0366746    .0122146
-        1.balaka |   .0249856   .0138016     1.81   0.073    -.0023453    .0523165
-           _cons |   .0481886   .0151707     3.18   0.002     .0181465    .0782307
-    ------------------------------------------------------------------------------
-
-    Linear regression                               Number of obs     =      2,603
-                                                    F(5, 117)         =      50.98
-                                                    Prob > F          =     0.0000
-                                                    R-squared         =     0.1659
-                                                    Root MSE          =     3.4205
-
-                                  (Std. Err. adjusted for 118 clusters in villnum)
-    ------------------------------------------------------------------------------
-                 |               Robust
-        educ2004 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-    -------------+----------------------------------------------------------------
-           1.any |  -.1973266   .1905202    -1.04   0.302    -.5746419    .1799887
-            tinc |   .1020961   .0902959     1.13   0.261    -.0767302    .2809225
-         1.under |   .3539732   .1857646     1.91   0.059    -.0139239    .7218702
-        1.rumphi |   2.617905   .2369161    11.05   0.000     2.148705    3.087105
-        1.balaka |  -.7127753   .2398366    -2.97   0.004    -1.187759   -.2377914
-           _cons |   2.834223   .2224165    12.74   0.000     2.393739    3.274707
-    ------------------------------------------------------------------------------
-
-    Linear regression                               Number of obs     =      2,669
-                                                    F(5, 118)         =      22.61
-                                                    Prob > F          =     0.0000
-                                                    R-squared         =     0.0667
-                                                    Root MSE          =     .42812
-
-                                  (Std. Err. adjusted for 119 clusters in villnum)
-    ------------------------------------------------------------------------------
-                 |               Robust
-        land2004 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-    -------------+----------------------------------------------------------------
-           1.any |   .0083251   .0250677     0.33   0.740    -.0413157    .0579659
-            tinc |   .0073164   .0102662     0.71   0.477    -.0130134    .0276462
-         1.under |   -.007388    .017814    -0.41   0.679    -.0426646    .0278885
-        1.rumphi |  -.1590849   .0302915    -5.25   0.000    -.2190703   -.0990994
-        1.balaka |   .1009154    .028411     3.55   0.001      .044654    .1571769
-           _cons |   .7430269   .0283076    26.25   0.000     .6869703    .7990836
-    ------------------------------------------------------------------------------
-
-    Linear regression                               Number of obs     =      2,444
-                                                    F(5, 118)         =       3.96
-                                                    Prob > F          =     0.0024
-                                                    R-squared         =     0.0118
-                                                    Root MSE          =     .40762
-
-                                  (Std. Err. adjusted for 119 clusters in villnum)
-    ------------------------------------------------------------------------------
-                 |               Robust
-     usecondom04 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-    -------------+----------------------------------------------------------------
-           1.any |  -.0310891   .0212901    -1.46   0.147    -.0732493     .011071
-            tinc |   .0028911   .0096045     0.30   0.764    -.0161284    .0219106
-         1.under |  -.0066763   .0209732    -0.32   0.751    -.0482089    .0348563
-        1.rumphi |   .0680283   .0259159     2.62   0.010     .0167079    .1193488
-        1.balaka |  -.0220851   .0266765    -0.83   0.409    -.0749119    .0307417
-           _cons |   .2211733   .0264332     8.37   0.000     .1688283    .2735183
-    ------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------
+                          (1)             (2)             (3)             (4)             (5)             (6)   
+                         male             age         hiv2004        educ2004        land2004     usecondom04   
+    ------------------------------------------------------------------------------------------------------------
+    1.any             -0.0349           1.898**      -0.00785          -0.197         0.00833         -0.0311   
+                      (-1.13)          (2.75)         (-0.45)         (-1.04)          (0.33)         (-1.46)   
+    ------------------------------------------------------------------------------------------------------------
+    N                    2897            2892            2830            2603            2669            2444   
+    ------------------------------------------------------------------------------------------------------------
+    t statistics in parentheses
+    * p<0.05, ** p<0.01, *** p<0.001
 
 *Comment:* Among the 6 covariates we tested, all but `age` are not
 significantly different between the treated and the control
@@ -361,8 +269,8 @@ gen pvalue = rank/_N
 list if iteration==1
 ```
 
-    (note: file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_43943.000001 not found)
-    file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_43943.000001 saved
+    (note: file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_59206.000001 not found)
+    file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_59206.000001 saved
 
     (2598 missing values generated)
 
@@ -373,15 +281,15 @@ list if iteration==1
 
 
 
-    (note: file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_43943.000002 not found)
-    file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_43943.000002 saved
+    (note: file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_59206.000002 not found)
+    file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_59206.000002 saved
 
 
 
 
 
-    (note: file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_43943.0000tg not found)
-    file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_43943.0000tg saved
+    (note: file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_59206.0000tg not found)
+    file /var/folders/m3/fzql5frx44nbt7v3j41h6l440000gn/T//S_59206.0000tg saved
 
         Variable |        Obs        Mean    Std. Dev.       Min        Max
     -------------+---------------------------------------------------------

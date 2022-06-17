@@ -14,6 +14,8 @@ library(Statamarkdown)
 Load data from the following url: `https://raw.github.com/scunning1975/mixtape/master/thornton_hiv.dta`
 
 ```{stata load-data, collectcode = TRUE}
+* ssc install estout
+
 use "https://raw.github.com/scunning1975/mixtape/master/thornton_hiv.dta", clear
 ```
 
@@ -52,9 +54,11 @@ Interpret whether the results give you confidence in the experiment.
 
 ```{stata covariate-balance}
 *-> 2. "Check" the experimental design by looking at covariates
+eststo clear
 foreach y of varlist male age hiv2004 educ2004 land2004 usecondom04 {
-  reg `y' i.any tinc i.under i.rumphi i.balaka, vce(cluster villnum)
+  eststo: quietly reg `y' i.any tinc i.under i.rumphi i.balaka, vce(cluster villnum)
 }
+esttab, keep(1.any)
 ```
 
 *Comment:* Among the 6 covariates we tested, all but `age` are not significantly different between the treated and the control observations. For `age` the difference is only 1.9 years apart, which is relatively small. These results give me confidence in the experimental validity.
