@@ -1,0 +1,1173 @@
+\documentclass{beamer}
+
+\input{preamble.tex}
+\usepackage{breqn} % Breaks lines
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\usepackage{pdfpages} % \includepdf
+
+\usepackage{listings} % R code
+\usepackage{verbatim} % verbatim
+
+% Video stuff
+\usepackage{media9}
+
+% packages for bibs and cites
+\usepackage{natbib}
+\usepackage{har2nat}
+\newcommand{\possessivecite}[1]{\citeauthor{#1}'s \citeyearpar{#1}}
+\usepackage{breakcites}
+\usepackage{alltt}
+
+% tikz
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{calc, positioning, decorations.pathreplacing, arrows.meta, intersections}
+\pgfdeclarelayer{bg}
+\pgfdeclarelayer{back}
+\pgfdeclarelayer{fg}
+\pgfsetlayers{bg,main,fg,back}
+\usetikzlibrary{shapes,arrows}
+
+% Setup math operators
+\DeclareMathOperator{\E}{E} \DeclareMathOperator{\tr}{tr} \DeclareMathOperator{\se}{se} \DeclareMathOperator{\I}{I} \DeclareMathOperator{\sign}{sign} \DeclareMathOperator{\supp}{supp} \DeclareMathOperator{\plim}{plim}
+\DeclareMathOperator*{\dlim}{\mathnormal{d}\mkern2mu-lim}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+   \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand*\colvec[1]{\begin{pmatrix}#1\end{pmatrix}}
+
+\newcommand{\myurlshort}[2]{\href{#1}{\textcolor{gray}{\textsf{#2}}}}
+
+
+\begin{document}
+
+\imageframe{./lecture_includes/mixtape_ci_cover.png}
+
+
+% ---- Content ----
+
+
+
+\section{Directed Acyclic Graphs}
+
+\subsection{Graph notation}
+
+\begin{frame}{Judea Pearl, 2011 Turing Award winner, drinking his first IPA}
+
+  \begin{figure}
+    \includegraphics[scale=0.05]{./lecture_includes/pearl_ipa.jpg}
+  \end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Judea Pearl and DAGs}
+
+
+  \begin{itemize}
+    \item Judea Pearl and colleagues in Artificial Intelligence at UCLA developed DAG modeling to create a formalized causal inference methodology
+    \item They causality concepts extremely clear, they provide a map to the estimation strategy, and maybe best of all, they communicate to others what must be true about the data generating process to recover the causal effect
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Further reading}
+
+  \begin{enumerate}
+
+    \item Pearl (2018) \underline{The Book of Why: The} \underline{New Science of Cause and Effect}, Basic Books (\emph{popular})
+    \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
+    \item Pearl, Glymour and Jewell (2016) \underline{Causal Inference In Statistics: A Primer}, Wiley Books (\emph{accessible})
+    \item Pearl (2009) \underline{Causality: Models, Reasoning and Inference}, Cambridge, 2nd edition (\emph{difficult})
+    \item Cunningham (2021) \underline{Causal Inference: The Mixtape}, Yale, 1st edition (\emph{best choice, no question})
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Design vs. Model}
+
+  \begin{itemize}
+    \item DAGs tend to be focused more on the theory of treatment assignment in the world
+    \item As such it's compatible with design-based approaches
+    \item But assumptions in design based approaches tend to emphasize selection into treatment which is not exactly what is meant here
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Causal model}
+
+  \begin{itemize}
+    \item The causal model is sometimes called the structural model, but for us, I prefer the former as it's less alienating
+    \item Think of this as more connected to the model-based approach discussed earlier
+    \item It's the system of equations describing the relevant aspects of the world
+    \item It necessarily is filled with causal effects associated with some particular comparative statics
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[plain]
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (y) {$Y$};
+      \node[above left of = d, text centered] (i) {$I$};
+      \node[left of = i, text centered] (pe) {$PE$};
+      \node[below of = pe, text centered] (b) {$B$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1,] (i) -- (d);
+      \draw[->, line width= 1,] (pe) -- (i);
+      \draw[->, line width= 1,] (pe) -- (d);
+      \draw[->, line width= 1, dashed] (b) -- (pe);
+      \draw[->, line width= 1, dashed] (b) -- (d);
+      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+  \begin{itemize}
+    \item $B$ is a \textbf{parent} of $PE$ and $D$
+    \item $PE$ and $D$ are \textbf{descendants} of $B$
+    \item There is a \textbf{direct (causal) path} from $D$ to $Y$
+    \item There is a \textbf{mediated (causal) path} from $B$ to $Y$ through $D$
+    \item There are four \textbf{paths} from $PE$ to $Y$ but none are direct, and one is unlike the others
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Colliders}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (y) {$Y$};
+      \node[above left of = d, text centered] (i) {$I$};
+      \node[left of = i, text centered] (pe) {$PE$};
+      \node[below of = pe, text centered] (b) {$B$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1,] (i) -- (d);
+      \draw[->, line width= 1,] (pe) -- (i);
+      \draw[->, line width= 1,] (pe) -- (d);
+      \draw[->, line width= 1, dashed] (b) -- (pe);
+      \draw[->, line width= 1, dashed] (b) -- (d);
+      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+
+  Notice anything different with this DAG?  Look closely.
+  \begin{itemize}
+
+    \item $D$ is a \textbf{collider} along the path $B\rightarrow D\leftarrow I$ (i.e., ``colliding'' at $D$)
+    \item $D$ is a \textbf{noncollider} along the path $B\rightarrow D\rightarrow Y$
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Summarizing Value of DAGs}
+
+  \begin{enumerate}
+    \item Facilitates the task of designing identification strategy for estimating average causal effects
+    \item Facilitates the task of testing compatibility of the model with your data
+    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Creating DAGs}
+
+  \begin{itemize}
+    \item The DAG is a \emph{relevant} causal relationships describing the relationship between $D$ and $Y$
+    \item It will include:
+          \begin{itemize}
+            \item All direct causal effects among the \emph{relevant} variables in the graph
+            \item All common causes of any pair of \emph{relevant} variables in the graph
+          \end{itemize}
+    \item No need to model a dinosaur stepping on a bug causing in a million years some evolved created that impacted your decision to go to college
+    \item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
+    \item Sometimes called the data generating process.
+  \end{itemize}
+
+\end{frame}
+
+
+
+\subsection{Backdoor criterion}
+
+\begin{frame}{Research designs: Selection on observables}
+
+  \begin{itemize}
+
+    \item DAGs help us understand the source of problems in our observational (non-experimental) data that make inferring causality hard
+    \item But it also can help us see a way out (this whole class is a way out)
+    \item First way out is the selection on observables research design, which is best described in causal graphs using the \textbf{backdoor criterion}
+    \item Selection on observables is not technically difficult, but it does require a reasonable level of confidence in the DAG
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Confounding}
+
+  \begin{itemize}
+    \item Omitted variable bias has a name in DAGs: ``confounding''
+    \item Confounding occurs when when the treatment and the outcomes have a common cause or parent which creates spurious correlation between $D$ and $Y$
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered] (d) {$D$};
+              \node[below right of = d, text centered] (x) {$X$};
+              \node[above right of = x, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= 1] (d) -- (y);
+              \draw[->, line width= 1] (x) -- (d);
+              \draw[->, line width= 1] (x) -- (y);
+            \end{tikzpicture}
+          \end{center}
+
+          The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Backdoor Paths}
+
+  \begin{itemize}
+    \item Confounding creates \textbf{backdoor paths} between treatment and outcome ($D\leftarrow X\rightarrow Y$) -- i.e., spurious correlations
+    \item Not the same as mediation ($D \rightarrow X \rightarrow Y$)
+    \item We can ``block'' backdoor paths by conditioning on the common cause $X$
+    \item Once we condition on $X$, the correlation between $D$ and $Y$ estimates the causal effect of $D$ on $Y$
+    \item Conditioning means calculating $E[Y|D=1,X]-E[Y|D=0,X]$ for each value of $X$ then combining (e.g., integrating)
+
+  \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}
+      [node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[below right of = d, text centered, rectangle, draw, thin] (x) {$X$};
+      \node[above right of = x, text centered] (y) {$Y$};
+
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1] (x) -- (d);
+      \draw[->, line width= 1] (x) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}{Blocked backdoor paths}
+
+  A backdoor path is blocked if and only if:
+  \begin{itemize}
+    \item It contains a noncollider that has been conditioned on
+    \item Or it contains a collider that has not been conditioned on
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Examples of blocked paths}
+
+  Examples:
+  \begin{enumerate}
+    \item Conditioning on a noncollider blocks a path:
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered, rectangle, draw, thin] (x) {$X$};
+              \node[right of = x, text centered] (z) {$Z$};
+              \node[right of = z, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5] (x) -- (z);
+              \draw[->, line width= .5] (x) to [out=45,in=135, looseness=0.5] (y);
+            \end{tikzpicture}
+          \end{center}
+
+    \item Conditioning on a collider opens a path (i.e., creates spurious correlations):
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered] (z) {$Z$};
+              \node[right of = z, text centered, rectangle, draw, thin] (x) {$X$};
+              \node[right of = x, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5] (z) -- (x);
+              \draw[->, line width= .5] (y) -- (x);
+            \end{tikzpicture}
+          \end{center}
+
+    \item \emph{Not} conditioning on a collider blocks a path:
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered] (z) {$Z$};
+              \node[right of = z, text centered] (x) {$X$};
+              \node[right of = x, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5] (z) -- (x);
+              \draw[->, line width= .5] (y) -- (x);
+            \end{tikzpicture}
+          \end{center}
+
+  \end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Backdoor criterion}
+
+
+  \begin{block}{Backdoor criterion}
+    Conditioning on $X$ satisfies the backdoor criterion with respect to $(D,Y)$ directed path if:
+    \begin{enumerate}
+      \item All backdoor paths are blocked by $X$
+      \item No element of $X$ is a collider
+    \end{enumerate}
+
+    In words: If $X$ satisfies the backdoor criterion with respect to $(D,Y)$, then controlling for or matching on $X$ identifies the causal effect of $D$ on $Y$
+  \end{block}
+\end{frame}
+
+\begin{frame}{What control strategy meets the backdoor criterion?}
+  \begin{itemize}
+    \item List all backdoor paths from $D$ to $Y$. I'll wait.
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered,rectangle,thin] (x1) {$X_1$};
+              \node[right of = x1, text centered] (d) {$D$};
+              \node[below right of = d, text centered] (x2) {$X_2$};
+              \node[above right of = x2, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5] (x1) -- (d);
+              \draw[->, line width= .5] (d) -- (y);
+              \draw[->, line width= .5] (x2) -- (d);
+              \draw[->, line width= .5] (x2) -- (y);
+              \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+            \end{tikzpicture}
+          \end{center}
+
+    \item What are the necessary and sufficient set of controls which will satisfy the backdoor criterion?
+  \end{itemize}
+
+  \framebreak
+
+
+
+
+\end{frame}
+
+
+\begin{frame}{What if you have an unobservable?}
+
+
+  \begin{itemize}
+    \item List all the backdoor paths from $D$ to $Y$.
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered] (u) {$U$};
+              \node[right of = u, text centered] (x2) {$X_2$};
+              \node[above of = x2, text centered] (x1) {$X_1$};
+              \node[right of = x2, text centered] (d) {$D$};
+              \node[right of = d, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5, dashed] (u) -- (x2);
+              \draw[->, line width= .5] (x2) -- (d);
+              \draw[->, line width= .5] (x1) -- (d);
+              \draw[->, line width= .5] (x1) -- (y);
+              \draw[->, line width= .5] (d) -- (y);
+              \draw[->, line width= .5, dashed] (u) to [out=-45,in=-135, looseness=0.5] (y);
+            \end{tikzpicture}
+          \end{center}
+
+    \item What are the necessary and sufficient set of controls which will satisfy the backdoor criterion?
+    \item What about the unobserved variable, $U$?
+  \end{itemize}
+
+  \framebreak
+
+
+\end{frame}
+
+\begin{frame}{Multiple strategies}
+
+
+  \begin{center}
+    \begin{tikzpicture}
+      [node distance=1.5cm, text centered]
+      % nodes %
+      \node[] (x3) {$X_3$};
+      \node[above left of = x3,rectangle,draw,thin] (x1) {$X_1$};
+      \node[below left of = x3,rectangle,draw,thin] (x2) {$X_2$};
+      \node[right of = x] (d) {$D$};
+      \node[right of = d] (y) {$Y$};
+
+      % edges %
+      \draw[->, line width= .5] (x1) -- (x3);
+      \draw[->, line width= .5] (x2) -- (x3);
+      \draw[->, line width= .5] (x1) to [out=0,in=135, looseness=0.5] (y);
+      \draw[->, line width= .5] (x2) to [out=0,in=-135, looseness=0.5] (y);
+      \draw[->, line width= .5] (x3) -- (d);
+      \draw[->, line width= .5] (d) -- (y);
+    \end{tikzpicture}
+
+    \begin{tikzpicture}
+      [node distance=1.5cm, text centered]
+      % nodes %
+      \node[rectangle,draw,thin] (x3) {$X_3$};
+      \node[above left of = x3] (x1) {$X_1$};
+      \node[below left of = x3] (x2) {$X_2$};
+      \node[right of = x] (d) {$D$};
+      \node[right of = d] (y) {$Y$};
+
+      % edges %
+      \draw[->, line width= .5] (x1) -- (x3);
+      \draw[->, line width= .5] (x2) -- (x3);
+      \draw[->, line width= .5] (x1) to [out=0,in=135, looseness=0.5] (y);
+      \draw[->, line width= .5] (x2) to [out=0,in=-135, looseness=0.5] (y);
+      \draw[->, line width= .5] (x3) -- (d);
+      \draw[->, line width= .5] (d) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \item Conditioning on the common causes, $X_1$ and $X_2$, is sufficient
+    \item \dots but so is conditioning on $X_3$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Testing the Validity of the DAG}
+
+  \begin{itemize}
+    \item The DAG makes testable predictions
+    \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
+    \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
+    \item Causal algorithms tend to be DAG based and are becoming popular in industry
+  \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (y) {$Y$};
+      \node[above left of = d, text centered] (i) {$I$};
+      \node[left of = i, text centered] (pe) {$PE$};
+      \node[below of = pe, text centered] (b) {$B$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1,] (i) -- (d);
+      \draw[->, line width= 1,] (pe) -- (i);
+      \draw[->, line width= 1,] (pe) -- (d);
+      \draw[->, line width= 1, dashed] (b) -- (pe);
+      \draw[->, line width= 1, dashed] (b) -- (d);
+      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+
+
+
+
+\subsection{Collider bias}
+
+\begin{frame}[allowframebreaks,plain]
+  \begin{center}
+    \textbf{Collider bias}
+  \end{center}
+
+  \begin{itemize}
+    \item \textbf{Conditioning on a collider introduces spurious correlations; can even mask causal directions}
+          \begin{itemize}
+            \item There is only one backdoor path from $D$ to $Y$
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
+                      \node[right of = x1, text centered] (d) {$D$};
+                      \node[below right of = d, text centered] (x2) {$X_2$};
+                      \node[above right of = x2, text centered] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5] (x1) -- (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                      \draw[->, line width= .5] (d) -- (x2);
+                      \draw[->, line width= .5] (y) -- (x2);
+                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item Conditioning on $X_1$ blocks the backdoor path
+
+            \item But what if we also condition on $X_2$?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
+                      \node[right of = x1, text centered] (d) {$D$};
+                      \node[below right of = d, draw, rectangle, text centered] (x2) {$X_2$};
+                      \node[above right of = x2, text centered] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5] (x1) -- (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                      \draw[->, line width= .5] (d) -- (x2);
+                      \draw[->, line width= .5] (y) -- (x2);
+                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
+          \end{itemize}
+
+          \framebreak
+
+
+    \item \textbf{Even controlling for pretreatment covariates can create bias}
+          \begin{itemize}
+            \item Name the backdoor paths.  Is it open or closed?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm, text centered]
+                      % nodes %
+                      \node[] (x) {$X$};
+                      \node[above left of = x] (u1) {$U_1$};
+                      \node[below left of = x] (u2) {$U_2$};
+                      \node[right of = x] (d) {$D$};
+                      \node[right of = d] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5, dashed] (u1) -- (x);
+                      \draw[->, line width= .5, dashed] (u2) -- (x);
+                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
+                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item But what if we condition on $X$?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm, text centered]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x) {$X$};
+                      \node[above left of = x] (u1) {$U_1$};
+                      \node[below left of = x] (u2) {$U_2$};
+                      \node[right of = x] (d) {$D$};
+                      \node[right of = d] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5, dashed] (u1) -- (x);
+                      \draw[->, line width= .5, dashed] (u2) -- (x);
+                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
+                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+
+          \end{itemize}
+  \end{itemize}
+  \framebreak
+
+
+\end{frame}
+
+
+\begin{frame}{Sample selection example of collider bias}
+
+  \alert{Important}: Since unconditioned colliders block back-door paths, what exactly does conditioning on a collider do? Let's illustrate with a fun example and some made-up data\\
+  \begin{itemize}
+    \item \underline{CNN.com} headline: Megan Fox voted worst -- but sexiest -- actress of 2009 \myurlshort{http://marquee.blogs.cnn.com/2009/12/30/megan-fox-voted-worst-but-sexiest-actress-of-2009/}{(link)}
+    \item Are these two things actually negatively correlated in the world?
+    \item Assume talent and beauty are independent, but each causes someone to become a movie star.  What's the correlation between talent and beauty for a sample of movie stars compared to the population as a whole (stars and non-stars)?
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[plain]
+
+  \begin{itemize}
+    \item What if the sample consists \emph{only} of movie stars?
+    \item Look at python code
+  \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}
+      [node distance=2cm, text centered]
+
+      %nodes
+      \node[text centered,draw,rectangle,thin] (x) {Movie Star};
+      \node[below left of = x] (u1) {$Talent$};
+      \node[below right of = x] (u2) {$Beauty$};
+
+      % edges %
+      \draw[->, line width= 2] (u1) -- (x);
+      \draw[->, line width= 2] (u2) -- (x);
+    \end{tikzpicture}
+  \end{center}
+
+
+
+
+\end{frame}
+
+\begin{frame}[shrink=20,plain]
+
+  \begin{figure}
+    \includegraphics[height=9cm]{./lecture_includes/beauty_collider.pdf}
+    \caption{Top left figure: Non-star sample scatter plot of beauty (vertical axis) and talent (horizontal axis). Top right right figure: Star sample scatter plot of beauty and talent.  Bottom left figure: Entire (stars and non-stars combined) sample scatter plot of beauty and talent.}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Occupational sorting and discrimination example of collider bias}
+
+  \begin{itemize}
+    \item Let's look at another example: very common for think tanks and journalists to say that the gender gap in earnings disappears once you control for occupation.
+    \item But what if occupation is a collider, which it could be in a model with occupational sorting
+    \item Then controlling for occupation in a wage regression searching for discrimination can lead to all kinds of crazy results \emph{even in a simulation where we explicitly design there to be discrimination}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{DAG}
+
+  \begin{center}
+    \begin{tikzpicture}
+      [node distance=1.5cm]
+      % nodes %
+      \node[text centered] (f) {$F$};
+      \node[above right of = f, text centered] (d) {$d$};
+      \node[right of = f] (y) {$y$};
+      \node[below  of = f, text centered] (o) {$o$};
+      \node[right of = o, text centered] (a) {$A$};
+
+      % edges %
+      \draw[->, line width= 1] (f) -- (d);
+      \draw[->, line width= 1] (d) -- (o);
+      \draw[->, line width= 1, dashed] (a) -- (o);
+
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1] (o) -- (y);
+      \draw[->, line width= 1, dashed] (a) -- (y);
+
+    \end{tikzpicture}
+  \end{center}
+
+  $F$ is female, $d$ is discrimination, $o$ is occupation, $y$ is earnings and $A$ is ability. Dashed lines mean the variable cannot be observed. Note, by design, being a female has no effect on earnings or occupation, and has no relationship with ability. So earnings is coming through discrimination, occupation, and ability.
+
+\end{frame}
+
+
+\begin{frame}[plain]
+
+  \begin{center}
+    \begin{tikzpicture}
+      [node distance=1.5cm]
+      % nodes %
+      \node[text centered] (f) {$F$};
+      \node[above right of = f, text centered] (d) {$d$};
+      \node[right of = f] (y) {$y$};
+      \node[below  of = f, text centered] (o) {$o$};
+      \node[right of = o, text centered] (a) {$A$};
+
+      % edges %
+      \draw[->, line width= 1] (f) -- (d);
+      \draw[->, line width= 1] (d) -- (o);
+      \draw[->, line width= 1, dashed] (a) -- (o);
+
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1] (o) -- (y);
+      \draw[->, line width= 1, dashed] (a) -- (y);
+
+    \end{tikzpicture}
+  \end{center}
+
+
+  Mediation and Backdoor paths
+
+  \begin{enumerate}
+
+    \item $d$ $\rightarrow o \rightarrow y$
+    \item $d$ $\rightarrow o \leftarrow A \rightarrow y$
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}[plain, shrink=20]
+
+  \begin{table}[htbp]\centering
+    \scriptsize
+    \caption{Regressions illustrating collider bias with simulated gender disparity}
+    \begin{center}
+      \begin{tabular}{l*{3}{c}}
+        \toprule
+        \multicolumn{1}{l}{Covariates: }&
+        \multicolumn{1}{c}{\textbf{Unbiased combined effect}}&
+        \multicolumn{1}{c}{\textbf{Biased }}&
+        \multicolumn{1}{c}{\textbf{Unbiased wage effect only}}\\
+        \midrule
+        Female                     & -3.074*** & 0.601*** & -0.994*** \\
+                                   & (0.000)   & (0.000)  & (0.000)   \\
+        Occupation                 &           & 1.793*** & 0.991***  \\
+                                   &           & (0.000)  & (0.000)   \\
+        Ability                    &           &          & 2.017***  \\
+                                   &           &          & (0.000)   \\
+        \\
+        \midrule
+        N                          & 10,000    & 10,000   & 10,000    \\
+        Mean of dependent variable & 0.45      & 0.45     & 0.45      \\
+        \bottomrule
+      \end{tabular}
+    \end{center}
+  \end{table}
+
+  \begin{itemize}
+    \item Recall we designed there to be a discrimination coefficient of -1
+    \item If we do not control for occupation, then we get the combined effect of $d \rightarrow o \rightarrow y$ and $d  \rightarrow y$
+    \item Because it seems intuitive to control for occupation, notice column 2 - the sign flips!
+    \item We are only able to isolate the direct causal effect by conditioning on ability and occupation, but ability is unobserved
+  \end{itemize}
+
+\end{frame}
+
+
+
+\subsection{Front door criterion}
+
+\begin{frame}{Research design \#2: front door criterion}
+
+  \begin{itemize}
+    \item Confounding creates major issues for us, but if we can observe the confounders, then we can use the backdoor criterion (``selection on observables'') to identify causal effects
+    \item What about \textbf{unobserved confounding}?  It depends on the DAG
+    \item One particular DAG structure that is not widely known outside of Pearl circles is the front door criterion
+    \item Bears some topical resemblance to instrumental variables, but it is nonetheless very different and when available to you the elements can be used to trace out causal effects
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Mechanisms}
+
+  \begin{itemize}
+    \item Rarely does an intervention operate directly on an outcome; oftentimes it operates on the outcome via a ``mechanism''
+          \begin{itemize}
+            \item Example: Parental substance abuse causes foster care removals through child abuse and neglect
+          \end{itemize}
+    \item The presence of mechanisms, it turns out, is valuable because of their policy relevance, but also because we can use them \emph{sometimes} for identification
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Frontdoor DAG}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \item We cannot close $D \leftarrow U \rightarrow Y$ because $U$ is not observed and thus simple contrasts are biased estimates of treatment effects
+    \item Pearl (2009) showed that this DAG actually does allow us to recover the effect of $D$ on $Y$, though -- just not via the backdoor criterion
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Front door criterion}
+
+  \begin{quote}
+    If one or more unblocked back door paths connect a causal variable to an outcome variable, the causal effect is identified by conditioning on a set of observed variables $M$ that make up the identifying mechanism if and only if: 1) the variables in $M$ intercept all directed paths from the causal variable to the outcome (``exhaustiveness''); 2) No unblocked back-door paths connecting the causal variable to the variables in the set $M$ and all back door paths from the variables in $M$ to the outcome can be blocked by conditioning on $D$ (``isolation'')
+  \end{quote}
+
+\end{frame}
+
+\begin{frame}{Exhaustiveness}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+
+  \begin{itemize}
+    \item Exhaustiveness means the variables $M$ are the only paths through which $D$ impacts $Y$.
+    \item In other words, rules out direct effects that bypass $M$ altogether
+    \item ``only through $M$'' in place of exhaustiveness and you get the idea
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Isolation}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+
+  \begin{itemize}
+    \item Mechanism itself is not confounded with respect to $Y$ (i.e., no unobserved confounding parent linking $M$ and $Y$)
+    \item You are looking for a causal effect contained in a closed but confounded system and the presence of the $M$ mechanism is key
+    \item Pearl and others have suggested smoking ($D$) and lung cancer ($Y$) with $M=$ tar buildup in the lungs might have been candidate but this has been debated)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Frontdoor three step method}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+
+    \item Frontdoor criterion is going to take advantage of two things we've seen so far: collider properties and blocking properties
+    \item This is not IV, but as we will see, it bears some similarities to IV
+    \item The final estimator will be the product of two separate calculations (whereas IV is more like the ratio)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Frontdoor three step method}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+
+
+
+  \begin{enumerate}
+    \item[1. ] Estimate the effect of $D$ on $M$.  Consider a regression of $M$ on $D$ or simple difference in mean $D$ with respect to $M$ $$D = \alpha_0 + \beta M + \epsilon$$
+          \begin{itemize}
+            \item $M$ is isolated, so it is not confounded
+            \item $D \leftarrow U \rightarrow Y \leftarrow M$ which is blocked bc $Y$ is a \textbf{collider}
+            \item Therefore $\widehat{\beta}$ identifies $\beta$
+          \end{itemize}
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Frontdoor three step method}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+
+  \begin{enumerate}
+
+    \item[2. ] Estimate the effect of $M$ on $Y$ conditional on $X$
+          \begin{itemize}
+            \item Gets you an unbiased estimate of $M$ effect on $Y$ bc only backdoor path from $M$ to $Y$ is $M \leftarrow D \leftarrow U \rightarrow Y$
+            \item So long as we condition on $D$ this path is blocked $$Y = \alpha_1 + \gamma M + \psi D + \varepsilon$$
+          \end{itemize}
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Frontdoor three step method}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+
+  \begin{enumerate}
+
+    \item[3. ] Multiply $\widehat{\gamma} \times \widehat{\beta}$ and you get the causal effect of $D$ on $Y$
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Examples have been elusive}
+
+  \begin{itemize}
+    \item Pearl has suggested smoking as an possible example of this but to be valid it requires smoking to not have a direct effect on lung cancer and if it is not the case, it would invalidate the frontdoor design
+    \item Frontdoors requires ``closed systems'' (as do instruments), and it's possible that in carefully designed platforms that could either be intentionally designed or happen naturally in a way that is defensible
+    \item Bellemare, et al. (2021) provides a plausible example involving tipping and Uber
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Uber and tipping}
+
+  \begin{itemize}
+    \item Shared rides could lead to reduced tipping but also increased demand thus creating principal agency issues for Uber and Lyft (drivers versus the firm)
+    \item Harrington (2019): ``on average, about 17\% of rideshares end up with the driver getting tipped.  For strips where a shared trip was authorized, that number is halved to a measly 8.6\%.''
+    \item Drivers experiencing such declines probably think it's caused by sharing rides (e.g., bystander effects, freeriding, etc.) but it also may just be selection (i.e., the marginal rider would've tipped that low anyway)
+    \item Bellemare, et al. (2021) suggest Uber's platform design created FDC DAG that would allow this to be tested
+  \end{itemize}
+
+\end{frame}
+\begin{frame}{Assumed Uber Tipping DAG}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+
+  \begin{itemize}
+    \item Let $D$ here be authorizing a shared ride (regardless of whether a shared ride occurred), $M$ be a dummy measuring one if sharing did occur, $Y$ be the amount the passengers tipped and $U$ be the unobserved covariates.
+    \item Estimate the effect of authorization ($D$) on both whether a passenger tips ($Y$) as well as how much, what they call the extensive and intensive margin of tipping, respectively.
+    \item Data come from Chicago's Department of Business Affairs and Consumer Protection's Transportation Network Providers and is freely available for download from the City of Chicago's website
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Assumptions}
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (m) {$M$};
+      \node[right of = m, text centered] (y) {$Y$};
+      \node[below of = m, text centered] (u) {$U$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (m);
+      \draw[->, line width= 1] (m) -- (y);
+      \draw[->, line width= 1, dashed] (u) -- (d);
+      \draw[->, line width= 1, dashed] (u) -- (y);
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+
+    \item Key assumption: once the authorization to share a ride is initiated ($D$), then when the ride is shared ($M$)
+    \item No direct effect of authorization on tipping, no unblocked backdoor path from sharing a ride and tipping itself.
+    \item Authors argue that their extensive set of fixed effects will yield plausible conditions for isolation and exhaustiveness are guaranteed.
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Estimation}
+
+  \begin{itemize}
+    \item Using the logic of the front door criterion, the authors estimate the same two step procedure as shown in the previous simulation with the caveat that they include extensive fixed effects so as to create conditional conditions for isolation and exhaustiveness.
+    \item For illustrative purposes, I will only focus on the effect at the extensive margin (i.e., on whether a passenger tipped at all).
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}[shrink=20]
+
+  \begin{table}[htb]
+    \small
+    \caption{Estimation results for tipping at the extensive margin}
+    \label{tab:screening}
+    \centering
+    \begin{tabular}{l*{3}{c}}
+      \toprule
+      \multicolumn{1}{l}{Variables: }&
+      \multicolumn{1}{c}{\textbf{Naive }}&
+      \multicolumn{2}{c}{\textbf{Front Door }}\\
+      \multicolumn{1}{l}{}&
+      \multicolumn{1}{c}{\textbf{Tipped}}&
+      \multicolumn{1}{c}{\textbf{Shared Trip }}&
+      \multicolumn{1}{c}{\textbf{Tipped}}\\
+      \midrule
+      Sharing authorized $D$                       & -0.0628*** & 0.6769***  & -0.0550*** \\
+                                                   & (0.0001)   & (0.0002)   & (0.0002)   \\
+      Shared trip $M$                              &            &            & -0.0115*** \\
+                                                   &            &            & (0.0002)   \\
+      Full fare                                    & 0.0050***  & -0.0064*** & 0.0049***  \\
+                                                   & (0.00001)  & (0.00001)  & (0.00003)  \\
+
+      \midrule
+
+      Estimated causal effect ($\widehat{\delta}$) & -0.0628*** &            & -0.0078**  \\
+                                                   & (0.0001)   &            & (0.0001)   \\
+      \\
+      \midrule
+      N                                            & 95,670,449 & 95,670,449 & 95,670,449 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Interpretation}
+
+  \begin{itemize}
+    \item Column 1: naive regression simply compares tipping between authorized and non-authorized sharing (6.3pp reduction in tipping)
+    \item Front door criterion: 1pp reduction
+    \item Not surprising drivers don't want ride shares, but authors argue it's caused by selection (i.e., the people using ride shares) not ride share itself
+    \item Unclear if you banned it whether it would increase driver earnings in other words
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Discussion}
+
+  \begin{itemize}
+    \item DAG front door criterion example.  What is the strength of this approach in your opinion (no wrong answer)?
+    \item What is the weakness of this approach in your opinion (no wrong answer)?
+    \item Based on your own background, are there applications you might want to look for these opportunities?
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+\subsection{Concluding remarks}
+
+
+\begin{frame}{Summarizing all of this}
+
+  \begin{itemize}
+    \item Your dataset will not come with a codebook flagging some variables as ``confounders'', ``mechanisms'' and ``colliders'' because those terms are always context specific
+    \item Except for some unique situations that aren't generally applicable, you also don't always know statistically you have an omitted variable bias problem; but both of these are fatal for any application
+    \item You only know to do what you're doing based on \emph{knowledge about data generating process}.
+    \item All identification must be guided by theory, experience, observation, common sense and knowledge of institutions
+    \item DAGs absorb that information and can be then used to write out the explicit identifying model
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{DAGs are not panacea}
+
+  \begin{itemize}
+    \item DAGs cannot handle, though, reverse causality or simultaneity
+    \item So there are limitations.  ``All models are wrong but some are useful''
+    \item They are also not everywhere popular (see Twitter ongoing debates which have descended into light hearted jokes as well as aggressive debates)
+    \item But I think they are helpful and while not \emph{necessary}, showcase what is necessary -- assumptions
+    \item Heckman (1979) can maybe provide some justification at times
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+\end{document}

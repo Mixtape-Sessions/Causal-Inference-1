@@ -85,9 +85,8 @@
 
 \begin{frame}{4-day Causal Inference Workshop}
 
-  TODO: UPDATE THESE
   \begin{itemize}
-    \item Our workshop together is 5-days, 8am to 5pm CST, with 15 min breaks on the hour and a 1-hour lunch break at noon CST
+    \item Our workshop together is 4-days, 9am to 6pm CST, with 15 min breaks on the hour and a 1-hour lunch break at 12:00PM CST
     \item It will mix exposition, discussion of papers, coding exercises and discussion as best as I can
     \item It's essentially a semester's worth of material
   \end{itemize}
@@ -104,11 +103,11 @@
 
 \end{frame}
 
-\begin{frame}{Topics}
+\begin{frame}{Workshop (Part 1) Topics}
 
   \begin{enumerate}
     \item Foundations: Day 1
-    \item Matching: Day 2
+    \item Graphs and Matching: Day 2
     \item IV: Day 3
     \item RDD: Day 4
   \end{enumerate}
@@ -135,7 +134,7 @@
   \begin{columns}
     \column{0.48\linewidth}
     \centering
-    \textbf{Prediction machines}
+    \textbf{Traditional prediction}
     \begin{itemize}
       \item Traditional prediction seeks to detect patterns in data and fit functional relationships between variables with a high degree of accuracy
       \item ``Does this person have heart disease?'', ``How many books will I sell?''
@@ -159,80 +158,100 @@
 
 
 
-\section{Foundations of causal inference}
+\subsection{History of design}
 
 
-\begin{frame}{Some history}
+
+\begin{frame}{Lost credibility}
 
   \begin{itemize}
-    \item Causal inference is very old going back millenia
-    \item Our class focuses, though, on contemporary causal inference methodologies and practices originating in empirical labor
-    \item This is a walk through that history briefly
+  \item Tremendous turmoil in applied economics in late 1970s and early 1980s
+  \item Several high profile papers found serious credibility problems in many applied studies, particularly those using macro data
+  \item This criticism eventually turned to labor economics (Lalonde 1985; Ashenfelter and Card 1985)
   \end{itemize}
 
 \end{frame}
 
-\subsection{Princeton Industrial Relations Section}
 
+\begin{frame}{Job training}
 
-\begin{frame}{Princeton Industrial Relations Section}
+\begin{itemize}
+\item Lalonde (1985) evaluated an RCT of a job training program; ground truth was known
+\item Cleverly dropped the control group and replaced it with CPS and PSID, re-analyzed the data
+\item Impossible to get the answer without specification searching (``peeking'', p-hacking)
 
-  \begin{itemize}
-    \item October 2021's Nobel Prize in economics went to Card, Angrist and Imbens
-    \item Princeton's mid 1980s Industrial Relations Section: Orley Ashenfelter, who advises Card, Angrist, LaLonde, hires Krueger, etc.
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Princeton and credibility}
-
-  \begin{itemize}
-    \item Panel models were not satisfactory for recovering causal effects in Ashenfelter dip situations
-    \item Princeton IRS economists focus less on modeling the outcome and more on the treatment variation
-    \item LaLonde JMP (AER 1986) as well as Ashenfelter and Card (RESTAT 1985) cast doubt on econometric evaluators, increase demand for explicit randomization
-  \end{itemize}
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Angrist and Imbens and the 1990s}
+\begin{frame}{Lewis 1986 book}
 
-  \begin{itemize}
-    \item Angrist writes a dissertation using randomized instruments (Vietnam draft), goes to Harvard, overlaps with Imbens for a year, they are mentored by Gary Chamberlain, work with Don Rubin, write their famous LATE paper
-    \item Chamberlain recommends potential outcomes framework over a different one that had been used at that time (latent index) and that seems to make the work more generally attractive (like to Rubin)
-    \item Let's spend twenty minutes listening to them
-  \end{itemize}
+\begin{quote}
+``After reviewing virtually every study since 1963, Lewis reached the awkward conclusion that simple OLS of union wage effects were more useful and reliable than those based on IV or endogenous selection approaches. The problem, in his view, was that researchers used \emph{arbitrary} and \emph{unsupported assumptions} to identify their models with little or no concern for the validity of their assumptions or the implications of their findings. This criticism was particularly salient because many of the new methods had been tested initially on the union wage effect question (e.g., Lee 1978).'' -- Card (2022)
+\end{quote}
 
 \end{frame}
 
-\begin{frame}{Angrist, Imbens and Harvard}
+\begin{frame}{Replication problems}
 
-
-  Josh Angrist on the negative results at the time (10 min)
-
-  \url{https://youtu.be/ApNtXe-JDfA?t=1885}
-
-
-  \bigskip
-  Guido Imbens on the reception of their work (10 min)
-
-  \url{https://youtu.be/cm8V65AS5iU?t=799}
+\begin{itemize}
+\item Deward, Thursby and Anderson (1986) suggest that applied estimates can't be replicated partly bc many authors won't share their data or their programs
+\item They tried to replicate the papers at the JMCB journal between 1980 and 1984 (there was a data sharing agreement in 1982 and 1/4 authors still won't respond to request; before that 2/3 failed to respond)
+\item Only 2 of 9 papers could be reproduced exactly; 5 had substantial errors
+\end{itemize}
 
 \end{frame}
+
+\begin{frame}{Take the con out of econometrics}
+
+\begin{itemize}
+\item Famous paper by Ed Leamer -- ``Take the con out of econometrics''
+\item He says in Hendry, Leamer and Poirier (1990), ``we don't take empirical work seriously in economics. It's not the source by which economists accumulate their opinions, by and large.''
+\item Hits hard at Princeton's Industrial Relations Section where Card, Ashenfelter, Krueger, Angrist, Lalonde, and more are. They seek to fix this
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Princeton IRS Model}
+
+\begin{itemize}
+\item Ashenfelter 1970s work in government focuses on extreme self-selection into job trainings programs (``Ashenfelter dip''); Ashenfelter and Card (1985) note longitudinal studies are not designed for this 
+\item Princeton Industrial Relations Section Model: more transparency, more credible ``research design'' that make explicit sources of identification and work hard to verify the legitimacy of that source
+\item Krueger notes that he would read NEJM and they'd often include a short description of the study's ``research design''
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Natural experiments}
+
+\begin{itemize}
+\item Richard Freeman had been pushing for natural experiments for years -- ``big shocks'' like federal minimum wages in Puerto Rico
+\item Card really pushes this early on 
+	\begin{itemize}
+	\item Immigration labor supply shifts from the Mariel Boatlift paper (Card 1990); 
+	\item Minimum wage increases from neighboring state comparisons (Card and Krueger 1994)
+	\end{itemize}
+\item Steven Levitt seems instrumental in the late 1990s for bringing natural experiments and this labor economics approach to crime, more or less cleaning house; also very good abt sharing data and programs
+\end{itemize}
+
+\end{frame}
+
 
 \subsection{Design versus Model}
 
+\begin{frame}{Theory's role}
+
+\begin{itemize}
+\item Economists write models to help them understand the world
+\item Economists also use those models to guide their empirical work
+\item But the connection between those two steps has not always been done the same; let's review as this framework can help give you the big picture
+\end{itemize}
+
+\end{frame}
 
 
+\begin{frame}{Design vs Model}
 
-
-
-
-
-\begin{frame}{Causality and the model}
-
-  Empirical labor economics and the economic model (Card speech 2014)
-
-  \bigskip
   \begin{itemize}
     \item \textbf{Model}: Causality exists within the framework of a theory that says ``D causes Y'' (e.g., Heckman)
     \item \textbf{Design}: Causality is design-based and can be discerned with \emph{physical} manipulation of a treatment $D$ (e.g., Rubin, Holland)
@@ -268,16 +287,17 @@
 \begin{frame}{Working model}
 
   \begin{enumerate}
-    \item[3. ] \textbf{Working model}: Program evaluation (e.g., Princeton)
+    \item[3. ] \textbf{Working model}: Called reduced form, program evaluation, more like Princeton's IRS model
           \begin{itemize}
-            \item Focus is on physical assignment of treatments (putting it in Fisher tradition on the RCT)
             \item Model formulates questions, intuition, but does not necessarily assist with identification
+            \item Focus is on physical assignment of treatments not on modeling assumptions
+            \item Extreme focus on verifying the assumptions through placebos, falsifications, checks for identifying assumptions throughout
           \end{itemize}
   \end{enumerate}
 
   \bigskip
 
-  Empirical labor seems to shift towards more of the ``working model'' approach with exceptions and this is largely connected with an approach that is somewhat agnostic about the underlying model
+Models are useful, but not necessarily \emph{used}, the way they are in structural approaches
 
 \end{frame}
 
@@ -292,19 +312,34 @@
 
 \end{frame}
 
+\begin{frame}{Strengths of design}
 
-\begin{frame}{Design's distinctiveness}
-
-  \begin{itemize}
-    \item Main idea: focus is on the assignment of units to treatment (e.g., physical randomization, instruments, running variables, propensity score)
-    \item Favors deep institutional knowledge and domain knowledge (as opposed to black box style modeling)
-    \item Can help answer causal questions when RCTs are difficult to implement (e.g., too expensive, not realistic, not ethical)
-    \item Potential outcomes model is really core in all of this
-  \end{itemize}
+\begin{itemize}
+\item Approaches are oftentimes easier to explain; identification (historically a mathematical term) becomes synonymous with research design (Imbens and Angrist 1994)
+\item Precise research designs, as we will see, make it much easier to evaluate the core assumptions of the model (like employing event studies in a diff-in-diff)
+\item Designs become portable -- we can repeat these approaches in other settings (which is in many ways what this class is doing)
+\end{itemize}
 
 \end{frame}
 
-\subsection{Potential outcomes}
+\begin{frame}{Weaknesses}
+
+\begin{itemize}
+\item Limits the questions we can answer oftentimes 
+	\begin{itemize}
+	\item It's very backwards looking (may be a strength insofar as it's conservative)
+	\item Lacks generalizability
+	\end{itemize}
+\item Listen to Petra Todd describe these weaknesses \url{https://youtu.be/m1Mpc7-b-1I?t=2776}
+
+\end{itemize}
+
+\end{frame}
+
+
+\section{Potential outcomes}
+
+\subsection{Naive correlation}
 
 \begin{frame}{Introduction to Counterfactuals}
 
@@ -359,32 +394,46 @@
 
 \end{frame}
 
-\begin{frame}{History of potential outcomes}
+\subsection{Potential outcomes notation}
 
-  \begin{itemize}
-    \item The conceptual framework for design based causal inference is the \emph{potential outcomes} model which roots causality in counterfactual reasoning
-    \item Jerzy Neyman (1923) and Ronald Fisher (1925) linked causal inference to randomized physical experiments
-    \item It continues into the present through Donald Rubin in the 1970s and 1980s with Paul Rosenbaum on the propensity score
-    \item Continues through Rubin's collaborations with Josh Angrist and Guido Imbens (this year's Nobel Prize winners) on instrumental variables
-  \end{itemize}
+\begin{frame}{Potential outcomes}
+
+\begin{itemize}
+\item Conceptual framework for design based causal inference is counterfactual reasoning
+\item Counterfactual modeling becomes linked to potential outcomes models with Don Rubin 1970s work on propensity scores
+\item Potential outcomes notation was created by Jerzy Neyman (1923) and led Ronald Fisher (1925) to suggest RCTs
+\item Huge push by Donald Rubin, a Neyman ``grandson'', in the 1970s and 1980s with Paul Rosenbaum on the propensity score
+\item Guido Imbens, a Rubin coauthor, notes that it was crucial to his work on IV with Angrist, but it may even have made that work more appealing \emph{outside economics}
+\url{https://youtu.be/cm8V65AS5iU?t=1097}
+
+\end{itemize}
 
 \end{frame}
+
+
 
 
 \begin{frame}{Potential outcomes notation}
 
   \begin{itemize}
     \item Let the treatment be a binary variable: $$D_{i,t} =\begin{cases} 1 \text{ if hospitalized at time $t$} \\ 0 \text{ if not hospitalized at time $t$} \end{cases}$$where $i$ indexes an individual observation, such as a person
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Potential outcomes notation}
+
+  \begin{itemize}
     \item Potential outcomes: $$Y_{i,t}^j =\begin{cases} 1 \text{ health if hospitalized at time $t$} \\ 0 \text{ health if not hospitalized at time $t$} \end{cases}$$where $j$ indexes a counterfactual state of the world
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Moving between worlds}
+
+\begin{frame}{Realized vs potential outcomes}
 
   \begin{itemize}
-    \item I'll drop $t$ subscript, but note -- these are potential outcomes for the same person at the exact same moment in time
-    \item A potential outcome $Y^1$ is not the observed outcome $Y$ either conceptually or notationally
-    \item Potential outcomes are hypothetical states of the world but observed outcomes are ex post realizations
+    \item Potential outcomes $Y^1$ are not the realized outcomes $Y$ either conceptually or notationally
+    \item Potential outcomes are hypothetical states of the world but realized outcomes are \emph{ex post} the observed outcomes we have in our data due to treatment assignment
+    \item This distinction is subtle, creates challenges at the introductory stage, it isn't how econometrics was historically taught, except for at the very beginning; again Imbens on this \url{https://youtu.be/cm8V65AS5iU?t=1175}
   \end{itemize}
 \end{frame}
 
@@ -658,27 +707,71 @@
 \end{frame}
 
 
-\begin{frame}{Perfect doctor exercise (and breakout)}
+\begin{frame}{Illustrating selection bias with spreadsheets}
 
   \begin{itemize}
     \item Chronic PTSD has historically been treated with cognitive behavior therapies like mindfulness, but recent work shows therapist assisted MDMA (street name: ecstasy), are effective too
-    \item The Perfect Doctor can perfectly assess whether mindfulness practices or MDMA is more beneficial for treating a patient's chronic PTSD ($Y^1 - Y^0$ is positive or negative), and makes treatment assignments ($D=1$ or $0$) depending on its impact
-    \item We will go through an exercise together (go along on your end with your google sheet) analyzing the implications of the perfect doctor's choices on a range of statistics, followed by a breakout session where you do it alone
-  \end{itemize}
+    \item Ongoing work in psychopharmacology has begun experimenting with long dormant approaches in the psychedelics and empathogens fot treating mental illness, including PTSD
+    \item MAPS organization has been funding RCTs in compliance with FDA trials to study MDMA's effect on PTSD \url{https://www.nature.com/articles/s41591-021-01336-3}
+    \end{itemize}
+    
+\end{frame}
+
+
+\begin{frame}{Illustrating selection bias with spreadsheets}
+\begin{itemize}
+\item Perfect Doctor can accurately determine whether mindfulness practices or MDMA is more beneficial for treating a patient's chronic PTSD ($Y^1 - Y^0$ is positive or negative), and makes treatment assignments ($D=1$ or $0$) depending on its impact
+\item We will go through an exercise together (copy this google sheet) analyzing the implications of the perfect doctor's choices on a range of statistics, followed by discussion \url{https://docs.google.com/spreadsheets/d/10DuQqGtH_Ewea7zQoLTFYHbnvqaTVDhn2GDzq3Oa6EQ/edit?usp=sharing}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Humans always make bias}
+
+\begin{itemize}
+\item People make choices because they think their live will be better as a result (i.e., based on $Y^1$ or $Y^0$)
+	\begin{enumerate}
+	\item I chose to get a PhD because I didn't like my life -- i.e., $Y^0$ maybe was different for me than others
+	\item I chose to get a PhD because I thought it would help me -- i.e., $Y^1$ maybe was different for me than others
+	\end{enumerate}
+\item When humans make choices based on expected gains, it introduces ``selection bias'' and heterogeneous treatment effect bias 
+\item Rational choice is why correlations in non-experimental data stop illustrating causal effects
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Selection bias}
+
+\begin{itemize}
+\item For many of us, we have heard the word ``selection bias'' before but it was with respect to ``non-random samples''
+\item In causal inference, that isn't what we mean.  We mean $E[Y^0|D=1] \neq E[Y^0 |D=0]$ for two groups of people
+\item But notice, only one of those quantities via the switching equation can be seen, but if they are different, then two groups can look very different and it not reflect a causal effect
+\item Selection bias was the problem that the aliens failed to overcome -- people were on vents because $E[Y^0]$ was much lower than those not on it, and because it probably would help them more than it would other COVID patients $E[Y^1]$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Group Questions for Engagement}
+
+\begin{enumerate}
+\item Some workers work from home and others work at the office and we observe differences in productivity for the ones who work from home. Why might $E[Y^0|WFH]$ be different from the ones who work at the physical office?
+\end{enumerate}
+
 \end{frame}
 
 
 \begin{frame}{Goal of causal inference}
 
-  Our goal in all of causal inference is to estimate aggregate causal parameters by modeling treatment assignment
+  Our goal in all of causal inference is to estimate aggregate causal parameters by modeling treatment assignment by \emph{imputing} missing counterfactuals
 
   \bigskip
 
-  We seek to \emph{impute} (either explicitly or implicitly) missing counterfactuals using various techniques such that selection bias is eliminated
+This imputation process happens sometimes explicitly (nearest neighbor matching) and sometimes implicitly (RCTs)
 
   \bigskip
 
-  Let's look what happens in an A/B test \emph{and why} this addresses the term $E[Y^0|D=1]$ and $E[Y^0|D=0]$
+  Let's look what happens in an RCT \emph{and why} this addresses selection bias term $E[Y^0|D=1]$ and $E[Y^0|D=0]$
 
 \end{frame}
 
@@ -796,31 +889,31 @@
 
 \begin{frame}
 
-  \begin{figure}[hpt]
-    \begin{center}
-      \includegraphics[scale=0.25]{./lecture_includes/econometrica_steve.png}
-    \end{center}
-  \end{figure}
+\begin{figure}[hpt]
+\begin{center}
+\includegraphics[scale=0.25]{./lecture_includes/econometrica_steve.png}
+\end{center}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}{Internet advertising facts}
 
-  \begin{itemize}
-    \item In 2012, revenues from Internet advertising was \$36.6 billion and has only grown since
-    \item Paid search (``search engine marketing'') is the largest format by revenue (46.3\% of 2012 revenues, or \$16.9 billion)
-    \item Google is leading provider (registered \$46 billion in global revenues in 2012 of which 95\% was attributed to advertising)
-  \end{itemize}
+\begin{itemize}
+\item In 2012, revenues from Internet advertising was \$36.6 billion and has only grown since
+\item Paid search (``search engine marketing'') is the largest format by revenue (46.3\% of 2012 revenues, or \$16.9 billion)
+\item Google is leading provider (registered \$46 billion in global revenues in 2012 of which 95\% was attributed to advertising)
+\end{itemize}
 
 \end{frame}
 
 \begin{frame}{Selection bias}
 
-  \begin{itemize}
-    \item Treatment was targeted ads at particular people conducting particular types of keyword search
-    \item Consumers who choose to click on ads are loyal and already informed about products with high likelihood to buy already
-    \item Problem is ads are targeting people at the end of their search, so the question is whether they would've found it already (i.e., $E[Y^0|D=1] \neq E[Y^0|D=0]$)
-  \end{itemize}
+\begin{itemize}
+\item Treatment was targeted ads at particular people conducting particular types of keyword search
+\item Consumers who choose to click on ads are loyal and already informed about products with high likelihood to buy already 
+\item Problem is ads are targeting people at the end of their search, so the question is whether they would've found it already (i.e., $E[Y^0|D=1] \neq E[Y^0|D=0]$)
+\end{itemize}
 
 
 \end{frame}
@@ -829,53 +922,53 @@
 
 \begin{frame}{Selection bias}
 
-  \begin{itemize}
-    \item Estimated return on investment using OLS  found ROI of over 1600\%
-    \item Compared this to experimental methods and found ROI of -63\% with a 95\% CI of $[-124\%, -3\%]$, rejecting the hypothesis that the channel yielded short-run positive returns
-    \item Think back to perfect doctor -- Even without the treatment ($Y^0$), the treated group observationally would've still found a way
-  \end{itemize}
+\begin{itemize}
+\item Estimated return on investment using OLS  found ROI of over 1600\%
+\item Compared this to experimental methods and found ROI of -63\% with a 95\% CI of $[-124\%, -3\%]$, rejecting the hypothesis that the channel yielded short-run positive returns
+\item Think back to perfect doctor -- Even without the treatment ($Y^0$), the treated group observationally would've still found a way
+\end{itemize}
 
 \end{frame}
 
 \begin{frame}{Natural experiment}
 
-  \begin{itemize}
-    \item Study began with a naturally occurring and somewhat fortuitous  event at eBay
-    \item eBay halted SEM queries for brand words (i.e., queries that included the term eBay) on Yahoo! and Microsoft but continued to pay for these terms on Google
-    \item Blake, Nosky and Tadelis (2015) showed almost all of the foregone click traffic and attributed sales were captured by natural search
-    \item Substitution between paid and unpaid traffic was nearly one to one complete
-  \end{itemize}
+\begin{itemize}
+\item Study began with a naturally occurring and somewhat fortuitous  event at eBay
+\item eBay halted SEM queries for brand words (i.e., queries that included the term eBay) on Yahoo! and Microsoft but continued to pay for these terms on Google
+\item Blake, Nosky and Tadelis (2015) showed almost all of the foregone click traffic and attributed sales were captured by natural search
+\item Substitution between paid and unpaid traffic was nearly one to one complete
+\end{itemize}
 
 \end{frame}
 
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_fig1.png}
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_fig1.png}
+\end{center}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}{Interpretation of natural experiment}
 
-  \begin{quote}
-    ``The evidence strongly supports the intuitive notion that for brand keywords, natural search is close to a perfect substitute for paid search, making brand keyword SEM ineffective for short-term sales.  After all, the users who type the brand keyword in the search query intend to reach the company's website, and most likely will execute on their intent regardless of the appearance of a paid search ad.''
-  \end{quote}
+\begin{quote}
+``The evidence strongly supports the intuitive notion that for brand keywords, natural search is close to a perfect substitute for paid search, making brand keyword SEM ineffective for short-term sales.  After all, the users who type the brand keyword in the search query intend to reach the company's website, and most likely will execute on their intent regardless of the appearance of a paid search ad.''
+\end{quote}
 
 \end{frame}
 
 \begin{frame}{Selection bias}
 
-  Observational data masked causal effect (recall the decomposition of the any non-designed estimation strategy)
+Observational data masked causal effect (recall the decomposition of the any non-designed estimation strategy)
 
-  \bigskip
+\bigskip
 
-  \begin{quote}
-    ``Advertising may appear to attract these consumers, when in reality they would have found other channels to visit the company's website.  We overcome this endogeneity challenge with our controlled experiments.''
-  \end{quote}
+\begin{quote}
+``Advertising may appear to attract these consumers, when in reality they would have found other channels to visit the company's website.  We overcome this endogeneity challenge with our controlled experiments.''
+\end{quote}
 
 \end{frame}
 
@@ -884,140 +977,139 @@
 
 \begin{frame}{RCT}
 
-  Natural experiment was valuable, but eBay could run a large scale RCT.
+Natural experiment was valuable, but eBay could run a large scale RCT.
 
-  \bigskip
+\bigskip
 
 
-  Use this finding of a nearly one-to-one substitution once paid search was dropped to convince eBay to field a large scale RCT discontinuing non-band key words
+Use this finding of a nearly one-to-one substitution once paid search was dropped to convince eBay to field a large scale RCT discontinuing non-band key words
 
-  \bigskip
+\bigskip
 
 
 \end{frame}
 
 \begin{frame}{Design of the experiment}
 
-  \begin{itemize}
-    \item Randomly assigned 30 percent of eBay's US traffic to stop all bidding for all non-brand keywords for 60 days
-    \item Some random group of users, in other words, were exposed to ads; a control group did not see the ads
-    \item Used Google's geographic bid feature that can accurately identify geographic market of the user conducting the search
-    \item Ads were suspended in 30 percent of markets to reduce the scope of the test and minimize the potential cost and impact to the business
-  \end{itemize}
+\begin{itemize}
+\item Randomly assigned 30 percent of eBay's US traffic to stop all bidding for all non-brand keywords for 60 days
+\item Some random group of users, in other words, were exposed to ads; a control group did not see the ads
+\item Used Google's geographic bid feature that can accurately identify geographic market of the user conducting the search
+\item Ads were suspended in 30 percent of markets to reduce the scope of the test and minimize the potential cost and impact to the business
+\end{itemize}
 
 \end{frame}
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_fig3.png}
-      \caption{Attributed sales due to clicking on a Google link (treatment group)}
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_fig3.png}
+\caption{Attributed sales due to clicking on a Google link (treatment group)}
+\end{center}
+\end{figure}
 
 \end{frame}
 
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_fig2.png}
-      \caption{Differences in total sales by market (treatment to control)}
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_fig2.png}
+\caption{Differences in total sales by market (treatment to control)}
+\end{center}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_ols1.png}
-      \caption{Spending effect on revenue using OLS but not the randomization. Effects are gigantic. }
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_ols1.png}
+\caption{Spending effect on revenue using OLS but not the randomization. Effects are gigantic. }
+\end{center}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_ols2.png}
-      \caption{Spending effect on revenue using the randomization. Effects are negative. }
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_ols2.png}
+\caption{Spending effect on revenue using the randomization. Effects are negative. }
+\end{center}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}{Heterogenous treatment effects}
 
-  \begin{itemize}
-    \item Recall how the potential outcomes model explicitly models individual treatment effects could be unique and that the perfect doctor showed selection on gains masked treatment effects, perhaps even reversing sign
-    \item Search advertising in this RCT only worked if the consumer had no idea that the company had the desired product
-    \item Large firms like eBay with powerful brands will see little benefit from paid search advertising because most consumers already know that they exist, as well as what they have to offer
-  \end{itemize}
+\begin{itemize}
+\item Recall how the potential outcomes model explicitly models individual treatment effects could be unique and that the perfect doctor showed selection on gains masked treatment effects, perhaps even reversing sign
+\item Search advertising in this RCT only worked if the consumer had no idea that the company had the desired product
+\item Large firms like eBay with powerful brands will see little benefit from paid search advertising because most consumers already know that they exist, as well as what they have to offer
+\end{itemize}
 
 \end{frame}
 
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_newuser_fig1.png}
-      \caption{Effects on new users are positive and large, but not others. }
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_newuser_fig1.png}
+\caption{Effects on new users are positive and large, but not others. }
+\end{center}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[scale=0.2]{./lecture_includes/tadelis_newuser_fig2.png}
-      \caption{Effects are largest for ``least active'' customers. }
-    \end{center}
-  \end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{./lecture_includes/tadelis_newuser_fig2.png}
+\caption{Effects are largest for ``least active'' customers. }
+\end{center}
+\end{figure}
 
 \end{frame}
 
 
 \begin{frame}{Why are causal effects small?}
 
-  \begin{itemize}
-    \item They suggest that the brand query tests found small causal returns because users simply substituted from the paid search clicks to the natural search clicks
-    \item If that's the case, then it's explicitly a selection bias story $$E[Y^0|D=1] \neq E[Y^0|D=0]$$ where $D$ is being shown the branded advertisement based on search (i.e., they were already going there)
-    \item They weren't using branded search for information; they were using to \emph{navigate}
-  \end{itemize}
+\begin{itemize}
+\item They suggest that the brand query tests found small causal returns because users simply substituted from the paid search clicks to the natural search clicks
+\item If that's the case, then it's explicitly a selection bias story $$E[Y^0|D=1] \neq E[Y^0|D=0]$$ where $D$ is being shown the branded advertisement based on search (i.e., they were already going there)
+\item They weren't using branded search for information; they were using to \emph{navigate}
+\end{itemize}
 
 \end{frame}
-
 
 \begin{frame}{Self selection based on gains}
 
-  \begin{itemize}
-    \item Potential outcomes is the foundation of the physical experiment because the physical experiment assigns units to treatments \emph{independent} of potential outcomes, $Y^0,Y^1$
-    \item This is important because outside of the physical experiment, we expect people select those important treatments based on whether, subjectively, they think $Y^1>Y^0$ or $Y^1\leq Y^0$.
-    \item Rational actors almost by definition are thought to ``self-select into treatment'' making non-designed comparisons potentially misleading -- sometimes by a little, sometimes by a lot
-  \end{itemize}
+\begin{itemize}
+\item Potential outcomes is the foundation of the physical experiment because the physical experiment assigns units to treatments \emph{independent} of potential outcomes, $Y^0,Y^1$
+\item This is important because outside of the physical experiment, we expect people select those important treatments based on whether, subjectively, they think $Y^1>Y^0$ or $Y^1\leq Y^0$. 
+\item Rational actors almost by definition are thought to ``self-select into treatment'' making non-designed comparisons potentially misleading -- sometimes by a little, sometimes by a lot
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Natural experiments}
 
-  \begin{itemize}
-    \item Recall how Blake, et al. (2015) used that natural even in which eBay stopped paid search on two search engines but not Google?
-    \item While the phrase ``natural experiment'' can be a misnomer, as these are not real experiments, it is nonetheless a helpful hook to hang your hat on as we go forward
-    \item Natural experiments are important if the RCT we want to run may not be one we can run for any number of reasons
-    \item Our course runs down alternative strategies, but each of them must replace independence with something else
-    \item Separate in your minds identification from estimation -- it'll help as we progress
-  \end{itemize}
+\begin{frame}{Discussion}
+
+\begin{itemize}
+\item What's a correlation that you have heard of or seen that you think is misinterpreted because of selection bias?
+\item If you had all the money in the world and complete discretion, what RCT would you run to test it?
+\end{itemize}
 
 \end{frame}
+
+
 
 \subsection{Example of physical experimentation: HIV status}
 
@@ -1216,1125 +1308,732 @@
 
 \end{frame}
 
+\section{Randomization inference}
 
-\section{Directed Acyclic Graphs}
+\subsection{Lady tasting tea}
 
-\subsection{Graph notation}
+\begin{frame}{Randomization inference and causal inference}
 
-\begin{frame}{Judea Pearl, 2011 Turing Award winner, drinking his first IPA}
+\begin{itemize}
+\item ``In randomization-based inference, uncertainty in estimates arises naturally from the random assignment of the treatments, rather than from hypothesized sampling from a large population.'' (Athey and Imbens 2017)
 
-  \begin{figure}
-    \includegraphics[scale=0.05]{./lecture_includes/pearl_ipa.jpg}
-  \end{figure}
+\item Athey and Imbens is part of growing trend of economists using randomization-based methods for doing causal inference
 
-\end{frame}
+\item Unclear (to me) why we are hearing more and more about randomization inference, but we are. 
 
+\item Could be due to improved computational power and/or the availability of large data instead of samples?
 
-\begin{frame}{Judea Pearl and DAGs}
+\end{itemize}
 
-
-  \begin{itemize}
-    \item Judea Pearl and colleagues in Artificial Intelligence at UCLA developed DAG modeling to create a formalized causal inference methodology
-    \item They causality concepts extremely clear, they provide a map to the estimation strategy, and maybe best of all, they communicate to others what must be true about the data generating process to recover the causal effect
-  \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Further reading}
-
-  \begin{enumerate}
-
-    \item Pearl (2018) \underline{The Book of Why: The} \underline{New Science of Cause and Effect}, Basic Books (\emph{popular})
-    \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
-    \item Pearl, Glymour and Jewell (2016) \underline{Causal Inference In Statistics: A Primer}, Wiley Books (\emph{accessible})
-    \item Pearl (2009) \underline{Causality: Models, Reasoning and Inference}, Cambridge, 2nd edition (\emph{difficult})
-    \item Cunningham (2021) \underline{Causal Inference: The Mixtape}, Yale, 1st edition (\emph{best choice, no question})
-  \end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Design vs. Model}
-
-  \begin{itemize}
-    \item DAGs tend to be focused more on the theory of treatment assignment in the world
-    \item As such it's compatible with design-based approaches
-    \item But assumptions in design based approaches tend to emphasize selection into treatment which is not exactly what is meant here
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Causal model}
-
-  \begin{itemize}
-    \item The causal model is sometimes called the structural model, but for us, I prefer the former as it's less alienating
-    \item Think of this as more connected to the model-based approach discussed earlier
-    \item It's the system of equations describing the relevant aspects of the world
-    \item It necessarily is filled with causal effects associated with some particular comparative statics
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}[plain]
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (y) {$Y$};
-      \node[above left of = d, text centered] (i) {$I$};
-      \node[left of = i, text centered] (pe) {$PE$};
-      \node[below of = pe, text centered] (b) {$B$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1,] (i) -- (d);
-      \draw[->, line width= 1,] (pe) -- (i);
-      \draw[->, line width= 1,] (pe) -- (d);
-      \draw[->, line width= 1, dashed] (b) -- (pe);
-      \draw[->, line width= 1, dashed] (b) -- (d);
-      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \bigskip
-  \begin{itemize}
-    \item $B$ is a \textbf{parent} of $PE$ and $D$
-    \item $PE$ and $D$ are \textbf{descendants} of $B$
-    \item There is a \textbf{direct (causal) path} from $D$ to $Y$
-    \item There is a \textbf{mediated (causal) path} from $B$ to $Y$ through $D$
-    \item There are four \textbf{paths} from $PE$ to $Y$ but none are direct, and one is unlike the others
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Colliders}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (y) {$Y$};
-      \node[above left of = d, text centered] (i) {$I$};
-      \node[left of = i, text centered] (pe) {$PE$};
-      \node[below of = pe, text centered] (b) {$B$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1,] (i) -- (d);
-      \draw[->, line width= 1,] (pe) -- (i);
-      \draw[->, line width= 1,] (pe) -- (d);
-      \draw[->, line width= 1, dashed] (b) -- (pe);
-      \draw[->, line width= 1, dashed] (b) -- (d);
-      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \bigskip
-
-  Notice anything different with this DAG?  Look closely.
-  \begin{itemize}
-
-    \item $D$ is a \textbf{collider} along the path $B\rightarrow D\leftarrow I$ (i.e., ``colliding'' at $D$)
-    \item $D$ is a \textbf{noncollider} along the path $B\rightarrow D\rightarrow Y$
-
-  \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Summarizing Value of DAGs}
-
-  \begin{enumerate}
-    \item Facilitates the task of designing identification strategy for estimating average causal effects
-    \item Facilitates the task of testing compatibility of the model with your data
-    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
-  \end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Creating DAGs}
-
-  \begin{itemize}
-    \item The DAG is a \emph{relevant} causal relationships describing the relationship between $D$ and $Y$
-    \item It will include:
-          \begin{itemize}
-            \item All direct causal effects among the \emph{relevant} variables in the graph
-            \item All common causes of any pair of \emph{relevant} variables in the graph
-          \end{itemize}
-    \item No need to model a dinosaur stepping on a bug causing in a million years some evolved created that impacted your decision to go to college
-    \item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
-    \item Sometimes called the data generating process.
-  \end{itemize}
-
-\end{frame}
-
-
-
-\subsection{Backdoor criterion}
-
-\begin{frame}{Research designs: Selection on observables}
-
-  \begin{itemize}
-
-    \item DAGs help us understand the source of problems in our observational (non-experimental) data that make inferring causality hard
-    \item But it also can help us see a way out (this whole class is a way out)
-    \item First way out is the selection on observables research design, which is best described in causal graphs using the \textbf{backdoor criterion}
-    \item Selection on observables is not technically difficult, but it does require a reasonable level of confidence in the DAG
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Confounding}
-
-  \begin{itemize}
-    \item Omitted variable bias has a name in DAGs: ``confounding''
-    \item Confounding occurs when when the treatment and the outcomes have a common cause or parent which creates spurious correlation between $D$ and $Y$
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered] (d) {$D$};
-              \node[below right of = d, text centered] (x) {$X$};
-              \node[above right of = x, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= 1] (d) -- (y);
-              \draw[->, line width= 1] (x) -- (d);
-              \draw[->, line width= 1] (x) -- (y);
-            \end{tikzpicture}
-          \end{center}
-
-          The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Backdoor Paths}
-
-  \begin{itemize}
-    \item Confounding creates \textbf{backdoor paths} between treatment and outcome ($D\leftarrow X\rightarrow Y$) -- i.e., spurious correlations
-    \item Not the same as mediation ($D \rightarrow X \rightarrow Y$)
-    \item We can ``block'' backdoor paths by conditioning on the common cause $X$
-    \item Once we condition on $X$, the correlation between $D$ and $Y$ estimates the causal effect of $D$ on $Y$
-    \item Conditioning means calculating $E[Y|D=1,X]-E[Y|D=0,X]$ for each value of $X$ then combining (e.g., integrating)
-
-  \end{itemize}
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[below right of = d, text centered, rectangle, draw, thin] (x) {$X$};
-      \node[above right of = x, text centered] (y) {$Y$};
-
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1] (x) -- (d);
-      \draw[->, line width= 1] (x) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-\end{frame}
-
-
-\begin{frame}{Blocked backdoor paths}
-
-  A backdoor path is blocked if and only if:
-  \begin{itemize}
-    \item It contains a noncollider that has been conditioned on
-    \item Or it contains a collider that has not been conditioned on
-  \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Examples of blocked paths}
-
-  Examples:
-  \begin{enumerate}
-    \item Conditioning on a noncollider blocks a path:
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered, rectangle, draw, thin] (x) {$X$};
-              \node[right of = x, text centered] (z) {$Z$};
-              \node[right of = z, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (x) -- (z);
-              \draw[->, line width= .5] (x) to [out=45,in=135, looseness=0.5] (y);
-            \end{tikzpicture}
-          \end{center}
-
-    \item Conditioning on a collider opens a path (i.e., creates spurious correlations):
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered] (z) {$Z$};
-              \node[right of = z, text centered, rectangle, draw, thin] (x) {$X$};
-              \node[right of = x, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (z) -- (x);
-              \draw[->, line width= .5] (y) -- (x);
-            \end{tikzpicture}
-          \end{center}
-
-    \item \emph{Not} conditioning on a collider blocks a path:
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered] (z) {$Z$};
-              \node[right of = z, text centered] (x) {$X$};
-              \node[right of = x, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (z) -- (x);
-              \draw[->, line width= .5] (y) -- (x);
-            \end{tikzpicture}
-          \end{center}
-
-  \end{enumerate}
-\end{frame}
-
-
-\begin{frame}{Backdoor criterion}
-
-
-  \begin{block}{Backdoor criterion}
-    Conditioning on $X$ satisfies the backdoor criterion with respect to $(D,Y)$ directed path if:
-    \begin{enumerate}
-      \item All backdoor paths are blocked by $X$
-      \item No element of $X$ is a collider
-    \end{enumerate}
-
-    In words: If $X$ satisfies the backdoor criterion with respect to $(D,Y)$, then controlling for or matching on $X$ identifies the causal effect of $D$ on $Y$
-  \end{block}
-\end{frame}
-
-\begin{frame}{What control strategy meets the backdoor criterion?}
-  \begin{itemize}
-    \item List all backdoor paths from $D$ to $Y$. I'll wait.
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered,rectangle,thin] (x1) {$X_1$};
-              \node[right of = x1, text centered] (d) {$D$};
-              \node[below right of = d, text centered] (x2) {$X_2$};
-              \node[above right of = x2, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (x1) -- (d);
-              \draw[->, line width= .5] (d) -- (y);
-              \draw[->, line width= .5] (x2) -- (d);
-              \draw[->, line width= .5] (x2) -- (y);
-              \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-            \end{tikzpicture}
-          \end{center}
-
-    \item What are the necessary and sufficient set of controls which will satisfy the backdoor criterion?
-  \end{itemize}
-
-  \framebreak
-
-
-
-
-\end{frame}
-
-
-\begin{frame}{What if you have an unobservable?}
-
-
-  \begin{itemize}
-    \item List all the backdoor paths from $D$ to $Y$.
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered] (u) {$U$};
-              \node[right of = u, text centered] (x2) {$X_2$};
-              \node[above of = x2, text centered] (x1) {$X_1$};
-              \node[right of = x2, text centered] (d) {$D$};
-              \node[right of = d, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5, dashed] (u) -- (x2);
-              \draw[->, line width= .5] (x2) -- (d);
-              \draw[->, line width= .5] (x1) -- (d);
-              \draw[->, line width= .5] (x1) -- (y);
-              \draw[->, line width= .5] (d) -- (y);
-              \draw[->, line width= .5, dashed] (u) to [out=-45,in=-135, looseness=0.5] (y);
-            \end{tikzpicture}
-          \end{center}
-
-    \item What are the necessary and sufficient set of controls which will satisfy the backdoor criterion?
-    \item What about the unobserved variable, $U$?
-  \end{itemize}
-
-  \framebreak
-
-
-\end{frame}
-
-\begin{frame}{Multiple strategies}
-
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=1.5cm, text centered]
-      % nodes %
-      \node[] (x3) {$X_3$};
-      \node[above left of = x3,rectangle,draw,thin] (x1) {$X_1$};
-      \node[below left of = x3,rectangle,draw,thin] (x2) {$X_2$};
-      \node[right of = x] (d) {$D$};
-      \node[right of = d] (y) {$Y$};
-
-      % edges %
-      \draw[->, line width= .5] (x1) -- (x3);
-      \draw[->, line width= .5] (x2) -- (x3);
-      \draw[->, line width= .5] (x1) to [out=0,in=135, looseness=0.5] (y);
-      \draw[->, line width= .5] (x2) to [out=0,in=-135, looseness=0.5] (y);
-      \draw[->, line width= .5] (x3) -- (d);
-      \draw[->, line width= .5] (d) -- (y);
-    \end{tikzpicture}
-
-    \begin{tikzpicture}
-      [node distance=1.5cm, text centered]
-      % nodes %
-      \node[rectangle,draw,thin] (x3) {$X_3$};
-      \node[above left of = x3] (x1) {$X_1$};
-      \node[below left of = x3] (x2) {$X_2$};
-      \node[right of = x] (d) {$D$};
-      \node[right of = d] (y) {$Y$};
-
-      % edges %
-      \draw[->, line width= .5] (x1) -- (x3);
-      \draw[->, line width= .5] (x2) -- (x3);
-      \draw[->, line width= .5] (x1) to [out=0,in=135, looseness=0.5] (y);
-      \draw[->, line width= .5] (x2) to [out=0,in=-135, looseness=0.5] (y);
-      \draw[->, line width= .5] (x3) -- (d);
-      \draw[->, line width= .5] (d) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \begin{itemize}
-    \item Conditioning on the common causes, $X_1$ and $X_2$, is sufficient
-    \item \dots but so is conditioning on $X_3$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Testing the Validity of the DAG}
-
-  \begin{itemize}
-    \item The DAG makes testable predictions
-    \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
-    \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
-    \item Causal algorithms tend to be DAG based and are becoming popular in industry
-  \end{itemize}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (y) {$Y$};
-      \node[above left of = d, text centered] (i) {$I$};
-      \node[left of = i, text centered] (pe) {$PE$};
-      \node[below of = pe, text centered] (b) {$B$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1,] (i) -- (d);
-      \draw[->, line width= 1,] (pe) -- (i);
-      \draw[->, line width= 1,] (pe) -- (d);
-      \draw[->, line width= 1, dashed] (b) -- (pe);
-      \draw[->, line width= 1, dashed] (b) -- (d);
-      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
-    \end{tikzpicture}
-  \end{center}
 
 \end{frame}
 
 
 
 
+\begin{frame}{Lady tasting tea experiment}
 
-\subsection{Collider bias}
+	\begin{itemize}
+	\item Ronald Aylmer Fisher (1890-1962)
+		\begin{itemize}
+		\item Two classic books on statistics: \emph{Statistical Methods for Research Workers} (1925) and \emph{The Design of Experiments} (1935), as well as a famous work in genetics, \emph{The Genetical Theory of Natural Science}
+		\item Developed many fundamental notions of modern statistics including the theory of randomized experimental design.
+		\end{itemize}
 
-\begin{frame}[allowframebreaks,plain]
-  \begin{center}
-    \textbf{Collider bias}
-  \end{center}
-
-  \begin{itemize}
-    \item \textbf{Conditioning on a collider introduces spurious correlations; can even mask causal directions}
-          \begin{itemize}
-            \item There is only one backdoor path from $D$ to $Y$
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
-                      \node[right of = x1, text centered] (d) {$D$};
-                      \node[below right of = d, text centered] (x2) {$X_2$};
-                      \node[above right of = x2, text centered] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5] (x1) -- (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                      \draw[->, line width= .5] (d) -- (x2);
-                      \draw[->, line width= .5] (y) -- (x2);
-                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item Conditioning on $X_1$ blocks the backdoor path
-
-            \item But what if we also condition on $X_2$?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
-                      \node[right of = x1, text centered] (d) {$D$};
-                      \node[below right of = d, draw, rectangle, text centered] (x2) {$X_2$};
-                      \node[above right of = x2, text centered] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5] (x1) -- (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                      \draw[->, line width= .5] (d) -- (x2);
-                      \draw[->, line width= .5] (y) -- (x2);
-                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
-          \end{itemize}
-
-          \framebreak
+	\end{itemize}
+	
+\end{frame}
 
 
-    \item \textbf{Even controlling for pretreatment covariates can create bias}
-          \begin{itemize}
-            \item Name the backdoor paths.  Is it open or closed?
+\begin{frame}{Lady tasting tea}
 
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm, text centered]
-                      % nodes %
-                      \node[] (x) {$X$};
-                      \node[above left of = x] (u1) {$U_1$};
-                      \node[below left of = x] (u2) {$U_2$};
-                      \node[right of = x] (d) {$D$};
-                      \node[right of = d] (y) {$Y$};
+\begin{itemize}
+	\item Muriel Bristol (1888-1950)
+		\begin{itemize}
+		\item A PhD scientist back in the days when women weren't PhD scientists
+		\item Worked with Fisher at the Rothamsted Experiment Station (which she established) in 1919 
+		\item During afternoon tea, Muriel claimed she could tell from taste whether the milk was added to the cup before or after the tea
+		\item Scientists were incredulous, but Fisher was inspired by her strong claim
+		\item He devised a way to test her claim which she passed using randomization inference
+		\end{itemize}
+\end{itemize}
 
-                      % edges %
-                      \draw[->, line width= .5, dashed] (u1) -- (x);
-                      \draw[->, line width= .5, dashed] (u2) -- (x);
-                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
-                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                    \end{tikzpicture}
-                  \end{center}
+\end{frame}
 
-            \item But what if we condition on $X$?
+\begin{frame}{Description of the tea-tasting experiment}
 
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm, text centered]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x) {$X$};
-                      \node[above left of = x] (u1) {$U_1$};
-                      \node[below left of = x] (u2) {$U_2$};
-                      \node[right of = x] (d) {$D$};
-                      \node[right of = d] (y) {$Y$};
+	\begin{itemize}
+	\item Original claim: Given a cup of tea with milk, Bristol claims she can discriminate the order in which the milk and tea were added to the cup
+	\item Experiment: To test her claim, Fisher prepares 8 cups of tea -- 4 \textbf{milk then tea} and 4 \textbf{tea then milk} -- and presents each cup to Bristol for a taste test
+	\item Question: How many cups must Bristol correctly identify to convince us of her unusual ability to identify the order in which the milk was poured?
+	\item Fisher's sharp null: Assume she can't discriminate.  Then what's the likelihood that random chance was responsible for her answers?
+	\end{itemize}
+\end{frame}
 
-                      % edges %
-                      \draw[->, line width= .5, dashed] (u1) -- (x);
-                      \draw[->, line width= .5, dashed] (u2) -- (x);
-                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
-                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                    \end{tikzpicture}
-                  \end{center}
+\begin{frame}{Choosing subsets}
+	
+	\begin{itemize}
+	\item The lady performs the experiment by selecting $4$ cups, say, the ones she claims to have had the tea poured first.
+	 $${n \choose k} = \frac{n!}{k!(n-k)!}$$
+	\item ``8 choose 4'' -- $ 8 \choose 4 $ -- ways to choose 4 cups out of 8
+		
+		\begin{itemize}
+		\item Numerator is $8\times{7}\times{6}\times{5}=1,680$ ways to choose a first cup, a second cup, a third cup, and a fourth cup, in order.
+		\item Denominator is $4\times{3}\times{2}\times{1}=24$ ways to order $4$ cups.
+		\end{itemize}
+	\end{itemize}
+\end{frame}
 
 
-          \end{itemize}
-  \end{itemize}
-  \framebreak
+\begin{frame}{Choosing subsets}
 
+\begin{itemize}
+	\item There are $70$ ways to choose $4$ cups out of $8$, and therefore a 1.4\% probability of producing the correct answer by chance
+		\begin{eqnarray*}
+		\frac{24}{1680}=1/70=0.014.
+		\end{eqnarray*}
+	\item For example, the probability that she would correctly identify all $4$ cups is $\frac{1}{70}$ 
+\end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Sample selection example of collider bias}
+%\begin{frame}[plain]
 
-  \alert{Important}: Since unconditioned colliders block back-door paths, what exactly does conditioning on a collider do? Let's illustrate with a fun example and some made-up data\\
-  \begin{itemize}
-    \item \underline{CNN.com} headline: Megan Fox voted worst -- but sexiest -- actress of 2009 \myurlshort{http://marquee.blogs.cnn.com/2009/12/30/megan-fox-voted-worst-but-sexiest-actress-of-2009/}{(link)}
-    \item Are these two things actually negatively correlated in the world?
-    \item Assume talent and beauty are independent, but each causes someone to become a movie star.  What's the correlation between talent and beauty for a sample of movie stars compared to the population as a whole (stars and non-stars)?
-  \end{itemize}
+%	\begin{center}
+%	\textbf{Choosing $3$}
+%	\end{center}
+	
+%	\begin{itemize}
+%	\item To get exactly $3$ right, and, hence, $1$ wrong, she would have to choose $3$ from the $4$ correct ones.
+%		\begin{enumerate}
+%		\item She can do this by $4\times{3}\times{2}=24$ with order.
+%		\item Since $3$ cups can be ordered in $3\times{2}=6$ ways, there are $4$ ways for her to choose the $3$ correctly.
+%		\end{enumerate}
+%	\item Since she can now choose the $1$ incorrect cup $4$ ways, there are a total of $4\times{4}=16$ ways for her to choose exactly $3$ right and $1$ wrong.
+%	\item Hence the probability that she chooses exactly 3 correctly is $\frac{16}{70}=0.23$.
+%	\end{itemize}
+%\end{frame}
 
+\begin{frame}{Statistical significance}
+	
+	\begin{itemize}
+	\item Suppose the lady correctly identifies all 4 cups.  Then \dots
+		\begin{enumerate}
+		\item Either she has no ability, and has chosen the correct 4 cups purely by chance, or
+		\item She has the discriminatory ability she claims.
+		\end{enumerate}
+	\item Since choosing correctly is highly unlikely in the first case (one chance in $70$), the second seems plausible.
+	\item Bristol actually got all four correct
+	\item I wonder if seeing this, any of the scientists present changed their mind
+	\end{itemize}
 \end{frame}
 
+\subsection{Fisher's sharp null}
 
-\begin{frame}[plain]
+\begin{frame}{Null hypothesis}
+	
+	\begin{itemize}
+	\item In this example, the null hypothesis is the hypothesis that the lady has no special ability to discriminate between the cups of tea.
+	\item We can never prove the null hypothesis, but the data may provide evidence to reject it.
+	\item In most situations, rejecting the null hypothesis is what we hope to do.
 
-  \begin{itemize}
-    \item What if the sample consists \emph{only} of movie stars?
-    \item Look at python code
-  \end{itemize}
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=2cm, text centered]
-
-      %nodes
-      \node[text centered,draw,rectangle,thin] (x) {Movie Star};
-      \node[below left of = x] (u1) {$Talent$};
-      \node[below right of = x] (u2) {$Beauty$};
-
-      % edges %
-      \draw[->, line width= 2] (u1) -- (x);
-      \draw[->, line width= 2] (u2) -- (x);
-    \end{tikzpicture}
-  \end{center}
-
-
-
-
-\end{frame}
-
-\begin{frame}[shrink=20,plain]
-
-  \begin{figure}
-    \includegraphics[height=9cm]{./lecture_includes/beauty_collider.pdf}
-    \caption{Top left figure: Non-star sample scatter plot of beauty (vertical axis) and talent (horizontal axis). Top right right figure: Star sample scatter plot of beauty and talent.  Bottom left figure: Entire (stars and non-stars combined) sample scatter plot of beauty and talent.}
-  \end{figure}
-\end{frame}
-
-
-\begin{frame}{Occupational sorting and discrimination example of collider bias}
-
-  \begin{itemize}
-    \item Let's look at another example: very common for think tanks and journalists to say that the gender gap in earnings disappears once you control for occupation.
-    \item But what if occupation is a collider, which it could be in a model with occupational sorting
-    \item Then controlling for occupation in a wage regression searching for discrimination can lead to all kinds of crazy results \emph{even in a simulation where we explicitly design there to be discrimination}
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{DAG}
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=1.5cm]
-      % nodes %
-      \node[text centered] (f) {$F$};
-      \node[above right of = f, text centered] (d) {$d$};
-      \node[right of = f] (y) {$y$};
-      \node[below  of = f, text centered] (o) {$o$};
-      \node[right of = o, text centered] (a) {$A$};
-
-      % edges %
-      \draw[->, line width= 1] (f) -- (d);
-      \draw[->, line width= 1] (d) -- (o);
-      \draw[->, line width= 1, dashed] (a) -- (o);
-
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1] (o) -- (y);
-      \draw[->, line width= 1, dashed] (a) -- (y);
-
-    \end{tikzpicture}
-  \end{center}
-
-  $F$ is female, $d$ is discrimination, $o$ is occupation, $y$ is earnings and $A$ is ability. Dashed lines mean the variable cannot be observed. Note, by design, being a female has no effect on earnings or occupation, and has no relationship with ability. So earnings is coming through discrimination, occupation, and ability.
-
-\end{frame}
-
-
-\begin{frame}[plain]
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=1.5cm]
-      % nodes %
-      \node[text centered] (f) {$F$};
-      \node[above right of = f, text centered] (d) {$d$};
-      \node[right of = f] (y) {$y$};
-      \node[below  of = f, text centered] (o) {$o$};
-      \node[right of = o, text centered] (a) {$A$};
-
-      % edges %
-      \draw[->, line width= 1] (f) -- (d);
-      \draw[->, line width= 1] (d) -- (o);
-      \draw[->, line width= 1, dashed] (a) -- (o);
-
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1] (o) -- (y);
-      \draw[->, line width= 1, dashed] (a) -- (y);
-
-    \end{tikzpicture}
-  \end{center}
-
-
-  Mediation and Backdoor paths
-
-  \begin{enumerate}
-
-    \item $d$ $\rightarrow o \rightarrow y$
-    \item $d$ $\rightarrow o \leftarrow A \rightarrow y$
-  \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}[plain, shrink=20]
-
-  \begin{table}[htbp]\centering
-    \scriptsize
-    \caption{Regressions illustrating collider bias with simulated gender disparity}
-    \begin{center}
-      \begin{tabular}{l*{3}{c}}
-        \toprule
-        \multicolumn{1}{l}{Covariates: }&
-        \multicolumn{1}{c}{\textbf{Unbiased combined effect}}&
-        \multicolumn{1}{c}{\textbf{Biased }}&
-        \multicolumn{1}{c}{\textbf{Unbiased wage effect only}}\\
-        \midrule
-        Female                     & -3.074*** & 0.601*** & -0.994*** \\
-                                   & (0.000)   & (0.000)  & (0.000)   \\
-        Occupation                 &           & 1.793*** & 0.991***  \\
-                                   &           & (0.000)  & (0.000)   \\
-        Ability                    &           &          & 2.017***  \\
-                                   &           &          & (0.000)   \\
-        \\
-        \midrule
-        N                          & 10,000    & 10,000   & 10,000    \\
-        Mean of dependent variable & 0.45      & 0.45     & 0.45      \\
-        \bottomrule
-      \end{tabular}
-    \end{center}
-  \end{table}
-
-  \begin{itemize}
-    \item Recall we designed there to be a discrimination coefficient of -1
-    \item If we do not control for occupation, then we get the combined effect of $d \rightarrow o \rightarrow y$ and $d  \rightarrow y$
-    \item Because it seems intuitive to control for occupation, notice column 2 - the sign flips!
-    \item We are only able to isolate the direct causal effect by conditioning on ability and occupation, but ability is unobserved
-  \end{itemize}
-
+	\end{itemize}
 \end{frame}
 
 
 
-\subsection{Front door criterion}
-
-\begin{frame}{Research design \#2: front door criterion}
-
-  \begin{itemize}
-    \item Confounding creates major issues for us, but if we can observe the confounders, then we can use the backdoor criterion (``selection on observables'') to identify causal effects
-    \item What about \textbf{unobserved confounding}?  It depends on the DAG
-    \item One particular DAG structure that is not widely known outside of Pearl circles is the front door criterion
-    \item Bears some topical resemblance to instrumental variables, but it is nonetheless very different and when available to you the elements can be used to trace out causal effects
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Mechanisms}
-
-  \begin{itemize}
-    \item Rarely does an intervention operate directly on an outcome; oftentimes it operates on the outcome via a ``mechanism''
-          \begin{itemize}
-            \item Example: Parental substance abuse causes foster care removals through child abuse and neglect
-          \end{itemize}
-    \item The presence of mechanisms, it turns out, is valuable because of their policy relevance, but also because we can use them \emph{sometimes} for identification
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Frontdoor DAG}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \begin{itemize}
-    \item We cannot close $D \leftarrow U \rightarrow Y$ because $U$ is not observed and thus simple contrasts are biased estimates of treatment effects
-    \item Pearl (2009) showed that this DAG actually does allow us to recover the effect of $D$ on $Y$, though -- just not via the backdoor criterion
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Front door criterion}
-
-  \begin{quote}
-    If one or more unblocked back door paths connect a causal variable to an outcome variable, the causal effect is identified by conditioning on a set of observed variables $M$ that make up the identifying mechanism if and only if: 1) the variables in $M$ intercept all directed paths from the causal variable to the outcome (``exhaustiveness''); 2) No unblocked back-door paths connecting the causal variable to the variables in the set $M$ and all back door paths from the variables in $M$ to the outcome can be blocked by conditioning on $D$ (``isolation'')
-  \end{quote}
-
-\end{frame}
-
-\begin{frame}{Exhaustiveness}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-
-  \begin{itemize}
-    \item Exhaustiveness means the variables $M$ are the only paths through which $D$ impacts $Y$.
-    \item In other words, rules out direct effects that bypass $M$ altogether
-    \item ``only through $M$'' in place of exhaustiveness and you get the idea
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Isolation}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-
-  \begin{itemize}
-    \item Mechanism itself is not confounded with respect to $Y$ (i.e., no unobserved confounding parent linking $M$ and $Y$)
-    \item You are looking for a causal effect contained in a closed but confounded system and the presence of the $M$ mechanism is key
-    \item Pearl and others have suggested smoking ($D$) and lung cancer ($Y$) with $M=$ tar buildup in the lungs might have been candidate but this has been debated)
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Frontdoor three step method}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \begin{itemize}
-
-    \item Frontdoor criterion is going to take advantage of two things we've seen so far: collider properties and blocking properties
-    \item This is not IV, but as we will see, it bears some similarities to IV
-    \item The final estimator will be the product of two separate calculations (whereas IV is more like the ratio)
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Frontdoor three step method}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-
-
-
-  \begin{enumerate}
-    \item[1. ] Estimate the effect of $D$ on $M$.  Consider a regression of $M$ on $D$ or simple difference in mean $D$ with respect to $M$ $$D = \alpha_0 + \beta M + \epsilon$$
-          \begin{itemize}
-            \item $M$ is isolated, so it is not confounded
-            \item $D \leftarrow U \rightarrow Y \leftarrow M$ which is blocked bc $Y$ is a \textbf{collider}
-            \item Therefore $\widehat{\beta}$ identifies $\beta$
-          \end{itemize}
-  \end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Frontdoor three step method}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-
-  \begin{enumerate}
-
-    \item[2. ] Estimate the effect of $M$ on $Y$ conditional on $X$
-          \begin{itemize}
-            \item Gets you an unbiased estimate of $M$ effect on $Y$ bc only backdoor path from $M$ to $Y$ is $M \leftarrow D \leftarrow U \rightarrow Y$
-            \item So long as we condition on $D$ this path is blocked $$Y = \alpha_1 + \gamma M + \psi D + \varepsilon$$
-          \end{itemize}
-  \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}{Frontdoor three step method}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-
-  \begin{enumerate}
-
-    \item[3. ] Multiply $\widehat{\gamma} \times \widehat{\beta}$ and you get the causal effect of $D$ on $Y$
-  \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}{Examples have been elusive}
-
-  \begin{itemize}
-    \item Pearl has suggested smoking as an possible example of this but to be valid it requires smoking to not have a direct effect on lung cancer and if it is not the case, it would invalidate the frontdoor design
-    \item Frontdoors requires ``closed systems'' (as do instruments), and it's possible that in carefully designed platforms that could either be intentionally designed or happen naturally in a way that is defensible
-    \item Bellemare, et al. (2021) provides a plausible example involving tipping and Uber
-  \end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}{Uber and tipping}
-
-  \begin{itemize}
-    \item Shared rides could lead to reduced tipping but also increased demand thus creating principal agency issues for Uber and Lyft (drivers versus the firm)
-    \item Harrington (2019): ``on average, about 17\% of rideshares end up with the driver getting tipped.  For strips where a shared trip was authorized, that number is halved to a measly 8.6\%.''
-    \item Drivers experiencing such declines probably think it's caused by sharing rides (e.g., bystander effects, freeriding, etc.) but it also may just be selection (i.e., the marginal rider would've tipped that low anyway)
-    \item Bellemare, et al. (2021) suggest Uber's platform design created FDC DAG that would allow this to be tested
-  \end{itemize}
-
-\end{frame}
-\begin{frame}{Assumed Uber Tipping DAG}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-
-  \begin{itemize}
-    \item Let $D$ here be authorizing a shared ride (regardless of whether a shared ride occurred), $M$ be a dummy measuring one if sharing did occur, $Y$ be the amount the passengers tipped and $U$ be the unobserved covariates.
-    \item Estimate the effect of authorization ($D$) on both whether a passenger tips ($Y$) as well as how much, what they call the extensive and intensive margin of tipping, respectively.
-    \item Data come from Chicago's Department of Business Affairs and Consumer Protection's Transportation Network Providers and is freely available for download from the City of Chicago's website
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Assumptions}
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (m) {$M$};
-      \node[right of = m, text centered] (y) {$Y$};
-      \node[below of = m, text centered] (u) {$U$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (m);
-      \draw[->, line width= 1] (m) -- (y);
-      \draw[->, line width= 1, dashed] (u) -- (d);
-      \draw[->, line width= 1, dashed] (u) -- (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \begin{itemize}
-
-    \item Key assumption: once the authorization to share a ride is initiated ($D$), then when the ride is shared ($M$)
-    \item No direct effect of authorization on tipping, no unblocked backdoor path from sharing a ride and tipping itself.
-    \item Authors argue that their extensive set of fixed effects will yield plausible conditions for isolation and exhaustiveness are guaranteed.
-  \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Estimation}
-
-  \begin{itemize}
-    \item Using the logic of the front door criterion, the authors estimate the same two step procedure as shown in the previous simulation with the caveat that they include extensive fixed effects so as to create conditional conditions for isolation and exhaustiveness.
-    \item For illustrative purposes, I will only focus on the effect at the extensive margin (i.e., on whether a passenger tipped at all).
-  \end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}[shrink=20]
-
-  \begin{table}[htb]
-    \small
-    \caption{Estimation results for tipping at the extensive margin}
-    \label{tab:screening}
-    \centering
-    \begin{tabular}{l*{3}{c}}
-      \toprule
-      \multicolumn{1}{l}{Variables: }&
-      \multicolumn{1}{c}{\textbf{Naive }}&
-      \multicolumn{2}{c}{\textbf{Front Door }}\\
-      \multicolumn{1}{l}{}&
-      \multicolumn{1}{c}{\textbf{Tipped}}&
-      \multicolumn{1}{c}{\textbf{Shared Trip }}&
-      \multicolumn{1}{c}{\textbf{Tipped}}\\
-      \midrule
-      Sharing authorized $D$                       & -0.0628*** & 0.6769***  & -0.0550*** \\
-                                                   & (0.0001)   & (0.0002)   & (0.0002)   \\
-      Shared trip $M$                              &            &            & -0.0115*** \\
-                                                   &            &            & (0.0002)   \\
-      Full fare                                    & 0.0050***  & -0.0064*** & 0.0049***  \\
-                                                   & (0.00001)  & (0.00001)  & (0.00003)  \\
-
-      \midrule
-
-      Estimated causal effect ($\widehat{\delta}$) & -0.0628*** &            & -0.0078**  \\
-                                                   & (0.0001)   &            & (0.0001)   \\
-      \\
-      \midrule
-      N                                            & 95,670,449 & 95,670,449 & 95,670,449 \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
-\end{frame}
-
-\begin{frame}{Interpretation}
-
-  \begin{itemize}
-    \item Column 1: naive regression simply compares tipping between authorized and non-authorized sharing (6.3pp reduction in tipping)
-    \item Front door criterion: 1pp reduction
-    \item Not surprising drivers don't want ride shares, but authors argue it's caused by selection (i.e., the people using ride shares) not ride share itself
-    \item Unclear if you banned it whether it would increase driver earnings in other words
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Discussion}
-
-  \begin{itemize}
-    \item DAG front door criterion example.  What is the strength of this approach in your opinion (no wrong answer)?
-    \item What is the weakness of this approach in your opinion (no wrong answer)?
-    \item Based on your own background, are there applications you might want to look for these opportunities?
-  \end{itemize}
+\begin{frame}{Null hypothesis of no effect}
+
+\begin{itemize}
+\item Randomization inference allows us to make probability calculations revealing whether the treatment assignment was ``unusual''
+\item Fisher's sharp null is when entertain the possibility that no unit has a treatment effect
+\item This allows us to make ``exact'' p-values which do not depend on large sample approximations
+\item It also means the inference is not dependent on any particular distribution (e.g., Gaussian); sometimes called nonparametric
+\end{itemize}
 
 \end{frame}
 
 
 
 
-\subsection{Concluding remarks}
+\begin{frame}{Sidebar: bootstrapping is different}
 
-
-\begin{frame}{Summarizing all of this}
-
-  \begin{itemize}
-    \item Your dataset will not come with a codebook flagging some variables as ``confounders'', ``mechanisms'' and ``colliders'' because those terms are always context specific
-    \item Except for some unique situations that aren't generally applicable, you also don't always know statistically you have an omitted variable bias problem; but both of these are fatal for any application
-    \item You only know to do what you're doing based on \emph{knowledge about data generating process}.
-    \item All identification must be guided by theory, experience, observation, common sense and knowledge of institutions
-    \item DAGs absorb that information and can be then used to write out the explicit identifying model
-  \end{itemize}
+\begin{itemize}
+\item Sometimes people confuse randomization inference with bootstrapping
+\item Bootstrapping randomly draws a percent of the total observations for estimation; ``uncertainty over the sample''
+\item Randomization inference randomly reassigns the treatment;  ``uncertainty over treatment assignment''
+\end{itemize}(Thanks to Jason Kerwin for helping frame the two against each other)
 
 \end{frame}
 
-\begin{frame}{DAGs are not panacea}
 
-  \begin{itemize}
-    \item DAGs cannot handle, though, reverse causality or simultaneity
-    \item So there are limitations.  ``All models are wrong but some are useful''
-    \item They are also not everywhere popular (see Twitter ongoing debates which have descended into light hearted jokes as well as aggressive debates)
-    \item But I think they are helpful and while not \emph{necessary}, showcase what is necessary -- assumptions
-    \item Heckman (1979) can maybe provide some justification at times
-  \end{itemize}
+\begin{frame}{6-step guide to randomization inference}
+
+\begin{enumerate}
+\item Choose a sharp null hypothesis (e.g., no treatment effects)
+\item Calculate a test statistic ($T$ is a scalar based on $D$ and $Y$)
+\item Then pick a randomized treatment vector $\tilde{D_1}$
+\item Calculate the test statistic associated with $(\tilde{D},Y)$
+\item Repeat steps 3 and 4 for all possible combinations to get $\tilde{T} = \{\tilde{T}_1, \dots , \tilde{T}_K \}$
+\item Calculate exact p-value as $p=\frac{1}{K} \sum_{k=1}^K I(\tilde{T}_k \geq T)$
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Pretend experiment}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\caption{Pretend DBT intervention for some homeless population}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+\multicolumn{1}{l}{Name}&
+\multicolumn{1}{c}{D}&
+\multicolumn{1}{c}{Y}&
+\multicolumn{1}{c}{Y$^0$}&
+\multicolumn{1}{c}{Y$^1$}\\
+\midrule
+Andy		& 1 & 10  & . & 10 \\
+Ben		& 1 & 5    & . & 5 \\
+Chad	& 1 & 16  & . & 16 \\	
+Daniel	& 1 &  3   & . & 3 \\
+Edith		& 0 & 5    & 5 & . \\
+Frank	& 0 & 7    & 7&.  \\
+George	& 0 & 8    & 8 & . \\
+Hank		& 0 & 10  & 10 & . \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+For concreteness, assume a program where we pay homeless people \$15 to take dialectical behavioral therapy (DBT). Outcomes are some measure of mental health 0-20 with higher scores being improvements in mental health symptoms. 
+	
+\end{frame}
+
+
+
+\begin{frame}{Step 1: Sharp null of no effect}
+
+\begin{block}{Fisher's Sharp Null Hypothesis}
+$H_0: \delta_i = Y_i^1 - Y_i^0 = 0 \text{ } \forall i$
+\end{block}
+
+\begin{itemize}
+\item Assuming no effect means any test statistic is due to chance
+\item Neyman and Fisher test statistics were different -- Fisher was exact, Neyman was not
+\item Neyman's null was no average treatment effect (ATE=0). If you have a treatment effect of 5 and I have a treatment effect of -5, our ATE is zero. This is not the sharp null even though it also implies a zero ATE
+
+\end{itemize}
 
 \end{frame}
 
+
+\begin{frame}{More sharp null}
+
+\begin{itemize}
+\item Since under the Fisher sharp null $\delta_i=0$, it means each unit's potential outcomes under both states of the world are the same
+\item We therefore know each unit's missing counterfactual
+\item The randomization we will perform will cycle through all treatment assignments under a null well treatment assignment doesn't matter because all treatment assignments are associated with a null of zero unit treatment effects
+\item We are looking for evidence \emph{against} the null 
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Step 1: Fisher's sharp null and missing potential outcomes}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\caption{Missing potential outcomes are no longer missing}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+\multicolumn{1}{l}{Name}&
+\multicolumn{1}{c}{D}&
+\multicolumn{1}{c}{Y}&
+\multicolumn{1}{c}{Y$^0$}&
+\multicolumn{1}{c}{Y$^1$}\\
+\midrule
+Andy		& 1 & 10  & \textbf{10} & 10 \\
+Ben		& 1 & 5    & \textbf{5} & 5 \\
+Chad	& 1 & 16  & \textbf{16} & 16 \\	
+Daniel	& 1 &  3   & \textbf{3} & 3 \\
+Edith		& 0 & 5    & 5 & \textbf{5} \\
+Frank	& 0 & 7    & 7& \textbf{7}  \\
+George	& 0 & 8    & 8 & \textbf{8} \\
+Hank		& 0 & 10  & 10 & \textbf{10} \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+Fisher sharp null allows us to \textbf{fill in} the missing counterfactuals bc under the null there's zero treatment effect at the unit level.
+	
+\end{frame}
+
+\begin{frame}{Step 2: Choosing a test statistic}
+
+\begin{block}{Test Statistic}
+A test statistic $T(D,Y)$ is a scalar quantity calculated from the treatment assignments  $D$ and the observed outcomes $Y$ 
+\end{block}
+
+\begin{itemize}
+\item By scalar, I just mean it's a number (vs. a function) measuring some relationship between $D$ and $Y$
+\item Ultimately there are many tests to choose from; I'll review a few later
+\item If you want a test statistic with high statistical power, you need large values when the null is false, and small values when the null is true (i.e., \emph{extreme})
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Simple difference in means}
+
+\begin{itemize}
+\item Consider the absolute SDO from earlier $$ \delta_{SDO} = \bigg | \frac{1}{N_T} \sum_{i=1}^N D_iY_i - \frac{1}{N_C} \sum_{i=1}^N (1-D_i)Y_i \bigg |$$
+\item Larger values of $\delta_{SDO}$ are evidence \emph{against} the sharp null
+\item Good estimator for constant, additive treatment effects and relatively few outliers in the potential outcomes
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Step 2: Calculate test statistic, $T(D,Y)$}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\caption{Calculate $T$ using $D$ and $Y$}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+\multicolumn{1}{l}{Name}&
+\multicolumn{1}{c}{D}&
+\multicolumn{1}{c}{Y}&
+\multicolumn{1}{c}{Y$^0$}&
+\multicolumn{1}{c}{Y$^1$}&
+\multicolumn{1}{c}{$\delta_i$}\\
+\midrule
+Andy		& \textbf{1} & \textbf{10}  & {10} & {10} & 0\\
+Ben		& \textbf{1} & \textbf{5}    & {5} & {5} & 0 \\
+Chad	& \textbf{1} & \textbf{16}  & {16} & {16} & 0 \\	
+Daniel	& \textbf{1} &  \textbf{3}   & {3} & {3} & 0 \\
+Edith		& \textbf{0} & \textbf{5}    & {5} & {5} & 0 \\
+Frank	& \textbf{0} & \textbf{7}    & {7} & {7} & 0  \\
+George	& \textbf{0} &\textbf {8}    & {8} & {8} & 0 \\
+Hank		& \textbf{0} & \textbf{10}  & {10} & {10} & 0 \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+We'll start with this simple the simple difference in means test statistic, $T(D,Y)$: $\delta_{SDO} = 34/4 - 30/4 = 1$	
+\end{frame}
+
+
+
+\begin{frame}{Steps 3-5: Null randomization distribution}
+
+\begin{itemize}
+\item Randomization steps reassign treatment assignment for every combination, calculating test statistics each time, to obtain the entire distribution of counterfactual test statistics
+\item The key insight of randomization inference is that under Fisher's sharp null, the treatment assignment shouldn't matter
+\item Ask yourself: 
+	\begin{itemize}
+	\item if there is no unit level treatment effect, can you picture a distribution of counterfactual test statistics?
+	\item and if there is no unit level treatment effect, what must average counterfactual test statistics equal?
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Step 6: Calculate ``exact'' p-values}
+
+\begin{itemize}
+\item Question: how often would we get a test statistic as big or bigger as our ``real'' one if Fisher's sharp null was true?
+\item This can be calculated ``easily'' (sometimes) once we have the randomization distribution from steps 3-5
+	\begin{itemize}
+	\item The number of test statistics ($t(D,Y)$) bigger than the observed divided by total number of randomizations $$Pr(T(D,Y) \geq T(\tilde{D},Y | \delta = 0)) = \frac{ \sum_{D \in \Omega} I(T(D,Y) \leq T(\tilde{D},Y)}{K}$$
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+%\begin{frame}[plain]
+
+%\begin{center}
+%\textbf{Simulation}
+%\end{center}
+
+%Download the file \texttt{combinations.do} and you can do this yourself for this dataset of eight people.  It will do exact combinations. 
+
+%\end{frame}
+
+
+\begin{frame}{First permutation (holding $N_T$ fixed)}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+\multicolumn{1}{l}{Name}&
+\multicolumn{1}{c}{$\tilde{D_2}$}&
+\multicolumn{1}{c}{Y}&
+\multicolumn{1}{c}{Y$^0$}&
+\multicolumn{1}{c}{Y$^1$}\\
+Andy		& 1 & \textcolor{blue}{10}  & {10} & 10 \\
+Ben		& 0 & \textcolor{red}{5}    & {5} & 5 \\
+Chad	& 1 & \textcolor{blue}{16}  & {16} & 16 \\	
+Daniel	& 1 &  \textcolor{blue}{3}   & {3} & 3 \\
+Edith		& 0 & \textcolor{red}{5}    & 5 & {5} \\
+Frank	& 1 & \textcolor{blue}{7}    & 7& {7}  \\
+George	& 0 & \textcolor{red}{8}    & 8 & {8} \\
+Hank		& 0 & \textcolor{red}{10}  & 10 & {10} \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+$$\tilde{T}_1 =  | \textcolor{blue}{36/4} - \textcolor{red}{28/4}  | = \textcolor{blue}{9} - \textcolor{red}{7} = 2$$
+	
+\end{frame}
+
+\begin{frame}{Second permutation (again holding $N_T$ fixed)}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+\multicolumn{1}{l}{Name}&
+\multicolumn{1}{c}{$\tilde{D_3}$}&
+\multicolumn{1}{c}{Y}&
+\multicolumn{1}{c}{Y$^0$}&
+\multicolumn{1}{c}{Y$^1$}\\
+Andy		& 1 & \textcolor{blue}{10}  & {10} & 10 \\
+Ben		& 0 & \textcolor{red}{5}    & {5} & 5 \\
+Chad	& 1 & \textcolor{blue}{16}  & {16} & 16 \\	
+Daniel	& 1 &  \textcolor{blue}{3}   & {3} & 3 \\
+Edith		& 0 & \textcolor{red}{5}    & 5 & {5} \\
+Frank	& 0 & \textcolor{red}{7}    & 7& {7}  \\
+George	& 1 & \textcolor{blue}{8}    & 8 & {8} \\
+Hank		& 0 & \textcolor{red}{10}  & 10 & {10} \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+$$T_{rank} =  | \textcolor{blue}{36/4} - \textcolor{red}{27/4}  | = \textcolor{blue}{9} - \textcolor{red}{6.75} = 2.25$$
+	
+\end{frame}
+
+\begin{frame}{Sidebar: Should it be 4 treatment groups each time?}
+
+\begin{itemize}
+\item In this experiment, I've been using the same $N_T$ \emph{under the assumption} that $N_T$ had been fixed when the experiment was drawn.
+\item But if the original treatment assignment had been generated by something like a Bernoulli distribution (e.g., coin flips over every unit), then you should be doing a complete permutation that is also random in this way
+\item This means that for 8 units, sometimes you'd have 1 treated, or even 8
+\item Correct inference requires you know the original data generating process
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Randomization distribution}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\begin{threeparttable}
+\begin{tabular}{lccccccccc}
+\toprule
+\multicolumn{1}{l}{Assignment}&
+\multicolumn{1}{c}{$D_1$}&
+\multicolumn{1}{c}{$D_2$}&
+\multicolumn{1}{c}{$D_3$}&
+\multicolumn{1}{c}{$D_4$}&
+\multicolumn{1}{c}{$D_5$}&
+\multicolumn{1}{c}{$D_6$}&
+\multicolumn{1}{c}{$D_7$}&
+\multicolumn{1}{c}{$D_8$}&
+\multicolumn{1}{c}{$|T_i|$}\\
+\midrule
+True $D$ & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+$\tilde{D_2}$ & 1 & 0 & 1 & 1 & 0 & 1 & 0 & 0 & 2 \\
+$\tilde{D_3}$ & 1 & 0 & 1 & 1 & 0 & 0 & 1 & 0 & 2.25 \\
+\dots \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\end{frame}
+
+\subsection{Alternative test statistics}
+
+\begin{frame}{Step 2: Other test statistics}
+
+\begin{itemize}
+\item The simple difference in means is fine when effects are additive, and there are few outliers in the data
+\item But outliers create more variation in the randomization distribution
+\item A good test statistic is the one that best fits your data.  
+\item Some test statistics will have weird properties in the randomization as we'll see in synthetic control.
+\item What are some alternative test statistics?
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Transformations}
+
+\begin{itemize}
+\item What if there was a constant multiplicative effect: $Y_i^1 / Y_i^0 = C$?
+\item Difference in means will have low power to detect this alternative hypothesis
+\item So we transform the observed outcome using the natural log:
+
+$$T_{log} = \bigg | \frac{1}{N_T} \sum_{i=1}^N D_i ln(Y_i) - \frac{1}{N_C} \sum_{i=1}^N (1-D_i) ln(Y_i) \bigg |$$
+\item This is useful for skewed distributions of outcomes
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Difference in medians/quantiles}
+
+\begin{itemize}
+\item We can protect against outliers using other test statistics such as the difference in quantiles
+\item Difference in medians:$$T_{median} = | median(Y_T) - median(Y_C)|$$
+\item We could also estimate the difference in quantiles at any point in the distribution (e.g., 25th or 75th quantile)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Rank test statistics}
+
+\begin{itemize}
+\item Basic idea is rank the outcomes (higher values of $Y_i$ are assigned higher ranks) 
+\item Then calculate a test statistic based on the transformed ranked outcome (e.g., mean rank)
+\item Useful with continuous outcomes, small datasets and/or many outliers
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Rank statistics formally}
+
+\begin{itemize}
+\item Rank is the domination of others (including oneself): $$\tilde{R} = \tilde{R}_i(Y_1, \dots , Y_N) = \sum_{j=1}^N I(Y_j \leq Y_i)$$
+\item Normalize the ranks to have mean 0 $$\tilde{R}_i = \tilde{R}_i(Y_1, \dots, Y_N) = \sum_{j=1}^N I(Y_j \leq Y_i) - \frac{N+1}{2}$$
+\item Calculate the absolute difference in average ranks: $$T_{rank} = |\overline{R}_T - \overline{R}_C | = \bigg | \frac{\sum_{i:D_i=1} R_i}{N_T} - \frac{\sum_{i:D_i=0} R_i}{N_C} \bigg |$$
+\item Minor adjustment (averages) for ties
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Randomization distribution}
+
+\begin{table}[htbp]\centering
+\begin{center}
+\begin{threeparttable}
+\begin{tabular}{l|cc|cc|cc}
+\toprule
+\multicolumn{1}{l}{Name}&
+\multicolumn{1}{c}{D}&
+\multicolumn{1}{c}{Y}&
+\multicolumn{1}{c}{Y$^0$}&
+\multicolumn{1}{c}{Y$^1$}&
+\multicolumn{1}{c}{Rank}&
+\multicolumn{1}{c}{$R_i$}\\
+\midrule
+Andy		& 1 & 10  & \textbf{10} & 10 & 6.5 & 2\\
+Ben		& 1 & 5    & \textbf{5} & 5 & 2.5 & -2\\
+Chad	& 1 & 16  & \textbf{16} & 16 & 8  &3.5 \\
+Daniel	& 1 &  3   & \textbf{3} & 3 & 1 & -3.5\\
+Edith		& 0 & 5    & 5 & \textbf{5} & 2.5 & -2\\
+Frank	& 0 & 7    & 7& \textbf{7} & 4 & -0.5 \\
+George	& 0 & 8    & 8 & \textbf{8} & 5 & 0.5\\
+Hank		& 0 & 10  & 10 & \textbf{10} & 6.5 & 2\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+
+$$T_{rank} = | 0 - 0 | = 0$$
+
+\end{frame}
+
+\begin{frame}{Effects on outcome distributions}
+
+\begin{itemize}
+\item Focused so far on ``average'' differences between groups.
+\item Kolmogorov-Smirnov test statistics is based on the difference in the distribution of outcomes 
+\item Empirical cumulative distribution function (eCDF): 
+\begin{eqnarray*}
+\widehat{F}_C(Y) &=& \frac{1}{N_C} \sum_{i:D_i=0} 1(Y_i \leq Y) \\
+\widehat{F}_T(Y)&=& \frac{1}{N_T} \sum_{i:D_i=1} 1(Y_i \leq Y)
+\end{eqnarray*}
+\item Proportion of observed outcomes below a chosen value for treated and control separately
+\item If two distributions are the same, then $\widehat{F}_C(Y) = \widehat{F}_T(Y)$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Kolmogorov-Smirnov statistic}
+
+\begin{itemize}
+\item Test statistics are scalars not functions
+\item eCDFs are functions, not scalars
+\item Solution: use the maximum discrepancy between the two eCDFs:$$T_{KS} = max | \widehat{F}_T(Y_i) - \widehat{F}_C(Y_i) |$$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{eCDFs by treatment status and test statistic}
+
+	\begin{figure}
+	\includegraphics[scale=0.8]{./lecture_includes/ecdf.pdf}     
+	\end{figure}
+	
+\end{frame}
+
+
+
+
+\begin{frame}{Small vs. Modest Sample Sizes are non-trivial}
+
+Computing the exact randomization distribution is not always feasible (Wolfram Alpha)
+\begin{itemize}
+\item $N=6$ and $N_T=3$ gives us 20 assignment vectors
+\item $N=8$ and $N_T=4$ gives us 70 assignment vectors
+\item $N=10$ and $N_T=5$ gives us 252 assignment vectors
+\item $N=20$ and $N_T=10$ gives us 184,756 assignment vectors
+\item $N=50$ and $N_T=25$ gives us 1.2641061$\times 10^{14}$ assignment vectors
+\end{itemize}
+Exact $p$ calculations are not realistic bc the number of assignments explodes at even modest size
+
+\end{frame}
+
+
+
+\begin{frame}{Approximate p-values}
+
+These have been ``exact'' tests when they use every possible combination of $D$ 
+	\begin{itemize}
+	\item When you can't use every combination, then you can get \emph{approximate} p-values from a simulation (TBD)
+	\item With a rejection threshold of $\alpha$ (e.g., 0.05), randomization inference test will falsely reject less than 100$\times \alpha$\% of the time
+	\end{itemize}
+
+\end{frame}
+\begin{frame}{Approximate $p$ values}
+
+\begin{itemize}
+\item Use simulation to get approximate $p$-values
+	\begin{itemize}
+	\item Take $K$ samples from the treatment assignment space
+	\item Calculate the randomization distribution in the $K$ samples
+	\item Tests no longer exact, but bias is under your control (increase $K$)
+	\end{itemize}
+\item Imbens and Rubin show that $p$ values converge to stable $p$ values pretty quickly (in their example after 1000 replications)
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Thornton's experiment}
+
+\begin{table}[htbp]\small\index{starrandom}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+ATE & Iteration & Rank & $p$ & no. trials \\
+\midrule
+0.45 	 & 1 & 1 & 0.01 & 100\\
+0.45 	 & 1 & 1 & 0.002 & 500\\
+0.45 	 & 1 & 1 & 0.001 & 1000\\
+\bottomrule
+\end{tabular}
+\caption{Estimated $p$-value using different number of trials.}
+\label{tab:starrandom}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Including covariate information}
+
+\begin{itemize}
+\item Let $X_i$ be a pretreatment measure of the outcome
+\item One way is to use this as a gain score: $Y^{d'} = Y_i^d - X_i$
+\item Causal effects are the same $Y^{1i} - Y^{0i} = Y_i^1 - Y_i^0$
+\item But the test statistic is different:
+\begin{eqnarray*}
+T_{gain} = \bigg | ( \overline{Y}_T - \overline{Y}_C ) - (\overline{X}_T - \overline{X}_C ) \bigg |
+\end{eqnarray*}
+\item If $X_i$ is strongly predictive of $Y_i^0$, then this could have higher power
+	\begin{itemize}
+	\item $Y_{gain}$ will have lower variance under the null
+	\item This makes it easier to detect smaller effects
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Regression in RI}
+
+\begin{itemize}
+\item We can extend this to use covariates in more complicated ways
+\item For instance, we can use an OLS regression:
+\begin{eqnarray*}
+Y_i = \alpha + \delta D_i + \beta X_i +  \varepsilon
+\end{eqnarray*}
+\item Then our test statistic could be $T_{OLS} = \widehat{\delta}$
+\item RI is justified even if the model is wrong
+	\begin{itemize}
+	\item OLS is just another way to generate a test statistic
+	\item The more the model is ``right'' (read: predictive of $Y_i^0$), the higher the power $T_{OLS}$ will have
+	\end{itemize}
+\item See if you can do this in Thornton's dataset using the loops and saving the OLS coefficient (or just use \texttt{ritest})
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Concluding remarks}
+
+\begin{itemize}
+\item Randomization inference is very common, particularly useful you don't want to make strong assumptions (parametric free)
+\item We'll now explore its use in a popular observational method -- the synthetic control
+\end{itemize}
+
+\end{frame}
 
 
 
 \end{document}
+\begin{frame}{Angrist and Imbens and the 1990s}
+
+  \begin{itemize}
+    \item Angrist writes a dissertation using randomized instruments (Vietnam draft), goes to Harvard, overlaps with Imbens for a year, they are mentored by Gary Chamberlain, work with Don Rubin, write their famous LATE paper
+    \item Chamberlain recommends potential outcomes framework over a different one that had been used at that time (latent index) and that seems to make the work more generally attractive (like to Rubin)
+    \item Let's spend twenty minutes listening to them
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Angrist, Imbens and Harvard}
+
+
+  Josh Angrist on the negative results at the time (10 min)
+
+  \url{https://youtu.be/ApNtXe-JDfA?t=1885}
+
+
+  \bigskip
+  Guido Imbens on the reception of their work (10 min)
+
+  \url{https://youtu.be/cm8V65AS5iU?t=799}
+
+\end{frame}
