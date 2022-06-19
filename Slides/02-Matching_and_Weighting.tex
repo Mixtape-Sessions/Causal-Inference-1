@@ -56,55 +56,38 @@
 \begin{frame}{Parameters of interest}
 
 \begin{itemize}
-	\item We've discussed several important causal effects we may care about:
-		\begin{itemize}
-		\item Average Treatment Effects -- most external validity
-		\item Average Treatment on the Treated -- impact on just the treated group
-		\item Local Average Treatment Effects -- impact only on the subpopulation who complies
-		\end{itemize}
-	\item RDD and IV can identify the LATE 
-	\item DD and synth can identify ATT
-	\item What can estimate the ATE?
+	\item RCTs can recover the ATE
+	\item DD and synth can identify the ATT
+	\item Local average treatment effect can be identified using RDD and IV
+	\item Can anything else recover the ATE and if so under what conditions?
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{History of non-experimental matching}
 
-\begin{itemize}
+\begin{frame}{Defined causal parameters}
 
-	\item A set of techniques for estimating ATE emerged in the 20th century from statistics and epidemiology
-	\item Largely driven by smoking's connection to lung cancer
-	\item Weighting methods emerged to estimate ATE from non-experimental data
-	\item Interestingly, these methods would evolve into the contemporary suite of estimators I call matching but it includes weighting too
+Recall our definition of the ATE in terms of population mean differences in potential outcomes: $$E[Y^1] - E[Y^0]$$
 
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{What is matching?}
-
-Define the ATE: $$E[Y^1] - E[Y^0]$$
-
-and its sample analog: $$\frac{1}{N} \sum_i \bigg [ Y_i^1 - Y_i^0 \bigg ]$$
+We work with samples, so we express the ATE sample analog: $$\frac{1}{N} \sum_i \bigg [ Y_i^1 - Y_i^0 \bigg ]$$
 
 
 \end{frame}
 
-\begin{frame}{What is matching?}
+\begin{frame}{Defined causal parameters}
 
-Estimator:
+Our ATE estimator is a weighted average of the ATT and the ATU:
 
 $$\widehat{\delta}^{ATE} = \frac{N_T}{N}\  \widehat{\delta}^{ATT} + \frac{N_C}{N}\  \widehat{\delta}^{ATU}$$
 
 
-where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_i^0 \bigg ]$ and $\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
+where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_i^0 \bigg ]$;
+$\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
 
 
 \pause\bigskip~\bigskip
-What is $\widehat{Y}^0_i$ for the treatment group?  It's an \textbf{estimated} counterfactual.  And this is its estimated value: 
+What is $\widehat{Y}^0_i$ for the treatment group?  It's an \textbf{estimate} of the \textbf{missing} counterfactual.  And this is its estimated value: 
 $$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
 
 \begin{itemize}
@@ -113,22 +96,76 @@ $$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
 
 \end{frame}
 
-\begin{frame}{What is matching?}
+\begin{frame}{Estimating missing counterfactuals}
 
 $$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
 
 \bigskip
-We are estimating counterfactuals as \textbf{weighted} averages over outcomes from the other group (e.g., control)
+We will be estimating counterfactuals as \textbf{weighted} averages over outcomes from the other group (e.g., control) by incorporating observable covariates
 
 \begin{itemize}
-  \item Basically, no matter how fancy we get, matching is really always this form
+  \item Matching and weighting methods will correct for relevant differences in observables, not just to do it, but because it closes the backdoor paths necessary for conditional independence to hold
   \item Estimators differ in how the weights, $w_{ij}$, are calculated
-  \item Part of our goal is \textbf{balance} covariates between treatment and control group
+  \item Large part of the goal becomes \textbf{balance} on the conditioning set of covariates between treatment and control group needed to satisfy the backdoor criterion
 \end{itemize}
 
 \end{frame}
 
-\subsection{Stratification}
+\subsection{Simple weighting}
+
+\begin{frame}{Big picture}
+
+\begin{itemize}
+\item We are going to use weighting and matching methods to adjust for observable differences between treatment and control groups
+\item Personal philosophy: this \textbf{must be driven} by model like reasoning as this only has any hope if the backdoor criterion holds
+\item Personal observation: given the lack of comfort people have with modeling in general, it's not a good sign when you see them then use matching methods
+\item Let's define the terms first: what is a covariate?
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Observable Covariate}
+	
+	
+	\begin{block}{Definition: Predetermined Covariates}
+	Variable $X$ is a predetermined covariate if for each individual $i$, the value of $X_i$ does not depend on treatment status.
+	\end{block}
+	
+	\begin{itemize}
+	\item Does not imply $X$ and treatment status are independent 
+	\item Sometimes covariates do not change over time, but doesn't have to be 
+	\item Colliders are not covariates; anything the treatment can change is not a covariate (``bad controls'', Angrist and Pischke MHE)
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}{Adjustment for Observables}
+	
+	\begin{itemize}
+	\item Simple weighting methods (e.g., subclassification)
+	\item Exact matching methods (e.g., nearest neighbors)
+	\item Approximate matching methods (e.g., propensity scores)
+	\item Hybrid matching methods (e.g., coarsened exact matching)
+	\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{History of non-experimental matching}
+
+\begin{itemize}
+
+	\item A set of techniques for estimating ATE emerged in the 20th century from statistics and epidemiology, largely driven by public health concerns about smoking's connection to lung cancer
+	\item ``Weighting'' methods to correct for covariate imbalance were developed to estimate ATE from non-experimental data
+	\item In time these evolved into matching, and while conceptually they seem distinct, they are very similar
+	\item Huge area, and it never really took off in economics despite some initial promise (Dehejia and Wahba 1999; 2002), but if you take Causal Inference Part 2, you'll see that the principles are there in difference-in-differences and synthetic control
+
+
+\end{itemize}
+
+\end{frame}
+
 
 \begin{frame}{Smoking thought experiment}
 
@@ -212,9 +249,9 @@ Other criticisms came from giants like Joseph Berkson, Jerzy Neyman and Ronald F
 
 \begin{frame}{Fisher's confounding theory}
 		\begin{itemize}
-		\item Fisher, equally famous as a geneticist, argued from logic, statistics and genetic evidence for a hypothetical confounding genome, $Z$, and therefore smokers and non-smokers were not exchangeable (violation of independence assumption)
-		\item Other studies showed that cigarette smokers and non-smokers were different on observables -- more extraverted than non-smokers and pipe smokers, differed in age, differed in income, differed in education, etc.
-		\item (FWIW Fisher was a chain smoking pipe smoker, he died of cancer, and he was a paid expert witness for the tobacco industry)
+		\item  Fisher was a chain smoking pipe smoker, he died of cancer, and he was a paid expert witness for the tobacco industry
+		\item He was also equally famous as a geneticist and arguing from logic, statistics and genetic evidence proposed a hypothetical confounding genome, $Z$, which introduced selection bias into contrasts of smokers and non-smokers (``perfect doctor'')
+		\item There was support for this:  studies showed that cigarette smokers and non-smokers were different on observables -- more extraverted than non-smokers and pipe smokers, differed in age, differed in income, differed in education, etc.
 		\end{itemize}
 \end{frame}
 
@@ -256,11 +293,11 @@ Other criticisms came from giants like Joseph Berkson, Jerzy Neyman and Ronald F
 		\end{center}
 	\end{table}
 	
-Are cigars more dangerous than cigarettes?  Are cigarettes safe?
+Cigars in these data had much higher mortality rates in all three countries than non-smokers, but even cigarette smokers.  Cigarette smokers in Canada have same mortality rates as non-smokers. Strange associations to us today, so imagine back then when the smoking-cancer hypothesis was not settled
 	
 \end{frame}
 
-\begin{frame}{Non-smokers and smokers differ in mortality but also age}
+\begin{frame}{Non-smokers and smokers differ in age}
 	
 
 
@@ -296,14 +333,14 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
   Covariates are \emph{not balanced} -- their mean values differ for treatment and control group. 
 
   \bigskip 
-  \textbf{Option 1:}
+  \textbf{Option 1: Strata}
   \begin{itemize}
-    \item Subclassification (also called stratification) compares mortality rates across the different smoking groups \emph{within} each age group 
+    \item Compare mortality rates across the different smoking groups but \emph{within} each age group 
     \item Compare within covariate strata and then combine differences to neutralize observed confounders
   \end{itemize}
 
   \bigskip 
-  \textbf{Option 2:}
+  \textbf{Option 2: Weights}
   \begin{itemize}
     \item Weight the data so that covariates are balanced, then compare mortality across treatment and control
     \item Which weights?
@@ -313,12 +350,13 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 \begin{frame}{Weighting the data}
 
   Divide the smoking group samples into age groups:
-  \begin{itemize}
-		\item For each smoking group sample, calculate the mortality rates for that age group
-		\item Construct probability weights: the proportion of each smoking group sample within a given age group
-		\item For each smoking group, compute the weighted averages of the age groups mortality rates using the probability weights
-		\item This will oddly enough balance the observed covariate, in this case age group, between treatment and control
-  \end{itemize}
+  \begin{enumerate}
+		\item Calculate mortality rates separately for each age group \emph{by treatment and control separately}
+		\item Construct ``probability weights'': the proportion of each smoking group sample within a given age group
+		\item For treatment and control group, compute the weighted averages of the age groups mortality rates using the probability weights
+  \end{enumerate}
+This interestingly will balance the observed covariate, age, between treatment and control
+
 
 \end{frame}
 
@@ -351,8 +389,8 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 	\begin{flalign*}
     \only<1-2>{&\text{Question: What is the average death rate for pipe smokers?}&}\\
     \only<2-2>{&15\cdot\left(\frac{11}{40}\right)+35\cdot\left(\frac{13}{40}\right)+50\cdot\left(\frac{16}{40}\right)=35.5} \\
-    \only<3-4>{&\text{Question: What would the average mortality rate be for pipe smokers}} \\ 
-    \only<3-4>{&\text{if they had the same age distribution as the non-smokers?}}\\
+    \only<3-4>{&\text{Counterfactual question: What would the average mortality rate be for }} \\ 
+    \only<3-4>{&\text{pipe smokers if they had the same age distribution as the non-smokers?}}\\
     \only<4-4>{&15\cdot\left(\frac{29}{40}\right)+35\cdot\left(\frac{9}{40}\right)+50\cdot\left(\frac{2}{40}\right)=21.2}
 	\end{flalign*}
 
@@ -381,39 +419,14 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 
 \end{frame}
 
-\begin{frame}{Observable Covariate}
-	
-	We are going to use matching methods to adjust for observable differences between these three groups
-	
-	\begin{block}{Definition: Predetermined Covariates}
-	Variable $X$ is a predetermined covariate if for each individual $i$, the value of $X_i$ does not depend on treatment status.
-	\end{block}
-	
-	\begin{itemize}
-	\item Does not imply $X$ and treatment status are independent 
-	\item Sometimes covariates do not change over time, but doesn't have to be 
-	\item Beware of colliders or ``bad controls'' 
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{Adjustment for Observables}
-	
-	\begin{itemize}
-	\item Simple weighting methods (e.g., subclassification)
-	\item Exact matching methods (e.g., nearest neighbors)
-	\item Approximate matching methods (e.g., propensity scores)
-	\end{itemize}
-\end{frame}
 
 \begin{frame}{Assumptions, data and statistics}
 
+We need three things to estimate a causal effect
 \begin{itemize}
-\item We need three things, and really only three things, to estimate a causal effect
 \item \textbf{Assumptions}: what must we assume is true so that our models work with data?
 \item \textbf{Data}: what data with what covariates and outcomes do we need for this project?
-\item \textbf{Statistical models}: sometimes called ``estimators'' which crank data into estimates which equal the causal effect?
-\item Many moving parts with many players 
+\item \textbf{Statistical models}: sometimes called ``estimators'' which are the calculators turning data into unbiased estimates of treatment effects (or not!)
 \end{itemize}
 
 \end{frame}
@@ -431,13 +444,85 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Covariate distribution}
+
+\begin{itemize}
+\item Just like independence implies balance on potential outcomes, it also implies balance on covariates which is called ``common support''
+\item We saw this in our Thornton regressions: cash vouchers were not associated with being male, one's age, etc.
+\item If we have balance on potential outcomes, that's all we need but balance on covariates is often used to provide some evidence the randomization was done well
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Violations of independence}
 
 \begin{itemize}
-\item Problem with smoking and cancer was smoking wasn't \emph{randomly assigned}
-\item Since it wasn't randomly assigned, smoking was not ``independent'' of potential outcomes
-\item When a treatment is ``dependent'' on potential outcomes, it means people smoke because they expect something is better when they smoke ($Y^1$) than when they don't ($Y^0$)
-\item So what?  Means you can't compare naively -- you have to adjust for whatever is needed to recover ``conditional independence''
+\item Problem with smoking and cancer was smoking wasn't \emph{randomly assigned} -- it was chosen by the ``perfect doctor'' (i.e., self selection into smoking based on factors related to potential outcomes)
+\item When a treatment is ``dependent'' on potential outcomes, it means people smoke because they expect something is better when they smoke ($Y^1$) than when they don't ($Y^0$) introducing selection bias and potentially heterogenous treatment effect bias
+\item Naive comparisons can be deeply misleading -- covariate adjustment can resolve this if ``conditional independence'' happens in the data
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}[plain]
+
+	\begin{block}{Identifying assumption I: Conditional independence}
+	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of observable covariates such that after controlling for these covariates, treatment assignment is \emph{independent of potential outcomes}.
+	\end{block}
+	
+	\begin{itemize}
+	\item Conditional on $X$, treatment assignment is `as good as random'. 
+	\item `As good as random' is English for ``independent of potential outcomes'' potential outcomes jargon
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+
+	\begin{block}{Identifying assumption II: Common support}
+	For ranges of $X$, there is a positive probability of being both treated and untreated
+	\end{block}
+	
+	\begin{itemize}
+	\item Assumption requires that there are units in both treatment and control for the range of $X$
+	\item Common support ensures we can find similar enough donors in the control pool
+	\item We can't check for balance on potential outcomes, because of switching equation eliminating counterfactuals, but we can check for common support 
+	\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Big picture of conditional independence}
+
+\begin{itemize}
+\item You use these methods if you are confident in your DAG, \textbf{and} there exists a conditioning strategy that satisfies the backdoor criterion
+\item If you literally refuse to commit to a model, theory of DGP or DAG, then you cannot justify matching
+\item Matching is for experts -- not because it's hard, but because experts are often the ones who \emph{are willing} to write down a DAG; it rewards domain specific human capital 
+\item But remember the audience and the progression away from models that Card (2014) mentioned \dots
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Independence breaks down under perfect doctor reasoning}
+
+\begin{itemize}
+\item Independence was violated if the treatment was assigned \emph{because} we expected things to improve or not (``perfect doctor'' reasoning)
+\item If you take an action because you think it helps and others don't take the action because they don't or can't, then it is a violation of independence probably
+\item Keep telling yourself this phrase: ``Firms don't flip coins to set prices''. They set prices based on profit maximization or cost minimization or equivalent goals
+\item Selection bias then will be baked into those non-experimental observations and thus can't be relied on without causal inference adjustments
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Conditional independence}
+
+\begin{itemize}
+\item DAG reasoning can be a little unhelpful at times once we try to articulate the conditional independence assumption, so hear me out:
+\item Firms don't flip coins to set prices, but is there \emph{some} random price setting conditional on observable factors (which only employees, managers and executives could possibly know about)? 
+\item If they flip coins conditional on something, then that's ``conditional independence''. See -- it's a strong belief.  
+\item Conditional independence means that once we adjust for covariates, all remaining variation in treatment assignment had nothing to do with profit maximization or potential outcomes more generally but rather was as good as random
 \end{itemize}
 
 \end{frame}
@@ -451,20 +536,24 @@ Identification assumptions:
   \end{enumerate}
 
 \bigskip
-Comparing two individuals \emph{who have the same values of} $X$, treatment is independent of outcomes
+Comparing two individuals \emph{who have the same values of} $X$, treatment is independent of potential outcomes. 
+
+\bigskip
+
+The second term implies we have people in treatment and control for every strata of $X$
 \end{frame}
 
 
-\begin{frame}{Implications of independence}
+\begin{frame}{Implications of assumptions}
 
 
 	\begin{itemize}
-	\item Assumption 1 lets you plug $Y$ for $Y^j$
+	\item Assumption 1 lets you plug $Y$ for $Y^j$ with the switching equation
 		\begin{eqnarray*}
 		E[Y^1-Y^0|X] &=& E[Y^1 - Y^0 | X,D=1] \\
 		&=&E[Y|X,D=1] - E[Y|X,D=0]
 		\end{eqnarray*}
-	\item Assumption 2 lets you weight
+	\item Assumption 2 lets you properly weight over the covariate distribution
 		\begin{eqnarray*}
 		\delta_{ATE} &=&E[Y^1-Y^0] = E\bigg[ E[Y^1 - Y^0 \ \vert \ X] \bigg] \\
 		&=& \int E[Y^1 - Y^0 |X,D=1] dPr(X) \\
@@ -474,42 +563,12 @@ Comparing two individuals \emph{who have the same values of} $X$, treatment is i
 
 \end{frame}
 
-\begin{frame}{Independence breaks down}
 
-\begin{itemize}
-\item Independence is violated, though, if the treatment was assigned \emph{because} we expected things to improve or not
-\item That's because the causal effect is $\delta_i = Y_i^1 - Y_i^0$
-\item If you take an action because you think $\delta_i > 0$ and others don't take the action because $\delta_i < 0$, then you are admitting independence doesn't hold
-\item Firms don't ordinarily flip coins to set prices -- they set prices based on profit maximization 
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Conditional independence}
-
-\begin{itemize}
-\item But, if there is \emph{some} random price setting conditional on observable factors (which only employees, managers and executives could possibly know about), then we may be able to defend ``conditional independence''
-\item Conditional independence means that once we adjust for covariates, all remaining variation in treatment assignment had nothing to do with profit maximization or potential outcomes more generally
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Implications of assumptions}
-
-Conditional independence lets us do two things:
-		\begin{eqnarray*}
-		\delta_{ATT} &=& E\bigg[ E[Y^1-Y^0 | D=1,X] \bigg] \\
-		&=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
-		\end{eqnarray*}
-\end{frame}
 
 
 \begin{frame}{Can we defend any conditional independence?}
 
-\begin{itemize}
-	\item Maybe prices are conditionally independent of $Y^0$ but not $Y^1$
-	\item Technically a weaker assumption, but also means we can't estimate ATE
-\end{itemize}
+Other versions of conditional independence (and this shows up in diff-in-diff too)
 
 \begin{enumerate}
   \item $Y^0 \independent{D} | X$ 
@@ -517,12 +576,21 @@ Conditional independence lets us do two things:
 \end{enumerate}
 
 \bigskip
-We can then estimate the ATT.
+Notice how there is only one potential outcome in the independence equation.  That's okay.  We can still then estimate the ATT (just not the ATE).
 
 \end{frame}
 
+\begin{frame}{ATT}
 
-\begin{frame}{Two parameter estimates}
+Conditional independence of $D$ with respect to $Y^0$ conditional on $X$, but not $Y^1$, lets us recover the ATT with weights and the realized data
+		\begin{eqnarray*}
+		\delta_{ATT} &=& E\bigg[ E[Y^1-Y^0 | D=1,X] \bigg] \\
+		&=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
+		\end{eqnarray*}
+\end{frame}
+
+
+\begin{frame}{Summarizing}
 
 
 Weighted averages under either assumption:
@@ -530,9 +598,11 @@ Weighted averages under either assumption:
 		\delta_{ATE} &=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X) \\
 		\delta_{ATT} &=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
 		\end{eqnarray*}
+ATE needs independence with respect to both potential outcomes; ATT only needs it with respect to $Y^0$. 		
+		
 \end{frame}
 
-\begin{frame}{Subclassification by Age ($K=2$)}
+\begin{frame}{Weighting by Age ($K=2$)}
 	
 	\begin{table}\centering
 		\begin{center}
@@ -572,7 +642,7 @@ Weighted averages under either assumption:
 		
  
 
-\begin{frame}[shrink=20,plain]{Subclassification by Age and Gender ($K=4$)}
+\begin{frame}[shrink=20,plain]{Weighting by Age and Gender ($K=4$)}
 	
 	\begin{table}\centering
 		\begin{center}
@@ -604,7 +674,7 @@ Weighted averages under either assumption:
 
 	\begin{flalign*}
 		    \only<1-2>{&\text{Problem: What is $\widehat{\delta_{ATE}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k}{N}\right)$?}&}\\
-		    \only<2-2>{&\text{Not identified!}} \\
+		    \only<2-2>{&\text{Not identified! What went wrong?}} \\
 		    \only<3-4>{&\text{Question: What is $\widehat{\delta_{ATT}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k_T}{N_T}\right)$?}} \\ 
 		    \only<4-4>{&4\cdot\left(\frac{3}{10}\right)+5\cdot\left(\frac{3}{10}\right)+6\cdot\left(\frac{4}{10}\right)=5.1}
 	\end{flalign*}
@@ -614,7 +684,7 @@ Weighted averages under either assumption:
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item Subclassification may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
+	\item Simple weighting methods may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
 	\item Assume we have $k$ covariates and we divide each into 3 coarse categories (e.g., age: young, middle age, old; income: low, medium, high, etc.)
 	\item The number of sub classification cells (or ``strata'') is $3^k$. For $k=10$, then it's $3^{10}=59,049$
 	\end{itemize}
@@ -623,13 +693,26 @@ Weighted averages under either assumption:
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both.  If so, we cannot use sub classification.
-	\item Subclassification is also a problem if the cells are ``too coarse''.  We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
+	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both.  If so, we cannot use this kind of simple weighting (e.g., subclassification, stratification).
+	\item Simple weighting methods is also a problem if the cells are ``too coarse''.  
+	\item We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
+	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS doesn't tell us it is just doing various extrapolations
 	\end{itemize}
 \end{frame}	
 
 
 \subsection{Nearest neighbor matching}
+
+\begin{frame}{To Look Like Someone Else}
+
+\begin{itemize}
+\item Not sure of the exact history of matching, but the idea is super intuitive
+\item What if we could make synthetic xerox copies of ourselves in counterfactual states?
+\item Matching is to basically find units in the control group, or treatment group, that ``look like me'' \textbf{on observables}
+\item But remember -- it's driven by DAG reasoning; you only need to look minimally ``like'' the other person to satisfy backdoor
+\end{itemize}
+
+\end{frame}
 
 \begin{frame}{Nearest Neighbor Matching}
 	
@@ -723,15 +806,6 @@ Weighted averages under either assumption:
 
 \end{frame}
 
-\begin{frame}{Training Effect Estimates}
-  Difference in average earnings between trainees and non-trainees:
-
-  \begin{itemize}
-    \item Before matching $$16,426 - 20,724 = -4,298$$
-    \item After matching $$16,426 - 13,982 = 2,444$$
-  \end{itemize}
-  
-\end{frame}
 
 {
 \setbeamercolor{background canvas}{bg=}
@@ -884,9 +958,9 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 
   \item If the matching discrepancies are large, so we are worried about potential biases, we can apply bias correction techniques
 
-  \item Partial solution: propensity score methods (coming soon\dots)
 	\end{enumerate}
 \end{frame}
+
 
 \begin{frame}{Matching with bias correction}
 	
@@ -899,6 +973,8 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 	\item Under some conditions, the bias correction eliminates the bias of the matching estimator without affecting the variance.
 	\end{itemize}
 \end{frame}
+
+
 
 
 \begin{frame}[plain,shrink=0]
@@ -979,7 +1055,6 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 		\begin{eqnarray*}
 		\widehat{var}(Y_i | X_i,D_i=0) = \frac{(Y_i-Y_j)^2}{2}
 		\end{eqnarray*}is an unbiased estimator of $\widehat{var}(\varepsilon_i | X_i,D_i=0))$
-	\item The bootstrap doesn't work!
 	\end{itemize}
 \end{frame}
 	
@@ -1020,49 +1095,6 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Identifying assumptions}
-
-\begin{itemize}
-\item We need two assumptions for propensity scores to help us identify causal effects
-	\begin{enumerate}
-	\item Conditional independence, or unconfoundedness
-	\item Common support or overlap
-	\end{enumerate}
-\item The first is based on state of the art and institutional details sufficient to warrant such a judgment call, making propensity scores arguably more, not less, advanced
-\item The latter is testable
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}[plain]
-
-	\begin{block}{Identifying assumption I: Conditional independence}
-	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of observable covariates such that after controlling for these covariates, treatment assignment is \emph{independent of potential outcomes}.
-	\end{block}
-	
-	\begin{itemize}
-	\item Conditional on $X$, treatment assignment is `as good as random'. 
-	\item `As good as random' is English for ``independent of potential outcomes'' potential outcomes jargon
-	\item Also sometimes called `ignorable treatment assignment', `unconfoundedness'', `selection on observables', `exogeneity', `conditional zero mean'
-	\item CIA is assumed, \textbf{not tested}, bc potential outcomes are \emph{missing}. Consult your doctor
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[plain]
-
-	\begin{block}{Identifying assumption II: Common support}
-	For ranges of $X$, there is a positive probability of being both treated and untreated
-	\end{block}
-	
-	\begin{itemize}
-	\item We'll talk about the propensity score in just a second; for now this assumption is only about $X$
-	\item Assumption requires that there are units in both treatment and control for the range of propensity score
-	\item Recall, RDD did not have common support so relied on extrapolation sensitive to functional form assumptions
-	\item Common support ensures we can find similar enough donors in the control pool
-	\item Unlike CIA, common support is \textbf{testable}
-	\end{itemize}
-\end{frame}
-
 
 
 \begin{frame}{Formal Definition}
@@ -1094,7 +1126,8 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 		\begin{itemize}
 		\item Estimate the conditional probability of treatment using probit or logit model$$Pr(D_i=1|X_i) = F(\beta X_i)$$
 		\item Use the estimated coefficients to calculate the propensity score for each unit $i$$$\widehat{\rho}_i = \widehat{\beta} X_i$$
-		\item Propensity score is the predicted conditional probability of treatment, or the fitted value for each unit -- \emph{same thing}
+		\item Propensity score is the predicted conditional probability of treatment, or the fitted value for each unit -- it is the likelihood you'd be in the treatment group given your covariates
+		\item Frequentist probability in other words
 		\end{itemize}
 \end{frame}
 
@@ -1725,60 +1758,8 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \imageframe{./lecture_includes/dw_5.pdf}
 \imageframe{./lecture_includes/dw_6.pdf}
 
-\begin{frame}{Estimation in Stata}
-	
-	\begin{itemize}
-	\item I have written up code that will implement IPW on the DW data
-	\item It's nonparametric, so it doesn't use any packages
-	\item But you are welcome to try some packages, particularly the -\texttt{teffects}- command
-	\end{itemize}
-	
-\end{frame}
 
 
-
-\begin{frame}{Kernel matching}
-	
-	\begin{itemize}
-	\item Alternatively we can perform propensity score matching with a kernel-based method. 
-	\item Notice on the next slide that the estimate of the ATT switches sign relative to that produced by the NN matching algorithm
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Stata syntax}
-
-\lstinputlisting{./lecture_includes/score2.do} 
-\end{frame}
-
-
-\begin{frame}[plain]
-
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./lecture_includes/ps_output3.png}}%
-	\end{figure}
-
-
-\end{frame}
-
-\begin{frame}[plain]
-
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./lecture_includes/ps_output4.png}}%
-	\end{figure}
-
-
-\end{frame}
-
-\begin{frame}{Matchings vs. Propensity score}
-	
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./lecture_includes/abadie-imbens-2011.pdf}}%
-	\end{figure}
-
-
-
-\end{frame}
 
 
 \clearpage
@@ -1803,14 +1784,6 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \item It is vital you know you're data, if you're going to use these methods, which means understanding at a deep level the way in which selection (i.e., treatment assignment) works in your data
 \end{itemize}
 
-\end{frame}
-\begin{frame}{Beating a dead horse}
-
-\begin{itemize}
-	\item The propensity score can make groups comparable \textbf{but} only on the variables used to estimate the propensity score in the first place.  There is \textbf{NO} guarantee you are balancing on unobserved covariates.
-	\item If you know that there are important unobservable variables, you may need another tool.
-	\item Remember: randomization ensure that both observable and \textbf{unobservable} variables are balanced
-\end{itemize}
 \end{frame}
 
 
