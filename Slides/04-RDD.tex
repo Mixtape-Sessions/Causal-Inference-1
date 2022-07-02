@@ -48,11 +48,10 @@
 
 % ---- Content ----
 
-\section{Regression discontinuity designs}
-
-\subsection{Introduction}
+\section{Introducing Regression Discontinuity Design}
 
 
+\subsection{Basic background}
 
 
 
@@ -174,7 +173,6 @@ Help me understand the questions at the bottom of each picture by discussing wha
 
 
 
-\subsection{Rounding Stars Design Motivating Example}
 
 
 \begin{frame}{Examples of RDD}
@@ -346,9 +344,8 @@ Help me understand the questions at the bottom of each picture by discussing wha
 
 
 
-\section{Identification}
 
-\subsection{Basics}
+\subsection{Identification Basics}
 
 
 \begin{frame}{Some RDD jargon terms}
@@ -1469,7 +1466,134 @@ Why did density tests fail? Not enough power because you need to evaluate \emph{
 
 \end{frame}
 
-\section{Example}
+\section{Examples}
+
+\subsection{DWI and recidivism}
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_aer_fig}
+	\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Criminal deterrence}
+
+\begin{itemize}
+\item Becker 1968 asserted a downward sloping demand for crime through two channels:
+	\begin{enumerate}
+	\item Higher probability of arrest
+	\item Punishment conditional on arrest and conviction
+	\end{enumerate}
+\item Debates about whether these punishments work and how
+	\begin{enumerate}
+	\item Deterrence -- need variation in $p$ or punishment
+	\item Incapacitation -- Locking them up isn't deterrence and is expensive
+	\end{enumerate}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Evidence for deterrence}
+
+\begin{itemize}
+\item Difficult to disentangle deterrence from incapacitation
+\item Drago, et al. (2009) exploited a natural experiment in Italy from a collective pardon where those who were pardoned had to finish their old sentence plus anything new -- creating quasi-random variation in sentences for the same offnse (small deterrence effects)
+\item But few and far between -- let's consider Hansen (2015) who finds evidence for deterrence with drunk driving using RDD
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Background}
+
+\begin{itemize}
+\item US has a minimum age of drinking at age 21
+\item Earlier study showed that this was associated with higher mortality due to what appeared to be drunk driving traffic fatalities
+\item Washington DWI stops (n=512,964), running variable is blood alcohol content, cutoff is 0.08
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig1}
+	\caption{Punishments for repeat DWI offense (Hansen 2015)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig2}
+	\caption{Manipulation histogram along the running variable (Hansen 2015)}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_table1}
+	\caption{Placebos on exogenous demographics (Hansen 2015)}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig3}
+	\caption{Falsification figures on exogenous characteristics (Hansen 2015)}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_table2}
+	\caption{Evidence for deterrence on recidivism (Hansen 2015)}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig4}
+	\caption{Evidence for deterrence on recidivism (Hansen 2015)}
+	\end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}{Replicating pieces of Hansen's paper}
+
+\begin{itemize}
+\item Let's work through an example doing this
+\item In Code is a word document walking us through a set of exercises focusing on each of these figures and tables
+\item We'll extend it a little with robust RDD methods
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Concluding remarks}
+
+\begin{itemize}
+\item In many ways, it's a surprising method for being so popular and so powerful
+\item Be wary of all the subjective researcher biases that can creep in -- choosing $h$, choosing $p$, choosing kernels, choosing binned pictures
+\item You'll need to have strong visual effects is my experience to get buy in, which is why those issues are so critical
+\item Needs data, an open eye, and luck
+\end{itemize}
+
+\end{frame}
+
+
 
 \subsection{Close election design}
 
@@ -1622,128 +1746,180 @@ There are two fundamentally different views of the role of voters in a represent
 
 \end{frame}
 
-\subsection{DWI and recidivism}
 
-\begin{frame}
-
-	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_aer_fig}
-	\end{figure}
-\end{frame}
+\subsection{Fuzzy RDD}
 
 
-
-\begin{frame}{Criminal deterrence}
+\begin{frame}{Noncompliance}
 
 \begin{itemize}
-\item Becker 1968 asserted a downward sloping demand for crime through two channels:
-	\begin{enumerate}
-	\item Higher probability of arrest
-	\item Punishment conditional on arrest and conviction
-	\end{enumerate}
-\item Debates about whether these punishments work and how
-	\begin{enumerate}
-	\item Deterrence -- need variation in $p$ or punishment
-	\item Incapacitation -- Locking them up isn't deterrence and is expensive
-	\end{enumerate}
+		\item Fuzzy RDD is an approach taken when the treatment assignment was not entirely deterministic, implies overlap with selection bias
+		\item Given the treatment assignment probabilities were non zero below the threshold (and maybe less than 1 above), you need IV
+		\item Fuzzy RDD is in other words an instrumental variables design where the instrument is the cutoff and all earlier discussion about IV carries forward
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Evidence for deterrence}
+\begin{frame}{Probability of treatment jumps at discontinuity}
+	
+		\begin{block}{Probabilistic treatment assignment (i.e. ``fuzzy RDD'')}
+		The probability of receiving treatment changes discontinuously at the cutoff, $c_0$, but need not go from 0 to 1$$lim_{X_i\rightarrow{c_0}}Pr(D_i=1|X_i=c_0) \neq lim_{c_0 \leftarrow X_i} Pr(D_i=1 | X_i=c_0)$$Examples: Incentives to participate in some program may change discontinuously at the cutoff but are not powerful enough to move everyone from non participation to participation.  
+		\end{block}
+\end{frame}
 
-\begin{itemize}
-\item Difficult to disentangle deterrence from incapacitation
-\item Drago, et al. (2009) exploited a natural experiment in Italy from a collective pardon where those who were pardoned had to finish their old sentence plus anything new -- creating quasi-random variation in sentences for the same offnse (small deterrence effects)
-\item But few and far between -- let's consider Hansen (2015) who finds evidence for deterrence with drunk driving using RDD
-\end{itemize}
+\begin{frame}{Deterministic (sharp) vs. probabilistic (fuzzy)}
+
+	\begin{itemize}
+		\item In the sharp RDD, $D_i$ was \emph{determined} by $X_i\geq{c_0}$ 
+		\item In the fuzzy RDD, the \emph{conditional probability} of treatment \emph{jumps} at $c_0$. 
+		\item The relationship between the conditional probability of treatment and $X_i$ can be written as:$$P[D_i=1 | X_i] = g_0(X_i) + [g_1(X_i) - g_0(X_i)]Z_i$$where $Z_i=1$ if $(X_i\geq c_0)$ and $0$ otherwise.
+	\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Background}
+\begin{frame}{Visualization of identification strategy (i.e. smoothness)}
+	
+	\begin{itemize}
+	\item $E[Y^0|X]$ and $E[Y^1|X]$ for $D=0,1$ are the dashed/solid continuous functions
+	\item $E[Y|X]$ is the solid which jumps at $X=6$
+	\end{itemize}
+	
+\begin{tikzpicture}
 
-\begin{itemize}
-\item US has a minimum age of drinking at age 21
-\item Earlier study showed that this was associated with higher mortality due to what appeared to be drunk driving traffic fatalities
-\item Washington DWI stops (n=512,964), running variable is blood alcohol content, cutoff is 0.08
-\end{itemize}
+    % horizontal axes
+    \draw (0,0) -- (10,0) node[anchor=north] {};
+    \draw (0,5) -- (10,5) node[anchor=north] {};
 
+    %draw top ticks
+    \foreach \i in {0,...,10}
+        \draw[xshift=\i cm, yshift=-0.1cm] (0pt,2pt) -- (0pt,-1pt) node[below] {\i};
+
+    %draw bottom ticks
+    \foreach \i in {0,...,10}
+        \draw[yshift=5cm,xshift=\i cm] (0pt,2pt) -- (0pt,-1pt) node[above] {};
+
+    % vertical axes
+    \draw (0,0) -- (0,5) node[anchor=east] {};
+    \draw (10,0) -- (10,5) node[anchor=east] {};
+
+    %draw right ticks
+    \foreach \i in {0,...,5}
+        \draw[yshift=\i cm] (2pt,0pt) -- (-1pt,0pt) node[left] {\i};
+
+    %draw left ticks
+    \foreach \i in {0,...,5}
+        \draw[xshift=10cm,yshift=\i cm] (2pt,0pt) -- (-1pt,0pt) node[right] {};
+
+    %first solid curve
+    \draw (0,0) to [out=45,in=180] (3,2);
+    \draw (3,2) to [out=0,in=180] (6,1.5);
+    %second solid curve
+    \draw (6,3) to [out=0,in=200] (10,4.2);
+
+    %break
+    \draw (6,1.5) -- (6,3);
+
+    %first dashed curve
+    \draw[dashed] (0,0.3) to [out=45,in=200] (3,2.7);
+    \draw[dashed] (3,2.7) to [out=20,in=180] (6,3);
+    %second dashed curve
+    \draw[dashed] (6,1.5) to [out=0,in=210] (10,4.4);
+
+\end{tikzpicture}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Hoekstra flagship school}
 
 	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig1}
-	\caption{Punishments for repeat DWI offense (Hansen 2015)}
+	\includegraphics[scale=0.75]{./lecture_includes/rdd_hoekstra1.pdf}
 	\end{figure}
+
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Instrumental variables}
 
-	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig2}
-	\caption{Manipulation histogram along the running variable (Hansen 2015)}
-	\end{figure}
-\end{frame}
+	\begin{itemize}
+	\item As said, fuzzy designs are numerically equivalent and conceptually similar to IV
+		\begin{itemize}
+		\item \underline{``Reduced form'' Numerator}: ``jump'' in the regression of the outcome on the running variable, $X$.
+		\item \underline{``First stage'' Denominator}: ``jump'' in the regression of the treatment indicator on the running variable $X$.
+		\end{itemize}
+	\item Same IV assumptions, caveats about compliers vs. defiers, and statistical tests that we will discuss in next lecture with instrumental variables apply here -- e.g., check for weak instruments using $F$ test on instrument in first stage, etc.
+	\end{itemize}
 
-
-\begin{frame}
-
-	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_table1}
-	\caption{Placebos on exogenous demographics (Hansen 2015)}
-	\end{figure}
-\end{frame}
-
-
-\begin{frame}
-
-	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig3}
-	\caption{Falsification figures on exogenous characteristics (Hansen 2015)}
-	\end{figure}
-\end{frame}
-
-
-\begin{frame}
-
-	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_table2}
-	\caption{Evidence for deterrence on recidivism (Hansen 2015)}
-	\end{figure}
-\end{frame}
-
-
-\begin{frame}
-
-	\begin{figure}
-	\includegraphics[scale=0.35]{./lecture_includes/hansen_fig4}
-	\caption{Evidence for deterrence on recidivism (Hansen 2015)}
-	\end{figure}
 \end{frame}
 
 
 
-
-\begin{frame}{Replicating pieces of Hansen's paper}
-
-\begin{itemize}
-\item Let's work through an example doing this
-\item In Code is a word document walking us through a set of exercises focusing on each of these figures and tables
-\item We'll extend it a little with robust RDD methods
-\end{itemize}
-
+\begin{frame}{Wald estimator}
+	
+	\begin{block}{Wald estimator of treatment effect under Fuzzy RDD}
+	Average causal effect of the treatment is the Wald IV parameter$$\delta_{\text{Fuzzy RDD}} = \frac{ lim_{X \rightarrow c_0} E[Y | X = c_0] -  lim_{c_0 \leftarrow X} E[Y | X = c_0] } { lim_{X \rightarrow c_0} E[D | X = c_0] -  lim_{c_0 \leftarrow X} E[D | X = c_0] } $$
+	\end{block}
+	
 \end{frame}
-\begin{frame}{Concluding remarks}
 
-\begin{itemize}
-\item In many ways, it's a surprising method for being so popular and so powerful
-\item Be wary of all the subjective researcher biases that can creep in -- choosing $h$, choosing $p$, choosing kernels, choosing binned pictures
-\item You'll need to have strong visual effects is my experience to get buy in, which is why those issues are so critical
-\item Needs data, an open eye, and luck
-\end{itemize}
 
-\end{frame}
+\begin{frame}{RDD's Relationship to IV}
+	
+	\begin{itemize}
+	\item Center $X$ it's equal to zero at $c_0$ and define $Z=\textbf{1}(X\geq{0})$
+	\item The coefficient on $Z$ in a regression like$$\texttt{. reg Y Z X X2 X3}$$ is the reduced form discontinuity, and $$\texttt{. reg D Z X X2 X3}$$ is the first stage discontinuity
+	\item Ratio of discontinuities is estimate of $\delta_{\text{Fuzzy RDD}}$ 
+	\item Simple way to implement is IV$$\texttt{. ivregress 2sls Y (D=Z) X X2 X3}$$
+	\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{First stage relationship between $X$ and $D$}
+	
+	\begin{itemize}
+	\item One can use both $Z_i$ as well as the interaction terms as instruments for $D_i$.  
+	\item If one uses only $Z_i$ as IV, then the it is a ``just identified'' model which usually has good finite sample properties. 
+	\item In the just identified case, the first stage would be:$$D_i = \gamma_0 + \gamma_1X_i+\gamma_2X_i^2 + \dots + \gamma_pX_i^p + \pi{Z}_i + \varepsilon_{1i}$$where $\pi$ is the causal effect of $Z$ on the conditional probability of treatment.
+	\item The fuzzy RD reduced form is:$$Y_i = \mu + \kappa_1X_i + \kappa_2X_i^2 + \dots + \kappa_pX_i^p + \rho \pi Z_i + \varepsilon_{2i}$$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Fuzzy RDD with varying Treatment Effects - Second Stage}
+	
+	\begin{itemize}
+	\item As in the sharp RDD case one can allow the smooth function to be different on both sides of the discontinuity.
+	\item The second stage model with interaction terms would be the same as before:
+		\begin{eqnarray*}
+		Y_i &=& \alpha + \beta_{01}\tilde{x}_i + \beta_{02}\tilde{x}_i^2 + \dots + \beta_{0p}\tilde{x}_i^p \\
+		& & + \rho D_i + \beta_1^*D_i\tilde{x}_i + \beta_2^*D_i\tilde{x}_i^2 + \dots + \beta_p^*D_i\tilde{x}_i^p + \eta_i
+		\end{eqnarray*}
+	\item Where $\tilde{x}$ are now not only normalized with respect to $c_0$ but are also fitted values obtained from the first stage regression.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Fuzzy RDD with Varying Treatment Effects - First Stages}
+	
+	\begin{itemize}
+	\item Again one can use both $Z_i$ as well as the interaction terms as instruments for $D_i$
+	\item Only using $Z$ the estimated first stages would be:
+		\begin{eqnarray*}
+		D_i &=& \gamma_{00} + \gamma_{01}\tilde{X}_i + \gamma_{02}\tilde{X}_i^2 + \dots + \gamma_{0p}\tilde{X}_i^p \\
+		& & + \pi Z_i + \gamma_1^*\tilde{X}_iZ_i + \gamma_2^* \tilde{X}_i^2Z_i + \dots + \gamma_p^*Z_i + \varepsilon_{1i}
+		\end{eqnarray*}
+	\item We would also construct analogous first stages for $\tilde{X}_iD_i$, $\tilde{X}_i^2D_i$, $\dots$, $\tilde{X}_i^pD_i$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Limitations of the LATE}
+	
+	\begin{itemize}
+	\item Fuzzy RDD has assumptions of all standard IV framework (exclusion, independence, nonzero first stage, and monotonicity)
+	\item As with other binary IVs, the fuzzy RDD is estimating LATE: the local average treatment effect for the group of \emph{compliers}
+	\item In RDD, the compliers are those whose treatment status changed as we moved the value of $x_i$ from just to the left of $c_0$ to just to the right of $c_0$
+	\item Means we can use Medicare age cutoff to estimate the effect of public insurance on mortality (LATE) and still not know the effect of public insurance on mortality (ATE)
+	\end{itemize}
+\end{frame}
+
+
+
 
 
 
