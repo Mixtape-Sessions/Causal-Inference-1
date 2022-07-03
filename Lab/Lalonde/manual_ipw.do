@@ -80,6 +80,12 @@ su ht norm
 * ATT under non-normalized weights is $2,006
 * ATT under normalized weights is $1,806
 
+teffects ipw (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75 interaction1, logit), ate
+
+* ATT $1,610.58 but convergence not achieved
+
 capture log close
 exit
+
+
 
