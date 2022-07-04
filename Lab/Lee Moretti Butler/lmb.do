@@ -52,8 +52,10 @@ xi: reg democrat lagdemocrat##c.(demvoteshare_c demvoteshare_sq) if lagdemvotesh
 
 * Nonparametric histograms using cmogram
 ssc install cmogram
+cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) 
 cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) lfit
 cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) qfitci
+
 
 * Note kernel-weighted local regression is a smoothing method.
 lpoly score lagdemvoteshare if lagdemocrat == 0, nograph kernel(triangle) gen(x0 sdem0) bwidth(0.1)
@@ -69,6 +71,7 @@ rdrobust score lagdemvoteshare, kernel(epanechnikov) masspoints(off) p(2) c(0.5)
 rdrobust score lagdemvoteshare, masspoints(off) p(2) c(0.5)
 rdrobust score lagdemvoteshare, masspoints(off) p(3) c(0.5)
 rdrobust score lagdemvoteshare, masspoints(off) p(4) c(0.5)
+rdrobust score lagdemvoteshare, masspoints(off) p(5) c(0.5)
 
 * Data-driven RDD plots
 rdplot score lagdemvoteshare, p(0) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))
