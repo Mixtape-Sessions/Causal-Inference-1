@@ -54,8 +54,12 @@ use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
   * Poor propensity score match
   * hist pscore, by(treat)
 
-  * inverse propensity score weights
-  gen inv_ps_weight = treat * 1/pscore + (1-treat)*1/(1-pscore)
+  * inverse propensity score weights (ATT)
+  gen inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
+  * ATE
+  * gen inv_ps_weight = inv_ps_weight = treat / pscore + (1-treat) * 1/(1-pscore)
+  * ATC
+  * gen inv_ps_weight = treat * (1-pscore)/pscore - (1-treat)
 
   reg re78 i.treat [aw=inv_ps_weight], r
 

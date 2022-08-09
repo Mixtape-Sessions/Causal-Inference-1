@@ -133,8 +133,12 @@ predict pscore
 * Poor propensity score match
 * hist pscore, by(treat)
 
-* inverse propensity score weights
-gen inv_ps_weight = treat * 1/pscore + (1-treat)*1/(1-pscore)
+* inverse propensity score weights (ATT)
+gen inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
+* ATE
+* gen inv_ps_weight = inv_ps_weight = treat / pscore + (1-treat) * 1/(1-pscore)
+* ATC
+* gen inv_ps_weight = treat * (1-pscore)/pscore - (1-treat)
 ```
 
     Iteration 0:   log likelihood = -1011.0713  
@@ -176,20 +180,20 @@ gen inv_ps_weight = treat * 1/pscore + (1-treat)*1/(1-pscore)
 reg re78 i.treat [aw=inv_ps_weight], r
 ```
 
-    (sum of wgt is   2.2406e+04)
+    (sum of wgt is   3.8166e+02)
 
     Linear regression                               Number of obs     =     16,177
-                                                    F(1, 16175)       =      22.22
-                                                    Prob > F          =     0.0000
-                                                    R-squared         =     0.1048
-                                                    Root MSE          =       8878
+                                                    F(1, 16175)       =       5.02
+                                                    Prob > F          =     0.0251
+                                                    R-squared         =     0.0146
+                                                    Root MSE          =     6926.8
 
     ------------------------------------------------------------------------------
                  |               Robust
             re78 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
     -------------+----------------------------------------------------------------
-         1.treat |  -6784.387   1439.237    -4.71   0.000    -9605.451   -3963.322
-           _cons |   14722.91   78.40934   187.77   0.000     14569.22     14876.6
+         1.treat |   1689.309    753.911     2.24   0.025     211.5601    3167.058
+           _cons |   4659.834   485.3618     9.60   0.000     3708.472    5611.197
     ------------------------------------------------------------------------------
 
 2.  Note that the previous estimate was still negative. That is because
@@ -209,20 +213,20 @@ restore
 
     (15,807 observations deleted)
 
-    (sum of wgt is   7.6571e+02)
+    (sum of wgt is   2.8125e+02)
 
     Linear regression                               Number of obs     =        370
-                                                    F(1, 368)         =       3.26
-                                                    Prob > F          =     0.0718
-                                                    R-squared         =     0.0111
-                                                    Root MSE          =       6405
+                                                    F(1, 368)         =       8.55
+                                                    Prob > F          =     0.0037
+                                                    R-squared         =     0.0353
+                                                    Root MSE          =     6881.7
 
     ------------------------------------------------------------------------------
                  |               Robust
             re78 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
     -------------+----------------------------------------------------------------
-         1.treat |   1350.894   748.0434     1.81   0.072    -120.0822     2821.87
-           _cons |   4385.504   417.8374    10.50   0.000     3563.855    5207.152
+         1.treat |   2626.024   898.3118     2.92   0.004     859.5555    4392.492
+           _cons |   3648.313   563.0169     6.48   0.000     2541.179    4755.447
     ------------------------------------------------------------------------------
 
 3.  Using (i) 1:1 nearest-neighbor propensity-score matching with
