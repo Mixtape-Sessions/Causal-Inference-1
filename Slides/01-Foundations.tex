@@ -55,8 +55,7 @@
 
   \begin{itemize}
     \item Mixtape Sessions is an educational platform designed to ``democratize causal inference'' at all levels by helping bridging people with teachers
-    \item Causal inference, in my mind, is an \emph{applied} field as much as it is a \emph{technical} field and so learning more about it is to also learn about a range of topics not normally covered in an econometrics course
-    \item These include econometric estimation, detailed exposition of research design elements, but also coding practices, handling of data, more detailed dives on specific topics and even advice on publishing and communicating results
+    \item This workshop, and others like it, are important because of how important causal inference is and how in demand it has become and how erratically spread across disciplines the material is taught if at all
   \end{itemize}
 
 \end{frame}
@@ -65,8 +64,8 @@
 
   \begin{itemize}
 
-    \item Scott Cunningham, Professor of Economics, Baylor University (about me)
-    \item Not an econometrician; more of a run of the mill typical applied microeconomist
+    \item Scott Cunningham, Ben Williams Professor of Economics, Baylor University 
+    \item Not an econometrician; just your run of the mill typical applied microeconomist
     \item Workshop is about the science but also the art of causal inference (as is the broader Mixtape Sessions platform)
 
   \end{itemize}
@@ -86,7 +85,7 @@
 \begin{frame}{4-day Causal Inference Workshop}
 
   \begin{itemize}
-    \item Our workshop together is 4-days, 9am to 6pm PST, with 15 min breaks on the hour and a 1-hour lunch break at 12:00PM PST
+    \item Our workshop together is 4-days, 8am to 5pm CST, with 15 min breaks on the hour and a 1-hour lunch break at 12:00PM CST
     \item It will mix exposition, discussion of papers, coding exercises and discussion as best as I can
     \item It's essentially a semester's worth of material
   \end{itemize}
@@ -121,83 +120,29 @@
 
   \begin{enumerate}
     \item Foundations: Day 1
-    \item Graphs and Matching: Day 2
-    \item IV: Day 3
-    \item RDD: Day 4
+    \item Graphs and Selection on Observables: Day 2
+    \item Instrumental Variables: Day 3
+    \item Regression Discontinuity Design: Day 4
   \end{enumerate}
 
 \end{frame}
 
-\begin{frame}{What is causality}
 
-  \begin{quote}
-    ``Causation is something that makes a difference, and the difference it makes must be a difference from what would have happened without it.'' -- David Lewis (philosopher)
-  \end{quote}
-
-  \bigskip
-  Key idea $\rightarrow$ counterfactual. Counterfactuals are neither past nor future.  They are alternative histories created by thought experiments but we use them as framing devices to decipher causality in our timeline
-
-  \bigskip
-
-  Causal inference is also fundamentally practically because if we know causality, then we can also know not only the past, but also the future (policy)
-
-\end{frame}
-
-\begin{frame}{Different types of prediction}
-
-  \begin{columns}
-    \column{0.48\linewidth}
-    \centering
-    \textbf{Traditional prediction}
-    \begin{itemize}
-      \item Traditional prediction seeks to detect patterns in data and fit functional relationships between variables with a high degree of accuracy
-      \item ``Does this person have heart disease?'', ``How many books will I sell?''
-      \item It is not predictions of what effect a choice will have, though
-    \end{itemize}
-    \column{0.48\linewidth}
-    \centering
-    \textbf{Causal inference}
-    \begin{itemize}
-      \item Causal inference is also a type of prediction, but it's a prediction of a \emph{counterfactual} associated with a particular \emph{choice taken}
-      \item Causal inference takes that predicted (or imputed) counterfactual and constructs a causal effect that we hope tells us about a future in the event of a similar choice taken
-    \end{itemize}
-  \end{columns}
-\end{frame}
-
-
-\begin{frame}{Identification problem}
-  \centering
-  \includegraphics[scale=0.5,height=6.5cm, width=10cm]{./lecture_includes/prediction_causality.png}
-\end{frame}
+\subsection{Brief history of design-based causal inference}
 
 
 
-\subsection{History of causal inference}
-
-
-
-\begin{frame}{Lost credibility within empirical economics}
+\begin{frame}{Credibility Problem Within Empirical Economics}
 
   \begin{itemize}
-  \item Some history can help sometimes understand where all this comes from
   \item Tremendous turmoil in applied economics in late 1970s and early 1980s
   \item Several high profile papers found serious credibility problems in many applied studies, particularly those using macro data
-  \item This criticism eventually turned to labor economics (Lalonde 1985; Ashenfelter and Card 1985)
+  \item This criticism eventually turned to labor economics which was vulnerable because of its early adoption of rich micro data and microeconometric methods (``Pioneers take arrows in the back'')
   \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Job training}
-
-\begin{itemize}
-\item Bob Lalonde (1985) evaluated an RCT of a job training program; ground truth was known
-\item Cleverly dropped the control group and replaced it with CPS and PSID, re-analyzed the data
-\item Impossible to get the answer without specification searching (``peeking'', p-hacking)
-
-\end{itemize}
-
-\end{frame}
 
 \begin{frame}{Lewis 1986 book}
 
@@ -247,12 +192,12 @@
 	\item Minimum wage increases from neighboring state comparisons (Card and Krueger 1994)
 	\end{itemize}
 \item Steven Levitt seems instrumental in the late 1990s for bringing natural experiments and this labor economics approach to crime, more or less cleaning house; also very good abt sharing data and programs
+
 \end{itemize}
 
 \end{frame}
 
-
-\subsection{Design versus Model}
+\subsection{Design's Growing Influence}
 
 \begin{frame}{Theory's role}
 
@@ -356,6 +301,51 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 \subsection{Naive correlation}
 
+\begin{frame}{What is causality?}
+
+  \begin{quote}
+    ``Causation is something that makes a difference, and the difference it makes must be a difference from what would have happened without it.'' -- David Lewis (philosopher)
+  \end{quote}
+
+  \bigskip
+  Key idea $\rightarrow$ counterfactual. Counterfactuals are neither past nor future.  They are alternative histories created by thought experiments but we use them as framing devices to decipher causality in our timeline
+
+  \bigskip
+
+  Causal inference is also fundamentally practically because if we know causality, then we can also know not only the past, but also the future (policy)
+
+\end{frame}
+
+\begin{frame}{Different types of prediction}
+
+  \begin{columns}
+    \column{0.48\linewidth}
+    \centering
+    \textbf{Traditional prediction}
+    \begin{itemize}
+      \item Traditional prediction seeks to detect patterns in data and fit functional relationships between variables with a high degree of accuracy
+      \item ``Does this person have heart disease?'', ``How many books will I sell?''
+      \item It is not predictions of what effect a choice will have, though
+    \end{itemize}
+    \column{0.48\linewidth}
+    \centering
+    \textbf{Causal inference}
+    \begin{itemize}
+      \item Causal inference is also a type of prediction, but it's a prediction of a \emph{counterfactual} associated with a particular \emph{choice taken}
+      \item Causal inference takes that predicted (or imputed) counterfactual and constructs a causal effect that we hope tells us about a future in the event of a similar choice taken
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Identification problem}
+  \centering
+  \includegraphics[scale=0.5,height=6.5cm, width=10cm]{./lecture_includes/prediction_causality.png}
+\end{frame}
+
+
+
+
 \begin{frame}{Introduction to Counterfactuals}
 
   \begin{itemize}
@@ -410,6 +400,50 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 \end{frame}
 
 \subsection{Potential outcomes notation}
+
+\begin{frame}{What is causality?}
+
+  \begin{quote}
+    ``Causation is something that makes a difference, and the difference it makes must be a difference from what would have happened without it.'' -- David Lewis (philosopher)
+  \end{quote}
+
+  \bigskip
+  Key idea $\rightarrow$ counterfactual. Counterfactuals are neither past nor future.  They are alternative histories created by thought experiments but we use them as framing devices to decipher causality in our timeline
+
+  \bigskip
+
+  Causal inference is also fundamentally practically because if we know causality, then we can also know not only the past, but also the future (policy)
+
+\end{frame}
+
+\begin{frame}{Different types of prediction}
+
+  \begin{columns}
+    \column{0.48\linewidth}
+    \centering
+    \textbf{Traditional prediction}
+    \begin{itemize}
+      \item Traditional prediction seeks to detect patterns in data and fit functional relationships between variables with a high degree of accuracy
+      \item ``Does this person have heart disease?'', ``How many books will I sell?''
+      \item It is not predictions of what effect a choice will have, though
+    \end{itemize}
+    \column{0.48\linewidth}
+    \centering
+    \textbf{Causal inference}
+    \begin{itemize}
+      \item Causal inference is also a type of prediction, but it's a prediction of a \emph{counterfactual} associated with a particular \emph{choice taken}
+      \item Causal inference takes that predicted (or imputed) counterfactual and constructs a causal effect that we hope tells us about a future in the event of a similar choice taken
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Identification problem}
+  \centering
+  \includegraphics[scale=0.5,height=6.5cm, width=10cm]{./lecture_includes/prediction_causality.png}
+\end{frame}
+
+
 
 \begin{frame}{Potential outcomes}
 
@@ -523,10 +557,12 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
       &=&E[Y^1|D=1]-E[Y^0|D=1]
     \end{eqnarray*}
   \end{block}
-  Cannot be calculated because $Y^1_i$ and $Y^0_i$ do not exist \emph{for the same unit i} due to switching equation
+  Cannot be calculated because $Y^1_i$ and $Y^0_i$ do not exist \emph{for the same unit i} due to switching equation. 
 
 
 \end{frame}
+
+
 
 \begin{frame}{Conditional Average Treatment Effects}
 
