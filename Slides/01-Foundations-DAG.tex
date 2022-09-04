@@ -108,6 +108,17 @@
 
 \end{frame}
 
+\begin{frame}{Summarizing Value of DAGs}
+
+  \begin{enumerate}
+    \item Facilitates the task of designing identification strategy for estimating average causal effects
+    \item Facilitates the task of testing compatibility of the model with your data
+    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
+  \end{enumerate}
+
+\end{frame}
+
+
 \begin{frame}{Causal model}
 
   \begin{itemize}
@@ -185,32 +196,18 @@
 \end{frame}
 
 
-\begin{frame}{Summarizing Value of DAGs}
-
-  \begin{enumerate}
-    \item Facilitates the task of designing identification strategy for estimating average causal effects
-    \item Facilitates the task of testing compatibility of the model with your data
-    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
-  \end{enumerate}
-
-\end{frame}
 
 \begin{frame}{Creating DAGs}
 
-  \begin{itemize}
-    \item The DAG is a \emph{relevant} causal relationships describing the relationship between $D$ and $Y$
-    \item It will include:
-          \begin{itemize}
-            \item All direct causal effects among the \emph{relevant} variables in the graph
-            \item All common causes of any pair of \emph{relevant} variables in the graph
-          \end{itemize}
-    \item No need to model a dinosaur stepping on a bug causing in a million years some evolved created that impacted your decision to go to college
-    \item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
-    \item Sometimes called the data generating process.
-  \end{itemize}
+	\begin{itemize}
+	\item Your DAG should be a reasonable approximation of $D$ and $Y$ parents (confounders) and direct and indirect effects of $D$ on $Y$
+	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
+	\item Sometimes called the data generating process.
+	\end{itemize}
 
 \end{frame}
 
+% 	\item The DAG is a reasonable approximation of all common parents of $D$ and $Y$ (confounders) and direct relationships between $D and $Y$
 
 
 \subsection{Backdoor criterion}
@@ -230,7 +227,6 @@
 \begin{frame}{Confounding}
 
   \begin{itemize}
-    \item Omitted variable bias has a name in DAGs: ``confounding''
     \item Confounding occurs when when the treatment and the outcomes have a common cause or parent which creates spurious correlation between $D$ and $Y$
 
           \begin{center}
@@ -248,7 +244,7 @@
             \end{tikzpicture}
           \end{center}
 
-          The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$
+          \item The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$ because of selection bias due to a confounder
   \end{itemize}
 \end{frame}
 
