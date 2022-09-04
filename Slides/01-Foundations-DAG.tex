@@ -284,6 +284,10 @@
     \item It contains a noncollider that has been conditioned on
     \item Or it contains a collider that has not been conditioned on
   \end{itemize}
+  
+  \bigskip
+  
+Note: A path which has a conditioned-on-collider can still be closed, but only with a noncollider-conditioned-on (we will see this later)
 
 \end{frame}
 
@@ -351,11 +355,18 @@
     Conditioning on $X$ satisfies the backdoor criterion with respect to $(D,Y)$ directed path if:
     \begin{enumerate}
       \item All backdoor paths are blocked by $X$
-      \item No element of $X$ is a collider
+      \item No element of $X$ is a collider 
+
     \end{enumerate}
 
-    In words: If $X$ satisfies the backdoor criterion with respect to $(D,Y)$, then controlling for or matching on $X$ identifies the causal effect of $D$ on $Y$
+    
   \end{block}
+        In words: If $X$ satisfies the backdoor criterion with respect to $(D,Y)$, then controlling for or matching on $X$ identifies the causal effect of $D$ on $Y$. 
+
+\bigskip
+
+    And again note that a path which has a conditioned-on-collider can still be closed, but only with a noncollider-conditioned-on 
+
 \end{frame}
 
 \begin{frame}{What control strategy meets the backdoor criterion?}
@@ -473,35 +484,6 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Testing the Validity of the DAG}
-
-  \begin{itemize}
-    \item The DAG makes testable predictions
-    \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
-    \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
-    \item Causal algorithms tend to be DAG based and are becoming popular in industry
-  \end{itemize}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (y) {$Y$};
-      \node[above left of = d, text centered] (i) {$I$};
-      \node[left of = i, text centered] (pe) {$PE$};
-      \node[below of = pe, text centered] (b) {$B$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1,] (i) -- (d);
-      \draw[->, line width= 1,] (pe) -- (i);
-      \draw[->, line width= 1,] (pe) -- (d);
-      \draw[->, line width= 1, dashed] (b) -- (pe);
-      \draw[->, line width= 1, dashed] (b) -- (d);
-      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
-    \end{tikzpicture}
-  \end{center}
-
-\end{frame}
 
 
 
@@ -509,13 +491,25 @@
 
 \subsection{Collider bias}
 
+\begin{frame}{Collider bias}
+
+\begin{itemize}
+\item You can identify average causal effects using a covariate adjustment strategy so long as you do not in the process inadvertently ``open'' backdoor paths
+\item Backdoor paths can remain open in covariate adjustment strategies through two ways:
+	\begin{enumerate}
+	\item You did not close the path because you did not condition on the confounder
+	\item Your conditioning variable opened up a previously closed backdoor path because on that path the variable was a \textbf{collider}
+	\end{enumerate}
+\item Colliders are ``bad controls''; they are often outcomes, but not always and not all outcomes create this problem
+\item This is the risk of blindly controlling for variables (``kitchen sink regressions'')
+\end{itemize}
+
+\end{frame}
+
 \begin{frame}[allowframebreaks,plain]
-  \begin{center}
-    \textbf{Collider bias}
-  \end{center}
 
   \begin{itemize}
-    \item \textbf{Conditioning on a collider introduces spurious correlations; can even mask causal directions}
+    \item \textbf{Colliders can be outcomes (and often those are the ones)}
           \begin{itemize}
             \item There is only one backdoor path from $D$ to $Y$
 
@@ -536,8 +530,10 @@
                       \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
                     \end{tikzpicture}
                   \end{center}
+                  
 
             \item Conditioning on $X_1$ blocks the backdoor path
+
 
             \item But what if we also condition on $X_2$?
 
@@ -565,7 +561,7 @@
           \framebreak
 
 
-    \item \textbf{Even controlling for pretreatment covariates can create bias}
+    \item \textbf{Colliders could be pre-treatment covariates}
           \begin{itemize}
             \item Name the backdoor paths.  Is it open or closed?
 
@@ -618,7 +614,7 @@
 \end{frame}
 
 
-\begin{frame}{Sample selection example of collider bias}
+\begin{frame}{Movie star example of collider bias}
 
   \alert{Important}: Since unconditioned colliders block back-door paths, what exactly does conditioning on a collider do? Let's illustrate with a fun example and some made-up data\\
   \begin{itemize}
@@ -630,12 +626,9 @@
 \end{frame}
 
 
-\begin{frame}[plain]
+\begin{frame}{Movie star DAG}
 
-  \begin{itemize}
-    \item What if the sample consists \emph{only} of movie stars?
-    \item Look at python code
-  \end{itemize}
+Imagine casting directors pick movie stars based on talent and beauty
 
   \begin{center}
     \begin{tikzpicture}
@@ -652,7 +645,7 @@
     \end{tikzpicture}
   \end{center}
 
-
+Talent and beauty can become correlated even though they are independent
 
 
 \end{frame}
@@ -663,6 +656,16 @@
     \includegraphics[height=9cm]{./lecture_includes/beauty_collider.pdf}
     \caption{Top left figure: Non-star sample scatter plot of beauty (vertical axis) and talent (horizontal axis). Top right right figure: Star sample scatter plot of beauty and talent.  Bottom left figure: Entire (stars and non-stars combined) sample scatter plot of beauty and talent.}
   \end{figure}
+\end{frame}
+
+\begin{frame}{Sample selection?}
+
+\begin{itemize}
+\item Notice that this is clear when we are focused on sample selection
+\item But even a regression that included ``star'' would create the issue:$$talent_i = \alpha + \delta beauty_i + \beta star_i + \varepsilon_i$$
+\item It's not just sample selection 
+\end{itemize}
+
 \end{frame}
 
 
@@ -779,6 +782,35 @@
 \end{frame}
 
 
+\begin{frame}{Testing the Validity of the DAG}
+
+  \begin{itemize}
+    \item The DAG makes testable predictions
+    \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
+    \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
+    \item Causal algorithms tend to be DAG based and are becoming popular in industry
+  \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (y) {$Y$};
+      \node[above left of = d, text centered] (i) {$I$};
+      \node[left of = i, text centered] (pe) {$PE$};
+      \node[below of = pe, text centered] (b) {$B$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1,] (i) -- (d);
+      \draw[->, line width= 1,] (pe) -- (i);
+      \draw[->, line width= 1,] (pe) -- (d);
+      \draw[->, line width= 1, dashed] (b) -- (pe);
+      \draw[->, line width= 1, dashed] (b) -- (d);
+      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
 
 \subsection{Front door criterion}
 
