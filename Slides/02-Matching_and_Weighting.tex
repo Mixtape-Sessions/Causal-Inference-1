@@ -86,15 +86,21 @@ where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_
 $\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
 
 
-\pause\bigskip~\bigskip
+
+\end{frame}
+
+\begin{frame}{Defined causal parameters}
+
 What is $\widehat{Y}^0_i$ for the treatment group?  It's an \textbf{estimate} of the \textbf{missing} counterfactual.  And this is its estimated value: 
 $$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
 
 \begin{itemize}
   \item $w_{ij}$ is the weight unit $j$ receives in predicting unit $i$'s counterfactual
+  \item Weighting is therefore an important part of what we will be doing, even though what we are going to be doing always is imputing missing counterfactuals through estimation
 \end{itemize}
 
 \end{frame}
+
 
 \begin{frame}{Estimating missing counterfactuals}
 
@@ -102,6 +108,11 @@ $$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
 
 \bigskip
 We will be estimating counterfactuals as \textbf{weighted} averages over outcomes from the other group (e.g., control) by incorporating observable covariates
+
+
+\end{frame}
+
+\begin{frame}{Estimation}
 
 \begin{itemize}
   \item Matching and weighting methods will correct for relevant differences in observables, not just to do it, but because it closes the backdoor paths necessary for conditional independence to hold
