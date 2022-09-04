@@ -48,23 +48,10 @@
 
 % ---- Content ----
 
-\section{Matching and weighting}
+\section{Selection on observables}
 
 
-\subsection{What is matching?}
-
-\begin{frame}{Parameters of interest}
-
-\begin{itemize}
-	\item RCTs can recover the ATE
-	\item DD and synth can identify the ATT
-	\item Local average treatment effect can be identified using RDD and IV
-	\item Can anything else recover the ATE and if so under what conditions?
-\end{itemize}
-
-\end{frame}
-
-
+\subsection{Missing counterfactuals}
 
 \begin{frame}{Defined causal parameters}
 
@@ -72,24 +59,28 @@ Recall our definition of the ATE in terms of population mean differences in pote
 
 We work with samples, so we express the ATE sample analog: $$\frac{1}{N} \sum_i \bigg [ Y_i^1 - Y_i^0 \bigg ]$$
 
-
-\end{frame}
-
-\begin{frame}{Defined causal parameters}
-
-Our ATE estimator is a weighted average of the ATT and the ATU:
-
-$$\widehat{\delta}^{ATE} = \frac{N_T}{N}\  \widehat{\delta}^{ATT} + \frac{N_C}{N}\  \widehat{\delta}^{ATU}$$
-
-
-where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_i^0 \bigg ]$;
-$\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
-
+But for every $i$ unit, who is either treated or not treated, we are missing one of these (i.e., counterfactuals), and so we will \emph{estimate} the missing counterfactual for one group with the observed values of the other
 
 
 \end{frame}
 
-\begin{frame}{Defined causal parameters}
+%\begin{frame}{Defined causal parameters and weights}
+
+%Our ATE estimator is a weighted average of the ATT and the ATU:
+
+%$$\widehat{\delta}^{ATE} = \frac{N_T}{N}\  \widehat{\delta}^{ATT} + \frac{N_C}{N}\  \widehat{\delta}^{ATU}$$
+
+
+%where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_i^0 \bigg ]$;
+%$\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
+
+%\bigskip
+
+%\url{https://docs.google.com/spreadsheets/d/10DuQqGtH_Ewea7zQoLTFYHbnvqaTVDhn2GDzq3Oa6EQ/edit?usp=sharing}
+
+%\end{frame}
+
+\begin{frame}{Defined causal parameters and weights}
 
 What is $\widehat{Y}^0_i$ for the treatment group?  It's an \textbf{estimate} of the \textbf{missing} counterfactual.  And this is its estimated value: 
 $$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
@@ -112,46 +103,31 @@ We will be estimating counterfactuals as \textbf{weighted} averages over outcome
 
 \end{frame}
 
-\begin{frame}{Estimation}
+
+
+\begin{frame}{What is selection on observables?}
 
 \begin{itemize}
-  \item Matching and weighting methods will correct for relevant differences in observables, not just to do it, but because it closes the backdoor paths necessary for conditional independence to hold
-  \item Estimators differ in how the weights, $w_{ij}$, are calculated
-  \item Large part of the goal becomes \textbf{balance} on the conditioning set of covariates between treatment and control group needed to satisfy the backdoor criterion
+	\item Selection on observables is an estimation strategy that attempts to estimate average treatment effects using covariate adjustments that meet the backdoor criterion
+	\item Very strong condition: conditional on covariates, all remaining variation in the treatment is ``as good as randomly assigned''
+	\item Covariates are used to construct a credible counterfactual as a weighted average of the other treatment category group (``look-a-like'')
+	\item Estimators differ in how the weights, $w_{ij}$, are calculated and how comparisons are made
 \end{itemize}
 
 \end{frame}
 
-\subsection{Simple weighting}
-
-\begin{frame}{Big picture}
+\begin{frame}{DAGs are crucial for selection on observables}
 
 \begin{itemize}
-\item We are going to use weighting and matching methods to adjust for observable differences between treatment and control groups
-\item Personal philosophy: this \textbf{must be driven} by model like reasoning as this only has any hope if the backdoor criterion holds
-\item Personal observation: given the lack of comfort people have with modeling in general, it's not a good sign when you see them then use matching methods
-\item Let's define the terms first: what is a covariate?
+\item If you are going to estimate causal effects using covariates, then you \textbf{must use a model} as you will be assuming that you have not forgotten a confounder or included a collider
+\item You must \textbf{defend} selection on observables methods and it's much less credible to many people because they cannot confirm much of the assumptions
+\item Personal observation: given the lack of comfort people have with modeling in general, it's not a great sign when you see them then use selection on observables
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Observable Covariate}
-	
-	
-	\begin{block}{Definition: Predetermined Covariates}
-	Variable $X$ is a predetermined covariate if for each individual $i$, the value of $X_i$ does not depend on treatment status.
-	\end{block}
-	
-	\begin{itemize}
-	\item Does not imply $X$ and treatment status are independent 
-	\item Sometimes covariates do not change over time, but doesn't have to be 
-	\item Colliders are not covariates; anything the treatment can change is not a covariate (``bad controls'', Angrist and Pischke MHE)
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{Adjustment for Observables}
+\begin{frame}{Selection on observables}
 	
 	\begin{itemize}
 	\item Simple weighting methods (e.g., subclassification)
@@ -159,9 +135,36 @@ We will be estimating counterfactuals as \textbf{weighted} averages over outcome
 	\item Approximate matching methods (e.g., propensity scores)
 	\item Hybrid matching methods (e.g., coarsened exact matching)
 	\end{itemize}
+	
+	\bigskip
+	
+	Regressions that condition on covariates are with binary treatments can be used also
 
 
 \end{frame}
+
+
+\begin{frame}{Exogenous Covariate}
+	
+	
+	\begin{block}{Definition of a Exogenous Covariate}
+	Variable $X$ is an exogenous covariate if for each individual $i$, the value of $X_i$ does not vary because of the treatment status (i.e., not a collider)
+	\end{block}
+	
+	\begin{itemize}
+	\item Does not imply $X$ and treatment status are independent; just means that the treatment doesn't cause $X$ (i.e., colliders aren't covariates)
+	\item Covariates can be time invariant or change over the time -- that's not relevant
+	\item Goal is to use covariates that capture all confounders (no unobserved ones) and don't open backdoors through bad controls (e.g., colliders)
+	\end{itemize}
+	
+\end{frame}
+
+
+
+\subsection{Simple weighting}
+
+
+
 
 \begin{frame}{History of non-experimental matching}
 
@@ -178,17 +181,18 @@ We will be estimating counterfactuals as \textbf{weighted} averages over outcome
 \end{frame}
 
 
+
+
+
 \begin{frame}{Smoking thought experiment}
 
-	\begin{center}	
-    \textbf{Does Smoking Cause Cancer?}
-  \end{center}
 
-\bigskip
 \begin{itemize}
 	\item Split a large enough population to gain enough power to detect causal effects into treatment and control
-	\item Treatment spends their lives smoking a pack of day; control abstains
-	\item Compare lung cancer rates between the two groups
+		\begin{itemize}
+		\item Treatment spends their lives smoking a pack of day; control abstains
+		\item Compare lung cancer rates between the two groups
+		\end{itemize}
 	\item Low realism: can't really expect people to comply with a longterm experiment like this
 	\item But important, so how did scientists proceed? Through weighting-based methods
 \end{itemize}
@@ -278,7 +282,7 @@ Other criticisms came from giants like Joseph Berkson, Jerzy Neyman and Ronald F
   \end{quote}
 	
   \begin{itemize}
-    \item Scientists shifted to fixing their broken clocks for good
+    \item Scientists shifted to fixing their broken clocks for good and adjusting for \emph{observable} differences became a solution
   \end{itemize}
 
 \end{frame}
@@ -336,29 +340,44 @@ Cigars in these data had much higher mortality rates in all three countries than
 	\item How can we check this?
 	\end{itemize}
  
+\end{frame}
+
+\begin{frame}{Covariate imbalance}
+
+\begin{itemize}
+\item  Covariates are \emph{not balanced} -- their mean values differ for treatment and control group. 
+\item We will use weighting and imputation to achieve covariate balance
+\item Keeping in mind we need this to be done for \emph{relevant} covariates
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Force groups to have the same age distribution}
-	
-  Covariates are \emph{not balanced} -- their mean values differ for treatment and control group. 
 
-  \bigskip 
-  \textbf{Option 1: Strata}
+\begin{frame}{General principles}
+	
+
+  \textbf{Comparing Within Covariate Strata}
   \begin{itemize}
-    \item Compare mortality rates across the different smoking groups but \emph{within} each age group 
-    \item Compare within covariate strata and then combine differences to neutralize observed confounders
+	\item Create slices of the covariates called ``strata'' 
+	\item Compare mortality rates across the different smoking groups but \emph{within} each strata 
+	\item Compare within covariate strata and then combine differences to neutralize observed confounders
   \end{itemize}
 
-  \bigskip 
-  \textbf{Option 2: Weights}
+\end{frame}
+
+\begin{frame}{General principles}
+	
+
+  \textbf{Weighting}
   \begin{itemize}
-    \item Weight the data so that covariates are balanced, then compare mortality across treatment and control
-    \item Which weights?
+    \item Weight the data so that covariates are balanced, 
+    \item Then compare mortality across treatment and control
+    \item Focus then is how to find those weights that cause covariate balance
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Weighting the data}
+
+\begin{frame}{Subclassification/stratification}
 
   Divide the smoking group samples into age groups:
   \begin{enumerate}
@@ -433,16 +452,16 @@ This interestingly will balance the observed covariate, age, between treatment a
 
 \begin{frame}{Assumptions, data and statistics}
 
-We need three things to estimate a causal effect
+We always need three things to estimate a causal effect
 \begin{itemize}
-\item \textbf{Assumptions}: what must we assume is true so that our models work with data?
-\item \textbf{Data}: what data with what covariates and outcomes do we need for this project?
+\item \textbf{Correct Assumptions}: what must we assume is true so that our models work with data?
+\item \textbf{Properly Measured Data}: what data with what covariates and outcomes do we need for this project?
 \item \textbf{Statistical models}: sometimes called ``estimators'' which are the calculators turning data into unbiased estimates of treatment effects (or not!)
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Assumption I: Independence}
+\begin{frame}{Recall the RCT Assumption of Independence}
 	
 	\begin{itemize}
 	\item Randomized treatment assignment guarantees ``independence'' $$(Y^0,Y^1)\independent{D}$$
@@ -484,7 +503,8 @@ We need three things to estimate a causal effect
 	
 	\begin{itemize}
 	\item Conditional on $X$, treatment assignment is `as good as random'. 
-	\item `As good as random' is English for ``independent of potential outcomes'' potential outcomes jargon
+	\item `As good as random' is English for ``independent of potential outcomes'' potential outcomes jargon, but we could just as easily insert backdoor criterion
+	\item Sometimes this is called also ``unconfoundedness''
 	\end{itemize}
 \end{frame}
 
