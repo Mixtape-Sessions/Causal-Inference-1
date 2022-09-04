@@ -506,113 +506,6 @@ Note: A path which has a conditioned-on-collider can still be closed, but only w
 
 \end{frame}
 
-\begin{frame}[allowframebreaks,plain]
-
-  \begin{itemize}
-    \item \textbf{Colliders can be outcomes (and often those are the ones)}
-          \begin{itemize}
-            \item There is only one backdoor path from $D$ to $Y$
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
-                      \node[right of = x1, text centered] (d) {$D$};
-                      \node[below right of = d, text centered] (x2) {$X_2$};
-                      \node[above right of = x2, text centered] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5] (x1) -- (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                      \draw[->, line width= .5] (d) -- (x2);
-                      \draw[->, line width= .5] (y) -- (x2);
-                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-                    \end{tikzpicture}
-                  \end{center}
-                  
-
-            \item Conditioning on $X_1$ blocks the backdoor path
-
-
-            \item But what if we also condition on $X_2$?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
-                      \node[right of = x1, text centered] (d) {$D$};
-                      \node[below right of = d, draw, rectangle, text centered] (x2) {$X_2$};
-                      \node[above right of = x2, text centered] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5] (x1) -- (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                      \draw[->, line width= .5] (d) -- (x2);
-                      \draw[->, line width= .5] (y) -- (x2);
-                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
-          \end{itemize}
-
-          \framebreak
-
-
-    \item \textbf{Colliders could be pre-treatment covariates}
-          \begin{itemize}
-            \item Name the backdoor paths.  Is it open or closed?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm, text centered]
-                      % nodes %
-                      \node[] (x) {$X$};
-                      \node[above left of = x] (u1) {$U_1$};
-                      \node[below left of = x] (u2) {$U_2$};
-                      \node[right of = x] (d) {$D$};
-                      \node[right of = d] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5, dashed] (u1) -- (x);
-                      \draw[->, line width= .5, dashed] (u2) -- (x);
-                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
-                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item But what if we condition on $X$?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm, text centered]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x) {$X$};
-                      \node[above left of = x] (u1) {$U_1$};
-                      \node[below left of = x] (u2) {$U_2$};
-                      \node[right of = x] (d) {$D$};
-                      \node[right of = d] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5, dashed] (u1) -- (x);
-                      \draw[->, line width= .5, dashed] (u2) -- (x);
-                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
-                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-
-          \end{itemize}
-  \end{itemize}
-  \framebreak
-
-
-\end{frame}
-
 
 \begin{frame}{Movie star example of collider bias}
 
@@ -778,6 +671,113 @@ Talent and beauty can become correlated even though they are independent
     \item Because it seems intuitive to control for occupation, notice column 2 - the sign flips!
     \item We are only able to isolate the direct causal effect by conditioning on ability and occupation, but ability is unobserved
   \end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,plain]
+
+  \begin{itemize}
+    \item \textbf{Colliders can be outcomes (and often those are the ones)}
+          \begin{itemize}
+            \item There is only one backdoor path from $D$ to $Y$
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
+                      \node[right of = x1, text centered] (d) {$D$};
+                      \node[below right of = d, text centered] (x2) {$X_2$};
+                      \node[above right of = x2, text centered] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5] (x1) -- (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                      \draw[->, line width= .5] (d) -- (x2);
+                      \draw[->, line width= .5] (y) -- (x2);
+                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+                    \end{tikzpicture}
+                  \end{center}
+                  
+
+            \item Conditioning on $X_1$ blocks the backdoor path
+
+
+            \item But what if we also condition on $X_2$?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
+                      \node[right of = x1, text centered] (d) {$D$};
+                      \node[below right of = d, draw, rectangle, text centered] (x2) {$X_2$};
+                      \node[above right of = x2, text centered] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5] (x1) -- (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                      \draw[->, line width= .5] (d) -- (x2);
+                      \draw[->, line width= .5] (y) -- (x2);
+                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
+          \end{itemize}
+
+          \framebreak
+
+
+    \item \textbf{Colliders could be pre-treatment covariates}
+          \begin{itemize}
+            \item Name the backdoor paths.  Is it open or closed?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm, text centered]
+                      % nodes %
+                      \node[] (x) {$X$};
+                      \node[above left of = x] (u1) {$U_1$};
+                      \node[below left of = x] (u2) {$U_2$};
+                      \node[right of = x] (d) {$D$};
+                      \node[right of = d] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5, dashed] (u1) -- (x);
+                      \draw[->, line width= .5, dashed] (u2) -- (x);
+                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
+                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item But what if we condition on $X$?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm, text centered]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x) {$X$};
+                      \node[above left of = x] (u1) {$U_1$};
+                      \node[below left of = x] (u2) {$U_2$};
+                      \node[right of = x] (d) {$D$};
+                      \node[right of = d] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5, dashed] (u1) -- (x);
+                      \draw[->, line width= .5, dashed] (u2) -- (x);
+                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
+                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+
+          \end{itemize}
+  \end{itemize}
+  \framebreak
+
 
 \end{frame}
 
