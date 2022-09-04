@@ -715,19 +715,20 @@ ATE needs independence with respect to both potential outcomes; ATT only needs i
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item Simple weighting methods may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
+	\item Stratification methods, including OLS, may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
 	\item Assume we have $k$ covariates and we divide each into 3 coarse categories (e.g., age: young, middle age, old; income: low, medium, high, etc.)
-	\item The number of sub classification cells (or ``strata'') is $3^k$. For $k=10$, then it's $3^{10}=59,049$
+	\item The number of strata is $3^k$. For $k=10$, then it's $3^{10}=59,049$
+	\item The problem isn't just the number of covariates; it's the number of strata based on those covariates (you can hit the curse fast)
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both.  If so, we cannot use this kind of simple weighting (e.g., subclassification, stratification).
-	\item Simple weighting methods is also a problem if the cells are ``too coarse''.  
+	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both, and that violates our second assumption
 	\item We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
 	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS doesn't tell us it is just doing various extrapolations
+	\item Simple weighting methods is also a problem if the cells are ``too coarse''
 	\end{itemize}
 \end{frame}	
 
