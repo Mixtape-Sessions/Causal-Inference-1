@@ -10,21 +10,47 @@ Load data from the following url:
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+    ## Warning: package 'tidyverse' was built under R version 4.1.3
 
-    ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-    ## ✔ tibble  3.1.7     ✔ dplyr   1.0.9
-    ## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-    ## ✔ readr   2.1.2     ✔ forcats 0.5.1
+    ## -- Attaching packages --------------------------------------- tidyverse 1.3.2 --
+    ## v ggplot2 3.3.6     v purrr   0.3.4
+    ## v tibble  3.1.8     v dplyr   1.0.9
+    ## v tidyr   1.2.0     v stringr 1.4.0
+    ## v readr   2.1.2     v forcats 0.5.1
 
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
+    ## Warning: package 'ggplot2' was built under R version 4.1.3
+
+    ## Warning: package 'tibble' was built under R version 4.1.3
+
+    ## Warning: package 'tidyr' was built under R version 4.1.3
+
+    ## Warning: package 'readr' was built under R version 4.1.3
+
+    ## Warning: package 'purrr' was built under R version 4.1.3
+
+    ## Warning: package 'dplyr' was built under R version 4.1.3
+
+    ## Warning: package 'stringr' was built under R version 4.1.3
+
+    ## Warning: package 'forcats' was built under R version 4.1.3
+
+    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
 
 ``` r
 library(fixest)
-library(haven)
+```
 
+    ## Warning: package 'fixest' was built under R version 4.1.3
+
+``` r
+library(haven)
+```
+
+    ## Warning: package 'haven' was built under R version 4.1.3
+
+``` r
 df <- haven::read_dta("https://raw.github.com/scunning1975/mixtape/master/thornton_hiv.dta")
 ```
 
