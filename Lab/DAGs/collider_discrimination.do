@@ -1,3 +1,5 @@
+* code from Erin Hengel
+
 clear all 
 set obs 10000 
 
@@ -8,7 +10,7 @@ generate female = runiform()>=0.5
 * ability distributions (ie not even committing to Charles Murray type arguments)
 generate ability = rnormal() 
 
-* All women experience discrimination. 
+* All females experience discrimination. 
 generate discrimination = female 
 
 * Data generating processes. We are not committing to the "females have different preferences" argument.
