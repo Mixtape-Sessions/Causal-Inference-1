@@ -53,67 +53,94 @@
 \subsection{Background}
 \subsection{Intuition}
 
-
-\begin{frame}{When is IV used?}
-	
-Instrumental variables methods are typically used to address the following kinds of problems encountered in naive regressions
-		\begin{enumerate}
-		\item Omitted variable bias
-		\item Classical measurement error
-		\item Simultaneity (eg supply and demand)
-		\item Reverse causality
-		\item Randomized control trials with noncompliance
-		\item Fuzzy RDD
-		\end{enumerate}
-		
-
-\end{frame}
 \begin{frame}{Instrumental variables}
 
 \begin{itemize}
-\item If treatment is tied to an unobservable, then RDD and DiD may be invalid (they do not solve all problems)
-\item The best instruments come from deep knowledge of institutional details (Angrist and Krueger 1991)
-\item Certain types of natural experiments can be the source of such opportunities and may be useful, but not all natural experiments will satisfy IV even if they are themselves interpretable as causal
+\item When you cannot observe all the confounders (or don't know them), or the concept of CIA doesn't seem plausible, then selection on observable methods do not solve the problem
+\item Alternative methods were developed but they themselves also have specific instances where they are suitable and when they aren't
+\item One popular method is the instrumental variables method which is the most popular of all designs (see next slide)
 \end{itemize}
 
 \end{frame}
 
+\begin{frame}{IV Popularity}
 
-
-
-\begin{frame}{Constant treatment effects}
-
-		\begin{itemize}
-		\item Constant treatment effects (i.e., $\delta$ is constant across all individual units)
-			\begin{itemize}
-			\item Constant treatment effects is the traditional econometric pedagogy when first learning instrumental variables, and doesn't need the potential outcomes model or notation to get the point across
-			\item Constant treatment effects is identical to assuming that ATE$=$ATT$=$ATU because constant treatment effects assumes $\delta_i=\delta_{-i}=\delta$ for all $i$ units
-			\end{itemize}
-		\end{itemize}
-
+	\begin{figure}
+	\includegraphics[scale=.15]{./lecture_includes/currie_iv}
+	\end{figure}
+	
 \end{frame}
 
-
-\begin{frame}{Heterogenous treatment effects}
+\begin{frame}{What is instrumental variables?}
 
 \begin{itemize}
-		\item Heterogeneous treatment effects (i.e., $\delta_i$ varies across individual units)
-			\begin{itemize}
-			\item Heterogeneous treatment effects means that the $ATE\neq{ATT}\neq{ATU}$ because $\delta_i$ differs across the population
-			\item This is equivalent to assuming the coefficient, $\delta_i$, is a random variable that varies across the population
-			\item Heterogenous treatment effects is based on work by Angrist, Imbens and Rubin (1996) and Imbens and Angrist (1994) which introduced the  ``local average treatment effect'' (LATE) concept
-			\end{itemize}
+\item Often associated with ``natural experiments'' because an instrument is when we discovered our treatment variable randomly changed when a third seemingly inconsequential event occurred
+\item Natural experiments are rarely ``good instruments'' because they often are associated with too much destruction to be useful, but the metaphor can be helpful because we often use instruments to recreate the conditions of a randomized experiment outside the lab
+\item Do we find instruments or do they find us?  They tend to become apparent to us when we understand what they are as otherwise they're chameleons blending into the background
+
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Data requirements}
+
+
+	
+\begin{frame}{IV from my research}
+
+\begin{itemize}
+\item Estimated the effect of growing online sex work on street prostitution arrests using commercial broadband adoption as an instrument for online sex work (Cunningham and Kendall 2010)
+\item Estimated the effect of parental meth abuse on foster care and child abuse/neglect using changes in meth prices caused by shortages of ephedrine and pseudoephedrine as an instrument for meth abuse (Cunningham and Finlay 2010)
+\item Estimated the price elasticity of demand for meth using the same instrument (Cunningham and Finlay 2014)
+\item Estimated the effect of being classified mentally ill in jail on suicide attempts (Seward, Cunningham, Vigliotti and Clay 2022)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Uses of instrumental variables}
+
+\begin{itemize}
+\item When you have unobserved confounders, IV may work
+\item When you have reverse causality, IV could help
+\item When you have variables being determined simultaneously (like in markets with supply and demand), then IV can step in
+\item When you run an experiment (RCT, AB tests, etc.) but not everyone obeys their treatment assignment, IV will help you
+\item When your treatment variable is measured with error, IV can help
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{My Teaching Style}
+
+\begin{enumerate}
+\item Intuition first -- what is an instrument and what do you do with it?
+\item Estimation second -- what are most common methods employed?
+\item Interpretation -- constant treatment effects versus heterogeneous treatment effects and the LATE parameter
+\item Applications -- price elasticity of demand, leniency
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Constant versus heterogenous treatment effects}
+
+Angrist and Imbens won the Nobel Prize (with Card) in October 2021 for their work on instrumental variables which focused on interpretation when treatment effects differed across a population
+
+\begin{itemize}
+\item \textbf{Constant treatment effects}: you and I both benefit the same from a college degree
+\item \textbf{Heterogenous treatment effects}: college degree \emph{causes} my wages to rise by 5\% but caused yours to rise by 18\%
+\end{itemize}
+
+\bigskip
+
+We'll start with the first but then move into the second.
+
+\end{frame}
+
+
+\begin{frame}{Instruments aren't labeled}
 
 	\begin{itemize}
 	\item Your data isn't going to come with a codebook saying ``instrumental variable''.  So how do you find it?
-	\item Well, sometimes the researcher just \emph{knows}.  
-	\item That is, the researcher knows of a variable ($Z$) that actually \emph{is} randomly assigned and that affects the endogenous variable but not the outcome (except via the endogenous variable)  
-	\item Such a variable is called an ``instrument''.
+	\item Well, sometimes the researcher just \emph{knows}
+	\item You know instruments when you see them because you know what their general structure is, and then notice them in the events and surroundings of the thing you're studying (Angrist and Krueger 2001).  
 	\end{itemize}
 \end{frame}
 
@@ -121,25 +148,23 @@ Instrumental variables methods are typically used to address the following kinds
 \begin{frame}{Picking a good instrument}
 
 	\begin{itemize}
-	\item The best instruments you think of first, then you seek the data second (but often students go in the reverse order which is basically guaranteed to be a crappy instrument)
-	\item If you want to use IV, then ask: 
+	\item Typically instruments are random events that are captured with a covariate that are highly predictive of your treatment variable but are in no other way related to the outcome
+	\item If you want to use IV, then ask yourself this questions: 
 		\begin{quote}
-		What moves around the covariate of interest that might be plausibly random?
+		Is there \emph{any} part of your treatment variable that is blown by the wind (i.e., random)? If so, is there a variable you know of that is associated with that randomness?
 		\end{quote}
-		\item Is there any element in the treatment that could be construed as random?  
-		\item If you were to find that random piece, then you have found an instrument
-	\item Once you have identified such a variable, begin to think about what data sets might have information on an outcome of interest, the treatment, and the instrument you have put your finger on.
+		\item In other words, is there any element in the treatment that could be construed as driven by a non-confounder (i.e., random)?  
 	\end{itemize}
 \end{frame}
 
 
 
-\begin{frame}{Does family size reduce labor supply or is it selection?}
+\begin{frame}{Strangeness Example}
 
-Angrist and Evans (1998), ``Children and their parents' labor supply'' \emph{American Economic Review}, 
 		\begin{itemize}
-		\item They want to know the effect of family size on labor supply, but need exogenous changes in family size
-		\item So what if I told you if the first two children born were of the same gender, then you're less likely to work. What?!
+		\item What if I told you if the first two children born were of the same sex, then the mother is less likely to work.
+		\item What does sex composition of first two born have to do with a mother's willingness or ability to work? \pause
+		\item Unclear to an intelligent layperson why it should matter \pause which is why it is a good instrument potentially
 		\end{itemize}
 
 \end{frame}
@@ -149,13 +174,14 @@ Angrist and Evans (1998), ``Children and their parents' labor supply'' \emph{Ame
 
 \begin{itemize}
 
-		\item Many parents have a preference for having at least one child of each gender
+		\item Many parents have both a ``stopping rule'' and a preference for having at least one child of each sex
 			\begin{itemize}	
-			\item Consider a couple whose first two kids were both boys; they will often have a third, hoping to have a girl
-			\item Consider a couple whose first two kids were girls; they will often have a third, hoping for a boy
-			\item Consider a couple with one boy and one girls; they will often not have a third kid
+			\item If a couple whose first two kids were both boys, they will often have a third, hoping to have a girl
+			\item If a couple whose first two kids were both girls, they will often have a third, hoping to have a boy
+			\item But if it was boy/girl or girl/boy, they will often \textbf{stop}
 			\end{itemize}
-		\item The gender of your kids is arguably randomly assigned (maybe not exactly, but close enough)
+		\item Sex of your kids is essentially as good as random (around 0.51 historically chance of a boy)
+		\item Josh Angrist and Bill Evans used sex ratio of first two kids as an instrument for family size to estimate effect of family size on whether a woman worked
 		\end{itemize}
 
 \end{frame}
@@ -166,26 +192,21 @@ Angrist and Evans (1998), ``Children and their parents' labor supply'' \emph{Ame
 
 \begin{itemize}
 		\item On its face, it's puzzling that the first two kids' gender predicts labor market participation
-		\item Instrumental variables strategies formalize \emph{strangeness of the instrument}, which is the inference drawn by an intelligent layperson with no particular knowledge of the phenomena or background in statistics.
-		\item You need more information, in other words, otherwise the layperson can't understand what same gender of your children has to do with working
+		\item Instrumental variables strategies formalize this \emph{strangeness}, 
+		\item Strangeness principle is the inference drawn by an intelligent layperson with no particular knowledge of the phenomena or background in statistics.
+		\item Without understanding the research question (family size $\rightarrow$ maternal work), the instrument's correlation with the outcome (sex ratio of first two kids predicting maternal work) makes no sense
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{When a good IV strategy finally makes sense}
-
-\begin{itemize}
-		\item But then the researchers point out that women whose first two children are of the same gender are more likely to have additional children than women whose first two children are of different genders
-		\item The layperson then asks himself, ``Hm. I wonder if the labor market differences are due \emph{solely} to the differences in the number of kids the woman has...''
-
-\end{itemize}
-
-\end{frame}
 
 \begin{frame}{Sunday Candy is a good instrument}
 
 \begin{itemize}
-		\item Let's listen to a few lines from ``Ultralight Beam'' by Kanye West. Chance the Rapper sings on it and says
+		\item Let's listen to a few lines from ``Ultralight Beam'' by Kanye West (skip to 2:30, but then it's around 3:15)
+		\item Chance the Rapper sings the following two lines
+
+\bigskip
 
 \begin{quote}
 ``I made Sunday Candy, I'm never going to hell \\
@@ -197,7 +218,8 @@ I met Kanye West, I'm never going to fail.'' \\
 - Chance the Rapper
 \end{quote}
 
-	\item What does making a song have to do with hell?  What does meeting Kanye West have to do with success? Let's consider each in order
+	\item What does a song have to do with hell, or meeting Kanye to do with success?  
+	\item These are instruments, but for what and are they good ones?
 	\end{itemize}
 \end{frame}
 
@@ -213,7 +235,7 @@ I met Kanye West, I'm never going to fail.'' \\
 		\end{itemize}
 			\begin{quote}
 			``I made Sunday Candy \\
-			 this pastor invited me to church on Sunday, \\
+			 \textcolor{blue}{a pastor invited me to church on Sunday}, \\
 			  I'm never going to hell''
 			\end{quote}
 
