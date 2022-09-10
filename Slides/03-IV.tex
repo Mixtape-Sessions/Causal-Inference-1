@@ -322,14 +322,13 @@ I met Kanye West, I'm never going to fail.'' \\
 \end{frame}	
 
 
-\begin{frame}{Foreshadowing the questions you need to be asking}
+\begin{frame}{Some questions you need to be asking}
 
 \begin{enumerate}
-	\item Is our instrument highly correlated with the treatment? With the outcome? Can you test that?
-	\item Are there random elements within the treatment? Why do you think that?
-	\item Is the instrument exogenous?  Why do you think that?
+	\item Is our instrument highly correlated with the treatment? With the outcome? Can we see evidence for this?
+	\item Are there random reasons why our treatment changes? Why do you think that?
+	\item Is the instrument independent of confounders?  Why do you think that?
 	\item Could the instrument affect outcomes directly? Why do you think that?
-	\item Could the instrument be associated with anything that causes the outcome even if it doesn't directly? Why do you think that?
 \end{enumerate}
 
 \end{frame}
@@ -424,22 +423,14 @@ where $Y$ is log earnings, $S$ is years of schooling, $A$ is unobserved ability,
 \begin{frame}{Two-stage least squares concepts}
 	
 	\begin{itemize}
-	\item Causal model.  Sometimes called the structural model:$$Y_i=\alpha + \delta{S_i} + \eta_i$$
+	\item Causal model.  Your main research question:$$Y_i=\alpha + \delta{S_i} + \eta_i$$
 	\item First-stage regression. Gets the name because of two-stage least squares:$$S_i = \gamma + \rho{Z_i} + \zeta_i$$
 	\item Second-stage regression. Notice the fitted values, $\widehat{S}$:$$Y_i=\beta + \delta{\widehat{S_i}}+\nu_i$$
+	\item Reduced form regression: $Y$ regressed onto the instrument:$$Y_i=\psi + \pi{Z_i} + \varepsilon_i$$
 	\end{itemize}
 \end{frame}
 
 
-\begin{frame}{Reduced form}
-
-\begin{itemize}
-\item Some people like a simpler approach because they don't want to defend IV's assumptions
-\item Reduced form a regression of $Y$ onto the instrument:$$Y_i=\psi + \pi{Z_i} + \varepsilon_i$$
-\item This would be like regressing hell onto Sunday Candy, as opposed to regressing hell onto church with Sunday Candy instrumenting for church
-\end{itemize}
-
-\end{frame}
 
 
 
@@ -544,8 +535,8 @@ Substitute for $\widehat{S}$ for $\widehat{\rho}Z$ ($\widehat{\gamma}$ drops out
 	
 	\begin{itemize}
 	\item Intuition is that 2SLS replaces $S$ with the fitted values $\widehat{S}$ from the first stage regression of $S$ onto $Z$ and all other covariates 
-	\item I prefer the intuition of 2SLS to the intuition of the ratio of reduced form to first stage, though your mileage may vary
-	\item By using the fitted values of the endogenous regressor from the first stage regression, our regression now uses \emph{only} the exogenous variation in the regressor due to the instrumental variable itself (only the random parts of schooling remain)
+	\item Our previous slides showed that 2SLS and the ratio of reduced form and first stage were equivalent though
+	\item By using the fitted values of the endogenous regressor from the first stage regression, our regression now uses \emph{only} the quasi-random variation in the treatment due to the instrumental variable itself (only the random parts of schooling remain)
 	\end{itemize}
 \end{frame}
 
