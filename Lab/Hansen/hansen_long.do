@@ -49,5 +49,3 @@ rdrobust recidivism bac1_orig, p(2) c(0.08) kernel(triangular) bwselect(msetwo)
 * Donut hole
 drop if bac1_orig>=0.079 & bac1_orig<=0.081
 
-rdrobust recidivism bac1_orig, p(1) c(0.08) kernel(triangular) bwselect(msetwo)
-rdrobust recidivism bac1_orig, p(2) c(0.08) kernel(triangular) bwselect(msetwo)
