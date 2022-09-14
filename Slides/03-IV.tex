@@ -53,67 +53,94 @@
 \subsection{Background}
 \subsection{Intuition}
 
-
-\begin{frame}{When is IV used?}
-	
-Instrumental variables methods are typically used to address the following kinds of problems encountered in naive regressions
-		\begin{enumerate}
-		\item Omitted variable bias
-		\item Classical measurement error
-		\item Simultaneity (eg supply and demand)
-		\item Reverse causality
-		\item Randomized control trials with noncompliance
-		\item Fuzzy RDD
-		\end{enumerate}
-		
-
-\end{frame}
 \begin{frame}{Instrumental variables}
 
 \begin{itemize}
-\item If treatment is tied to an unobservable, then RDD and DiD may be invalid (they do not solve all problems)
-\item The best instruments come from deep knowledge of institutional details (Angrist and Krueger 1991)
-\item Certain types of natural experiments can be the source of such opportunities and may be useful, but not all natural experiments will satisfy IV even if they are themselves interpretable as causal
+\item When you cannot observe all the confounders (or don't know them), or the concept of CIA doesn't seem plausible, then selection on observable methods do not solve the problem
+\item Alternative methods were developed but they themselves also have specific instances where they are suitable and when they aren't
+\item One popular method is the instrumental variables method which is the most popular of all designs (see next slide)
 \end{itemize}
 
 \end{frame}
 
+\begin{frame}{IV Popularity}
 
-
-
-\begin{frame}{Constant treatment effects}
-
-		\begin{itemize}
-		\item Constant treatment effects (i.e., $\delta$ is constant across all individual units)
-			\begin{itemize}
-			\item Constant treatment effects is the traditional econometric pedagogy when first learning instrumental variables, and doesn't need the potential outcomes model or notation to get the point across
-			\item Constant treatment effects is identical to assuming that ATE$=$ATT$=$ATU because constant treatment effects assumes $\delta_i=\delta_{-i}=\delta$ for all $i$ units
-			\end{itemize}
-		\end{itemize}
-
+	\begin{figure}
+	\includegraphics[scale=.15]{./lecture_includes/currie_iv}
+	\end{figure}
+	
 \end{frame}
 
-
-\begin{frame}{Heterogenous treatment effects}
+\begin{frame}{What is instrumental variables?}
 
 \begin{itemize}
-		\item Heterogeneous treatment effects (i.e., $\delta_i$ varies across individual units)
-			\begin{itemize}
-			\item Heterogeneous treatment effects means that the $ATE\neq{ATT}\neq{ATU}$ because $\delta_i$ differs across the population
-			\item This is equivalent to assuming the coefficient, $\delta_i$, is a random variable that varies across the population
-			\item Heterogenous treatment effects is based on work by Angrist, Imbens and Rubin (1996) and Imbens and Angrist (1994) which introduced the  ``local average treatment effect'' (LATE) concept
-			\end{itemize}
+\item Often associated with ``natural experiments'' because an instrument is when we discovered our treatment variable randomly changed when a third seemingly inconsequential event occurred
+\item Natural experiments are rarely ``good instruments'' because they often are associated with too much destruction to be useful, but the metaphor can be helpful because we often use instruments to recreate the conditions of a randomized experiment outside the lab
+\item Do we find instruments or do they find us?  They tend to become apparent to us when we understand what they are as otherwise they're chameleons blending into the background
+
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Data requirements}
+
+
+	
+\begin{frame}{IV from my research}
+
+\begin{itemize}
+\item Estimated the effect of growing online sex work on street prostitution arrests using commercial broadband adoption as an instrument for online sex work (Cunningham and Kendall 2010)
+\item Estimated the effect of parental meth abuse on foster care and child abuse/neglect using changes in meth prices caused by shortages of ephedrine and pseudoephedrine as an instrument for meth abuse (Cunningham and Finlay 2010)
+\item Estimated the price elasticity of demand for meth using the same instrument (Cunningham and Finlay 2014)
+\item Estimated the effect of being classified mentally ill in jail on suicide attempts (Seward, Cunningham, Vigliotti and Clay 2022)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Uses of instrumental variables}
+
+\begin{itemize}
+\item When you have unobserved confounders, IV may work
+\item When you have reverse causality, IV could help
+\item When you have variables being determined simultaneously (like in markets with supply and demand), then IV can step in
+\item When you run an experiment (RCT, AB tests, etc.) but not everyone obeys their treatment assignment, IV will help you
+\item When your treatment variable is measured with error, IV can help
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{My Teaching Style}
+
+\begin{enumerate}
+\item Intuition first -- what is an instrument and what do you do with it?
+\item Estimation second -- what are most common methods employed?
+\item Interpretation -- constant treatment effects versus heterogeneous treatment effects and the LATE parameter
+\item Applications -- price elasticity of demand, leniency
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Constant versus heterogenous treatment effects}
+
+Angrist and Imbens won the Nobel Prize (with Card) in October 2021 for their work on instrumental variables which focused on interpretation when treatment effects differed across a population
+
+\begin{itemize}
+\item \textbf{Constant treatment effects}: you and I both benefit the same from a college degree
+\item \textbf{Heterogenous treatment effects}: college degree \emph{causes} my wages to rise by 5\% but caused yours to rise by 18\%
+\end{itemize}
+
+\bigskip
+
+We'll start with the first but then move into the second.
+
+\end{frame}
+
+
+\begin{frame}{Instruments aren't labeled}
 
 	\begin{itemize}
 	\item Your data isn't going to come with a codebook saying ``instrumental variable''.  So how do you find it?
-	\item Well, sometimes the researcher just \emph{knows}.  
-	\item That is, the researcher knows of a variable ($Z$) that actually \emph{is} randomly assigned and that affects the endogenous variable but not the outcome (except via the endogenous variable)  
-	\item Such a variable is called an ``instrument''.
+	\item Well, sometimes the researcher just \emph{knows}
+	\item You know instruments when you see them because you know what their general structure is, and then notice them in the events and surroundings of the thing you're studying (Angrist and Krueger 2001).  
 	\end{itemize}
 \end{frame}
 
@@ -121,25 +148,23 @@ Instrumental variables methods are typically used to address the following kinds
 \begin{frame}{Picking a good instrument}
 
 	\begin{itemize}
-	\item The best instruments you think of first, then you seek the data second (but often students go in the reverse order which is basically guaranteed to be a crappy instrument)
-	\item If you want to use IV, then ask: 
+	\item Typically instruments are random events that are captured with a covariate that are highly predictive of your treatment variable but are in no other way related to the outcome
+	\item If you want to use IV, then ask yourself this questions: 
 		\begin{quote}
-		What moves around the covariate of interest that might be plausibly random?
+		Is there \emph{any} part of your treatment variable that is blown by the wind (i.e., random)? If so, is there a variable you know of that is associated with that randomness?
 		\end{quote}
-		\item Is there any element in the treatment that could be construed as random?  
-		\item If you were to find that random piece, then you have found an instrument
-	\item Once you have identified such a variable, begin to think about what data sets might have information on an outcome of interest, the treatment, and the instrument you have put your finger on.
+		\item In other words, is there any element in the treatment that could be construed as driven by a non-confounder (i.e., random)?  
 	\end{itemize}
 \end{frame}
 
 
 
-\begin{frame}{Does family size reduce labor supply or is it selection?}
+\begin{frame}{Strangeness Example}
 
-Angrist and Evans (1998), ``Children and their parents' labor supply'' \emph{American Economic Review}, 
 		\begin{itemize}
-		\item They want to know the effect of family size on labor supply, but need exogenous changes in family size
-		\item So what if I told you if the first two children born were of the same gender, then you're less likely to work. What?!
+		\item What if I told you if the first two children born were of the same sex, then the mother is less likely to work.
+		\item What does sex composition of first two born have to do with a mother's willingness or ability to work? \pause
+		\item Unclear to an intelligent layperson why it should matter \pause which is why it is a good instrument potentially
 		\end{itemize}
 
 \end{frame}
@@ -149,13 +174,14 @@ Angrist and Evans (1998), ``Children and their parents' labor supply'' \emph{Ame
 
 \begin{itemize}
 
-		\item Many parents have a preference for having at least one child of each gender
+		\item Many parents have both a ``stopping rule'' and a preference for having at least one child of each sex
 			\begin{itemize}	
-			\item Consider a couple whose first two kids were both boys; they will often have a third, hoping to have a girl
-			\item Consider a couple whose first two kids were girls; they will often have a third, hoping for a boy
-			\item Consider a couple with one boy and one girls; they will often not have a third kid
+			\item If a couple whose first two kids were both boys, they will often have a third, hoping to have a girl
+			\item If a couple whose first two kids were both girls, they will often have a third, hoping to have a boy
+			\item But if it was boy/girl or girl/boy, they will often \textbf{stop}
 			\end{itemize}
-		\item The gender of your kids is arguably randomly assigned (maybe not exactly, but close enough)
+		\item Sex of your kids is essentially as good as random (around 0.51 historically chance of a boy)
+		\item Josh Angrist and Bill Evans used sex ratio of first two kids as an instrument for family size to estimate effect of family size on whether a woman worked
 		\end{itemize}
 
 \end{frame}
@@ -166,26 +192,21 @@ Angrist and Evans (1998), ``Children and their parents' labor supply'' \emph{Ame
 
 \begin{itemize}
 		\item On its face, it's puzzling that the first two kids' gender predicts labor market participation
-		\item Instrumental variables strategies formalize \emph{strangeness of the instrument}, which is the inference drawn by an intelligent layperson with no particular knowledge of the phenomena or background in statistics.
-		\item You need more information, in other words, otherwise the layperson can't understand what same gender of your children has to do with working
+		\item Instrumental variables strategies formalize this \emph{strangeness}, 
+		\item Strangeness principle is the inference drawn by an intelligent layperson with no particular knowledge of the phenomena or background in statistics.
+		\item Without understanding the research question (family size $\rightarrow$ maternal work), the instrument's correlation with the outcome (sex ratio of first two kids predicting maternal work) makes no sense
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{When a good IV strategy finally makes sense}
-
-\begin{itemize}
-		\item But then the researchers point out that women whose first two children are of the same gender are more likely to have additional children than women whose first two children are of different genders
-		\item The layperson then asks himself, ``Hm. I wonder if the labor market differences are due \emph{solely} to the differences in the number of kids the woman has...''
-
-\end{itemize}
-
-\end{frame}
 
 \begin{frame}{Sunday Candy is a good instrument}
 
 \begin{itemize}
-		\item Let's listen to a few lines from ``Ultralight Beam'' by Kanye West. Chance the Rapper sings on it and says
+		\item Let's listen to a few lines from ``Ultralight Beam'' by Kanye West (skip to 2:30, but then it's around 3:15)
+		\item Chance the Rapper sings the following two lines
+
+\bigskip
 
 \begin{quote}
 ``I made Sunday Candy, I'm never going to hell \\
@@ -197,7 +218,8 @@ I met Kanye West, I'm never going to fail.'' \\
 - Chance the Rapper
 \end{quote}
 
-	\item What does making a song have to do with hell?  What does meeting Kanye West have to do with success? Let's consider each in order
+	\item What does a song have to do with hell, or meeting Kanye to do with success?  
+	\item These are instruments, but for what and are they good ones?
 	\end{itemize}
 \end{frame}
 
@@ -213,7 +235,7 @@ I met Kanye West, I'm never going to fail.'' \\
 		\end{itemize}
 			\begin{quote}
 			``I made Sunday Candy \\
-			 this pastor invited me to church on Sunday, \\
+			 \textcolor{blue}{a pastor invited me to church on Sunday}, \\
 			  I'm never going to hell''
 			\end{quote}
 
@@ -300,14 +322,13 @@ I met Kanye West, I'm never going to fail.'' \\
 \end{frame}	
 
 
-\begin{frame}{Foreshadowing the questions you need to be asking}
+\begin{frame}{Some questions you need to be asking}
 
 \begin{enumerate}
-	\item Is our instrument highly correlated with the treatment? With the outcome? Can you test that?
-	\item Are there random elements within the treatment? Why do you think that?
-	\item Is the instrument exogenous?  Why do you think that?
+	\item Is our instrument highly correlated with the treatment? With the outcome? Can we see evidence for this?
+	\item Are there random reasons why our treatment changes? Why do you think that?
+	\item Is the instrument independent of confounders?  Why do you think that?
 	\item Could the instrument affect outcomes directly? Why do you think that?
-	\item Could the instrument be associated with anything that causes the outcome even if it doesn't directly? Why do you think that?
 \end{enumerate}
 
 \end{frame}
@@ -402,22 +423,14 @@ where $Y$ is log earnings, $S$ is years of schooling, $A$ is unobserved ability,
 \begin{frame}{Two-stage least squares concepts}
 	
 	\begin{itemize}
-	\item Causal model.  Sometimes called the structural model:$$Y_i=\alpha + \delta{S_i} + \eta_i$$
+	\item Causal model.  Your main research question:$$Y_i=\alpha + \delta{S_i} + \eta_i$$
 	\item First-stage regression. Gets the name because of two-stage least squares:$$S_i = \gamma + \rho{Z_i} + \zeta_i$$
 	\item Second-stage regression. Notice the fitted values, $\widehat{S}$:$$Y_i=\beta + \delta{\widehat{S_i}}+\nu_i$$
+	\item Reduced form regression: $Y$ regressed onto the instrument:$$Y_i=\psi + \pi{Z_i} + \varepsilon_i$$
 	\end{itemize}
 \end{frame}
 
 
-\begin{frame}{Reduced form}
-
-\begin{itemize}
-\item Some people like a simpler approach because they don't want to defend IV's assumptions
-\item Reduced form a regression of $Y$ onto the instrument:$$Y_i=\psi + \pi{Z_i} + \varepsilon_i$$
-\item This would be like regressing hell onto Sunday Candy, as opposed to regressing hell onto church with Sunday Candy instrumenting for church
-\end{itemize}
-
-\end{frame}
 
 
 
@@ -522,8 +535,8 @@ Substitute for $\widehat{S}$ for $\widehat{\rho}Z$ ($\widehat{\gamma}$ drops out
 	
 	\begin{itemize}
 	\item Intuition is that 2SLS replaces $S$ with the fitted values $\widehat{S}$ from the first stage regression of $S$ onto $Z$ and all other covariates 
-	\item I prefer the intuition of 2SLS to the intuition of the ratio of reduced form to first stage, though your mileage may vary
-	\item By using the fitted values of the endogenous regressor from the first stage regression, our regression now uses \emph{only} the exogenous variation in the regressor due to the instrumental variable itself (only the random parts of schooling remain)
+	\item Our previous slides showed that 2SLS and the ratio of reduced form and first stage were equivalent though
+	\item By using the fitted values of the endogenous regressor from the first stage regression, our regression now uses \emph{only} the quasi-random variation in the treatment due to the instrumental variable itself (only the random parts of schooling remain)
 	\end{itemize}
 \end{frame}
 
@@ -976,7 +989,6 @@ More instruments increase precision, but drive down $F$, therefore we know the p
 
 
 
-\section{Heterogeneity}
 
 
 
@@ -1337,25 +1349,17 @@ IV estimates the average treatment effect for only one of these subpopulations:
 	
 		
 
-\subsection{Presentation suggestions}
+\section{Application}
 
-
-\begin{frame}{Practical advice}
-
-\begin{itemize}
-\item Some people are good at econometrics
-\item Some people know how a rug can really tie a room together
-\item Both of these talents are helpful when it comes to data visualization of causal inference
-\end{itemize}
-
-\end{frame}
+\subsection{Data visualization and necessary evidence}
 
 \begin{frame}{Practical advice}
 
 \begin{itemize}
-\item It's very easy for IV to become a black box, but no one is helped by that
+\item Before we move into applications, let's talk about pictures
+\item It's very easy for causal inference to become a black box, but the more it's a black box, the less people will believe your analysis 
 \item There's also recent evidence that IV papers show signs of publication bias with a large spike in $p$-values at 0.05 (unlike RCT and RDD)
-\item So in addition to all I said, I'd like to make some aesthetic suggestions
+\item Pictures are crucial, but it's particular kinds of pictures you need to show for IV that I want to emphasize (not just any data visual)
 
 \end{itemize}
 
@@ -1363,19 +1367,23 @@ IV estimates the average treatment effect for only one of these subpopulations:
 
 
 
-\begin{frame}{IV advice: Pictures}
+\begin{frame}{Show Wald Quantities}
 
-Present your main results as Wald quantites in beautiful pictures even if you're estimating with 2SLS
+Present your main results as Wald quantites in beautiful pictures of simple correlations even if you're estimating with 2SLS
 	\begin{itemize}
-	\item Show pictures of the first stage. If you can't see it there, then weak instruments are likely
-	\item You can't show a second stage with raw data, so instead show pictures of the reduced form. Same as above
+	\item Show pictures of the \textcolor{blue}{first stage}. If you can't see the correlation in the first stage, you have a weak instrument problem
+	\item Show instead pictures of the \textcolor{blue}{reduced form}.  If you can't see the correlation in the reduced form, it's likely not there.
 	\end{itemize}
+	
+	\bigskip
+	
+This can be challenging as not every IV design will lend itself to easy pictures though which is why it helps if you can familiarize yourself with a range of pictures for inspiration	
 
 \end{frame}
 
 
 
-\begin{frame}{IV advice: Pictures}
+\begin{frame}{IV advice: Picturing my instrument}
 	
 	\begin{figure}
 	\includegraphics[scale=0.15]{./lecture_includes/keith_1.png}
@@ -1384,7 +1392,7 @@ Present your main results as Wald quantites in beautiful pictures even if you're
 \end{frame}
 
 
-\begin{frame}{IV advice: Pictures}
+\begin{frame}{IV advice: Picturing the first stage}
 	
 	\begin{figure}
 	\includegraphics[scale=0.15]{./lecture_includes/keith_3.png}
@@ -1392,7 +1400,7 @@ Present your main results as Wald quantites in beautiful pictures even if you're
 	
 \end{frame}
 
-\begin{frame}{IV advice: Pictures}
+\begin{frame}{IV advice: Picturing the reduced form}
 	
 	\begin{figure}
 	\includegraphics[scale=0.15]{./lecture_includes/keith_2.png}
@@ -1465,44 +1473,6 @@ Std. Dev. Dependent Variable&       0.444   &       0.444   \\
 
 
 
-\begin{frame}{Looking forward}
-\begin{itemize}
-
-\item IV is an old method and quite powerful; when conditions hold, it can recover the LATE
-\item Heterogeneity has made much of this challenging, be it jumping over monotonicity and exclusion, addressing weak first stages which now must be even stronger, and these issues around covariates and 2SLS
-\item I remain optimistic -- literature on MTE shows amazingly we can recover aggregate parameters with instrument intensity, as well as information about compliers (which I couldn't cover due to time constraints)
-\item My hope is that by learning, also, about the leniency design, Amazon employees might see them in more places
-\item Thank you for having me!
-
-\end{itemize}
-
-\end{frame}
-
-
-
-
-\begin{frame}{Summarizing}
-
-	\begin{itemize}
-	\item The potential outcomes framework gives a more subtle interpretation of what IV is measuring
-		\begin{itemize}
-		\item In the constant coefficients world, IV measures $\delta$ which is ``the'' causal effect of $D_i$ on $Y_i$, and assumed to be the same for all $i$ units
-		\item In the random coefficients world, IV measures instead an \emph{average} of heterogeneous causal effects across a particular population -- $E[\delta_i]$ for some group of $i$ units
-	\item IV, therefore, measures the \emph{local average treatment effect} or LATE parameter, which is the average of causal effects across the subpopulation of \emph{compliers}, or those units whose covariate of interest, $D_i$, is influenced by the instrument. 
-		\end{itemize}
-	\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Summarizing}
-
-		\begin{itemize}
-		\item Under heterogenous treatment effects, Angrist and Evans (1996) identify the causal effect of the gender composition of the first two kids on labor supply		
-		\item This is not the same thing as identifying the causal effect of children on labor supply; the former is a LATE whereas the latter might be better described as an ATE
-		\item \emph{Ex post} this is probably obvious, but like many obvious things, it wasn't obvious until it was worked out.  This was a real breakthrough (see Angrist, Imbens and Rubin 1996; Imbens and Angrist 1994)
-		\end{itemize}
-
-\end{frame}
 	
 %\begin{frame}[shrink=20,plain]
 
@@ -1560,7 +1530,7 @@ Std. Dev. Dependent Variable&       0.444   &       0.444   \\
 %\end{itemize}
 
 %\end{frame}
-\section{Leniency design}
+\subsection{Leniency design}
 
 \begin{frame}{Leniency designs}
 
@@ -1782,17 +1752,162 @@ This is the ``long'' causal model. But note, from the prior DAG, we cannot contr
 \begin{frame}{Concluding remarks}
 
 	\begin{itemize}
-	\item Sad, but important, paper - the marginal kid shouldn't have been incarcerated
-	\item More generally, leniency designs are very powerful and very common if you know how to look for them
+	\item Identifying causal effect without an instrument is likely not possible given the deep selection issues associated with crime as a child and adult
+	\item Leniency designs are everywhere, even in tech, but you need to know how to look for them
 	\item Bottleneck, influential decision-makers, discretion - these are the three elements of the design
 	\end{itemize}
 
 \end{frame}
 
 
+\subsection{Price elasticity of demand}
+
+\begin{frame}{Supply and Demand}
+
+\begin{itemize}
+\item Instrumental variables was developed in the 1920s largely to address problems created by supply and demand
+\item Demand curves are causal functions, but so are supply curves
+\item We do not observe all the prices and quantities to be able to calculate the slope or shape of the demand curve because we only observe the ``realized prices and quantities'' in equilibrium
+\item But if we did know the price elasticity of demand, we could set more optimal policies like tax policy or profit maximization
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Supply and Demand}
+	
+	\begin{figure}
+	\includegraphics[scale=0.72]{./lecture_includes/supply_demand.pdf}
+	\end{figure}
+\end{frame}
 
 
+\begin{frame}{Initial price and quantity}
 
+	\begin{figure}
+	\includegraphics[scale=0.15]{./lecture_includes/elasticity_1.jpg}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Supply shift}
+
+	\begin{figure}
+	\includegraphics[scale=0.15]{./lecture_includes/elasticity_2.jpg}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{Price elasticity of demand}
+
+\begin{eqnarray*}
+\delta = \frac{Q_2 - Q_1}{P_2 - P_1}
+\end{eqnarray*}
+
+\bigskip
+
+Can be estimated with log-log regressions:
+
+\bigskip
+
+\begin{eqnarray*}
+Ln Q_{it} = \alpha + \delta Ln P_{it} + \psi_{it}
+\end{eqnarray*}
+
+\bigskip
+
+But you need an instrument for price and it must be a supply shifter only
+
+
+\end{frame}
+
+\begin{frame}{Supply shift}
+
+\begin{itemize}
+\item \textbf{Supply shifters}: Firm input costs and technology are typical candidates
+\item \textcolor{red}{Demand shifters}: Other consumer good prices, consumer income, availability of substitutes, expectations about the future
+\item Good instruments must shift \textbf{only} supply -- \textcolor{red}{not demand}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Elasticity of meth demand}
+
+	\begin{figure}
+	\includegraphics[scale=0.25]{./lecture_includes/he_1}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Cooking meth}
+
+\begin{itemize}
+\item d-methamphetamine is a chemical product synthesized from either ephedrine or pseudoephedrine 
+\item 1995, 1997 and 2003 there were several federal regulations that restricted access to these precursors as an effort combat meth epidemic
+\item Undercover meth seizure data showed massive increases in real price of meth on the street in response
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Meth purity plummetted}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/he_2}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Meth prices skyrocketed}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/he_3}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Meth admissions to treatment and hospitals fell}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/he_4}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{OLS and 2SLS Estimation}
+
+	\begin{figure}
+	\includegraphics[scale=0.35]{./lecture_includes/he_7}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Discussion}
+
+\begin{itemize}
+\item Highly inelastic (-0.21 to -0.26) and robust across two measures of meth consumption
+\item Need data on prices and quantities, required FOIA requests to Drug Enforcement Agency and purchasing data on hospitalizations and treatment
+\item But crucially needed something that would've raised firm costs through inputs that was not related to consumer demand (theory guided)
+\item Instruments were deviations in the price from longterm trends
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Discussion}
+
+\begin{itemize}
+\item There are other ways to estimate demand, but this method is one that should immediately be exploited when supply shocks happen
+\item Focus needs to be on inputs for which there are not instantly the ability to substitute
+\item But can't be so correlated with broader demand shocks that you are back shifting supply and demand (e.g., COVID)
+\end{itemize}
+
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+
+\begin{itemize}
+\item ``With a long enough lever, I can move the world'' -- Archimedes
+\item With a strong enough and strange enough instrument, you can identify the LATE even outside of the laboratory
+\item Need to know what to look for so keep that DAG in mind all the time -- write it on the wall
+\item But like selection on observables, we need plausible assumptions, properly measured data and appropriate estimators
+\end{itemize}
+
+\end{frame}
 
 
 \end{document}
