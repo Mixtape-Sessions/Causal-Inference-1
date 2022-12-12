@@ -4,7 +4,7 @@
 ## replicate figures and tables in Hansen 2015 AER and Graddy 1995
 
 library(haven)
-library(fixest)
+library(x)
 library(tidyverse)
 
 
