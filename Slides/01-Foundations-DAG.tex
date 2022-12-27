@@ -52,6 +52,18 @@
 
 \section{Directed Acyclic Graphs}
 
+\begin{frame}{Graphs}
+
+\begin{itemize}
+
+\item Now we turn from potential outcomes modeling of causal effects to causal graphs
+\item Very important area, very common to see it in computer science intersections with data science, particularly tech, and often very advanced
+\item My focus is very narrow -- I am using it mainly to help us carefully reason through design elements around matching and instrumental variables
+
+\end{itemize}
+
+\end{frame}
+
 \subsection{Graph notation}
 
 \begin{frame}{Judea Pearl, 2011 Turing Award winner, drinking his first IPA}
@@ -82,7 +94,6 @@
     \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
     \item Pearl, Glymour and Jewell (2016) \underline{Causal Inference In Statistics: A Primer}, Wiley Books (\emph{accessible})
     \item Pearl (2009) \underline{Causality: Models, Reasoning and Inference}, Cambridge, 2nd edition (\emph{difficult})
-    \item Cunningham (2021) \underline{Causal Inference: The Mixtape}, Yale, 1st edition (\emph{best choice, no question})
   \end{enumerate}
 
 \end{frame}
@@ -96,6 +107,17 @@
   \end{itemize}
 
 \end{frame}
+
+\begin{frame}{Summarizing Value of DAGs}
+
+  \begin{enumerate}
+    \item Facilitates the task of designing identification strategy for estimating average causal effects
+    \item Facilitates the task of testing compatibility of the model with your data
+    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
+  \end{enumerate}
+
+\end{frame}
+
 
 \begin{frame}{Causal model}
 
@@ -135,7 +157,7 @@
     \item $PE$ and $D$ are \textbf{descendants} of $B$
     \item There is a \textbf{direct (causal) path} from $D$ to $Y$
     \item There is a \textbf{mediated (causal) path} from $B$ to $Y$ through $D$
-    \item There are four \textbf{paths} from $PE$ to $Y$ but none are direct, and one is unlike the others
+    \item There are six \textbf{paths} from $PE$ to $Y$ but none are direct, but some of them are different in other ways
   \end{itemize}
 \end{frame}
 
@@ -166,40 +188,26 @@
   Notice anything different with this DAG?  Look closely.
   \begin{itemize}
 
-    \item $D$ is a \textbf{collider} along the path $B\rightarrow D\leftarrow I$ (i.e., ``colliding'' at $D$)
-    \item $D$ is a \textbf{noncollider} along the path $B\rightarrow D\rightarrow Y$
+    \item $D$ is a \textbf{collider} along the path $PE\rightarrow D\leftarrow I$ (i.e., ``colliding'' at $D$)
+    \item $D$ is a \textbf{noncollider} along the path $PE\rightarrow D\rightarrow Y$
 
   \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Summarizing Value of DAGs}
-
-  \begin{enumerate}
-    \item Facilitates the task of designing identification strategy for estimating average causal effects
-    \item Facilitates the task of testing compatibility of the model with your data
-    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
-  \end{enumerate}
-
-\end{frame}
 
 \begin{frame}{Creating DAGs}
 
-  \begin{itemize}
-    \item The DAG is a \emph{relevant} causal relationships describing the relationship between $D$ and $Y$
-    \item It will include:
-          \begin{itemize}
-            \item All direct causal effects among the \emph{relevant} variables in the graph
-            \item All common causes of any pair of \emph{relevant} variables in the graph
-          \end{itemize}
-    \item No need to model a dinosaur stepping on a bug causing in a million years some evolved created that impacted your decision to go to college
-    \item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
-    \item Sometimes called the data generating process.
-  \end{itemize}
+	\begin{itemize}
+	\item Your DAG should be a reasonable approximation of $D$ and $Y$ parents (confounders) and direct and indirect effects of $D$ on $Y$
+	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
+	\item Sometimes called the data generating process.
+	\end{itemize}
 
 \end{frame}
 
+% 	\item The DAG is a reasonable approximation of all common parents of $D$ and $Y$ (confounders) and direct relationships between $D and $Y$
 
 
 \subsection{Backdoor criterion}
@@ -219,7 +227,6 @@
 \begin{frame}{Confounding}
 
   \begin{itemize}
-    \item Omitted variable bias has a name in DAGs: ``confounding''
     \item Confounding occurs when when the treatment and the outcomes have a common cause or parent which creates spurious correlation between $D$ and $Y$
 
           \begin{center}
@@ -237,7 +244,7 @@
             \end{tikzpicture}
           \end{center}
 
-          The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$
+          \item The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$ because of selection bias due to a confounder
   \end{itemize}
 \end{frame}
 
@@ -277,6 +284,10 @@
     \item It contains a noncollider that has been conditioned on
     \item Or it contains a collider that has not been conditioned on
   \end{itemize}
+  
+  \bigskip
+  
+Note: A path which has a conditioned-on-collider can still be closed, but only with a noncollider-conditioned-on (we will see this later)
 
 \end{frame}
 
@@ -344,11 +355,18 @@
     Conditioning on $X$ satisfies the backdoor criterion with respect to $(D,Y)$ directed path if:
     \begin{enumerate}
       \item All backdoor paths are blocked by $X$
-      \item No element of $X$ is a collider
+      \item No element of $X$ is a collider 
+
     \end{enumerate}
 
-    In words: If $X$ satisfies the backdoor criterion with respect to $(D,Y)$, then controlling for or matching on $X$ identifies the causal effect of $D$ on $Y$
+    
   \end{block}
+        In words: If $X$ satisfies the backdoor criterion with respect to $(D,Y)$, then controlling for or matching on $X$ identifies the causal effect of $D$ on $Y$. 
+
+\bigskip
+
+    And again note that a path which has a conditioned-on-collider can still be closed, but only with a noncollider-conditioned-on 
+
 \end{frame}
 
 \begin{frame}{What control strategy meets the backdoor criterion?}
@@ -466,35 +484,6 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Testing the Validity of the DAG}
-
-  \begin{itemize}
-    \item The DAG makes testable predictions
-    \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
-    \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
-    \item Causal algorithms tend to be DAG based and are becoming popular in industry
-  \end{itemize}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (y) {$Y$};
-      \node[above left of = d, text centered] (i) {$I$};
-      \node[left of = i, text centered] (pe) {$PE$};
-      \node[below of = pe, text centered] (b) {$B$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1,] (i) -- (d);
-      \draw[->, line width= 1,] (pe) -- (i);
-      \draw[->, line width= 1,] (pe) -- (d);
-      \draw[->, line width= 1, dashed] (b) -- (pe);
-      \draw[->, line width= 1, dashed] (b) -- (d);
-      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
-    \end{tikzpicture}
-  \end{center}
-
-\end{frame}
 
 
 
@@ -502,116 +491,23 @@
 
 \subsection{Collider bias}
 
-\begin{frame}[allowframebreaks,plain]
-  \begin{center}
-    \textbf{Collider bias}
-  \end{center}
+\begin{frame}{Collider bias}
 
-  \begin{itemize}
-    \item \textbf{Conditioning on a collider introduces spurious correlations; can even mask causal directions}
-          \begin{itemize}
-            \item There is only one backdoor path from $D$ to $Y$
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
-                      \node[right of = x1, text centered] (d) {$D$};
-                      \node[below right of = d, text centered] (x2) {$X_2$};
-                      \node[above right of = x2, text centered] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5] (x1) -- (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                      \draw[->, line width= .5] (d) -- (x2);
-                      \draw[->, line width= .5] (y) -- (x2);
-                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item Conditioning on $X_1$ blocks the backdoor path
-
-            \item But what if we also condition on $X_2$?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
-                      \node[right of = x1, text centered] (d) {$D$};
-                      \node[below right of = d, draw, rectangle, text centered] (x2) {$X_2$};
-                      \node[above right of = x2, text centered] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5] (x1) -- (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                      \draw[->, line width= .5] (d) -- (x2);
-                      \draw[->, line width= .5] (y) -- (x2);
-                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
-          \end{itemize}
-
-          \framebreak
-
-
-    \item \textbf{Even controlling for pretreatment covariates can create bias}
-          \begin{itemize}
-            \item Name the backdoor paths.  Is it open or closed?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm, text centered]
-                      % nodes %
-                      \node[] (x) {$X$};
-                      \node[above left of = x] (u1) {$U_1$};
-                      \node[below left of = x] (u2) {$U_2$};
-                      \node[right of = x] (d) {$D$};
-                      \node[right of = d] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5, dashed] (u1) -- (x);
-                      \draw[->, line width= .5, dashed] (u2) -- (x);
-                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
-                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-            \item But what if we condition on $X$?
-
-                  \begin{center}
-                    \begin{tikzpicture}
-                      [node distance=1.5cm, text centered]
-                      % nodes %
-                      \node[text centered,draw,rectangle,thin] (x) {$X$};
-                      \node[above left of = x] (u1) {$U_1$};
-                      \node[below left of = x] (u2) {$U_2$};
-                      \node[right of = x] (d) {$D$};
-                      \node[right of = d] (y) {$Y$};
-
-                      % edges %
-                      \draw[->, line width= .5, dashed] (u1) -- (x);
-                      \draw[->, line width= .5, dashed] (u2) -- (x);
-                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
-                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
-                      \draw[->, line width= .5] (d) -- (y);
-                    \end{tikzpicture}
-                  \end{center}
-
-
-          \end{itemize}
-  \end{itemize}
-  \framebreak
-
+\begin{itemize}
+\item You can identify average causal effects using a covariate adjustment strategy so long as you do not in the process inadvertently ``open'' backdoor paths
+\item Backdoor paths can remain open in covariate adjustment strategies through two ways:
+	\begin{enumerate}
+	\item You did not close the path because you did not condition on the confounder
+	\item Your conditioning variable opened up a previously closed backdoor path because on that path the variable was a \textbf{collider}
+	\end{enumerate}
+\item Colliders are ``bad controls''; they are often outcomes, but not always and not all outcomes create this problem
+\item This is the risk of blindly controlling for variables (``kitchen sink regressions'')
+\end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Sample selection example of collider bias}
+\begin{frame}{Movie star example of collider bias}
 
   \alert{Important}: Since unconditioned colliders block back-door paths, what exactly does conditioning on a collider do? Let's illustrate with a fun example and some made-up data\\
   \begin{itemize}
@@ -623,12 +519,9 @@
 \end{frame}
 
 
-\begin{frame}[plain]
+\begin{frame}{Movie star DAG}
 
-  \begin{itemize}
-    \item What if the sample consists \emph{only} of movie stars?
-    \item Look at python code
-  \end{itemize}
+Imagine casting directors pick movie stars based on talent and beauty
 
   \begin{center}
     \begin{tikzpicture}
@@ -645,7 +538,7 @@
     \end{tikzpicture}
   \end{center}
 
-
+Talent and beauty can become correlated even though they are independent
 
 
 \end{frame}
@@ -656,6 +549,16 @@
     \includegraphics[height=9cm]{./lecture_includes/beauty_collider.pdf}
     \caption{Top left figure: Non-star sample scatter plot of beauty (vertical axis) and talent (horizontal axis). Top right right figure: Star sample scatter plot of beauty and talent.  Bottom left figure: Entire (stars and non-stars combined) sample scatter plot of beauty and talent.}
   \end{figure}
+\end{frame}
+
+\begin{frame}{Sample selection?}
+
+\begin{itemize}
+\item Notice that this is clear when we are focused on sample selection
+\item But even a regression that included ``star'' would create the issue:$$talent_i = \alpha + \delta beauty_i + \beta star_i + \varepsilon_i$$
+\item It's not just sample selection 
+\end{itemize}
+
 \end{frame}
 
 
@@ -771,7 +674,143 @@
 
 \end{frame}
 
+\begin{frame}[allowframebreaks,plain]
 
+  \begin{itemize}
+    \item \textbf{Colliders can be outcomes (and often those are the ones)}
+          \begin{itemize}
+            \item There is only one backdoor path from $D$ to $Y$
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
+                      \node[right of = x1, text centered] (d) {$D$};
+                      \node[below right of = d, text centered] (x2) {$X_2$};
+                      \node[above right of = x2, text centered] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5] (x1) -- (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                      \draw[->, line width= .5] (d) -- (x2);
+                      \draw[->, line width= .5] (y) -- (x2);
+                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+                    \end{tikzpicture}
+                  \end{center}
+                  
+
+            \item Conditioning on $X_1$ blocks the backdoor path
+
+
+            \item But what if we also condition on $X_2$?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x1) {$X_1$};
+                      \node[right of = x1, text centered] (d) {$D$};
+                      \node[below right of = d, draw, rectangle, text centered] (x2) {$X_2$};
+                      \node[above right of = x2, text centered] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5] (x1) -- (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                      \draw[->, line width= .5] (d) -- (x2);
+                      \draw[->, line width= .5] (y) -- (x2);
+                      \draw[->, line width= .5] (x1) to [out=45,in=135, looseness=0.5] (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
+          \end{itemize}
+
+          \framebreak
+
+
+    \item \textbf{Colliders could be pre-treatment covariates}
+          \begin{itemize}
+            \item Name the backdoor paths.  Is it open or closed?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm, text centered]
+                      % nodes %
+                      \node[] (x) {$X$};
+                      \node[above left of = x] (u1) {$U_1$};
+                      \node[below left of = x] (u2) {$U_2$};
+                      \node[right of = x] (d) {$D$};
+                      \node[right of = d] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5, dashed] (u1) -- (x);
+                      \draw[->, line width= .5, dashed] (u2) -- (x);
+                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
+                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+            \item But what if we condition on $X$?
+
+                  \begin{center}
+                    \begin{tikzpicture}
+                      [node distance=1.5cm, text centered]
+                      % nodes %
+                      \node[text centered,draw,rectangle,thin] (x) {$X$};
+                      \node[above left of = x] (u1) {$U_1$};
+                      \node[below left of = x] (u2) {$U_2$};
+                      \node[right of = x] (d) {$D$};
+                      \node[right of = d] (y) {$Y$};
+
+                      % edges %
+                      \draw[->, line width= .5, dashed] (u1) -- (x);
+                      \draw[->, line width= .5, dashed] (u2) -- (x);
+                      \draw[->, line width= .5, dashed] (u1) to [out=0,in=135, looseness=0.5] (y);
+                      \draw[->, line width= .5, dashed] (u2) to [out=0,in=-135, looseness=0.5] (d);
+                      \draw[->, line width= .5] (d) -- (y);
+                    \end{tikzpicture}
+                  \end{center}
+
+
+          \end{itemize}
+  \end{itemize}
+  \framebreak
+
+
+\end{frame}
+
+
+\begin{frame}{Testing the Validity of the DAG}
+
+  \begin{itemize}
+    \item The DAG makes testable predictions
+    \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
+    \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
+    \item Causal algorithms tend to be DAG based and are becoming popular in industry
+  \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (y) {$Y$};
+      \node[above left of = d, text centered] (i) {$I$};
+      \node[left of = i, text centered] (pe) {$PE$};
+      \node[below of = pe, text centered] (b) {$B$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1,] (i) -- (d);
+      \draw[->, line width= 1,] (pe) -- (i);
+      \draw[->, line width= 1,] (pe) -- (d);
+      \draw[->, line width= 1, dashed] (b) -- (pe);
+      \draw[->, line width= 1, dashed] (b) -- (d);
+      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
 
 \subsection{Front door criterion}
 

@@ -48,99 +48,151 @@
 
 % ---- Content ----
 
-\section{Matching and weighting}
+\section{Selection on observables}
 
 
-\subsection{What is matching?}
+\subsection{Missing counterfactuals}
 
-\begin{frame}{Parameters of interest}
+\begin{frame}{Defined causal parameters}
+
+Recall our definition of the ATE in terms of population mean differences in potential outcomes: $$E[Y^1] - E[Y^0]$$
+
+We work with samples, so we express the ATE sample analog: $$\frac{1}{N} \sum_i \bigg [ Y_i^1 - Y_i^0 \bigg ]$$
+
+But for every $i$ unit, who is either treated or not treated, we are missing one of these (i.e., counterfactuals), and so we will \emph{estimate} the missing counterfactual for one group with the observed values of the other
+
+
+\end{frame}
+
+%\begin{frame}{Defined causal parameters and weights}
+
+%Our ATE estimator is a weighted average of the ATT and the ATU:
+
+%$$\widehat{\delta}^{ATE} = \frac{N_T}{N}\  \widehat{\delta}^{ATT} + \frac{N_C}{N}\  \widehat{\delta}^{ATU}$$
+
+
+%where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_i^0 \bigg ]$;
+%$\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
+
+%\bigskip
+
+%\url{https://docs.google.com/spreadsheets/d/10DuQqGtH_Ewea7zQoLTFYHbnvqaTVDhn2GDzq3Oa6EQ/edit?usp=sharing}
+
+%\end{frame}
+
+\begin{frame}{Defined causal parameters and weights}
+
+What is $\widehat{Y}^0_i$ for the treatment group?  It's an \textbf{estimate} of the \textbf{missing} counterfactual.  And this is its estimated value: 
+$$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
 
 \begin{itemize}
-	\item We've discussed several important causal effects we may care about:
-		\begin{itemize}
-		\item Average Treatment Effects -- most external validity
-		\item Average Treatment on the Treated -- impact on just the treated group
-		\item Local Average Treatment Effects -- impact only on the subpopulation who complies
-		\end{itemize}
-	\item RDD and IV can identify the LATE 
-	\item DD and synth can identify ATT
-	\item What can estimate the ATE?
+  \item $w_{ij}$ is the weight unit $j$ receives in predicting unit $i$'s counterfactual
+  \item Weighting is therefore an important part of what we will be doing, even though what we are going to be doing always is imputing missing counterfactuals through estimation
 \end{itemize}
 
 \end{frame}
+
+
+\begin{frame}{Estimating missing counterfactuals}
+
+$$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
+
+\bigskip
+We will be estimating counterfactuals as \textbf{weighted} averages over outcomes from the other group (e.g., control) by incorporating observable covariates
+
+
+\end{frame}
+
+
+
+\begin{frame}{What is selection on observables?}
+
+\begin{itemize}
+	\item Selection on observables is an estimation strategy that attempts to estimate average treatment effects using covariate adjustments that meet the backdoor criterion
+	\item Very strong condition: conditional on covariates, all remaining variation in the treatment is ``as good as randomly assigned''
+	\item Covariates are used to construct a credible counterfactual as a weighted average of the other treatment category group (``look-a-like'')
+	\item Estimators differ in how the weights, $w_{ij}$, are calculated and how comparisons are made
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{DAGs are crucial for selection on observables}
+
+\begin{itemize}
+\item If you are going to estimate causal effects using covariates, then you \textbf{must use a model} as you will be assuming that you have not forgotten a confounder or included a collider
+\item You must \textbf{defend} selection on observables methods and it's much less credible to many people because they cannot confirm much of the assumptions
+\item Personal observation: given the lack of comfort people have with modeling in general, it's not a great sign when you see them then use selection on observables
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Selection on observables}
+	
+	\begin{itemize}
+	\item Simple weighting methods (e.g., subclassification)
+	\item Exact matching methods (e.g., nearest neighbors)
+	\item Approximate matching methods (e.g., propensity scores)
+	\item Hybrid matching methods (e.g., coarsened exact matching)
+	\end{itemize}
+	
+	\bigskip
+	
+	Regressions that condition on covariates are with binary treatments can be used also
+
+
+\end{frame}
+
+
+\begin{frame}{Exogenous Covariate}
+	
+	
+	\begin{block}{Definition of a Exogenous Covariate}
+	Variable $X$ is an exogenous covariate if for each individual $i$, the value of $X_i$ does not vary because of the treatment status (i.e., not a collider)
+	\end{block}
+	
+	\begin{itemize}
+	\item Does not imply $X$ and treatment status are independent; just means that the treatment doesn't cause $X$ (i.e., colliders aren't covariates)
+	\item Covariates can be time invariant or change over the time -- that's not relevant
+	\item Goal is to use covariates that capture all confounders (no unobserved ones) and don't open backdoors through bad controls (e.g., colliders)
+	\end{itemize}
+	
+\end{frame}
+
+
+
+\subsection{Simple weighting}
+
+
 
 
 \begin{frame}{History of non-experimental matching}
 
 \begin{itemize}
 
-	\item A set of techniques for estimating ATE emerged in the 20th century from statistics and epidemiology
-	\item Largely driven by smoking's connection to lung cancer
-	\item Weighting methods emerged to estimate ATE from non-experimental data
-	\item Interestingly, these methods would evolve into the contemporary suite of estimators I call matching but it includes weighting too
+	\item A set of techniques for estimating ATE emerged in the 20th century from statistics and epidemiology, largely driven by public health concerns about smoking's connection to lung cancer
+	\item ``Weighting'' methods to correct for covariate imbalance were developed to estimate ATE from non-experimental data
+	\item In time these evolved into matching, and while conceptually they seem distinct, they are very similar
+	\item Huge area, and it never really took off in economics despite some initial promise (Dehejia and Wahba 1999; 2002), but if you take Causal Inference Part 2, you'll see that the principles are there in difference-in-differences and synthetic control
+
 
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{What is matching?}
-
-Define the ATE: $$E[Y^1] - E[Y^0]$$
-
-and its sample analog: $$\frac{1}{N} \sum_i \bigg [ Y_i^1 - Y_i^0 \bigg ]$$
 
 
-\end{frame}
-
-\begin{frame}{What is matching?}
-
-Estimator:
-
-$$\widehat{\delta}^{ATE} = \frac{N_T}{N}\  \widehat{\delta}^{ATT} + \frac{N_C}{N}\  \widehat{\delta}^{ATU}$$
-
-
-where $\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_i \bigg [Y_i^1 - \widehat{Y}_i^0 \bigg ]$ and $\widehat{\delta}^{ATU} = \frac{1}{N_C} \sum_i \bigg [\widehat{Y}_i^1 - Y_i^0 \bigg ]$.
-
-
-\pause\bigskip~\bigskip
-What is $\widehat{Y}^0_i$ for the treatment group?  It's an \textbf{estimated} counterfactual.  And this is its estimated value: 
-$$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
-
-\begin{itemize}
-  \item $w_{ij}$ is the weight unit $j$ receives in predicting unit $i$'s counterfactual
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{What is matching?}
-
-$$\widehat{Y}^0_i \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}Y_j^0$$
-
-\bigskip
-We are estimating counterfactuals as \textbf{weighted} averages over outcomes from the other group (e.g., control)
-
-\begin{itemize}
-  \item Basically, no matter how fancy we get, matching is really always this form
-  \item Estimators differ in how the weights, $w_{ij}$, are calculated
-  \item Part of our goal is \textbf{balance} covariates between treatment and control group
-\end{itemize}
-
-\end{frame}
-
-\subsection{Stratification}
 
 \begin{frame}{Smoking thought experiment}
 
-	\begin{center}	
-    \textbf{Does Smoking Cause Cancer?}
-  \end{center}
 
-\bigskip
 \begin{itemize}
 	\item Split a large enough population to gain enough power to detect causal effects into treatment and control
-	\item Treatment spends their lives smoking a pack of day; control abstains
-	\item Compare lung cancer rates between the two groups
+		\begin{itemize}
+		\item Treatment spends their lives smoking a pack of day; control abstains
+		\item Compare lung cancer rates between the two groups
+		\end{itemize}
 	\item Low realism: can't really expect people to comply with a longterm experiment like this
 	\item But important, so how did scientists proceed? Through weighting-based methods
 \end{itemize}
@@ -212,9 +264,9 @@ Other criticisms came from giants like Joseph Berkson, Jerzy Neyman and Ronald F
 
 \begin{frame}{Fisher's confounding theory}
 		\begin{itemize}
-		\item Fisher, equally famous as a geneticist, argued from logic, statistics and genetic evidence for a hypothetical confounding genome, $Z$, and therefore smokers and non-smokers were not exchangeable (violation of independence assumption)
-		\item Other studies showed that cigarette smokers and non-smokers were different on observables -- more extraverted than non-smokers and pipe smokers, differed in age, differed in income, differed in education, etc.
-		\item (FWIW Fisher was a chain smoking pipe smoker, he died of cancer, and he was a paid expert witness for the tobacco industry)
+		\item  Fisher was a chain smoking pipe smoker, he died of cancer, and he was a paid expert witness for the tobacco industry
+		\item He was also equally famous as a geneticist and arguing from logic, statistics and genetic evidence proposed a hypothetical confounding genome, $Z$, which introduced selection bias into contrasts of smokers and non-smokers (``perfect doctor'')
+		\item There was support for this:  studies showed that cigarette smokers and non-smokers were different on observables -- more extraverted than non-smokers and pipe smokers, differed in age, differed in income, differed in education, etc.
 		\end{itemize}
 \end{frame}
 
@@ -230,7 +282,7 @@ Other criticisms came from giants like Joseph Berkson, Jerzy Neyman and Ronald F
   \end{quote}
 	
   \begin{itemize}
-    \item Scientists shifted to fixing their broken clocks for good
+    \item Scientists shifted to fixing their broken clocks for good and adjusting for \emph{observable} differences became a solution
   \end{itemize}
 
 \end{frame}
@@ -256,11 +308,11 @@ Other criticisms came from giants like Joseph Berkson, Jerzy Neyman and Ronald F
 		\end{center}
 	\end{table}
 	
-Are cigars more dangerous than cigarettes?  Are cigarettes safe?
+Cigars in these data had much higher mortality rates in all three countries than non-smokers, but even cigarette smokers.  Cigarette smokers in Canada have same mortality rates as non-smokers. Strange associations to us today, so imagine back then when the smoking-cancer hypothesis was not settled
 	
 \end{frame}
 
-\begin{frame}{Non-smokers and smokers differ in mortality but also age}
+\begin{frame}{Non-smokers and smokers differ in age}
 	
 
 
@@ -288,37 +340,53 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 	\item How can we check this?
 	\end{itemize}
  
+\end{frame}
+
+\begin{frame}{Covariate imbalance}
+
+\begin{itemize}
+\item  Covariates are \emph{not balanced} -- their mean values differ for treatment and control group. 
+\item We will use weighting and imputation to achieve covariate balance
+\item Keeping in mind we need this to be done for \emph{relevant} covariates
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Force groups to have the same age distribution}
-	
-  Covariates are \emph{not balanced} -- their mean values differ for treatment and control group. 
 
-  \bigskip 
-  \textbf{Option 1:}
+\begin{frame}{General principles}
+	
+
+  \textbf{Comparing Within Covariate Strata}
   \begin{itemize}
-    \item Subclassification (also called stratification) compares mortality rates across the different smoking groups \emph{within} each age group 
-    \item Compare within covariate strata and then combine differences to neutralize observed confounders
+	\item Create slices of the covariates called ``strata'' 
+	\item Compare mortality rates across the different smoking groups but \emph{within} each strata 
+	\item Compare within covariate strata and then combine differences to neutralize observed confounders
   \end{itemize}
 
-  \bigskip 
-  \textbf{Option 2:}
+\end{frame}
+
+\begin{frame}{General principles}
+	
+
+  \textbf{Weighting}
   \begin{itemize}
-    \item Weight the data so that covariates are balanced, then compare mortality across treatment and control
-    \item Which weights?
+    \item Weight the data so that covariates are balanced, 
+    \item Then compare mortality across treatment and control
+    \item Focus then is how to find those weights that cause covariate balance
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Weighting the data}
+
+\begin{frame}{Subclassification/stratification}
 
   Divide the smoking group samples into age groups:
-  \begin{itemize}
-		\item For each smoking group sample, calculate the mortality rates for that age group
-		\item Construct probability weights: the proportion of each smoking group sample within a given age group
-		\item For each smoking group, compute the weighted averages of the age groups mortality rates using the probability weights
-		\item This will oddly enough balance the observed covariate, in this case age group, between treatment and control
-  \end{itemize}
+  \begin{enumerate}
+		\item Calculate mortality rates separately for each age group \emph{by treatment and control separately}
+		\item Construct ``probability weights'': the proportion of each smoking group sample within a given age group
+		\item For treatment and control group, compute the weighted averages of the age groups mortality rates using the probability weights
+  \end{enumerate}
+This interestingly will balance the observed covariate, age, between treatment and control
+
 
 \end{frame}
 
@@ -351,8 +419,8 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 	\begin{flalign*}
     \only<1-2>{&\text{Question: What is the average death rate for pipe smokers?}&}\\
     \only<2-2>{&15\cdot\left(\frac{11}{40}\right)+35\cdot\left(\frac{13}{40}\right)+50\cdot\left(\frac{16}{40}\right)=35.5} \\
-    \only<3-4>{&\text{Question: What would the average mortality rate be for pipe smokers}} \\ 
-    \only<3-4>{&\text{if they had the same age distribution as the non-smokers?}}\\
+    \only<3-4>{&\text{Counterfactual question: What would the average mortality rate be for }} \\ 
+    \only<3-4>{&\text{pipe smokers if they had the same age distribution as the non-smokers?}}\\
     \only<4-4>{&15\cdot\left(\frac{29}{40}\right)+35\cdot\left(\frac{9}{40}\right)+50\cdot\left(\frac{2}{40}\right)=21.2}
 	\end{flalign*}
 
@@ -381,44 +449,19 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 
 \end{frame}
 
-\begin{frame}{Observable Covariate}
-	
-	We are going to use matching methods to adjust for observable differences between these three groups
-	
-	\begin{block}{Definition: Predetermined Covariates}
-	Variable $X$ is a predetermined covariate if for each individual $i$, the value of $X_i$ does not depend on treatment status.
-	\end{block}
-	
-	\begin{itemize}
-	\item Does not imply $X$ and treatment status are independent 
-	\item Sometimes covariates do not change over time, but doesn't have to be 
-	\item Beware of colliders or ``bad controls'' 
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{Adjustment for Observables}
-	
-	\begin{itemize}
-	\item Simple weighting methods (e.g., subclassification)
-	\item Exact matching methods (e.g., nearest neighbors)
-	\item Approximate matching methods (e.g., propensity scores)
-	\end{itemize}
-\end{frame}
 
 \begin{frame}{Assumptions, data and statistics}
 
+We always need three things to estimate a causal effect
 \begin{itemize}
-\item We need three things, and really only three things, to estimate a causal effect
-\item \textbf{Assumptions}: what must we assume is true so that our models work with data?
-\item \textbf{Data}: what data with what covariates and outcomes do we need for this project?
-\item \textbf{Statistical models}: sometimes called ``estimators'' which crank data into estimates which equal the causal effect?
-\item Many moving parts with many players 
+\item \textbf{Correct Assumptions}: what must we assume is true so that our models work with data?
+\item \textbf{Properly Measured Data}: what data with what covariates and outcomes do we need for this project?
+\item \textbf{Statistical models}: sometimes called ``estimators'' which are the calculators turning data into unbiased estimates of treatment effects (or not!)
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Assumption I: Independence}
+\begin{frame}{Recall the RCT Assumption of Independence}
 	
 	\begin{itemize}
 	\item Randomized treatment assignment guarantees ``independence'' $$(Y^0,Y^1)\independent{D}$$
@@ -431,13 +474,86 @@ Are cigars more dangerous than cigarettes?  Are cigarettes safe?
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Covariate distribution}
+
+\begin{itemize}
+\item Just like independence implies balance on potential outcomes, it also implies balance on covariates which is called ``common support''
+\item We saw this in our Thornton regressions: cash vouchers were not associated with being male, one's age, etc.
+\item If we have balance on potential outcomes, that's all we need but balance on covariates is often used to provide some evidence the randomization was done well
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Violations of independence}
 
 \begin{itemize}
-\item Problem with smoking and cancer was smoking wasn't \emph{randomly assigned}
-\item Since it wasn't randomly assigned, smoking was not ``independent'' of potential outcomes
-\item When a treatment is ``dependent'' on potential outcomes, it means people smoke because they expect something is better when they smoke ($Y^1$) than when they don't ($Y^0$)
-\item So what?  Means you can't compare naively -- you have to adjust for whatever is needed to recover ``conditional independence''
+\item Problem with smoking and cancer was smoking wasn't \emph{randomly assigned} -- it was chosen by the ``perfect doctor'' (i.e., self selection into smoking based on factors related to potential outcomes)
+\item When a treatment is ``dependent'' on potential outcomes, it means people smoke because they expect something is better when they smoke ($Y^1$) than when they don't ($Y^0$) introducing selection bias and potentially heterogenous treatment effect bias
+\item Naive comparisons can be deeply misleading -- covariate adjustment can resolve this if ``conditional independence'' happens in the data
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}[plain]
+
+	\begin{block}{Identifying assumption I: Conditional independence}
+	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of observable covariates such that after controlling for these covariates, treatment assignment is \emph{independent of potential outcomes}.
+	\end{block}
+	
+	\begin{itemize}
+	\item Conditional on $X$, treatment assignment is `as good as random'. 
+	\item `As good as random' is English for ``independent of potential outcomes'' potential outcomes jargon, but we could just as easily insert backdoor criterion
+	\item Sometimes this is called also ``unconfoundedness''
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+
+	\begin{block}{Identifying assumption II: Common support}
+	For ranges of $X$, there is a positive probability of being both treated and untreated
+	\end{block}
+	
+	\begin{itemize}
+	\item Assumption requires that there are units in both treatment and control for the range of $X$
+	\item Common support ensures we can find similar enough donors in the control pool
+	\item We can't check for balance on potential outcomes, because of switching equation eliminating counterfactuals, but we can check for common support 
+	\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Big picture of conditional independence}
+
+\begin{itemize}
+\item You use these methods if you are confident in your DAG, \textbf{and} there exists a conditioning strategy that satisfies the backdoor criterion
+\item If you literally refuse to commit to a model, theory of DGP or DAG, then you cannot justify matching
+\item Matching is for experts -- not because it's hard, but because experts are often the ones who \emph{are willing} to write down a DAG; it rewards domain specific human capital 
+\item But remember the audience and the progression away from models that Card (2014) mentioned \dots
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Independence breaks down under perfect doctor reasoning}
+
+\begin{itemize}
+\item Independence was violated if the treatment was assigned \emph{because} we expected things to improve or not (``perfect doctor'' reasoning)
+\item If you take an action because you think it helps and others don't take the action because they don't or can't, then it is a violation of independence probably
+\item Keep telling yourself this phrase: ``Firms don't flip coins to set prices''. They set prices based on profit maximization or cost minimization or equivalent goals
+\item Selection bias then will be baked into those non-experimental observations and thus can't be relied on without causal inference adjustments
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Conditional independence}
+
+\begin{itemize}
+\item DAG reasoning can be a little unhelpful at times once we try to articulate the conditional independence assumption, so hear me out:
+\item Firms don't flip coins to set prices, but is there \emph{some} random price setting conditional on observable factors (which only employees, managers and executives could possibly know about)? 
+\item If they flip coins conditional on something, then that's ``conditional independence''. See -- it's a strong belief.  
+\item Conditional independence means that once we adjust for covariates, all remaining variation in treatment assignment had nothing to do with profit maximization or potential outcomes more generally but rather was as good as random
 \end{itemize}
 
 \end{frame}
@@ -451,20 +567,24 @@ Identification assumptions:
   \end{enumerate}
 
 \bigskip
-Comparing two individuals \emph{who have the same values of} $X$, treatment is independent of outcomes
+Comparing two individuals \emph{who have the same values of} $X$, treatment is independent of potential outcomes. 
+
+\bigskip
+
+The second term implies we have people in treatment and control for every strata of $X$
 \end{frame}
 
 
-\begin{frame}{Implications of independence}
+\begin{frame}{Implications of assumptions}
 
 
 	\begin{itemize}
-	\item Assumption 1 lets you plug $Y$ for $Y^j$
+	\item Assumption 1 lets you plug $Y$ for $Y^j$ with the switching equation
 		\begin{eqnarray*}
 		E[Y^1-Y^0|X] &=& E[Y^1 - Y^0 | X,D=1] \\
 		&=&E[Y|X,D=1] - E[Y|X,D=0]
 		\end{eqnarray*}
-	\item Assumption 2 lets you weight
+	\item Assumption 2 lets you properly weight over the covariate distribution
 		\begin{eqnarray*}
 		\delta_{ATE} &=&E[Y^1-Y^0] = E\bigg[ E[Y^1 - Y^0 \ \vert \ X] \bigg] \\
 		&=& \int E[Y^1 - Y^0 |X,D=1] dPr(X) \\
@@ -474,42 +594,12 @@ Comparing two individuals \emph{who have the same values of} $X$, treatment is i
 
 \end{frame}
 
-\begin{frame}{Independence breaks down}
 
-\begin{itemize}
-\item Independence is violated, though, if the treatment was assigned \emph{because} we expected things to improve or not
-\item That's because the causal effect is $\delta_i = Y_i^1 - Y_i^0$
-\item If you take an action because you think $\delta_i > 0$ and others don't take the action because $\delta_i < 0$, then you are admitting independence doesn't hold
-\item Firms don't ordinarily flip coins to set prices -- they set prices based on profit maximization 
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Conditional independence}
-
-\begin{itemize}
-\item But, if there is \emph{some} random price setting conditional on observable factors (which only employees, managers and executives could possibly know about), then we may be able to defend ``conditional independence''
-\item Conditional independence means that once we adjust for covariates, all remaining variation in treatment assignment had nothing to do with profit maximization or potential outcomes more generally
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Implications of assumptions}
-
-Conditional independence lets us do two things:
-		\begin{eqnarray*}
-		\delta_{ATT} &=& E\bigg[ E[Y^1-Y^0 | D=1,X] \bigg] \\
-		&=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
-		\end{eqnarray*}
-\end{frame}
 
 
 \begin{frame}{Can we defend any conditional independence?}
 
-\begin{itemize}
-	\item Maybe prices are conditionally independent of $Y^0$ but not $Y^1$
-	\item Technically a weaker assumption, but also means we can't estimate ATE
-\end{itemize}
+Other versions of conditional independence (and this shows up in diff-in-diff too)
 
 \begin{enumerate}
   \item $Y^0 \independent{D} | X$ 
@@ -517,12 +607,21 @@ Conditional independence lets us do two things:
 \end{enumerate}
 
 \bigskip
-We can then estimate the ATT.
+Notice how there is only one potential outcome in the independence equation.  That's okay.  We can still then estimate the ATT (just not the ATE).
 
 \end{frame}
 
+\begin{frame}{ATT}
 
-\begin{frame}{Two parameter estimates}
+Conditional independence of $D$ with respect to $Y^0$ conditional on $X$, but not $Y^1$, lets us recover the ATT with weights and the realized data
+		\begin{eqnarray*}
+		\delta_{ATT} &=& E\bigg[ E[Y^1-Y^0 | D=1,X] \bigg] \\
+		&=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
+		\end{eqnarray*}
+\end{frame}
+
+
+\begin{frame}{Summarizing}
 
 
 Weighted averages under either assumption:
@@ -530,9 +629,11 @@ Weighted averages under either assumption:
 		\delta_{ATE} &=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X) \\
 		\delta_{ATT} &=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
 		\end{eqnarray*}
+ATE needs independence with respect to both potential outcomes; ATT only needs it with respect to $Y^0$. 		
+		
 \end{frame}
 
-\begin{frame}{Subclassification by Age ($K=2$)}
+\begin{frame}{Weighting by Age ($K=2$)}
 	
 	\begin{table}\centering
 		\begin{center}
@@ -572,7 +673,7 @@ Weighted averages under either assumption:
 		
  
 
-\begin{frame}[shrink=20,plain]{Subclassification by Age and Gender ($K=4$)}
+\begin{frame}[shrink=20,plain]{Weighting by Age and Gender ($K=4$)}
 	
 	\begin{table}\centering
 		\begin{center}
@@ -604,7 +705,7 @@ Weighted averages under either assumption:
 
 	\begin{flalign*}
 		    \only<1-2>{&\text{Problem: What is $\widehat{\delta_{ATE}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k}{N}\right)$?}&}\\
-		    \only<2-2>{&\text{Not identified!}} \\
+		    \only<2-2>{&\text{Not identified! What went wrong?}} \\
 		    \only<3-4>{&\text{Question: What is $\widehat{\delta_{ATT}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k_T}{N_T}\right)$?}} \\ 
 		    \only<4-4>{&4\cdot\left(\frac{3}{10}\right)+5\cdot\left(\frac{3}{10}\right)+6\cdot\left(\frac{4}{10}\right)=5.1}
 	\end{flalign*}
@@ -614,22 +715,36 @@ Weighted averages under either assumption:
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item Subclassification may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
+	\item Stratification methods, including OLS, may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
 	\item Assume we have $k$ covariates and we divide each into 3 coarse categories (e.g., age: young, middle age, old; income: low, medium, high, etc.)
-	\item The number of sub classification cells (or ``strata'') is $3^k$. For $k=10$, then it's $3^{10}=59,049$
+	\item The number of strata is $3^k$. For $k=10$, then it's $3^{10}=59,049$
+	\item The problem isn't just the number of covariates; it's the number of strata based on those covariates (you can hit the curse fast)
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both.  If so, we cannot use sub classification.
-	\item Subclassification is also a problem if the cells are ``too coarse''.  We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
+	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both, and that violates our second assumption
+	\item We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
+	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS doesn't tell us it is just doing various extrapolations
+	\item Simple weighting methods is also a problem if the cells are ``too coarse''
 	\end{itemize}
 \end{frame}	
 
 
 \subsection{Nearest neighbor matching}
+
+\begin{frame}{To Look Like Someone Else}
+
+\begin{itemize}
+\item Not sure of the exact history of matching, but the idea is super intuitive
+\item What if we could make synthetic xerox copies of ourselves in counterfactual states?
+\item Matching is to basically find units in the control group, or treatment group, that ``look like me'' \textbf{on observables}
+\item But remember -- it's driven by DAG reasoning; you only need to look minimally ``like'' the other person to satisfy backdoor
+\end{itemize}
+
+\end{frame}
 
 \begin{frame}{Nearest Neighbor Matching}
 	
@@ -723,15 +838,6 @@ Weighted averages under either assumption:
 
 \end{frame}
 
-\begin{frame}{Training Effect Estimates}
-  Difference in average earnings between trainees and non-trainees:
-
-  \begin{itemize}
-    \item Before matching $$16,426 - 20,724 = -4,298$$
-    \item After matching $$16,426 - 13,982 = 2,444$$
-  \end{itemize}
-  
-\end{frame}
 
 {
 \setbeamercolor{background canvas}{bg=}
@@ -863,20 +969,20 @@ Algebraic manipulation and simplification:
 Note $\widehat{\delta}_{ATT} - \delta_{ATT} \to 0$ as $N \to \infty$.
 \pause However, 
 $$E[ \sqrt{\frac{1}{N}} (\widehat{\delta}_{ATT} - \delta_{ATT})] = E[ \sqrt{\frac{1}{N}} ( \mu^0(X_i) - \mu^0(X_{j(i)}) ) | D=1].$$ 
-
+\pause
 Now consider the implications if $k$ is large:
-	\begin{itemize}
-	\item The difference between $X_i$ and $X_{j(i)}$ converges to zero very slowly
-	\item The difference $\mu^0(X_i) - \mu^0(X_{j(i)})$ converges to zero very slowly
-	\item $E[ \sqrt{\frac{1}{N}} (\mu^0(X_i) - \mu^0(X_{j(i)})) | D=1]$ may not converge to zero and an be very large!
-	\item $E[ \sqrt{\frac{1}{N}} (\widehat{\delta}_{ATT} - \delta_{ATT})]$ may not converge to zero because the bias of the matching discrepancy is dominating the matching estimator!
+\pause	\begin{itemize}
+	\item The difference between $X_i$ and $X_{j(i)}$ converges to zero very slowly 
+\pause	\item The difference $\mu^0(X_i) - \mu^0(X_{j(i)})$ converges to zero very slowly \pause
+	\item $E[ \sqrt{\frac{1}{N}} (\mu^0(X_i) - \mu^0(X_{j(i)})) | D=1]$ may not converge to zero and an be very large! 
+\pause	\item $E[ \sqrt{\frac{1}{N}} (\widehat{\delta}_{ATT} - \delta_{ATT})]$ may not converge to zero because the bias of the matching discrepancy is dominating the matching estimator! \pause
 	\end{itemize}
-Bias is often an issue when we match in many dimensions
+ Bias is often an issue when we match in many dimensions
 \end{frame}
 
 \begin{frame}{Solutions to matching bias problem}
 	
-The bias of the matching estimator is caused by large matching discrepancies $||X_i - X_{j(i)}||$. The curse of dimensionality virtually guarantees this.  However:
+The bias of the matching estimator is caused by large matching discrepancies $||X_i - X_{j(i)}||$ which is virtually guaranteed by the curse of dimensionality.  However:
 	\begin{enumerate}
 	\item But the matching discrepancies are observed. We can always check in the data how well we're matching the covariates.
 
@@ -884,9 +990,9 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 
   \item If the matching discrepancies are large, so we are worried about potential biases, we can apply bias correction techniques
 
-  \item Partial solution: propensity score methods (coming soon\dots)
 	\end{enumerate}
 \end{frame}
+
 
 \begin{frame}{Matching with bias correction}
 	
@@ -899,6 +1005,8 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 	\item Under some conditions, the bias correction eliminates the bias of the matching estimator without affecting the variance.
 	\end{itemize}
 \end{frame}
+
+
 
 
 \begin{frame}[plain,shrink=0]
@@ -945,7 +1053,7 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 
 \begin{frame}{Matching bias: Implications for practice}
 	
-Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i) - \mu^0(X_{j(i)})$. To minimize matching discrepancies:
+\emph{Matching} bias arises because of the effect of large matching discrepancies on $\mu^0(X_i) - \mu^0(X_{j(i)})$ due to a lack of common support. To minimize matching discrepancies:
 	\begin{enumerate}
 	\item Use a small $M$ (e.g., $M=1$). Larger values of $M$ produce large matching discrepancies.
 	\item Use matching with replacement.  Because matching with replacement can use untreated units as a match more than once, matching with replacement produces smaller matching discrepancies than matching without replacement.
@@ -979,8 +1087,21 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 		\begin{eqnarray*}
 		\widehat{var}(Y_i | X_i,D_i=0) = \frac{(Y_i-Y_j)^2}{2}
 		\end{eqnarray*}is an unbiased estimator of $\widehat{var}(\varepsilon_i | X_i,D_i=0))$
-	\item The bootstrap doesn't work!
 	\end{itemize}
+\end{frame}
+
+\begin{frame}{Final note about bias adjustment}
+
+\begin{itemize}
+\item Identifying assumptions with selection on observables are:
+	\begin{enumerate}
+	\item Potential outcomes are distributed independent of treatment status (``conditional independence'')
+	\item Common support
+	\end{enumerate}
+\item Matching discrepancies are due to violations of second assumption caused by curse of dimensionality -- not the first
+\item Matching bias adjustments \textbf{do not} recover ATE or ATT if conditional independence fails as that implies omitting a possibly very important and influential confounder
+\end{itemize}
+
 \end{frame}
 	
 
@@ -990,9 +1111,10 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 \begin{frame}{Avoiding dimensionality problems}
 	
 	\begin{itemize}
-	\item Curse of dimensionality makes matching on $K$ covariates challenging
-	\item Rubin (1977) and Rosenbaum and Rubin (1983) develop a method that can contain those $K$ covariates used for adjusting
-	\item Insofar as treatment is random conditional on $K$ covariates, then one can use the propensity score to adjust for confounders 
+	\item Curse of dimensionality makes matching on $K$ covariates challenging but earlier work before nearest neighbor covariate matching existed
+	\item Rubin (1977) and Rosenbaum and Rubin (1983) developed the propensity score method which reduced $K$ covariates used for adjusting into a single scalar
+	\item Insofar as treatment is random conditional on $K$ covariates, then one can use the propensity score to adjust for confounders
+	\item Variety of ways to incorporate the propensity score, but first we describe the propensity score as a dimension reduction method 
 	\end{itemize}
 	
 \end{frame}
@@ -1004,62 +1126,19 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 	\begin{itemize}
 	\item OLS is best linear predictor and approximation to the conditional expectation function 
 	\item But if probability of treatment is nonlinear, this conditional mean may be less informative
-	\item Propensity scores relax the linearity assumption and have other advantages
+	\item Propensity scores relax the linearity assumption and have other advantages, some of which is not broadly appreciated, such as basic diagnostics provided by common support checks
 	\end{itemize}
 \end{frame}
 
 
 
-\begin{frame}{The Idea behind propensity scores}
+\begin{frame}{Basic idea behind propensity scores}
 	
 	\begin{itemize}
 	\item Earlier we matched on $X$'s to compare units ``near'' one another based on some distance but matching discrepancies and sparseness created problems
 	\item Propensity scores summarize covariate information about treatment selection into a single number bounded between 0 and 1 (i.e., a probability)
-	\item Now we compare units with similar \emph{estimated probabilities} of treatment
-	\item And once we adjust using the propensity score, we no longer need to adjust for $X$
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Identifying assumptions}
-
-\begin{itemize}
-\item We need two assumptions for propensity scores to help us identify causal effects
-	\begin{enumerate}
-	\item Conditional independence, or unconfoundedness
-	\item Common support or overlap
-	\end{enumerate}
-\item The first is based on state of the art and institutional details sufficient to warrant such a judgment call, making propensity scores arguably more, not less, advanced
-\item The latter is testable
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}[plain]
-
-	\begin{block}{Identifying assumption I: Conditional independence}
-	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of observable covariates such that after controlling for these covariates, treatment assignment is \emph{independent of potential outcomes}.
-	\end{block}
-	
-	\begin{itemize}
-	\item Conditional on $X$, treatment assignment is `as good as random'. 
-	\item `As good as random' is English for ``independent of potential outcomes'' potential outcomes jargon
-	\item Also sometimes called `ignorable treatment assignment', `unconfoundedness'', `selection on observables', `exogeneity', `conditional zero mean'
-	\item CIA is assumed, \textbf{not tested}, bc potential outcomes are \emph{missing}. Consult your doctor
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[plain]
-
-	\begin{block}{Identifying assumption II: Common support}
-	For ranges of $X$, there is a positive probability of being both treated and untreated
-	\end{block}
-	
-	\begin{itemize}
-	\item We'll talk about the propensity score in just a second; for now this assumption is only about $X$
-	\item Assumption requires that there are units in both treatment and control for the range of propensity score
-	\item Recall, RDD did not have common support so relied on extrapolation sensitive to functional form assumptions
-	\item Common support ensures we can find similar enough donors in the control pool
-	\item Unlike CIA, common support is \textbf{testable}
+	\item Rather than compare units with similar values of $X$, we compare units with similar \textbf{estimated conditional probabilities of treatment}
+	\item Important theorem shows that once we adjust comparisons using the propensity score, we do not need to adjust for $X$
 	\end{itemize}
 \end{frame}
 
@@ -1070,70 +1149,105 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 	\begin{block}{Definition of Propensity score}
 	A propensity score is a number bounded between 0 and 1 measuring the probability of treatment assignment conditional on a vector of confounding variables: $p(X)=Pr(D=1 | X)$
 	\end{block}
-	
-	Two Necessary Identification Assumptions:
+
+\end{frame}
+
+\begin{frame}{Assumptions}
+
+	Two sufficient and necessary identification assumptions:
 	\begin{enumerate}
-	\item $(Y^0,Y^1) \independent{D}|X$ (CIA)
+	\item $(Y^0,Y^1) \independent{D}|X$ (conditional independence assumption, CIA)
 	\item $0<Pr(D=1|X)<1$ (common support)
 	\end{enumerate}
+	
+	With both, we can incorporate the propensity score into comparisons of treated and untreated units and obtain unbiased and consistent estimates of the ATE
 
 \end{frame}
 
 
-\begin{frame}{Steps}
+\begin{frame}{Propensity score methods}
 	
+Covariate adjustment using the propensity score is a three step process	
 		\begin{enumerate}
 		\item Estimate the propensity score using logit/probit
-		\item Estimate a particular ATE incorporating the propensity score using stratification, imputation, regression, or inverse probability weighting
+		\item Estimate a particular average treatment effect (e.g., ATE, ATT) incorporating the estimated propensity score (e.g., stratification, imputation, regression, or inverse probability weighting)
 		\item Estimate standard errors
 		\end{enumerate}
+
+Between steps 1 and 2 are various design-like diagnostic steps such as examining common support	using histograms, trimming, etc.
+
 \end{frame}
 
-\begin{frame}{Estimating the propensity score}
+\begin{frame}{Step 1: Estimating the propensity score}
 
 		\begin{itemize}
 		\item Estimate the conditional probability of treatment using probit or logit model$$Pr(D_i=1|X_i) = F(\beta X_i)$$
-		\item Use the estimated coefficients to calculate the propensity score for each unit $i$$$\widehat{\rho}_i = \widehat{\beta} X_i$$
-		\item Propensity score is the predicted conditional probability of treatment, or the fitted value for each unit -- \emph{same thing}
+		\item Use the estimated coefficients to calculate the propensity score for each unit $i$$$\widehat{\rho}_i(X_i) = \widehat{\beta} X_i$$
+		\item Note that each unit $i$ now has a predicted probability of treatment given the values of their covariates relative to everyone else's 
+		\item Frequentist probability -- you've basically just obtained the likelihood someone who ``looks like you'' would be treated (regardless of whether you were in fact treated)
 		\end{itemize}
 \end{frame}
 
 \begin{frame}{Identification}
 	
 	\begin{itemize}
-	\item A group of unit's average treatment effect may depend on some characteristic, $X$
+	\item Write down the definition of the ATE conditional on $X_i$
 		\begin{eqnarray*}
 		E[\delta_i(X_i) ]&=& E[Y^1_i - Y^0_i | X_i=x] \\
 		&=&E[Y^1_i | X_i=x] - E[Y^0_i | X_i=x]
 		\end{eqnarray*}
-	\item CIA allow us to substitute $$E[Y_i | D_i =1, X_i=x]=E[Y_i^1 | D_i=1, X_i=x]$$ and similar for other term $Y^0$ using a switching equation
-	\item Common support allows us to estimate both terms
+	\item Given conditional independence, we can substitute average values of $Y$ for potential outcomes using the switching equation: $$E[Y_i | D_i =1, X_i=x]=E[Y_i^1 | D_i=1, X_i=x]$$ and similar for other term $Y^0$
+	\item We need common support (assumption 2) so that both terms can be estimated
 	\end{itemize}
 \end{frame}		
 
 
-\begin{frame}[plain]
+\begin{frame}{Propensity score theorem}
 	
 	\begin{block}{Propensity score theorem}
 	If $(Y^1,Y^0)\independent{D}|X$ (CIA), then $(Y^1,Y^0)\independent{D} | \rho(X)$ where $\rho(X)=Pr(D=1|X)$, the propensity score
 	\end{block}
 	
 	\begin{itemize}
-	\item Conditioning on the propensity score is enough to have independence between $D$ and $(Y^1,Y^0)$ (Rosenbaum and Rubin 1983)\\
+	\item Conditioning on the propensity score is enough to have independence between $D$ and $(Y^1,Y^0)$ (Rosenbaum and Rubin 1983)
 	 \item Valuable theorem because of dimension reduction and convergence rate issues which can introduce biases
-	\item \textbf{Big picture}: You can toss $X$ out if you have $\widehat{\rho}$ because all information from $X$ have been absorbed into $\widehat{\rho}$
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Proof}
+\begin{frame}{Propensity score theorem}
 	
 	\begin{itemize}
-	\item Before diving into the proof, first recognize that$$Pr(D=1|Y^0,Y^1\rho(X)) = E[D | Y^0,Y^1,\rho(X)]$$because
+	\item This theorem tells us the \emph{only} covariate we need to adjust for is the conditional probability of treatment itself (i.e., the propensity score)
+	\item It does not tell us which method we should use to do that adjustment, though, which is an estimation question
+	\item There are options: inverse probability weighting, forms of imputation, stratification, and sometimes even regressions will incorporate the score as weights
+	\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Estimating ATE with propensity score}
+
+	\begin{block}{Unbiased Estimate of ATE}
+	If $(Y^1,Y^0)\independent{D}|X$, we can estimate average treatment effects:
+ $$E[Y^1-Y^0|\rho(X)] = E[Y|D=1,\rho(X)] - E[Y|D=0,\rho(X)]$$
+	\end{block}
+
+
+	
+\end{frame}
+
+
+\begin{frame}{Propensity Score Theorem Proof}
+	
+	 Details of the proof are provided for those who want to study it more closely
+	\begin{itemize}
+	\item First note that$$Pr(D=1|Y^0,Y^1\rho(X)) = E[D | Y^0,Y^1,\rho(X)]$$because
 		\begin{eqnarray*}
 		E[D|Y^0,Y^1,\rho(X)] &=& 1\times Pr(D=1|Y^0,Y^1,\rho(X)) \\
 		& & + 0 \times Pr(D=0 | Y^0,Y^1,\rho(X))
 		\end{eqnarray*}and the second term cancels out.
-		\end{itemize}
+	\item Rest of the proof is straightforward and I've drawn it out in case you need to see all the steps
+	\end{itemize}
 \end{frame}
 
 \begin{frame}[plain,shrink=5]
@@ -1164,72 +1278,42 @@ Bias arises because of the effect of large matching discrepancies on $\mu^0(X_i)
 \end{frame}
 
 
-\begin{frame}{Unbiased estimation of the ATE}
 
-Exact methods to do this to be discussed later, but until then, we can say this:
-	\begin{block}{Corollary: Estimating the ATE}
-	If $(Y^1,Y^0)\independent{D}|X$, we can estimate average treatment effects:
- $$E[Y^1-Y^0|\rho(X)] = E[Y|D=1,\rho(X)] - E[Y|D=0,\rho(X)]$$
-	\end{block}
-	
-\end{frame}
-
-\begin{frame}{Balancing property}
+\begin{frame}{Propensity score balances covariates}
 	
 	\begin{itemize}
-	\item Because the propensity score is a function of X, we know:
-		\begin{eqnarray*}
-		Pr(D=1 | X,\rho(X)) &=& Pr(D=1|X)\\
-		&=& \rho(X)
-		\end{eqnarray*}
-	\item Conditional on $\rho(X)$, the probability that $D=1$ does not depend on $X$.  
-	\item $D$ and $X$ are independent conditional on $p(X)$: $$D\independent{X} | \rho(X)$$
+	\item  $D$ and $X$ are independent conditional on $p(X)$: $$D\independent{X} | \rho(X)$$
+	\item This implies that the distribution of the covariates should be the same for treatment and control groups: $$Pr(X|D=1,p(X)) = Pr(X|D=0, p(X))$$ 
+	\item But we should check it ourselves. For propensity score ranges (e.g., 0.1 to 0.2, 0.2 to 0.3, \dots), what percent of the treatment group are male? What percent of control group are male?
 	\end{itemize}
 \end{frame}
 
 
-\begin{frame}{Balancing property}
+
+
+
+
+\begin{frame}{Checking common support}
+	
+	\begin{itemize}
+	\item Common support is required for unbiased estimation of the ATE or ATT, and it is often violated in practice depending on the distribution of the included confounders for selecting into treatment
+	\item A histogram of propensity scores by treatment and control group is a key diagnostic in highlighting the overlap problem
+	\item Crump, et al. (2009) suggest keeping units whose propensity scores are within the interval [0.1,0.9] (called ``trimming'')
+	\item Note that trimming comes at a price -- you are no longer estimating the ATE or the ATT if you are dropping units
+	\end{itemize}
+	
+\end{frame}
+
+
+
+
+\begin{frame}{Estimation with the propensity score}
 
 \begin{itemize}
-	\item So we obtain the \textbf{balancing property} of the propensity score: $$Pr(X|D=1,p(X)) = Pr(X|D=0, p(X))$$ conditional on the property score, the distribution of the covariates is the same for treatment and control group units
-	\item We can use this to check if our estimated propensity score actually produces balance:$$Pr(X|D=1,\widehat{p}(X)) = Pr(X|D=0, \widehat{p}(X))$$
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Propensity score theorem}
-	
-	\begin{itemize}
-	\item This theorem tells us the \emph{only} covariate we need to adjust for is the conditional probability of treatment itself (i.e., the propensity score)
-	\item It does not tell us which method we should use to do that adjustment, though, which is an estimation question
-	\item There are options: inverse probability weighting, forms of imputation, stratification, and sometimes even regressions will incorporate the score as weights
-	\end{itemize}
-\end{frame}
-
-
-
-\begin{frame}{Checking the common support assumption}
-	
-	\begin{itemize}
-	\item We can summarize the propensity scores in the treatment and control group and count how many units are off-support
-	\item Crump, et al. (2009) offer a rule of thumb: keep scores on interval [0.1,0.9]. 
-	\item Tossing out observations beyond those min and max scores
-	\item A histogram of propensity scores by treatment and control group also highlights the overlap problem; software also can help such as \texttt{teffects overlap}
-	\end{itemize}
-	
-\end{frame}
-
-
-
-\subsection{Inverse probability weighting}
-
-\begin{frame}{Inverse probability weighting}
-
-\begin{itemize}
-	\item I really like the simple method of inverse probability weighting aesthetically because there are no black boxes; it's all non-parametric averaging done through a particular kind of weights based on the propensity score
-	\item IPW involves fewer implementation choices like number of neighbors, common support, etc.
-	\item And because IPW is a smooth estimator, the bootstrap is valid for inference unlike covariate nearest neighbor matching which Abadie and Imbens (2008) show is not valid
+\item Propensity scores have many value to us, such as checking for common support, but the goal is ultimately to estimate an average treatment effect
+\item Many different ways have been developed over the years to incorporate the propensity score into estimation
+\item Sometimes you are imputing missing counterfactuals finding nearest neighbors with similar propensity scores, and sometimes you are weighting by the propensity score
+\item We'll discuss a few of them starting with weighting by the propensity score -- inverse probability weighting (IPW)
 \end{itemize}
 
 \end{frame}
@@ -1237,34 +1321,41 @@ Exact methods to do this to be discussed later, but until then, we can say this:
 \begin{frame}{Inverse probability weighting}
 
 \begin{itemize}
-	\item IPW is basically a reweighting of the outcomes by the propensity score developed in Robins and Rotnitzky (1995), Imbens (2000), Hirano and Imbens (2001)
-	\item The weights can be expressed in two ways -- without normalization (Horvitz and Thompson 1952) or normalized (Hajek1971) -- the difference being how well either approach can handle extreme values of the propensity score; the differences come out of the survey sampling literature 
-	\item Notation is far far scarier than in fact what we are doing, so I'll show you this in a Stata and R simulation to help pin down the intuition a little better
-	\item We'll start with the basic idea using the Horvitz and Thompson (1952) expression of the weights as it's not as messy.
+	\item IPW uses the estimated propensity score to reweight the outcomes (e.g., Robins and Rotnitzky 1995, Imbens 2000, Hirano and Imbens 2001)
+	\item The weights can be expressed in two ways (the difference being how well either approach can handle extreme values of the propensity score)
+		\begin{enumerate}
+		\item Without normalization (Horvitz and Thompson 1952) 
+		\item Normalized (Hajek1971) 
+		\end{enumerate}
+	\item We'll introduce IPW without normalization first as normalized weights can be a little intimidating at first glance
 \end{itemize}
 
 \end{frame}
 	
+\begin{frame}{Inverse probability weighting}
+
+\begin{itemize}
+	\item IPW is non-parametric -- you are just taking averages and multiplying by weights
+	\item There are also fewer implementation choices -- you aren't choosing how many neighbors to include, how far away a neighbor can be -- but you still have to closely examine common support
+	\item Fun fact: two new diff-in-diff estimators use IPW to incorporate covariates into estimation (Sant'anna and Zhao 2020; Callaway and Sant'anna 2020)
+\end{itemize}
+
+\end{frame}
 	
 
 \begin{frame}{Inverse Probability Weighting}
 	
-		\begin{block}{Proposition}
-	If $Y^1,Y^0 \independent{D}|X$, then
+		\begin{block}{Estimating ATE with IPW}
+	Given $Y^1,Y^0 \independent{D}|X$ and common support, then
 		\begin{eqnarray*}
 		\delta_{ATE}&=&E[Y^1-Y^0] \\
-		&=&E \left[ Y \cdot  \frac{D - \rho(X)}{\rho(X) \cdot (1-\rho(X))} \right]\\
-		\delta_{ATT}&=&E[Y^1-Y^0|D=1] \\
-		&=& \frac{1}{Pr(D=1)} \cdot  E \left[ Y \cdot \frac{D-\rho(X)}{1-\rho(X)} \right]
+		&=&E \left[ Y \cdot  \frac{D - \rho(X)}{\rho(X) \cdot (1-\rho(X))} \right]
 		\end{eqnarray*}
 	\end{block}
 
 \end{frame}
 
-\begin{frame}[plain,shrink=5]
-\begin{center}
-\textbf{IPW Proof}
-\end{center}
+\begin{frame}{Inverse Probability Weighting}
 
 	\begin{proof}
 	\begin{eqnarray*}
@@ -1276,18 +1367,31 @@ Exact methods to do this to be discussed later, but until then, we can say this:
 
 \end{frame}
 
+\begin{frame}{Inverse Probability Weighting}
+	
+		\begin{block}{Estimating ATT with IPW}
+	Given $Y^0 \independent{D}|X$ and common support, then
+		\begin{eqnarray*}
+		\delta_{ATT}&=&E[Y^1-Y^0|D=1] \\
+		&=& \frac{1}{Pr(D=1)} \cdot  E \left[ Y \cdot \frac{D-\rho(X)}{1-\rho(X)} \right]
+		\end{eqnarray*}
+	\end{block}Similar proof as ATE
+
+\end{frame}
+
+
 
 \begin{frame}{Weighting on the propensity score}
 
 Previous formulas used population concepts. Switching to samples, we use a two-step estimator:
 	\begin{enumerate}
-	\item Estimate the propensity score: $\widehat{\rho}(X)$
+	\item Estimate ech unit $i$'s propensity score: $\widehat{\rho_i}(X_i)$
 	\item Use estimated score to produce analog estimators. Let $\widehat{\delta}_{ATE}$ and $\widehat{\delta}_{ATT}$  be an estimate of the $ATE$ and $ATT$ parameter:
 		\begin{eqnarray*}
-		\widehat{\delta}_{ATE} &=& \frac{1}{N} \sum_{i=1}^N Y_i \cdot \frac{D_i - \widehat{\rho}(X_i)}{\widehat{\rho}(X_i) \cdot (1-\widehat{\rho}(X_i))}\\
-		\widehat{\delta}_{ATT} &=& \frac{1}{N_T} \sum_{i=1}^N Y_i \cdot \frac{D_i - \widehat{\rho}(X_i)}{1-\widehat{\rho}(X_i)}
+		\widehat{\delta}_{ATE} &=& \frac{1}{N} \sum_{i=1}^N Y_i \cdot \frac{D_i - \widehat{\rho_i}(X_i)}{\widehat{\rho_i}(X_i) \cdot (1-\widehat{\rho_i}(X_i))}\\
+		\widehat{\delta}_{ATT} &=& \frac{1}{N_T} \sum_{i=1}^N Y_i \cdot \frac{D_i - \widehat{\rho_i}(X_i)}{1-\widehat{\rho_i}(X_i)}
 		\end{eqnarray*}
-	\end{enumerate}
+	\end{enumerate}Note that we are simply averaging and differencing after weighting each unit by its propensity score
 \end{frame}
 
 \begin{frame}{Weighting on the propensity score}
@@ -1296,9 +1400,11 @@ Previous formulas used population concepts. Switching to samples, we use a two-s
 Standard errors can be constructed a few different ways:
 	\begin{itemize}
 	\item We need to adjust the standard errors for first-step estimation of $\rho(X)$
-	\item Parameteric first step: Newey and McFadden (1994)
-	\item Non-parametric first step: Newey (1994)
-	\item Or bootstrap the entire two-step procedure (Adudumilli 2018 and Bodory et al. 2020)
+		\begin{itemize}
+		\item Parameteric first step: Newey and McFadden (1994)
+		\item Non-parametric first step: Newey (1994)
+		\end{itemize}
+	\item IPW is a smooth estimator which means the bootstrap is valid for inference  (Adudumilli 2018 and Bodory et al. 2020) unlike covariate nearest neighbor matching which Abadie and Imbens (2008) show is not valid
 	\end{itemize}
 \end{frame}
 
@@ -1308,28 +1414,40 @@ Standard errors can be constructed a few different ways:
 
 \begin{itemize}
 \item I like estimating with IPW manually because I like being reminded how simple a procedure it is
-\item But Stata's -teffects- and R's -ipw- do it too, and -teffects- uses the Hajek normalization weights which will produce identical estimates to my program
-\item My programs don't do the inference, but I think that would be fun and easy to do using the bootstrap
-\item Let's look at it real quickly now with an example from LaLonde's 1986 paper on the NSW job trainings program (which I'll discuss again soon)
+\item You'll probably want to use Stata's -teffects- or R's -ipw- so that you can get standard errors
+\item Note that Stata's -teffects- uses the Hajek normalization weights which will produce identical estimates to my program in the Mixtape
+\item My book doesn't manually do the inference, but it would be fun and easy to do using the bootstrap
 \end{itemize}
 
 \end{frame}
 
-\subsubsection{Double robust}
 \begin{frame}{Double robust estimators}
 
 \begin{itemize}
-\item Lots of papers: Robins and Rotnizky (1995) originally, Hirano and Imbens (2001), etc.
-\item Basic idea is you are going to control for covariates twice: through regression and then through the propensity score
+\item Propensity scores and estimated propensity scores are not the same thing
+\item You can have the right covariates but the wrong model and unbiasedness requires the correct model
+\item What if you had a way to control for the covariates using propensity scores and something else like regression?
+\item Buys you some insurance against model misspecification if such a thing existed
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Double robust estimators}
+
+\begin{itemize}
+\item Lots of papers began to try and address the model misspecification problem by combining propensity scores with other methods called ``double robust'' (Robins and Rotnizky 1995; Hirano and Imbens 2001)
+\item Basic idea in all of them was to control for covariates twice \emph{at the same time} without paying a price
 \item We say that estimators combining regression with IPW are double robust so long as
 	\begin{itemize}
 	\item The regression for the outcome is properly specified, or
 	\item The propensity score is properly specified
 	\end{itemize}
-\item Hence the name ``double robust''. We give ourselves two chances to get it right (either/or not both/and)
+\item We give ourselves two chances to get it right (either/or not both/and) but if neither is properly specified, then you didn't really gain much
 \end{itemize}
 
 \end{frame}
+
+
 
 \begin{frame}{Estimation of outcome model}
 
@@ -1339,18 +1457,13 @@ y_i = \alpha_0 + X_i\beta + \tilde{\alpha_1} D_i + \theta_0 \frac{D_i}{\widehat{
 
 \end{frame}
 
-\subsection{Propensity score matching}
 
-\begin{frame}
-
-	\begin{center}
-	\textbf{Propensity score matching}
-	\end{center}
+\begin{frame}{Propensity score matching}
 	
 	\begin{itemize}
-	\item Matching, or what I like to call ``imputation'', is another way that utilizes the $\widehat{\rho}$
-	\item They all use the same first stage, but differ on their second and third stages
-	\item Part of the second stage may be imposing common support through ``trimming'', but for different reasons because now this idea of distance is entering and maybe you think some units are ``too far away'' to be relevant counterfactuals
+	\item Matching, or ``imputation'', is another way that utilizes the $\widehat{\rho_i}(X_i)$
+	\item Matching estimation based on the propensity score has the same first step as IPW, but not the second and third steps
+	\item Common support starts to be more complex with imputation methods because you will need to decide how far away from a unit's own propensity score is a tolerable distance to be considered a ``neighbor''
 	\end{itemize}
 
 \end{frame}
@@ -1361,7 +1474,7 @@ y_i = \alpha_0 + X_i\beta + \tilde{\alpha_1} D_i + \theta_0 \frac{D_i}{\widehat{
 \begin{frame}{Standard matching strategy}
 	
 	\begin{itemize}
-	\item Pair each treatment unit $i$ with one or more \emph{comparable} control group unit $j$, where comparability is in terms of proximity to the estimated propensity score
+	\item Pair each treatment unit $i$ with one or more \emph{comparable} control group unit $j$, where comparability is in terms of proximity, or distance, to the estimated propensity score
 	\item Impute the unit's missing counterfactual outcome $Y_{i(j)}$ based on the unit or units chosen in the previous step
 	\item If more than one are ``nearest neighbors'', then use the neighbors' weighted outcomes  $$Y_{i(j)} = \sum_{j \in C(i)} w_{ij}Y_j$$ where $C(i)$ is the set of neighbors with $W=0$ of the treatment unit $i$and $w_{ij}$ is the weight of control group units $j$ with $\sum_{j \in C(i)} w_{ij} = 1$
 	\end{itemize}
@@ -1370,14 +1483,14 @@ y_i = \alpha_0 + X_i\beta + \tilde{\alpha_1} D_i + \theta_0 \frac{D_i}{\widehat{
 
 \begin{frame}{Imputing the counterfactuals}
 	
-	A parameter of interest: $$E[Y^1_i | D_i=1] - E[Y^0_i | D_i=1]$$We estimate it as follows  $$\widehat{ATT} = \frac{1}{N_T} = \sum_{i:W_i=1} \bigg [Y_i - Y_{i(j)} \bigg ]$$where $N_T$ is the number of matched treatment units in the sample. Note the difference between \emph{imputation} and weighting
+	Let the ATT be our parameter of interest: $$E[Y^1_i | D_i=1] - E[Y^0_i | D_i=1]$$We estimate it as follows  $$\widehat{ATT} = \frac{1}{N_T}  \sum_{i:D_i=1} \bigg [Y_i - Y_{i(j)} \bigg ]$$where $N_T$ is the number of matched treatment units in the sample. Note the difference between \emph{imputation} and IPW -- the only weight here is $\frac{1}{N_T}$
 
 \end{frame}
 
 \begin{frame}{Matching methods}
 	
 	\begin{itemize}
-	\item The probability of observing two units with \emph{exactly} the same propensity score is in principle zero because $p(x)$ is continuous
+	\item The probability of observing two units with \emph{exactly} the same propensity score is in principle zero if $Pr(X=x)$ is continuous
 	\item Several matching methods have been proposed in the literature, but the most widely used are:
 		\begin{itemize}
 		\item Stratification matching
@@ -1394,10 +1507,9 @@ y_i = \alpha_0 + X_i\beta + \tilde{\alpha_1} D_i + \theta_0 \frac{D_i}{\widehat{
 \begin{frame}{Stratification}
 	
 	\begin{itemize}
-	\item Stratification is used to force covariate balance by finding strata where there is no difference in mean covariate values. 
-	\item You then use those strata to calculate within differences in means and sum over properly weighted strata. See Becker and Ichino (2002)
-	\item  Stratification is a brute force method for imposing balance by grouping the data and testing for differences in covariate means
-	\item It's actually kind of similar to coarsened exact matching, only using the propensity score for the ``stratification'' not the covariates
+	\item Stratification based on the propensity score is a multi step process that bears resemblance to the stratification/subclassification method proposed by Cochran (1968)
+	\item  Method uses brute force to achieve the balancing property discussed earlier, which is then used with weighted differences in means within propensity score ``strata''
+	\item Dehejia and Wahba (2002) used stratification matching in their seminal paper 
 	\end{itemize}
 	
 \end{frame}
@@ -1405,56 +1517,77 @@ y_i = \alpha_0 + X_i\beta + \tilde{\alpha_1} D_i + \theta_0 \frac{D_i}{\widehat{
 
 \begin{frame}{Stratification: Achieving Balance}
 	
-The algorithm is brute force covariate balancing
+First create ``propensity score strata'' inside which you have balanced covariates
 	\begin{enumerate}
 		\item Sort the data by propensity score and divide into groups of observations with similar propensity scores (e.g., percentiles)
-		\item Within each group, test (using a t-test) whether the means of the covariates ($X$) are equal between treatment and control
-		\item If so, then stop.  If not, it means the covariates aren't balanced \emph{within that group}.  Divide the group in half and repeat
+		\item Within each strata, test (e.g., t-test) whether the means of the $k$ covariates are equal between treatment and control
+		\item If so, then stop.  If not, it means the covariates aren't balanced \emph{within that propensity score strata} so then divide that strata in half and repeat step 2
 		\item If a particular covariate is unbalanced for multiple groups, modify the initial logit or probit equation by including higher order terms and/or interactions with that covariate and repeat
 		\end{enumerate}
-Historically this could be done with -\texttt{pscore2.ado}- or manually oneself if they felt so inclined, but it was dropped with -\texttt{teffects}-
+
 \end{frame}
+
+\begin{frame}{Propensity score matching}
+	
+	\begin{itemize}
+	\item Next we review explicit imputation based on the propensity score or what is sometimes called propensity score matching
+	\item King and Nielsen (2019) is a critique of using propensity scores \emph{for matching} (i.e., imputation)
+	\item But not a critique of the propensity score itself or to stratification, regression adjustment, or IPW
+	\item Issues raised have to do with forced balance through trimming and a myriad of other common choices made by the researcher
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}{Ad hoc user choices introduce bias}
+
+\begin{quote}
+	
+```[The] more balanced the data, or the more balance it becomes by [trimming] some of the observations through matching, the more likely propensity score matching will degrade inferences.'' -- King and Nielsen (2019)
+
+\end{quote}
+	
+\end{frame}
+
 
 
 \begin{frame}{Nearest Neighbor}
 	
-	Pretty similar to covariate matching.  Formula is $$ATT^{NN} = \frac{1}{N_T} \sum_{i:W_i=1} \bigg [ Y_i - \sum_{j \in C(i)_M} w_{ij}Y_j \bigg ]$$ 
+	Pretty similar to covariate matching.  Formula is $$\widehat{ATT} = \frac{1}{N_T} \sum_{i:D_i=1} \bigg [ Y_i - \sum_{j \in C(i)_M} w_{ij}Y_j \bigg ]$$ 
 		\begin{itemize}
-		\item $N_T$ is the number of Treatment units $i$
-		\item $w_{ij}$ is equal to $\frac{1}{N_C}$ if $j$ is a control unit and zero otherwise; $N_C$ is number of control units $j$
+		\item $N_T$ is the number of treated units $i$ and  $N_C$ is number of control units $j$
+		\item $w_{ij}$ is equal to $\frac{1}{N_C}$ if $j$ is a control unit and zero otherwise
 		\item And unit $j$ is chosen as a control for $i$ if it's propensity score is nearest to that of $i$
 		\end{itemize}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}{NN Matching: Bias vs. Variance}
 	
-	\begin{center}
-	\textbf{NN Matching: Bias vs. Variance}
-	\end{center}
-	
-	\begin{itemize}
-	\item But how far away on the propensity score will you use? Herein lies the different types of matching proposed
+How far away on the propensity score will you use is what makes some of the different types of matching proposed differ
 		\begin{itemize}
 		\item Matching just one nearest neighbor minimizes bias at the cost of larger variance
 		\item Matching using additional nearest neighbors increases the bias but decreases the variance
 		\end{itemize}
-	\item Matching with or without replacement
+	
+\end{frame}
+
+\begin{frame}{NN Matching: Bias vs. Variance}
+	
+	 Matching with or without replacement
 		\begin{itemize}
 		\item with replacement keeps bias low at the cost of larger variance
 		\item without replacement keeps variance low but at the cost of potential bias
 		\end{itemize}
-	\end{itemize}
 	
 \end{frame}
+
 
 
 \begin{frame}{Distance between treatment and control units}
 
 \begin{itemize}
 \item What was historically done was limiting ``distance''  through various \emph{ad hoc} choices
-\item Imagine these choices as creating like a lasso (like the cowboy rope)
-\item Anything within the lasso could be used for the imputation; anything outside the lasso could not
-\item There were two common ways -- caliper matching and radius matching. 
+\item Imagine these choices as creating like a cowboy rope lasso that matches to everything inside that circle
+\item There were two common ways for creating the circle -- caliper matching and radius matching. 
 \end{itemize}
 
 \end{frame}
@@ -1462,10 +1595,8 @@ Historically this could be done with -\texttt{pscore2.ado}- or manually oneself 
 \begin{frame}{Caliper matching}
 	
 	\begin{itemize}
-	\item Caliper matching is a variation on NN matching that tries to build brakes into the algorithm as to avoid ``bad neighbors''
-	\item It does this by imposing a tolerable maximum distance (e.g., 0.2 units in the propensity score away from a treatment unit $i$'s propensity score)
-	\item Note -- this is a one-to-one imputation, and if there doesn't exist anybody in the control group unit $j$ within that ``caliper'', then treatment unit $i$ is discarded
-	\item Means we aren't estimating the ATE anymore once we start dropping units
+	\item Caliper matching is a variation on NN matching that tries to build brakes into the algorithm as to avoid ``bad neighbors'' by imposing a tolerable maximum distance (e.g., 0.2 units in the propensity score away from a treatment unit $i$'s propensity score)
+	\item Note -- this is a one-to-one imputation, and if there doesn't exist anybody in the control group unit $j$ within that ``caliper'', then treatment unit $i$ is discarded which as with all trimming changes the parameter we are estimating
 	\item It's difficult to know what this caliper should be \emph{ex ante}, hence why I said it is somewhat \emph{ad hoc}
 	\end{itemize}
 
@@ -1476,8 +1607,8 @@ Historically this could be done with -\texttt{pscore2.ado}- or manually oneself 
 	
 	
 		\begin{itemize}
-		\item Each treatment unit $i$ is matched with the control group units whose propensity score are in a predefined neighborhood of the propensity score of the treatment unit.
-		\item \textbf{All} the control units with $\widehat{\rho_j}$ falling within a radius $r$ from $\widehat{\rho}_i$ are matched to the treatment unit $i$ -- this is what distinguishes it from calipers, and makes it more similar to covariate matching (Abadie and Imbens 2006, 2008)
+		\item Each treatment unit $i$ is matched with the control group units whose propensity score are in a ``predefined neighborhood'' of the propensity score of the treatment unit.
+		\item \textbf{All} the control units with $\widehat{\rho_j}(X_{j})$ falling within a radius $r$ from $\widehat{\rho}_i(X_i)$ are matched to the treatment unit $i$ -- this is what distinguishes it from calipers, and makes it more similar to covariate matching (Abadie and Imbens 2006, 2008)
 		\item The smaller the radius, the better the quality of the matches, but the higher the possibility some treatment units are not matched because the neighborhood does not contain control group units $j$
 		\end{itemize}
 		
@@ -1486,49 +1617,62 @@ Historically this could be done with -\texttt{pscore2.ado}- or manually oneself 
 \begin{frame}{Software}
 
 \begin{itemize}
-\item I think you can use -\texttt{teffects, psmatch}- to get at these two nearest neighbor approaches by setting the number of matches
-\item You can use -\texttt{pscore2}- for stratification, but I think the standard errors are wrong, so you may need to just do it manually using bootstrapping or variance approximation, and that may be a pain to program up
-\item Not sure of the R command, but I know it's out there
+\item You can use -\texttt{teffects, psmatch}- to get at these two nearest neighbor approaches by setting the number of matches
+\item You can use -\texttt{pscore2}- for stratification
+\item You can use the \texttt{MatchIt} package in R
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{King and Nielsen (2019)}
+\subsection{Lalonde and the propensity score}
+
+\begin{frame}{Failure of econometric estimators (LaLonde 1986)}
 	
 	\begin{itemize}
-	\item There is a King and Nielsen (2019) critique of these methods that is popularly known but not popularly studied
-	\item King and Nielsen (2019) is not a critique of the propensity score, because it does not apply to stratification, regression adjustment, or inverse probability weighting
-	\item It only applies to nearest neighbor and is related to forced balance through trimming and a myriad of other common choices made by the researcher
+	\item Evaluation of the Job Trainings Program (NSW) has a rich history in causal inference
+	\item Bob LaLonde (passed away November 2015) was a Card and Ashenfelter student at Princeton whose job market paper evaluated, not NSW itself, but econometric methods one would use in something like NSW
+	\item Dehejia and Wahba (1999; 2002) used LaLonde's data with propensity score matching and found they could recover known effects
+	\item Critiques by Petra Todd, Jeff Smith and others followed which I'll summarize
 	\end{itemize}
-	
+\end{frame}
+
+\begin{frame}{Summarizing LaLonde (1986)}
+
+		\begin{itemize}
+		\item Very clever study that combined experimental and non-experimental data to ascertain whether popular econometric methods could recover unbiased effects when those effects were already known 
+		\item Damning conclusion -- 1986 AER (it was LaLonde's JMP) found econometric methods failed to get the number right, and worse, failed to get the sign right
+		\item Was a critical paper in the emerging ``credibility crisis'' within labor and helped fuel the type of work we now broadly consider to be design based causal inference
+		\end{itemize}
+
 \end{frame}
 
 \begin{frame}[plain]
-
-\begin{quote}
+	\begin{center}
+	LaLonde, Robert J. (1986). \myurlshort{http://business.baylor.edu/scott_cunningham/teaching/lalonde-1986.pdf}{``Evaluating the Econometric Evaluations of Training Programs with Experimental Data''}. \emph{American Economic Review}. 
+	\end{center}
 	
-
-```[The] more balanced the data, or the more balance it becomes by [trimming] some of the observations through matching, the more likely propensity score matching will degrade inferences.'' -- King and Nielsen (2019)
-
-\end{quote}
-	
-\end{frame}
-
-
-\begin{frame}{Examples of propensity score matching}
-	
-	\begin{itemize}
-	\item Workhorse example of propensity score matching is the Job Trainings Program (NSW) 
-	\item First studied by LaLonde (1986) evaluating multiple econometric models for program evaluation 
+\underline{LaLonde's study} was \textbf{not} an evaluation of the NSW program, as that had been done, but rather an evaluation of econometric models done by:
 		\begin{itemize}
-		\item All the standard estimators failed to estimate the known ATE when replacing experimental controls with non-experimental controls -- even difference-in-differences
+		\item replacing the experimental NSW control group with non-experimental control group drawn from two nationally representative survey datasets: Current Population Survey (CPS) and Panel Study of Income Dynamics (PSID)
+		\item estimating the average effect using non-experimental workers as controls for the NSW trainees 
+		\item comparing his non-experimental estimates to the experimental estimates of \$900
 		\end{itemize}
-	\item Dehejia and Wahba (1999; 2002) use LaLonde's data with propensity score matching and found better results
-	\item Critiques by Petra Todd, Jeff Smith and others followed which I won't review here for sake of time
-	\end{itemize}
 \end{frame}
 
+\begin{frame}{LaLonde (1986)}
+
+\begin{itemize}
+
+	\item \underline{LaLonde's conclusion}: available econometric approaches were biased and inconsistent
+		\begin{itemize}
+		\item His estimates were way off and usually the wrong sign
+		\item Conclusion was influential in policy circles and led to greater push for more experimental evaluations
+		\end{itemize}
+
+\end{itemize}
+
+\end{frame}
 
 
 \begin{frame}{Description of NSW Job Trainings Program}
@@ -1592,7 +1736,7 @@ The National Supported Work Demonstration (NSW), operated by Manpower Demonstrat
 		\begin{itemize}
 		\item NSW was a randomized job trainings program; therefore estimating the average treatment effect is straightforward:
 			\begin{eqnarray*}
-			\frac{1}{N_t}\sum_{D_i=1}Y_i - \frac{1}{N_c}\sum_{D_i=0}Y_i \approx E[Y^1-Y^0] 
+			SDO = \frac{1}{N_t}\sum_{D_i=1}Y_i - \frac{1}{N_c}\sum_{D_i=0}Y_i \approx E[Y^1-Y^0] 
 			\end{eqnarray*}in large samples assuming treatment selection is independent of potential outcomes (randomization) -- i.e., $(Y^0,Y^1)\independent{D}$. 
 		\end{itemize}
 	\item \underline{NSW worked}: Treatment group participants' real earnings post-treatment (1978) was positive and economically meaningful -- $\approx$ \$900 (LaLonde 1986) to \$1,800 (Dehejia and Wahba 2002) depending on the sample used
@@ -1600,34 +1744,21 @@ The National Supported Work Demonstration (NSW), operated by Manpower Demonstrat
 
 \end{frame}
 	
-\begin{frame}[plain]
-	\begin{center}
-	LaLonde, Robert J. (1986). \myurlshort{http://business.baylor.edu/scott_cunningham/teaching/lalonde-1986.pdf}{``Evaluating the Econometric Evaluations of Training Programs with Experimental Data''}. \emph{American Economic Review}. 
-	\end{center}
-	
-\underline{LaLonde's study} was \textbf{not} an evaluation of the NSW program, as that had been done, but rather an evaluation of econometric models done by:
-		\begin{itemize}
-		\item replacing the experimental NSW control group with non-experimental control group drawn from two nationally representative survey datasets: Current Population Survey (CPS) and Panel Study of Income Dynamics (PSID)
-		\item estimating the average effect using non-experimental workers as controls for the NSW trainees 
-		\item comparing his non-experimental estimates to the experimental estimates of \$900
-		\end{itemize}
-\end{frame}
+\imageframe{./lecture_includes/lalonde_table5a.png}
 
-\begin{frame}{LaLonde (1986)}
+
+\begin{frame}{Switching out the control group}
 
 \begin{itemize}
-
-	\item \underline{LaLonde's conclusion}: available econometric approaches were biased and inconsistent
-		\begin{itemize}
-		\item His estimates were way off and usually the wrong sign
-		\item Conclusion was influential in policy circles and led to greater push for more experimental evaluations
-		\end{itemize}
-
+\item Think of \$800 to \$900 as the ``ground truth'' since row 1 was using the RCT 
+\item LaLonde ``drops'' the experimental controls (which satisfied independence) and ``replaces'' it with six different draws from two nationally representative surveys (PSID and CPS)
+\item Now the dataset contains a negatively selected treatment group compared to a nationally representative control group
+\item Will selection on observable methods ``work''?
 \end{itemize}
 
 \end{frame}
 
-\imageframe{./lecture_includes/lalonde_table5a.png}
+
 \imageframe{./lecture_includes/lalonde_table5b.png}
 
 \begin{frame}[plain,shrink=10]{Imbalanced covariates for experimental and non-experimental samples}
@@ -1696,28 +1827,18 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 
 \imageframe{./lecture_includes/dw_2.pdf}
 
-\begin{frame}{Proposition 2}
+\begin{frame}{Covariate imbalance}
 	
-	\begin{eqnarray*}
-	X \independent D | p(X)
-	\end{eqnarray*}
-	
+
 	\begin{itemize}
 	\item Conditional on the propensity score, the covariates are independent of the treatment, suggesting that the distribution of covariate values should be the same for both treatment and control groups
 	\item This can be checked as we have data on all three once we've estimated the propensity score
+	\item DW note that the two samples have \emph{severe} imbalance on \emph{observables} -- a huge number of non-experimental controls have propensity scores almost exactly equal to 0
+	\item Their analysis will ``trim'' (which will ultimately have implications for interpretation)
 	\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Trimming the data}
-	
-	\begin{itemize}
-	\item Common terms are ``trimming'' or ``pruning''
-	\item Drop units which do not overlap in terms of estimated propensity score
-	\item Sometimes as a rule of thumb, just keep units on the \texttt{[0.1,0.9]} interval
-	\end{itemize}
-
-\end{frame}
 
 
 \imageframe{./lecture_includes/dw_3.pdf}
@@ -1725,92 +1846,37 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \imageframe{./lecture_includes/dw_5.pdf}
 \imageframe{./lecture_includes/dw_6.pdf}
 
-\begin{frame}{Estimation in Stata}
-	
-	\begin{itemize}
-	\item I have written up code that will implement IPW on the DW data
-	\item It's nonparametric, so it doesn't use any packages
-	\item But you are welcome to try some packages, particularly the -\texttt{teffects}- command
-	\end{itemize}
-	
-\end{frame}
 
 
-
-\begin{frame}{Kernel matching}
-	
-	\begin{itemize}
-	\item Alternatively we can perform propensity score matching with a kernel-based method. 
-	\item Notice on the next slide that the estimate of the ATT switches sign relative to that produced by the NN matching algorithm
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Stata syntax}
-
-\lstinputlisting{./lecture_includes/score2.do} 
-\end{frame}
-
-
-\begin{frame}[plain]
-
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./lecture_includes/ps_output3.png}}%
-	\end{figure}
-
-
-\end{frame}
-
-\begin{frame}[plain]
-
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./lecture_includes/ps_output4.png}}%
-	\end{figure}
-
-
-\end{frame}
-
-\begin{frame}{Matchings vs. Propensity score}
-	
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./lecture_includes/abadie-imbens-2011.pdf}}%
-	\end{figure}
-
-
-
-\end{frame}
 
 
 \clearpage
 \newpage
 
-\begin{frame}{Subsequent studies}
+\begin{frame}{Replies by econometricians to DW}
 
 \begin{itemize}
-\item Heckman et al. (1996, 1998) used experimental data from the US National Job Training Partnership Act (JTPA)
-\item They conclude that in order for matching estimators to have low bias, it is important that the data include a rich set of variables related to program participation and labor market outcomes, that the nonexperimental comparison group be drawn from the same local labor markets as the participants and the dependent variable (typically earnings) be measured in the same way for participants and nonparticipants
+\item Heckman, Smith and Todd concluded from their own work that in order for matching estimators to have low bias, you need the following:
+	\begin{enumerate}
+	\item A rich set of variables related to program participation and predictive of $Y^0$ labor market outcomes, 
+	\item Nonexperimental comparison group be drawn from the same local labor markets as the participants and 
+	\item Dependent variable (e.g., earnings) be measured in the same way for participants and nonparticipants
+	\end{enumerate}
 \item All three of these conditions fail to hold in DW (1999, 2002) according to Smith and Todd (2005)
+\item DW also note the importance of conditioning on pre-treatment lagged outcomes (e.g., real earnings in $t-1$, $t-2$, etc.) as well as \emph{trimming}
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Smith and Todd}
+\begin{frame}{Smith and Todd, diff-in-diff, doubly robust}
 
 \begin{itemize}
-\item Difference-in-differences with propensity scores tended to work well in Smith and Todd (2005)
-\item But hard to make this a rule, because it's hard to know ex ante if we've specified the propensity score correctly (i.e., have CIA)
-\item It is vital you know you're data, if you're going to use these methods, which means understanding at a deep level the way in which selection (i.e., treatment assignment) works in your data
+\item Difference-in-differences with propensity scores tended to work well in Smith and Todd (2005) though the effect sizes are much larger
+\item In my Causal Inference II workshop, we use Sant'anna And Zhao's double robust DiD and get nearly the exact same parameter estimate as the experimental finding
+
 \end{itemize}
 
-\end{frame}
-\begin{frame}{Beating a dead horse}
-
-\begin{itemize}
-	\item The propensity score can make groups comparable \textbf{but} only on the variables used to estimate the propensity score in the first place.  There is \textbf{NO} guarantee you are balancing on unobserved covariates.
-	\item If you know that there are important unobservable variables, you may need another tool.
-	\item Remember: randomization ensure that both observable and \textbf{unobservable} variables are balanced
-\end{itemize}
 \end{frame}
 
 
@@ -1913,7 +1979,95 @@ You then add weights for stratum size and analyze without matching.
 
 
 
+\section{Concluding remarks}
+
+\begin{frame}{Comments}
+
+\begin{itemize}
+
+\item Selection on observables are important and when running regressions with controls, you are in fact doing it
+\item Conditional independence requires that you \emph{know} and \emph{include} all confounders to adjust comparisons when estimating treatment effects
+\item Without a prior behavioral model guiding you, it's very hard to defend conditional independence (borderline disingenuous) 
+\item If you are unwilling to use DAGs, you may want to ask yourself why you are comfortable running regressions with covariates?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{When not to use selection on observables}
+
+\begin{itemize}
+\item Conditions for selection on observables are strong and subtle
+\begin{enumerate}
+		\item $(Y^1,Y^0) \independent{D} | X$ (conditional independence)
+		\item $0<Pr(D=1|X)<1$ with probability one (common support)
+\end{enumerate}
+\item What exactly does the first thing mean?
+		\begin{itemize}
+		\item Easy to explain part: all the confounders are known and in your dataset
+		\item Not as easy to explain part: once you condition on those things, your customers or people were behaving \emph{randomly}
+		\end{itemize}
+\item A lot of matching and weighting focused on biases created by dimensionality problems, but fixing those does not fix first point (and King and Nielsen are only focused on second)
+\end{itemize}
+
+\end{frame}  
+
+\begin{frame}{Rationality issues}
+
+\begin{itemize}
+\item Roy models basically suggest people usually do things because it benefits them -- called ``selection on gains''
+	\begin{itemize}
+	\item If I do something, it's because $Y^1-Y^0>0$
+	\item If I don't, it's because $Y^1-Y^0<0$
+	\end{itemize}
+\item We tend to think of this as nearly identical to rationality or intentional behavior, and when we use selection on observables methods we assume that that rationality could be absorbed by observables
+\item Very mysterious idea and Smith and Sweetman (2015) suggest some kinds of behavior may not \emph{ever} satisfy this condition
+\end{itemize}
+
+\end{frame}
 
 
+
+\begin{frame}{Comments}
+
+\begin{itemize}
+
+\item One diagnostic feature of the matching, weighting and imputation methods over OLS is the steps involved to evaluate common support
+\item Unnecessary though -- you can incorporate the propensity score into regressions as weights
+\item Nevertheless as we saw with DW, simply trimming can address some of the problems with overlap and propensity score makes this easier by collapsing $K$ strata into a single scalar
+\item Histograms help to diagnoses these problems
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Comments}
+
+\begin{itemize}
+
+\item Don't hyper-critical or naive -- CIA may or may not hold in your data.  You can have too strong of priors in either direction
+\item All that selection on observables does is create ``look-a-likes'' on \emph{observables}, but if you left out a critical confounder, you've not fixed anything
+\item Adjusting for covariates may still be valuable even if you are worried about confounders as it can at least you know the differences are due to these known confounders
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Brief conclusion}
+
+\begin{quote}
+ ``All models are wrong but some are useful'' -- George Box
+ \end{quote}
+ 
+ \begin{itemize}
+ \item Keep in mind -- you need to know your data, the area you're in, the people you're studying. 
+ \item Data, credentials and classwork are not a substitute for common sense and thoughtfulness. 
+ \item Sometimes CIA isn't insane and sometimes it may be and there is no rule I can give you
+
+\end{itemize}
+
+\end{frame}
 
 \end{document}
