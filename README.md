@@ -1,13 +1,13 @@
 <img src="img/banner.png" alt="Mixtape Sessions Banner" width="100%"> 
 <br/>
 
-<img src="img/readme_about.png" alt="Mixtape Sessions Banner" width="100%">
+<img src="img/readme_about.png" alt="About" width="100%">
 <br/>
 
 Causal Inference Part I kickstarts a new 4-day series on design-based causal inference series. It covers the foundations of causal inference grounded in a counterfactual theory of causality built on the Neyman-Rubin model of potential outcomes. It will also cover randomization inference, independence, matching, regression discontinuity and instrumental variables. We will review the theory behind each of these designs in detail with the aim being comprehension, competency and confidence. Each day is 8 hours with 15 minute breaks on the hour plus an hour for lunch. To help accomplish this, we will hold ongoing discussions via Discourse, work through assignments and exercises together, and have detailed walk-throughs of code in R and Stata. This is the prequel to the Part II course that covers difference-in-differences and synthetic control.
 <br/>
 
-<img src="img/readme_schedule.png" alt="Mixtape Sessions Banner" width="100%"> 
+<img src="img/readme_schedule.png" alt="Schedule" width="100%"> 
 <br/>
 
 <details open><summary><b>Potential Outcomes</b></summary><br/>

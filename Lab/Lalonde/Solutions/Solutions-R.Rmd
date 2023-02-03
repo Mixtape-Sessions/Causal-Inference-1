@@ -92,7 +92,12 @@ df_nonexp$pscore <- predict(logit_nsw, type = "response")
 # inverse propensity score weights
 df_nonexp <- df_nonexp |> 
   mutate(
-    inv_ps_weight = treat * 1/pscore + (1-treat) * 1/(1-pscore)
+    # ATT
+    inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
+    # ATE
+    # inv_ps_weight = treat / pscore + (1-treat) * 1/(1-pscore)
+    # ATC
+    # inv_ps_weight = treat * (1-pscore)/pscore - (1-treat)
   )
 ```
 

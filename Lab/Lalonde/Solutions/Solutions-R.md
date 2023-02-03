@@ -177,7 +177,12 @@ df_nonexp$pscore <- predict(logit_nsw, type = "response")
 # inverse propensity score weights
 df_nonexp <- df_nonexp |> 
   mutate(
-    inv_ps_weight = treat * 1/pscore + (1-treat) * 1/(1-pscore)
+    # ATT
+    inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
+    # ATE
+    # inv_ps_weight = treat / pscore + (1-treat) * 1/(1-pscore)
+    # ATC
+    # inv_ps_weight = treat * (1-pscore)/pscore - (1-treat)
   )
 ```
 
@@ -193,12 +198,12 @@ df_nonexp |>
     OLS estimation, Dep. Var.: re78
     Observations: 16,177 
     Standard-errors: Heteroskedasticity-robust 
-                Estimate Std. Error   t value   Pr(>|t|)    
-    (Intercept) 14722.91    78.4093 187.76983  < 2.2e-16 ***
-    treat::1    -6784.39  1439.2374  -4.71388 2.4507e-06 ***
+                Estimate Std. Error t value  Pr(>|t|)    
+    (Intercept)  4659.83    485.362 9.60074 < 2.2e-16 ***
+    treat::1     1689.31    753.911 2.24073  0.025057 *  
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    RMSE: 10,447.8   Adj. R2: 0.104767
+    RMSE: 1,063.9   Adj. R2: 0.014579
 
 2.  Note that the previous estimate was still negative. That is because
     we have extremem values for pscore. For example, a control unit with
@@ -218,12 +223,12 @@ df_nonexp |>
     OLS estimation, Dep. Var.: re78
     Observations: 370 
     Standard-errors: Heteroskedasticity-robust 
-                Estimate Std. Error  t value  Pr(>|t|)    
-    (Intercept)  4385.50    417.837 10.49572 < 2.2e-16 ***
-    treat::1     1350.89    748.043  1.80590   0.07175 .  
+                Estimate Std. Error t value   Pr(>|t|)    
+    (Intercept)  3648.31    563.017 6.47993 2.9485e-10 ***
+    treat::1     2626.02    898.312 2.92329 3.6777e-03 ** 
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    RMSE: 9,189.1   Adj. R2: 0.008368
+    RMSE: 5,983.6   Adj. R2: 0.032665
 
 3.  Using (i) 1:1 nearest-neighbor propensity-score matching with
     replacement and (ii) coarsened exact matching, estimate a treatment
