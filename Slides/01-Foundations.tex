@@ -138,7 +138,7 @@
 
 \end{frame}
 
-\begin{frame}{Day 1}
+\begin{frame}{Today: Day 1}
 
 \begin{enumerate}
 \item Potential outcomes
@@ -862,6 +862,37 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 \begin{frame}{Bad Doctor and Perfect Doctor Lab}
 
 Now let's spent a half hour on a lab in code in R and Stata to try and illustrate this again
+
+\end{frame}
+
+\begin{frame}[plain]
+
+  \begin{block}{Identification with Randomization}
+    \begin{eqnarray*}
+      \underbrace{E_N[Y_i | D_i=1] - E_N[Y_i | D_i=0]}_{ \mathclap{\text{Estimate of SDO}}}&=& \underbrace{E[Y^1] - E[Y^0]}_{ \mathclap{\text{Average Treatment Effect}}} \\
+    &&+ \underbrace{0}_{ \mathclap{\text{Selection bias}}}  \\
+    && + \underbrace{0}_{ \mathclap{\text{Heterogenous treatment effect bias}}}
+    \end{eqnarray*}
+  \end{block}
+  
+  SDO is unbiased estimate of ATE with randomized treatment assignment because it sets selection bias to zero and $ATT=ATU$.
+
+
+
+\end{frame}
+
+
+\begin{frame}{Different paths may have implications}
+
+Strange things when we discuss randomization with potential outcomes -- for example, selection bias is zero because randomization distributed potential outcomes equally across treatment and control, but one of them doesn't exist!  $$\underbrace{\textcolor{red}{E[Y^0|D=1]}}_{\mathclap{\text{Doesn't exist}}} = \underbrace{E[Y^0|D=0]}_{\mathclap{\text{Exists}}}$$
+
+\bigskip
+
+Contrast that with people who come to randomization via experimental design tradition -- randomization distributes \emph{realized variables} equally across treatment and control -- but note we never even discussed variables
+
+\bigskip
+
+I wonder if this is why some stop at RCT but some branch into quasi-experimental?
 
 \end{frame}
 
