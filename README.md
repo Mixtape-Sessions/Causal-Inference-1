@@ -23,6 +23,8 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 <b>Code</b>
            
+[Doctor PO](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Doctor-PO)
+
 [Replication of Thornton (2008)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Thornton)
 
 [Shiny App for Randomization Inference](https://mixtape.shinyapps.io/Randomization-Inference/)
