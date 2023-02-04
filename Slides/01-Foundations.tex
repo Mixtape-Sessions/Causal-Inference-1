@@ -51,33 +51,35 @@
 
 \section{Introduction to course}
 
-\begin{frame}{Welcome to Mixtape Sessions!}
+
+\begin{frame}{Welcome!}
 
   \begin{itemize}
-    \item Mixtape Sessions is an educational platform designed to ``democratize causal inference'' at all levels by helping bridging people with teachers
-    \item This workshop, and others like it, are important because of how important causal inference is and how in demand it has become and how erratically spread across disciplines the material is taught if at all
+	\item Scott Cunningham, professor of economics at Baylor University, author of \underline{Causal Inference: the Mixtape}, applied microeconomist 
+	\item Causal inference is a sub-category within econometrics most often associated with ``treatment effects'', as opposed to economic theory
+	\item Workshops can be helpful ways to plug into one's methodological training as the field has become very impactful (arguably won the Nobel Prize last October)
   \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Why Mixtape Sessions}
+
+\begin{frame}{What is Mixtape Sessions?}
 
   \begin{itemize}
-
-    \item Scott Cunningham, Ben Williams Professor of Economics, Baylor University 
-    \item Not an econometrician; just your run of the mill typical applied microeconomist
-    \item Workshop is about the science but also the art of causal inference (as is the broader Mixtape Sessions platform)
-
+    \item Mixtape Sessions is my online platform created to ``democratize causal inference'' at all levels by helping connect people with material and teachers from beginner to advanced
+    \item I started it because a strong conviction I have which is there is a particular approach to empirical work (which I tried to describe in my 3-part history) which did not universally spread into everyone's methods training
+    \item That's because imo the stronger part of the growth in ``causal inference'' came from ordinary empiricists, and as such, it got passed around through professors in how they taught field courses, and not as broadly in how people taught econometrics
   \end{itemize}
 
 \end{frame}
+
 
 \begin{frame}{Class goals}
 
   \begin{enumerate}
-    \item \textbf{Confidence}: You will feel like you have a good understanding of design-based causal inference by the end such that it doesn't feel so mysterious or intimidating
-    \item \textbf{Comprehension}: You will have learned a lot both conceptually but also in various specifics, particularly with regards to issues around identification and estimation
-    \item \textbf{Competency}: you will have had some experience working together implementing these methods using code in Stata and R, syntax, possession of programs, knowledge of packages
+    \item \textbf{Confidence}: You will feel like you have a good understanding of causal inference so that by the end it doesn't feel all that mysterious or intimidating
+    \item \textbf{Comprehension}: You will have learned a lot both conceptually and in the specifics, particularly with regards to issues around identification and estimation
+    \item \textbf{Competency}: You will have more knowledge of programming syntax in Stata and R (and python!) so that later you can apply this in your own work
   \end{enumerate}
 
 \end{frame}
@@ -85,9 +87,9 @@
 \begin{frame}{4-day Causal Inference Workshop}
 
   \begin{itemize}
-    \item Our workshop together is 4-days, 8am to 5pm CST, with 15 min breaks on the hour and a 1-hour lunch break at 12:00PM CST
-    \item It will mix exposition, discussion of papers, coding exercises and discussion as best as I can
-    \item It's essentially a semester's worth of material
+    \item We workshop together for 4-days, 8am to 5pm CST, with 15 min breaks on the hour and a 1-hour lunch break at 12:00PM CST
+    \item I mix exposition, discussion of papers, coding exercises and discussion as best as I can
+    \item I'm me, and I teach how I teach, with passion, enthusiasm, deep joy, but I'm not an econometrician so sometimes I take the long way
   \end{itemize}
 
 \end{frame}
@@ -128,191 +130,182 @@
 \end{frame}
 
 
-\subsection{Brief history of design-based causal inference}
+
+\section{Potential outcomes}
 
 
 
-\begin{frame}{Credibility Problem Within Empirical Economics}
+\subsection{Naive causal inference}
 
-  \begin{itemize}
-  \item Tremendous turmoil in applied economics in late 1970s and early 1980s
-  \item Several high profile papers found serious credibility problems in many applied studies, particularly those using macro data
-  \item This criticism eventually turned to labor economics which was vulnerable because of its early adoption of rich micro data and microeconometric methods (``Pioneers take arrows in the back'')
-  \end{itemize}
+
+\begin{frame}{Coming to causal inference}
+
+\begin{itemize}
+\item Many roads lead to this material -- from computer science, to statistics, to economics, to philosophy, to epidemiology and so on and so forth
+\item Therefore any effort to teach it will always have a degree of subjectivity reflecting the presenter
+\item But even on something as narrow as what I'm going to discuss, there are even subtleties I want to take note of, and this reflects my own subjectivity
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Sociological history of causal inference}
+
+\begin{itemize}
+
+\item You can get a sense of my own perspective in my 3-part substack series on the sociological history of late 20th century quantitative causal inference (\url{https://causalinf.substack.com/p/a-selected-history-of-quantitative})
+\item I'm not going to review it here, as it takes a long time, but I encourage you to read it as it can help you understand where this came from and why it looks the way it does, but also my own beliefs
+\item All I will say is in my opinion, causal inference in the applied social sciences has two parents -- the statistician/econometricians and the ``ordinary data workers'' -- and that gives it the shape it has taken on
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Spurious correlations}
+  \centering
+  \includegraphics[scale=0.5,height=6.5cm, width=10cm]{./lecture_includes/spurious_correlation}
+\end{frame}
+
+\begin{frame}{Spurious correlations}
+
+\begin{itemize}
+
+\item What is causality?  \textbf{We need a definition}.
+\item Philosophers created a definition, but statisticians found a trick to make it tractable
+\item That trick combined notation (a definition) and a mechanism (treatment assignment) into ``acceptable solutions''
+\item Let's now dig into the issues around definitions and then the first major breakthrough -- randomization
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Causality, causal inference}
+
+\begin{itemize}
+
+\item Philosophers have been interrogating what causality is going back to antiquity
+\item It is one of the most important topics in both the fields of epistemology (how do I know if something causes something else?) and metaphysics (we will see why it involved metaphysics)
+\item But I want you to distinguish for this workshop between the topic of ``causality'' and the topic of ``causal inference'', because the former is a much broader topic that includes many differing views
+\item The latter is really a description of contemporary scientific methods bridging many sciences, including medicine, computer science, and much of the social sciences
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Philosophical origins of causal inference concepts}
+
+  \begin{quote}
+    ``If a person eats of a particular dish, and dies in consequence, that is, would not have died if he had not eaten it, people would be apt to say that eating of that dish was the source of his death.'' -- John Stuart Mill (19th century moral philosopher and economist)
+  \end{quote}
+
+  \bigskip
+  
+    \begin{quote}
+    ``Causation is something that makes a difference, and the difference it makes must be a difference from what would have happened without it.'' -- David Lewis (20th century metaphysical philosopher)
+  \end{quote}
 
 \end{frame}
 
 
 
-\begin{frame}{Lewis 1986 book}
+\begin{frame}{Ancient One explains it}
+
+  Both people pinned the idea of causality in \emph{comparisons} between (1) different actions taken and (2) different timelines
+  
+  \bigskip
+  
+  Let's start off and listen to the Ancient One explain to Bruce Banner (aka the Incredible Hulk) from \underline{Avengers: Endgame}
+  
+  \bigskip
+  
+  \url{https://youtu.be/1S3I0PqkooA?t=50}
+  
+  \end{frame}
+  
+  \begin{frame}{Counterfactuals}
+  
+  Philosophers and stories alike eventually settled on the idea that causality was rooted in a particular kind of comparison, like ``treatment'' versus ``control'' groups
+  
+  \bigskip
+  
+  But the comparison as you heard the Ancient One say was much weirder than comparing two groups -- it was comparing two possible events (choices) across two possible timelines that may (or may not) trigger two different outcomes
+  
+  \bigskip
+  
+  The key idea in contemporary causal inference is the idea of the counterfactual. Counterfactuals are neither past nor future.  They are alternative histories created by thought experiments but we use them as framing devices to decipher causality in our timeline
+
+\end{frame}
+
+\begin{frame}{Statistical origins}
 
 \begin{quote}
-``After reviewing virtually every study since 1963, Lewis reached the awkward conclusion that simple OLS of union wage effects were more useful and reliable than those based on IV or endogenous selection approaches. The problem, in his view, was that researchers used \emph{arbitrary} and \emph{unsupported assumptions} to identify their models with little or no concern for the validity of their assumptions or the implications of their findings. This criticism was particularly salient because many of the new methods had been tested initially on the union wage effect question (e.g., Lee 1978).'' -- Card (2022)
+``Yet, although the seeds of the idea that [causal effects are comparisons of potential outcomes] can be traced back at least to the 18th century [most likely he means David Hume], the formal notation for potential outcomes was not introduced until 1923 by Neyman.'' -- Don Rubin (1990)
 \end{quote}
 
 \end{frame}
 
-\begin{frame}{Replication problems}
+
+\begin{frame}{Jerzy Neyman introduces his definition}
 
 \begin{itemize}
-\item Deward, Thursby and Anderson (1986) suggest that applied estimates can't be replicated partly bc many authors won't share their data or their programs
-\item They tried to replicate the papers at the JMCB journal between 1980 and 1984 (there was a data sharing agreement in 1982 and 1/4 authors still won't respond to request; before that 2/3 failed to respond)
-\item Only 2 of 9 papers could be reproduced exactly; 5 had substantial errors
+\item Early 20th century statistician, one of the ``fathers'' of modern statistics
+\item 1923 article describes a field experiment with differing plots of land (imagine hundreds of square gardens) and many different ``varieties'' of fertilizer that farmers could apply to the land
+\item ``$U_{ik}$ is the yield of the $i$th variety on the $k$th plot...'' (Neyman 1923)
+\item He calls $U_{ik}$ ``potential yield'', as opposed to the realized yield because $i$ (the fertilizer type) described all possible fertilizers that could be assigned to each $k$ square garden
+\item Though only one fertilizer will be assigned to the land, many possibilities exist in other words
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Take the con out of econometrics}
+\begin{frame}{Urn model}
 
 \begin{itemize}
-\item Famous paper by Ed Leamer -- ``Take the con out of econometrics''
-\item He says in Hendry, Leamer and Poirier (1990), ``we don't take empirical work seriously in economics. It's not the source by which economists accumulate their opinions, by and large.''
-\item Hits hard at Princeton's Industrial Relations Section where Card, Ashenfelter, Krueger, Angrist, Lalonde, and more are. They seek to fix this
+
+\item For each fertilizer there is an associated ``potential yield'' that he collapses into $U$ and each of them he considers to be ``a priori fixed but unknown'' (Rubin 1990)
+\item Farmers draw fertilizer from an urn, like a bingo ball from a bingo ball machine, and apply it to each square garden
+\item Once the fertilizer is assigned, we go from ``all possible outcomes'' to ``realized outcome'' terminology
+\item Interestingly -- the urn model was a thought experiment, but it was stochastically identical to the completely randomized experiment, and he doesn't notice it
+\item His arch-rival, Ronald Fisher, does notice it and publishes a book two years later recommending randomized experiments rooted in this paper
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Princeton IRS Model}
+\begin{frame}{Treatment assignment mechanism}
 
-\begin{itemize}
-\item Ashenfelter 1970s work in government focuses on extreme self-selection into job trainings programs (``Ashenfelter dip''); Ashenfelter and Card (1985) note longitudinal studies are not designed for this 
-\item Princeton Industrial Relations Section Model: more transparency, more credible ``research design'' that make explicit sources of identification and work hard to verify the legitimacy of that source
-\item Krueger notes that he would read NEJM and they'd often include a short description of the study's ``research design''
-\end{itemize}
+\begin{quote}
+
+``Before the 20th century, there appears to have been only limited awareness of the concept of the assignment mechanism.  Although by the 1930s, randomized experiments were firmly established in some areas of scientific investigation, notably in agricultural experiments, there was no formal statement for a general assignment mechanism and, moreover, not even formal arguments in favor of randomization until Fisher (1925).'' (Imbens and Rubin 2015)
+
+\end{quote}
 
 \end{frame}
 
-\begin{frame}{Natural experiments}
+\begin{frame}{Progress is made and progress is not made}
 
 \begin{itemize}
-\item Richard Freeman had been pushing for natural experiments for years -- ``big shocks'' like federal minimum wages in Puerto Rico
-\item Card really pushes this early on 
-	\begin{itemize}
-	\item Immigration labor supply shifts from the Mariel Boatlift paper (Card 1990); 
-	\item Minimum wage increases from neighboring state comparisons (Card and Krueger 1994)
-	\end{itemize}
-\item Steven Levitt seems instrumental in the late 1990s for bringing natural experiments and this labor economics approach to crime, more or less cleaning house; also very good abt sharing data and programs
+
+\item Whereas the RCT takes off in medicine and agriculture, it is not adopted as universally in social sciences, like economics
+\item Economics ironically does have in its history early econometricians who thought about causality like Neyman and Fisher, but listen to Guido Imbens describe the transition towards modeling causality in terms of ``realized outcomes
 
 \end{itemize}
 
+\bigskip
+
+\url{https://www.youtube.com/watch?v=drGkRy53bB4}
+
 \end{frame}
 
-\subsection{Design's Growing Influence}
-
-\begin{frame}{Theory's role}
+\begin{frame}{Prediction vs causal inference}
 
 \begin{itemize}
-\item Economists write models to help them understand the world
-\item Economists also use those models to guide their empirical work
-\item But the connection between those two steps has not always been done the same; let's review as this framework can help give you the big picture
-\end{itemize}
 
-\end{frame}
-
-
-\begin{frame}{Design vs Model}
-
-  \begin{itemize}
-    \item \textbf{Model}: Causality exists within the framework of a theory that says ``D causes Y'' (e.g., Heckman)
-    \item \textbf{Design}: Causality is design-based and can be discerned with \emph{physical} manipulation of a treatment $D$ (e.g., Rubin, Holland)
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Approximating models}
-
-  \begin{enumerate}
-    \item[1. ] \textbf{Approximating models}: Consumer demand, labor supply models (e.g., Mincer 1958; 1974)
-          \begin{itemize}
-            \item Theory implies $y_i=f_i(x_i)$ with restrictions on $f_i$ (e.g., concavity)
-            \item Researcher estimates a simpler version $$y_i = \alpha + x_i \beta + \varepsilon_i$$
-          \end{itemize}
-  \end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Exact models}
-
-  \begin{enumerate}
-    \item[2. ] \textbf{Exact models}: Models gives us all causes (``complete DGP'')
-          \begin{itemize}
-            \item More structural approach to identification, less focused on physical assignment of treatments
-            \item Estimate model parameters and distribution of heterogeneity
-            \item Functional form, useful for welfare analysis
-          \end{itemize}
-  \end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Working model}
-
-  \begin{enumerate}
-    \item[3. ] \textbf{Working model}: Called reduced form, program evaluation, more like Princeton's IRS model
-          \begin{itemize}
-            \item Model formulates questions, intuition, but does not necessarily assist with identification
-            \item Focus is on physical assignment of treatments not on modeling assumptions
-            \item Extreme focus on verifying the assumptions through placebos, falsifications, checks for identifying assumptions throughout
-          \end{itemize}
-  \end{enumerate}
-
-  \bigskip
-
-Models are useful, but not necessarily \emph{used}, the way they are in structural approaches
-
-\end{frame}
-
-
-\begin{frame}{Topics broaden}
-
-  Dependence on the model vs freed from the model for causal inference increases topics
-  \begin{itemize}
-    \item \textbf{Design}: Anything goes, ``economics is what economists study'', happiness, fringe stuff (e.g., sex work) (opening up topics)
-    \item \textbf{Model}: Neoclassical topics due to needing agreed upon models (limiting topics)
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Strengths of design}
-
-\begin{itemize}
-\item Approaches are oftentimes easier to explain; identification (historically a mathematical term) becomes synonymous with research design (Imbens and Angrist 1994)
-\item Precise research designs, as we will see, make it much easier to evaluate the core assumptions of the model (like employing event studies in a diff-in-diff)
-\item Designs become portable -- we can repeat these approaches in other settings (which is in many ways what this class is doing)
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Weaknesses}
-
-\begin{itemize}
-\item Limits the questions we can answer oftentimes 
-	\begin{itemize}
-	\item It's very backwards looking (may be a strength insofar as it's conservative)
-	\item Lacks generalizability
-	\end{itemize}
-\item Listen to Petra Todd describe these weaknesses \url{https://youtu.be/m1Mpc7-b-1I?t=2776}
+\item Statistics was not merely interested in causal inference
+\item It was also interested in prediction, as are many of the social sciences
+\item But causal inference appeared to progress from Neyman-Fisher until Rubin's 1970s work without explicit references to Neyman's original ideas
+\item I think sometimes therefore the ``clarity'' as Imbens said was lost and as such, prediction and causal inference did not have sharp lines separating them
 
 \end{itemize}
-
-\end{frame}
-
-
-\section{Potential outcomes}
-
-\subsection{Naive correlation}
-
-\begin{frame}{What is causality?}
-
-  \begin{quote}
-    ``Causation is something that makes a difference, and the difference it makes must be a difference from what would have happened without it.'' -- David Lewis (philosopher)
-  \end{quote}
-
-  \bigskip
-  Key idea $\rightarrow$ counterfactual. Counterfactuals are neither past nor future.  They are alternative histories created by thought experiments but we use them as framing devices to decipher causality in our timeline
-
-  \bigskip
-
-  Causal inference is also fundamentally practically because if we know causality, then we can also know not only the past, but also the future (policy)
 
 \end{frame}
 
@@ -346,7 +339,7 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 
 
-\begin{frame}{Introduction to Counterfactuals}
+\begin{frame}{Naive causal inference}
 
   \begin{itemize}
     \item Aliens come and orbit earth, see people dying in hospitals and conclude ``doctors are hurting people''
@@ -356,7 +349,7 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 \end{frame}
 
-\begin{frame}{\#1: Correlation and causality are different}
+\begin{frame}{\#1: Correlation and causality are different concepts}
 
   Causal is one unit, correlation is many units
   \begin{itemize}
@@ -378,7 +371,7 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}{\#3: Causality may mask correlations!}
 
   \begin{figure}
     \centering
@@ -387,77 +380,9 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 \end{frame}
 
-\begin{frame}{\#3: No correlation does not mean no causality!}
-
-  \begin{itemize}
-    \item A sailor sails her sailboat across a lake
-    \item Wind blows, and she perfectly counters by turning the rudder
-    \item The same aliens observe from space and say ``Look at the way she's moving that rudder back and forth but going in a straight line.  That rudder is broken.'' So they send her a new rudder
-    \item They're wrong but why are they wrong? There is, after all, no correlation
-    \item Example: Fed and open market operations
-  \end{itemize}
-
-\end{frame}
 
 \subsection{Potential outcomes notation}
 
-\begin{frame}{What is causality?}
-
-  \begin{quote}
-    ``Causation is something that makes a difference, and the difference it makes must be a difference from what would have happened without it.'' -- David Lewis (philosopher)
-  \end{quote}
-
-  \bigskip
-  Key idea $\rightarrow$ counterfactual. Counterfactuals are neither past nor future.  They are alternative histories created by thought experiments but we use them as framing devices to decipher causality in our timeline
-
-  \bigskip
-
-  Causal inference is also fundamentally practically because if we know causality, then we can also know not only the past, but also the future (policy)
-
-\end{frame}
-
-\begin{frame}{Different types of prediction}
-
-  \begin{columns}
-    \column{0.48\linewidth}
-    \centering
-    \textbf{Traditional prediction}
-    \begin{itemize}
-      \item Traditional prediction seeks to detect patterns in data and fit functional relationships between variables with a high degree of accuracy
-      \item ``Does this person have heart disease?'', ``How many books will I sell?''
-      \item It is not predictions of what effect a choice will have, though
-    \end{itemize}
-    \column{0.48\linewidth}
-    \centering
-    \textbf{Causal inference}
-    \begin{itemize}
-      \item Causal inference is also a type of prediction, but it's a prediction of a \emph{counterfactual} associated with a particular \emph{choice taken}
-      \item Causal inference takes that predicted (or imputed) counterfactual and constructs a causal effect that we hope tells us about a future in the event of a similar choice taken
-    \end{itemize}
-  \end{columns}
-\end{frame}
-
-
-\begin{frame}{Identification problem}
-  \centering
-  \includegraphics[scale=0.5,height=6.5cm, width=10cm]{./lecture_includes/prediction_causality.png}
-\end{frame}
-
-
-
-\begin{frame}{Potential outcomes}
-
-\begin{itemize}
-\item Conceptual framework for design based causal inference is counterfactual reasoning
-\item Counterfactual modeling becomes linked to potential outcomes models with Don Rubin 1970s work on propensity scores
-\item Potential outcomes notation was created by Jerzy Neyman (1923) and led Ronald Fisher (1925) to suggest RCTs
-\item Huge push by Donald Rubin, a Neyman ``grandson'', in the 1970s and 1980s with Paul Rosenbaum on the propensity score
-\item Guido Imbens, a Rubin coauthor, notes that it was crucial to his work on IV with Angrist, but it may even have made that work more appealing \emph{outside economics}
-\url{https://youtu.be/cm8V65AS5iU?t=1097}
-
-\end{itemize}
-
-\end{frame}
 
 
 
@@ -465,14 +390,14 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 \begin{frame}{Potential outcomes notation}
 
   \begin{itemize}
-    \item Let the treatment be a binary variable: $$D_{i,t} =\begin{cases} 1 \text{ if hospitalized at time $t$} \\ 0 \text{ if not hospitalized at time $t$} \end{cases}$$where $i$ indexes an individual observation, such as a person
+    \item Let the treatment be a binary variable: $$D_{i,t} =\begin{cases} 1 \text{ if placed on ventilator at time $t$} \\ 0 \text{ if not placed on ventilator at time $t$} \end{cases}$$where $i$ indexes an individual observation, such as a person
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Potential outcomes notation}
 
   \begin{itemize}
-    \item Potential outcomes: $$Y_{i,t}^j =\begin{cases} 1 \text{ health if hospitalized at time $t$} \\ 0 \text{ health if not hospitalized at time $t$} \end{cases}$$where $j$ indexes a counterfactual state of the world
+    \item Potential outcomes: $$Y_{i,t}^j =\begin{cases} 1 \text{ health if placed on ventilator at time $t$} \\ 0 \text{ health if not placed on ventilator at time $t$} \end{cases}$$where $j$ indexes a potential treatment status for the same $i$ person at the same $t$ point in time
   \end{itemize}
 \end{frame}
 
@@ -480,30 +405,26 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 \begin{frame}{Realized vs potential outcomes}
 
   \begin{itemize}
-    \item Potential outcomes $Y^1$ are not the realized outcomes $Y$ either conceptually or notationally
-    \item Potential outcomes are hypothetical states of the world but realized outcomes are \emph{ex post} the observed outcomes we have in our data due to treatment assignment
-    \item This distinction is subtle, creates challenges at the introductory stage, it isn't how econometrics was historically taught, except for at the very beginning; again Imbens on this \url{https://youtu.be/cm8V65AS5iU?t=1175}
+    \item Potential outcomes $Y^1$ and realized outcomes $Y$ are not the same ideas or notation
+    \item Potential outcomes refer to the ``a priori fixed but unknown'' outcomes associated with different possible treatment assignments
+    \item Realized outcomes refer to the ``posterior and known'' outcome associated with a specific treatment assignment
+    \item This distinction is more subtle than I can emphasize, and so we have to spend time on the front end in spreadsheets and code
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Important definitions}
+
+    \begin{block}{Definition 1: Individual treatment effect}
+      The individual treatment effect,  $\delta_i$, associated with a ventilator is equal to $Y_i^1-Y_i^0$.
+    \end{block}
+\end{frame}
 
 
 \begin{frame}{Important definitions}
 
 
-  \begin{columns}[t]
-    \scriptsize
-    \column{.45\textwidth}
-
-    \begin{block}{Definition 1: Individual treatment effect}
-      The individual treatment effect,  $\delta_i$, equals $Y_i^1-Y_i^0$
-    \end{block}
-    \begin{block}{Definition 3: Fundamental problem of causal inference}
-      If you need both potential outcomes to know causality with certainty, then since it is impossible to observe both $Y_i^1$ and $Y_i^0$ for the same individual, $\delta_i$, is \emph{unknowable}.
-    \end{block}
-    \column{.45\textwidth}
     \begin{block}{Definition 2: Switching equation}
-      An individual's observed health outcomes, $Y$, is determined by treatment assignment, $D_i$, and corresponding potential outcomes:
+      An individual's realized health outcome, $Y_i$, is determined by treatment assignment, $D_i$ which selects one of the potential outcomes:
       \begin{eqnarray*}
         Y_i& = D_iY^1_i+(1-D_i)Y^0_i& \\
         Y_i& = \begin{cases}
@@ -513,18 +434,24 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
       \end{eqnarray*}
     \end{block}
 
-  \end{columns}
 \end{frame}
+
 
 \begin{frame}{Missing data problem}
 
-  \begin{itemize}
-    \item Causal inference is fundamentally a missing data problem requiring prediction, not of the present or the future, but of a missing past -- sometimes explicitly (nearest neighbor, synthetic control), sometimes implicitly (RDD, IV)
-    \item Aggregate parameters based on individual treatment effects are descriptions of causal effects
-    \item Fundamental problem of causal inference holds because of the switching equation \emph{even with big data}
+
+    \begin{block}{Definition 3: Fundamental problem of causal inference}
+      If you need both potential outcomes to know causality with certainty, then since it is impossible to observe both $Y_i^1$ and $Y_i^0$ for the same individual, $\delta_i$, is \emph{unknowable}.
+    \end{block}
+    
+      \begin{itemize}
+    \item Fundamental problem of causal inference is a consequence of what the switching equation does and cannot be fixed with more data -- always missing one of the potential outcomes
+    \item Causal inference is a missing data problem requiring imputation of missing counterfactuals (sometimes explicitly such as with nearest neighbor or synthetic control, sometimes implicitly as with RDD)
   \end{itemize}
 
+    
 \end{frame}
+
 
 
 \begin{frame}{Average Treatment Effects}
@@ -539,9 +466,11 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
   \bigskip
 
+Aggregate parameters based on individual treatment effects are \emph{summaries} of individual treatment effects
+
+\bigskip
+
   Cannot be calculated because $Y^1_i$ and $Y^0_i$ do not exist \emph{for the same unit i} due to switching equation
-
-
 
 \end{frame}
 
@@ -581,20 +510,20 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 \begin{frame}{Any collection of treatment effects}
 
   \begin{itemize}
-    \item Notice how in all three of these, all we did was take the defined treatment effect at the individual and aggregate
-    \item We will see this again with IV when we introduce the ``local'' average treatment effect
-    \item Just keep in mind -- these parameters can be defined, but they cannot be calculated due to the switching equation
+	\item Notice how in all three of these, all we did was take the defined treatment effect at the individual and aggregate
+	\item The aggregate causal parameters are \emph{definitions} of summaries but cannot be calculated directly bc of missing data problem
+	\item But they can be estimated, which is probably a distinction in epistemology as it's knowledge but of a different type (``warranted belief'')
   \end{itemize}
 
 \end{frame}
 
 \subsection{Selection bias}
 
-\begin{frame}{Good and bad variation}
+\begin{frame}{Naive causal inference and selection bias}
 
   \begin{itemize}
-    \item Naive use of statistical models will often find and take advantage of all types of variation for the purpose of prediction
-    \item But causal inference is much more cautious because it only uses \emph{some} of the variation
+    \item Naive causal inference is often caused by confusing prediction or description with causal inference
+    \item It is naive if it does not directly address, in a reasonable way, the problem of \emph{selection bias}
     \item This is better seen with a story and a decomposition
   \end{itemize}
 
@@ -602,16 +531,6 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 
 
-\begin{frame}{Causality and comparisons}
-
-  \begin{itemize}
-    \item Epistemology: what beliefs are warranted and what beliefs are not
-    \item Without counterfactuals, we do not \emph{know} treatment effects, but with groups of data we can sometimes obtain \emph{estimates}
-    \item We do this by making comparisons of groups treated and not treated
-    \item But not all comparisons are equal -- selection bias (e.g., aliens making unwarranted conclusions about causality because of failing to use design)
-    \item We will decompose a simple estimator so we can see what \emph{selection bias} is
-  \end{itemize}
-\end{frame}
 
 
 
@@ -625,40 +544,42 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
     \end{eqnarray*}
   \end{block}
   \bigskip
-  I tend to use expectation operators $E[ \cdot ]$ but note we are using samples $E_N[ \cdot ]$
+
+Notice how I moved between potential outcomes ($Y^1$) to realized outcomes ($Y$ for $D=1$) using the switching equation
 
 \end{frame}
 
-\begin{frame}{SDO}
+\begin{frame}{Simple difference in mean outcomes}
 
   \begin{itemize}
-    \item Simple difference in mean outcomes is our first estimator
-    \item Notice that we switched from potential outcomes to observed outcomes
-    \item This means that because the SDO is based on the switching equation, it uses data
-    \item So when is the SDO causal and when is it not?
+    \item Simple difference in mean outcomes may or may not be ``naive''
+    \item It can be calculated manually by differencing averages, or with a regression $$Y_i = \alpha + \delta D_i + \varepsilon_{i}$$where $\widehat{\delta}$ is the SDO from the previous slide
+    \item SDO creates a number (i.e., it's a calculation), but what does that number mean in terms of causality and bias?
   \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Potentially biased comparisons}
+\begin{frame}{Decomposition of the SDO}
 
   \begin{block}{Decomposition of the SDO}
-    The SDO can be decomposed into the sum of three parts:
+    The SDO is made up of three things:
     \begin{eqnarray*}
       E[Y^1 | D=1] - E[Y^0 | D=0]&=& ATE\nonumber \\
       &&+ E[Y^0|D=1] - E[Y^0|D=0] \nonumber \\
       && + (1-\pi)(ATT - ATU)
     \end{eqnarray*}
   \end{block}
-  Seeing is believing so let's work through this identity!
 
+\bigskip
+
+We need to see this as everything hinges on getting it
 \end{frame}
 
 
-\begin{frame}[shrink=20,plain]
+\begin{frame}{Begin with ATE definition}
 
-  \begin{block}{Use LIE to decompose ATE into the sum of four conditional average expectations}
+  \begin{block}{Law of iterated expectations}
     \begin{eqnarray*}
       \text{ATE}&=&E[Y^1]-E[Y^0]  \\
       &=& \{\pi E[Y^1 | D=1] + (1-\pi)E[Y^1 | D=0]\}  \\
@@ -667,7 +588,14 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
   \end{block}
 
 
-  \begin{block}{Substitute letters for expectations}
+
+\end{frame}
+
+\begin{frame}{Change notation}
+
+
+
+  \begin{block}{Substitute letters for expectations to go easy on the eyes}
     \begin{eqnarray*}
       E[Y^1|D=1] &=& a  \\
       E[Y^1|D=0] &=& b  \\
@@ -677,6 +605,12 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
     \end{eqnarray*}
   \end{block}
 
+
+\end{frame}
+
+\begin{frame}{Rewrite ATE definition}
+
+
   \begin{block}{Rewrite ATE}
     \begin{eqnarray*}
       e&=&\{\pi{a} + (1-\pi)b\} - \{\pi{c} + (1-\pi)d\}
@@ -685,9 +619,12 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 
 \end{frame}
 
+
+
+
 \begin{frame}[plain]
 
-  \begin{block}{Move SDO terms to LHS}
+  \begin{block}{Simple manipulation of ATE definition}
     \begin{eqnarray*}
       e&=&\{\pi{a} + (1-\pi)b\} - \{\pi{c} + (1-\pi)d\}  \\
       e&=&\pi{a} + b - \pi{b} - \pi{c} - d + \pi{d}  \\
@@ -704,65 +641,118 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 \end{frame}
 
 \begin{frame}[shrink=20,plain]
-  \begin{block}{Rewrite from previous slide}
+  \begin{block}{Carry forward from previous slide}
     \begin{eqnarray*}
       \textbf{a}-\textbf{d}&=&e  + (\textbf{c} - \textbf{d}) + (1-\pi)(a-c) -(1-\pi)(b-d)
     \end{eqnarray*}
   \end{block}
 
-  \begin{block}{Substitute conditional means}
+  \begin{block}{Replace letters with original terms }
     \begin{eqnarray*}
       E[Y^1|D=1] - E[Y^0|D=0] &=& \text{ATE}  \\
       &&+ (E[Y^0|D=1] - E[Y^0|D=0])  \\
-      && + (1-\pi)(\{E[Y^1|D=1] - \alert{E[Y^0|D=1]}\}  \\
-      && - (1-\pi)\{\alert{E[Y^1|D=0]} - E[Y^0|D=0]\}) \\
+      && + (1-\pi)( \underbrace{\{E[Y^1|D=1] - \alert{E[Y^0|D=1]}\}}_{ \mathclap{\text{ATT}}}  \\
+      && - (1-\pi)( \underbrace{\{E[Y^1|D=0] - \alert{E[Y^0|D=0]}\}}_{ \mathclap{\text{ATU}}}  \\
+    \end{eqnarray*}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Decomposition of the SDO}
+
+  \begin{block}{Decomposition of the SDO}
+    \begin{eqnarray*}
       E[Y^1 | D=1] - E[Y^0 | D=0]  &=& ATE \\
       &&+ (E[Y^0|D=1] - E[Y^0|D=0])  \\
       && + (1-\pi)(ATT - ATU)
     \end{eqnarray*}
   \end{block}
+  
+  \bigskip
+  
+  Note: this is a \emph{rewritten} formula for the definition of the ATE and so is \emph{always} true.  Also, notice that we started with $\pi$ but in the end we weight by $1-\pi$.
 \end{frame}
+
 
 \begin{frame}[plain]
 
-  \begin{block}{Decomposition of difference in means}
+  \begin{block}{Estimate SDO with sample averages}
     \begin{eqnarray*}
-      \underbrace{E_N[y_i | d_i=1] - E_N[y_i | d_i=0]}_{ \mathclap{\text{SDO}}}&=& \underbrace{E[Y^1] - E[Y^0]}_{ \mathclap{\text{Average Treatment Effect}}} \\
+      \underbrace{E_N[Y_i | D_i=1] - E_N[Y_i | D_i=0]}_{ \mathclap{\text{Estimate of SDO}}}&=& \underbrace{E[Y^1] - E[Y^0]}_{ \mathclap{\text{Average Treatment Effect}}} \\
       &&+ \underbrace{E[Y^0|D=1] - E[Y^0 | D=0]}_{ \mathclap{\text{Selection bias}}}  \\
       && + \underbrace{(1-\pi)(ATT - ATU)}_{ \mathclap{\text{Heterogenous treatment effect bias}}}
     \end{eqnarray*}
-    Using the switching equation, we get $E_N[Y|D=1] \to E[Y^1 | D=1]$, $E_N[Y|D=0] \to E[Y^0|D=0]$ and $(1-\pi)$ is the share of the population in the control group.
   \end{block}
 
+\bigskip
+
+    Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \to E[Y^1 | D=1]$, $E_N[Y|D=0] \to E[Y^0|D=0]$ and $(1-\pi)$ is the share of the population in the control group.
+
 \end{frame}
+
 
 \begin{frame}{Selection bias}
 
+\begin{itemize}
+\item For many of us, we have heard the word ``selection bias'' before but it was with respect to ``non-random samples''
+\item In causal inference, that isn't what we mean.  We mean mean potential outcomes differ for two groups.
+\item We cannot observe this though because one of the comparisons is counterfactual and the other is realized
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Bias \#1: Selection bias}
+
   \begin{itemize}
-    \item Notice this term ``selection bias'' $$E[Y^0|D=1] \neq E[Y^0 |D=0]$$
-    \item Selection bias was the problem that the aliens failed to overcome -- without treatment $Y^0$, COVID patients on vents $(D=1)$ would likely have been different from those with COVID not on vents $(D=0)$
-  \end{itemize}
+    \item Look very closely at the selection bias terms on their left and right hand sides $$E[Y^0|D=1] \neq E[Y^0 |D=0]$$
+    \item Ask yourself: do you think that the people placed on vents would've had the same mean health outcomes as the people not on vents had they not been on vents? Why do you think that?
+      \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Bias \#1: Selection bias}
+
+Probably not. Had they not been on vents, many would've died.
+
+\bigskip
+
+  $$\underbrace{E[Y^0|D=1]}_{\mathclap{\text{Worse off vents}}} < \underbrace{E[Y^0|D=0]}_{\mathclap{\text{Better off vents}}}$$
+
+\bigskip
+
+Bias was caused by \emph{the doctors} being good at their jobs!  
+
+\bigskip
+
+Bias was caused by the \emph{treatment assignment mechanism}, and Imbens and Rubin said that was not really emphasized until Fisher (1925) 
+
 
 \end{frame}
 
 
-\begin{frame}{What is selection bias?}
 
-  Let's put this into words.
-  \bigskip
-  \begin{enumerate}
-    \item Put $E[Y^0|D=1] \neq E[Y^0|D=0]$ to your best friend who hasn't taken this course
-    \item If people choose a treatment, $D=1$, or control, $D=0$, because they expect it benefits them, $Y^1-Y^0>0$, or doesn't $Y^1-Y^0\leq0$ then what do you suspect is true about the mean value of $Y^0$ for the treatment and control groups?
-  \end{enumerate}
+
+\begin{frame}{Humans cause selection bias, not statistical model}
+
+\begin{itemize}
+\item People cause the bias bc people choose treatments to make their lives better which means choosing $D=1$ if $Y^1-Y^0>0$.
+	\begin{enumerate}
+	\item I chose to get a PhD because I thought I would be less happy without it -- i.e., $Y^0$ maybe was lower for me than others
+	\item I chose to get a PhD because I thought it would make me happier -- i.e., $Y^1$ maybe was higher for me than others
+	\end{enumerate}
+\item Selection bias is associated with the first; heterogenous treatment effect bias with the second
+\end{itemize}
 
 \end{frame}
+
+
 
 
 \begin{frame}{Illustrating selection bias with spreadsheets}
 
   \begin{itemize}
     \item Chronic PTSD has historically been treated with cognitive behavior therapies like mindfulness, but recent work shows therapist assisted MDMA (street name: ecstasy), are effective too
-    \item Ongoing work in psychopharmacology has begun experimenting with long dormant approaches in the psychedelics and empathogens fot treating mental illness, including PTSD
+    \item Ongoing work in psychopharmacology has begun experimenting with long dormant approaches in the psychedelics and empathogens for treating mental illness, including PTSD
+    \item Several states have legalized it, Australia just legalized it this week, and FDA is expected to ``reschedule'' it soon
     \item MAPS organization has been funding RCTs in compliance with FDA trials to study MDMA's effect on PTSD \url{https://www.nature.com/articles/s41591-021-01336-3}
     \end{itemize}
     
@@ -776,53 +766,18 @@ Models are useful, but not necessarily \emph{used}, the way they are in structur
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Humans always make bias}
 
-\begin{itemize}
-\item People make choices because they think their live will be better as a result (i.e., based on $Y^1$ or $Y^0$)
-	\begin{enumerate}
-	\item I chose to get a PhD because I didn't like my life -- i.e., $Y^0$ maybe was different for me than others
-	\item I chose to get a PhD because I thought it would help me -- i.e., $Y^1$ maybe was different for me than others
-	\end{enumerate}
-\item When humans make choices based on expected gains, it introduces ``selection bias'' and heterogeneous treatment effect bias 
-\item Rational choice is why correlations in non-experimental data stop illustrating causal effects
-\end{itemize}
+\begin{frame}{Summarizing the goals of causal inference}
 
-\end{frame}
-
-
-\begin{frame}{Selection bias}
-
-\begin{itemize}
-\item For many of us, we have heard the word ``selection bias'' before but it was with respect to ``non-random samples''
-\item In causal inference, that isn't what we mean.  We mean $E[Y^0|D=1] \neq E[Y^0 |D=0]$ for two groups of people
-\item But notice, only one of those quantities via the switching equation can be seen, but if they are different, then two groups can look very different and it not reflect a causal effect
-\item Selection bias was the problem that the aliens failed to overcome -- people were on vents because $E[Y^0]$ was much lower than those not on it, and because it probably would help them more than it would other COVID patients $E[Y^1]$
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Group Questions for Engagement}
-
-\begin{enumerate}
-\item Some workers work from home and others work at the office and we observe differences in productivity for the ones who work from home. Why might $E[Y^0|WFH]$ be different from the ones who work at the physical office?
-\end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}{Goal of causal inference}
-
-  Our goal in all of causal inference is to estimate aggregate causal parameters by modeling treatment assignment by \emph{imputing} missing counterfactuals
+  Our goal in causal inference is to estimate aggregate causal parameters with data by exploiting what is known about the treatment assignment mechanism
 
   \bigskip
 
-This imputation process happens sometimes explicitly (nearest neighbor matching) and sometimes implicitly (RCTs)
+Depending on the treatment assignment mechanism, certain procedures are allowed and others are prohibited
 
   \bigskip
 
-  Let's look what happens in an RCT \emph{and why} this addresses selection bias term $E[Y^0|D=1]$ and $E[Y^0|D=0]$
+  Let's look what happens in an RCT \emph{and why} this addresses selection bias term $E[Y^0|D=1]$ and $E[Y^0|D=0]$ to see why Fisher (1925) recommended it
 
 \end{frame}
 
@@ -885,19 +840,33 @@ This imputation process happens sometimes explicitly (nearest neighbor matching)
 \end{frame}
 
 
+\begin{frame}{Bad Doctor and Perfect Doctor Lab}
 
+Now let's spent a half hour on a lab in code in R and Stata to try and illustrate this again
+
+\end{frame}
+
+\begin{frame}{Interference when aggregating units}
+
+\begin{itemize}
+\item While treatment effects are defined at individual level, aggregate parameters combine units
+\item This therefore means that for the aggregate parameters to be stable, there cannot be ``interference'' between one unit's treatment choice and another unit's potential outcome
+\item Creates challenges for definitions and estimation that are probably huge headaches, even in the RCT
+\end{itemize}
+
+\end{frame}
 
 \begin{frame}{SUTVA}
 
   \begin{itemize}
-    \item Potential outcomes model places a limit on what we can measure: the ``stable unit-treatment value assumption''
+    \item SUTVA stands for ``stable unit-treatment value assumption''
           \begin{enumerate}
             \item \textbf{S}: \emph{\textbf{s}table}
             \item \textbf{U}: across all \emph{\textbf{u}nits}, or the population
             \item \textbf{TV}: \emph{\textbf{t}reatment-value} (``treatment effect'', ``causal effect'')
             \item \textbf{A}: \emph{\textbf{a}ssumption}
           \end{enumerate}
-    \item Largely about spillovers, poorly defined treatments and scale
+    \item Largely about interference when aggregating but also poorly defined treatments and scale
   \end{itemize}
 \end{frame}
 
@@ -907,7 +876,7 @@ This imputation process happens sometimes explicitly (nearest neighbor matching)
   \begin{itemize}
     \item What if we impose a treatment at one neighborhood but not a contiguous one?
     \item Treatment may spill over causing $Y=Y^1$ even for the control units because of spillovers from treatment group
-    \item Informs the design stage
+    \item Can be mitigated with careful delineation of treatment and control units so that interference is impossible, may even require aggregation (e.g., classroom becomes the unit, not students)
   \end{itemize}
 \end{frame}
 
@@ -1151,11 +1120,12 @@ Use this finding of a nearly one-to-one substitution once paid search was droppe
 \end{frame}
 
 
-\begin{frame}{Discussion}
+\begin{frame}{Comments}
 
 \begin{itemize}
-\item What's a correlation that you have heard of or seen that you think is misinterpreted because of selection bias?
-\item If you had all the money in the world and complete discretion, what RCT would you run to test it?
+\item Natural experiments are valuable, but they don't always have the same certainty the way an RCT does
+\item We use natural experiments when people won't let us run the RCTs we want to run!
+\item Findings from natural experiments often push others to run RCTs -- like at eBay
 \end{itemize}
 
 \end{frame}
@@ -1275,9 +1245,9 @@ Use this finding of a nearly one-to-one substitution once paid search was droppe
 \begin{frame}{Results}
 
   \begin{itemize}
-    \item Even small incentives were effective
-    \item Any incentive increases learning HIV status by 43\% compared to the control (mean 34\%)
-    \item Next she looks at the effect that learning HIV status has on risky sexual behavior
+    \item Any incentive increases learning HIV status by 43 percentage points compared to the control (34\% of controls learned HIV status)
+    \item Next she looks at the effect that learning HIV status has on risky sexual behavior 
+    \item She had to do a lot of planning by creating two sources of randomization -- the voucher and the distance to clinics -- which required using instruments (we discuss it next week)
   \end{itemize}
 
 \end{frame}
@@ -1344,18 +1314,30 @@ Use this finding of a nearly one-to-one substitution once paid search was droppe
 
 \end{frame}
 
-\begin{frame}{Discussion}
+\begin{frame}{Thoughts you want to keep in mind}
 
   \begin{itemize}
-    \item What's in your field a causal question you find interesting that you wish you could answer?
     \item Describe the way you would conduct the RCT by explaining the following:
           \begin{itemize}
-            \item What's the treatment?  Express it as a binary variable.
-            \item How will you assign this so that SUTVA holds and independence is achieved?
+            \item What's the treatment?  Who will be treated? Who will not?
+            \item Write down a regression with a binary variable as sometimes that alone will clarify it
             \item What is the outcome you are interested in?
+            \item How will you assign this so that SUTVA holds and independence is achieved?
           \end{itemize}
     \item Describe the steps you would take to do this if you had all the money in the world
   \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Comment}
+
+\begin{itemize}
+
+\item Methods do not drive the question
+\item Questions drive the methods
+\item Don't lose sight of the ball -- the importance of the questions should be what motivate you
+
+\end{itemize}
 
 \end{frame}
 
