@@ -13,11 +13,11 @@ set obs 100000
 gen person = _n
 
 * Potential outcomes (Y0): life-span if no vent
-gen 	 y0 = rnormal(9.4,4)
+gen 	  y0 = rnormal(9.4,4)
 replace y0=0 if y0<0
 
 * Potential outcomes (Y1): life-span if assigned to vents
-gen 	 y1 = rnormal(10,4)
+gen 	  y1 = rnormal(10,4)
 replace y1=0 if y1<0
 
 * Define individual treatment effect
