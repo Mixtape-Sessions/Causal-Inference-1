@@ -5,12 +5,12 @@
 Complete the code in either R or Stata for the stratification assignment then fill out the following information.  Your code should create all of these and be replicable. 
 
 Table 1: Differences in female and adult passengers by treatment status on the Titanic
-|--------------------------|--------------------|-----------------------|----------|
+|--------------------------|--------------------|-----------------------|
 |    **Variable name**     | **First class**    | **All other classes** |
 |--------------------------|--------------------|-----------------------|
 |                          |  Obs      Mean     |  Obs       Mean       |
 |--------------------------|--------------------|-----------------------|
-| Percent adult            |                    |                |
+| Percent adult            |                    |                       |
 | Percent female           |                    |                       |
 |--------------------------|--------------------|-----------------------|
 
