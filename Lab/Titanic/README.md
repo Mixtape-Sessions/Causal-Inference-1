@@ -5,12 +5,11 @@
 Complete the code in either R or Stata for the stratification assignment then fill out the following information.  Your code should create all of these and be replicable. 
 
 Table 1: Differences in female and adult passengers by treatment status on the Titanic
-|--------------------------|--------------------|-----------------------|
 |    **Variable name**     | **First class**    | **All other classes** |
 |--------------------------|--------------------|-----------------------|
 |                          |  Obs      Mean     |  Obs       Mean       |
 |--------------------------|--------------------|-----------------------|
-| Percent adult            |                    |                       |
+| Percent adult            |                    |                |
 | Percent female           |                    |                       |
 |--------------------------|--------------------|-----------------------|
 
@@ -21,7 +20,6 @@ Table 1: Differences in female and adult passengers by treatment status on the T
 
 
 Table 2: Counts and Titanic survival rates by strata and treatment status
-|--------------------------|--------------------|-----------------------|----------|
 |    **Strata**            | **First class**    | **All other classes** |          |
 |--------------------------|--------------------|-----------------------|----------|
 |                          |  Obs      Mean     |  Obs       Mean       |   Total  |
@@ -42,18 +40,20 @@ Table 2: Counts and Titanic survival rates by strata and treatment status
 
 
 Table 3: Counts and Titanic survival rates by strata and treatment status on the Titanic
-|------------------|-----------------|----------------------------------------------|
-|  **Strata**      | **Differences** | **ATE-weight** **ATT-Weight** **ATU-Weight** |
-|                  | **in survival** |                                              | 
-|------------------|-----------------|----------------------------------------------|
-| Female adult     |                 |                                              | 
-| Male child       |                 |                                              | 
-| Female child     |                 |                                              | 
-|------------------|-----------------|----------------------------------------------|
-|                  | **SDO no strat  |  ATE&&         **ATT**      **ATU**          |
-|------------------|-----------------|----------------------------------------------|
-| Est coefficient  |                 |                                              |
-|------------------|-----------------|----------------------------------------------|
+|------------------|-----------------|----------------------------------------|
+
+|  **Strata**      | **Differences** | **ATE-weight  ATT-Weight  ATU-Weight** |
+|                  | **in survival** |                                        | 
+|------------------|-----------------|----------------------------------------|
+| Male adult       |                 |                                        | 
+| Female adult     |                 |                                        | 
+| Male child       |                 |                                        | 
+| Female child     |                 |                                        | 
+|------------------|-----------------|----------------------------------------|
+|                  | **SDO no strat  |  ATE              ATT         ATU**    |
+|------------------|-----------------|----------------------------------------|
+| Est coefficient  |                 |                                        |
+|------------------|-----------------|----------------------------------------|
 
 
 
