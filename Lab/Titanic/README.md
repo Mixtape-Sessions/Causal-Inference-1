@@ -40,9 +40,8 @@ Table 2: Counts and Titanic survival rates by strata and treatment status
 
 
 Table 3: Counts and Titanic survival rates by strata and treatment status on the Titanic
-|------------------|-----------------|----------------------------------------|
+
 |  **Strata**      | **Differences** | **ATE-weight  ATT-Weight  ATU-Weight** |
-|                  | **in survival** |                                        | 
 |------------------|-----------------|----------------------------------------|
 | Male adult       |                 |                                        | 
 | Female adult     |                 |                                        | 
