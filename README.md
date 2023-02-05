@@ -39,7 +39,7 @@ Mixtape chapter 4: <a href="https://mixtape.scunning.com/potential-outcomes.html
 </details><br />
 
 
-<details open><summary><b>Matching Methods</b></summary><br/>
+<details open><summary><b>Known and Quantified Confounder Methods</b></summary><br/>
 
 <b>About</b>
 
@@ -50,6 +50,8 @@ In observational studies, researchers typically are not able to assume that a tr
 <a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/02-Matching_and_Weighting.pdf">Matching Methods</a>
 
 <b>Code</b>
+
+[Titanic exercise using stratification weighting] (see lab section under Titanic)
 
 [Replication of Lalonde (1986) and Dehejia and Wahba (2002)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Thornton)
 

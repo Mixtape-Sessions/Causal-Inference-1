@@ -103,6 +103,18 @@
 \setbeamercolor{itemize subsubitem}{fg = jet}
 \setbeamerfont{itemize subsubitem}{size = \small}
 
+% Special characters
+
+\usepackage{collectbox}
+
+\makeatletter
+\newcommand{\mybox}{%
+    \collectbox{%
+        \setlength{\fboxsep}{1pt}%
+        \fbox{\BOXCONTENT}%
+    }%
+}
+\makeatother
 
 
 

@@ -13,6 +13,13 @@
  set obs 100000
  gen person = _n
  
+ * make half the sample male
+ 
+ gen male = runiform(0,1)
+ replace male = 1 if male>0.5
+ replace male = 0 if male<=0.5
+ 
+ 
  * Potential outcomes (Y0): life-span if no vent
  gen 	 y0 = rnormal(9.4,4)
  replace y0=0 if y0<0
