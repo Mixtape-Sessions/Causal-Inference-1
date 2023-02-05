@@ -1446,11 +1446,27 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 \begin{itemize}
 \item When we can make synthetic xerox copies of ourselves, that's exact matching
 \item But what if we can only make similar copies of ourselves, like fraternal, but not identical, twins? That's nearest neighbor matching -- a form of ``inexact matching''
-\item Find units who are as close to the original as possible, but not necessarily exact
 \item Introduces bias bc of inexact matching, but the magnitude of the bias depends on the magnitude of the discrepancy
+\item There exists a method to reduce the selection bias (Abadie and Imbens 2011)
 \end{itemize}
 
 \end{frame}
+
+\begin{frame}{Measuring the inexact matching}
+
+\begin{itemize}
+\item Imagine I match treated units to some comparison unit -- questions is which one?
+\item What if we had a way of measuring a match in terms of how ``close'' each unit's $X_i$ value was to the matched $X_j$
+\item Well then we could see how ``bad'' it is
+\item Let's do that and use the square root of the sum of all squared differences in each unit's $X_i - X_{j(i)}$
+\end{itemize}
+
+\bigskip
+
+\url{https://docs.google.com/spreadsheets/d/1iro1Qzrr1eLDY_LJVzOYvnQZWmxY8JyTcDf6YcdhkwQ/edit?usp=sharing}
+
+\end{frame}
+
 
 
 \begin{frame}{Inexact matching: Random match 1}
@@ -1745,7 +1761,7 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 \begin{frame}{Steps}
 
 \begin{enumerate}
-\item[1.  Regress $Y$ on $X$ with OLS except only use the control sample:
+\item[1.  ]Regress $Y$ on $X$ with OLS except only use the control sample:
 \begin{equation}
 Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 \end{equation}where $j$ are the units for which $D_j=0$.  
