@@ -1565,10 +1565,10 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 \end{frame}
 
 
-{
-\setbeamercolor{background canvas}{bg=}
-\includepdf[pages=1-last]{./lecture_includes/abadie-matching2.pdf}
-}
+%{
+%\setbeamercolor{background canvas}{bg=}
+%\includepdf[pages=1-last]{./lecture_includes/abadie-matching2.pdf}
+%}
 
 
 \begin{frame}{Alternative distance metric: Euclidean distance}
@@ -1589,6 +1589,15 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
   \textcolor{picton-blue}{Comment}: The Euclidean distance is not invariant to changes in the scale of the $X$'s.  For this reason, alternative distance metrics that \emph{are} invariant to changes in scale are used
 	
 \end{frame}
+
+\begin{frame}{Inexact matching: Random match 2}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.45]{./lecture_includes/inexact_euclidean}
+\end{figure}
+
+\end{frame}
+
 
 
 \begin{frame}{Normalized Euclidean distance}
@@ -1732,6 +1741,47 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 	\end{itemize}
 \end{frame}
 
+
+\begin{frame}{Steps}
+
+\begin{enumerate}
+\item[1.  Regress $Y$ on $X$ with OLS except only use the control sample:
+\begin{equation}
+Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
+\end{equation}where $j$ are the units for which $D_j=0$.  
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Steps}
+
+\begin{enumerate}
+\item[2. ] Use the fitted values $\widehat{\alpha}$ and $\widehat{\beta}$ to predict $\widehat{\mu}^0(X)$ for both the $i$ and the matched $j(i)$ units:
+\begin{eqnarray}
+\widehat{\mu}^0_i &=& \widehat{\alpha} + \widehat{\beta} X_i \nonumber \\
+\widehat{\mu}^0_{j(i)} &=& \widehat{\alpha} + \widehat{\beta} X_{j(i)} \nonumber
+\end{eqnarray}
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Steps}
+
+\begin{enumerate}
+\item[3. ] Subtract $ \widehat{\mu}_i^0(X_i) - \widehat{\mu}_{j(i)}^0(X_{j(i)})$, our estimate of the selection bias caused by matching discrepancies, from the sample estimate of the $ATT$: $$\widehat{\delta}_{ATT}^{BC} = \dfrac{1}{N_T} \sum_{D_i=1} \bigg [ (Y_i - Y_{j(i)}) - \Big(\widehat{\mu}^0(X_i) - \widehat{\mu}^0(X_{j(i)})\Big) \bigg ]$$
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Steps}
+
+\begin{enumerate}
+\item[4. ] Estimate Abadie-Imbens robust standard error (Abadie and Imbens 2006; 2008; 2011)
+\end{enumerate}
+
+\end{frame}
 
 
 
