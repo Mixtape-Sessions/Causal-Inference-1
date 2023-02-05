@@ -48,7 +48,7 @@ Table 3: Counts and Titanic survival rates by strata and treatment status on the
 | Male child       |                 |                                        | 
 | Female child     |                 |                                        | 
 |------------------|-----------------|----------------------------------------|
-|                  | **SDO no strat  |  ATE              ATT         ATU**    |
+|                  | **SDO**         |  **ATE**        **ATT**      **ATU**   |
 |------------------|-----------------|----------------------------------------|
 | Est coefficient  |                 |                                        |
 |------------------|-----------------|----------------------------------------|
