@@ -909,7 +909,119 @@ Female child	& 0.387 &	0.02 &	0.00	&0.02	\\
 
 \end{frame}
 
+\begin{frame}{Drop the one female child}
+
+\begin{itemize}
+\item We were able to estimate all three causal effect parameters because for all four strata there were units in both treatment and control
+\item But if we dropped the only female child in first class from the data, we'd be in trouble bc there wouldn't be any way to calculate a difference for that group
+\item But what could we identify?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{table}\tiny\index{rolling!3}
+\caption{Counts and Titanic survival rates by strata and first class status.}
+\centering
+\begin{tabular}{lcc|cc|c}
+\toprule
+\multicolumn{1}{c}{\textbf{}}&
+\multicolumn{2}{c}{\textbf{First class}}&
+\multicolumn{2}{c}{\textbf{All other classes}}&
+\multicolumn{1}{c}{\textbf{}}\\
+\multicolumn{1}{l}{Strata}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Total}\\
+\midrule
+Male adult		& 175	& 0.326	& 1,492	& 0.188	& 1,667 \\
+Female adult	& 144	& 0.972	& 281	& 0.626	& 425 \\
+Male child		& 5		& 1		& 59		& 0.407 	& 64\\
+Female child	& 0		& n/a		& 44		& 0.613 	& 44\\
+\midrule
+Total	observations	& 324	&&	1,876	 && 2,200\\
+\bottomrule
+\end{tabular}
+\label{tab:titanic-counts2}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{ATT is the only one we can get}
+
+\begin{eqnarray}
+\widehat{\delta}_{ATT} &=& (0.137 \times 0.54) + (0.346 \times 0.44) + (0.593 \times 0.02)  \nonumber \\
+&=& 0.24\text{ or 24 percentage points}
+\end{eqnarray}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{table}\tiny\index{rolling!3}
+\caption{Differences in survival rates, stratification weights, and estimates of parameters without perfect stratification}
+\centering
+\begin{threeparttable}
+\begin{tabular}{lc|ccc}
+\toprule
+\multicolumn{1}{l}{\textbf{Strata}}&
+\multicolumn{1}{c}{\textbf{Differences in Survival Rates}}&
+\multicolumn{1}{c}{\textbf{Weight$_{k,ATE}$}}&
+\multicolumn{1}{c}{\textbf{Weight$_{k,ATT}$}}&
+\multicolumn{1}{c}{\textbf{Weight$_{k,ATU}$}}\\
+\midrule
+Male adult		& 0.137 	&	0.76 &	0.54	&0.80	\\
+Female adult	& 0.346 	&	0.19 &	0.44	&0.15	\\
+Male child		& 0.593 	&	0.03 &	0.02	&0.03	\\
+Female child	& n/a 	&	n/a 	&	n/a	&0.02	\\
+\midrule
+\multicolumn{1}{l}{\textbf{}}&
+\multicolumn{1}{c}{\textbf{No stratification}}&
+\multicolumn{3}{c}{\textbf{Stratification weighted estimates}}\\
+
+ & $\widehat{\textbf{SDO}}$& $\widehat{\textbf{ATE}}$ & $\widehat{\textbf{ATT}}$ & $\widehat{\textbf{ATU}}$ \\
+\midrule
+\textbf{Estimated coefficient}& 0.35 & n/a & 	0.24	 & n/a  \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\tiny
+\item 
+Differences in survival rates, stratification weights, and estimated parameters. All coefficients should be multiplied by 100 to get a percentage point change in survival rate as a result of having a first class cabin. Note that the SDO is a simple difference in mean outcomes and therefore \emph{not} a weighted average over the strata differences.  But the estimated ATE, ATT and ATU parameters are weighted averages in difference in means using corresponding stratification weights. 
+\end{tablenotes}
+\end{threeparttable}
+\label{tab:titanic-weights2}
+\end{table}
+
+
+\end{frame}
+
+\begin{frame}{Why did this happen?}
+
+\begin{itemize}
+
+\item Stratification requires having units in both groups for every value of $X$ to get ATE
+\item If you want the ATT, you have to have units in the control group for every treated group based on its value of $X$ (female children weren't treated, so didn't matter)
+\item If you want the ATU, you have to have units in the treatment group for every treated group based on its value of $X$ (female children weren't treated, so did matter)
+\item This has a technical word we are going to learn more about called a ``lack of common support''
+\end{itemize}
+
+\end{frame}
+
 \subsection{Conditional Independence}
+
+\begin{frame}{Potential outcomes}
+
+\begin{itemize}
+\item Now let's introduce potential outcomes notation so that we can build more formalized models
+\item This helps us understand what assumptions we need to make, which is not necessarily spelled out in the DAG backdoor criterion
+\end{itemize}
+
+\end{frame}
 
 \begin{frame}{Recall the RCT Assumption of Independence}
 	
@@ -959,17 +1071,6 @@ Female child	& 0.387 &	0.02 &	0.00	&0.02	\\
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[plain]
-
-	\begin{block}{Identifying assumption I: Conditional independence}
-	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of known and quantified confounders such that after adjusting for them, treatment assignment is \emph{independent of potential outcomes}.
-	\end{block}
-	
-	\begin{itemize}
-	\item Conditional on $X$, treatment assignment is \textbf{random}
-	\item Sometimes this is called also ``unconfoundedness'' and worth thinking long and hard about
-	\end{itemize}
-\end{frame}
 
 \begin{frame}[plain]
 
@@ -1043,7 +1144,7 @@ The second term implies we have people in treatment and control for every strata
 		E[Y^1-Y^0|X] &=& E[Y^1 - Y^0 | X,D=1] \\
 		&=&E[Y|X,D=1] - E[Y|X,D=0]
 		\end{eqnarray*}
-	\item Assumption 2 lets you properly weight over the covariate distribution
+	\item Assumption 2 lets you weight over the covariate distribution
 		\begin{eqnarray*}
 		\delta_{ATE} &=&E[Y^1-Y^0] = E\bigg[ E[Y^1 - Y^0 \ \vert \ X] \bigg] \\
 		&=& \int E[Y^1 - Y^0 |X,D=1] dPr(X) \\
@@ -1070,14 +1171,6 @@ Notice how there is only one potential outcome in the independence equation.  Th
 
 \end{frame}
 
-\begin{frame}{ATT}
-
-Conditional independence of $D$ with respect to $Y^0$ conditional on $X$, but not $Y^1$, lets us recover the ATT with weights and the realized data
-		\begin{eqnarray*}
-		\delta_{ATT} &=& E\bigg[ E[Y^1-Y^0 | D=1,X] \bigg] \\
-		&=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
-		\end{eqnarray*}
-\end{frame}
 
 
 \begin{frame}{Summarizing}
@@ -1090,6 +1183,17 @@ Weighted averages under either assumption:
 		\end{eqnarray*}
 ATE needs independence with respect to both potential outcomes; ATT only needs it with respect to $Y^0$. 		
 		
+\end{frame}
+
+\begin{frame}{Review stratification weighting in light of this}
+
+\begin{itemize}
+
+\item Let's now look at the way in this works within stratification if we are missing some observations
+\item The reason that this happens is because the dimensions $K$ of the $X$ conditioning set is getting larger
+
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Weighting by Age ($K=2$)}
@@ -1313,21 +1417,40 @@ Mean & 	28.2 & 	\$24,150 & 	Mean & 	32.85 & 	\$27,923 \\
 
 \end{frame}
 
+\begin{frame}{SDO}
 
-\begin{frame}{Imbalance}
+\begin{equation}
+SDO = \$24,150-27,923 = -\$3,773
+\end{equation}
+
+\end{frame}
+
+
+\begin{frame}{Age Imbalance}
 
 \begin{figure}[!t]\centering
-\caption{Covariate distribution a job training program's trainees (figure a) versus a sample of workers who were not enrolled in the trainee program (figure b).}
+\caption{Age distribution of a job training program's trainees (figure a) versus a sample of workers who were not enrolled in the trainee program (figure b).}
 \includegraphics[scale=0.075]{./lecture_includes/trainees.jpg}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{Imbalance}
+\begin{frame}{Age Imbalance}
 
 \begin{figure}[!t]\centering
 \includegraphics[scale=0.075]{./lecture_includes/nontrainees}
 \end{figure}
+
+\end{frame}
+
+\begin{frame}{Exact matching}
+
+\begin{itemize}
+\item Exact matching finds a person in the control group whose value of $X_j$ is \emph{exactly} equal to each person in the treatment group $i$
+\item Will not work if the conditioning set includes a continuous variable
+\item Will also not work if $K$ gets large (curse of dimensionality)
+\item But let's see it work now
+\end{itemize}
 
 \end{frame}
 
@@ -1381,6 +1504,24 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 \end{tabular}
 \label{tab:trainee2}
 \end{table}
+
+\end{frame}
+
+\begin{frame}{Estimated ATT using Exact Matching}
+
+Estimate the ATT using the sample averages in the original treatment dataset and the \emph{matched} sample
+
+\begin{equation}
+ATT = \$24,210 - \$22,854 = \$1,356
+\end{equation}
+
+\bigskip
+
+Just remember -- this required conditional independence of $Y^0$ with respect to age. If that's not true, then this is just garbage.
+
+\bigskip
+
+Common support means that exact matching is possible.  So the only way we have selection bias is if conditional independence doesn't hold.
 
 \end{frame}
 
@@ -1445,55 +1586,17 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 
 \begin{itemize}
 \item When we can make synthetic xerox copies of ourselves, that's exact matching
-\item But what if we can only make similar copies of ourselves, like fraternal, but not identical, twins? That's nearest neighbor matching -- a form of ``inexact matching''
+\item But what if we can only make similar copies of ourselves, like fraternal, but not identical, twins? That's nearest neighbor matching -- a form of ``inexact matching'', sort of like fraternal twins
 \item Introduces bias bc of inexact matching, but the magnitude of the bias depends on the magnitude of the discrepancy
 \item There exists a method to reduce the selection bias (Abadie and Imbens 2011)
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Measuring the inexact matching}
-
-\begin{itemize}
-\item Imagine I match treated units to some comparison unit -- questions is which one?
-\item What if we had a way of measuring a match in terms of how ``close'' each unit's $X_i$ value was to the matched $X_j$
-\item Well then we could see how ``bad'' it is
-\item Let's do that and use the square root of the sum of all squared differences in each unit's $X_i - X_{j(i)}$
-\end{itemize}
-
-\bigskip
-
-\url{https://docs.google.com/spreadsheets/d/1iro1Qzrr1eLDY_LJVzOYvnQZWmxY8JyTcDf6YcdhkwQ/edit?usp=sharing}
-
-\end{frame}
-
-
-
-\begin{frame}{Inexact matching: Random match 1}
-
-\begin{figure}[!t]\centering
-\includegraphics[scale=0.45]{./lecture_includes/inexact_random1}
-\end{figure}
-
-\end{frame}
-
-
-\begin{frame}{Inexact matching: Random match 2}
-
-\begin{figure}[!t]\centering
-\includegraphics[scale=0.45]{./lecture_includes/inexact_random2}
-\end{figure}
-
-\end{frame}
-
-
-
 \begin{frame}{Nearest Neighbor Matching}
 	
 	\begin{itemize}
-	\item See Abadie and Imbens (2006). ``Large sample properties of matching
-        estimators for average treatment effects''.  \emph{Econometrica}
-	\item We could also estimate $\delta_{ATT}$ by \emph{imputing} the missing potential outcome of each treatment unit $i$ using the observed outcome from that outcome's ``nearest'' neighbor $j$ in the control set
+	\item Estimate $\delta_{ATT}$ by \emph{imputing} the missing potential outcome of each treatment unit $i$ using the observed outcome from that outcome's ``nearest'' neighbor $j$ in the control set using $X$ for the matching
 		\begin{eqnarray*}
 		\delta_{ATT} = \frac{1}{N_T}\sum_{D_i=1} (Y_i - Y_{j(i)})
 		\end{eqnarray*}where $Y_{j(i)}$ is the observed outcome of a control unit such that $X_{j(i)}$ is the \textbf{closest} value to $X_i$ among all of the control observations (eg match on $X$)
@@ -1587,12 +1690,25 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 %}
 
 
-\begin{frame}{Alternative distance metric: Euclidean distance}
-	
- When the vector of matching covariates, $X= \colvec{X_1\\X_2\\\vdots\\X_k}$ has more than one dimension ($k>1$) we will need a new definition of \textbf{distance} to measure ``closeness''.  
+
+\begin{frame}{Measuring the matching discrepancy}
+
+\begin{itemize}
+\item What does it mean to be close when I am working with a large number of covariates?
+\item What if we had a way of measuring a match in terms of how ``close'' each unit's $X_i$ value was to the matched $X_j$
+\item Let's do that and use the square root of the sum of all squared differences in each unit's $X_i - X_{j(i)}$ as a measure of how bad the match is
+\item This is called the Euclidean distance
+\end{itemize}
+
+
 \end{frame}
 
-\begin{frame}{Alternative distance metric: Euclidean distance}
+%\begin{frame}{Alternative distance metric: Euclidean distance}
+	
+% When the vector of matching covariates, $X= \colvec{X_1\\X_2\\\vdots\\X_k}$ has more than one dimension ($k>1$) we will need a new definition of \textbf{distance} to measure ``closeness''.  
+%\end{frame}
+
+\begin{frame}{Euclidean distance}
 	\begin{block}{Definition: Euclidean distance}
     \vspace*{-2.5mm}
     \begin{eqnarray*}
@@ -1602,11 +1718,48 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
     \vspace*{-2.5mm}
 	\end{block}
 	
-  \textcolor{picton-blue}{Comment}: The Euclidean distance is not invariant to changes in the scale of the $X$'s.  For this reason, alternative distance metrics that \emph{are} invariant to changes in scale are used
+Let's do this together -- sometimes it helps to manually calculate this
+
+\bigskip
+
+\url{https://docs.google.com/spreadsheets/d/1iro1Qzrr1eLDY_LJVzOYvnQZWmxY8JyTcDf6YcdhkwQ/edit?usp=sharing}
+
 	
 \end{frame}
 
+
+\begin{frame}{Inexact matching: Random match 1}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.45]{./lecture_includes/inexact_random1}
+\end{figure}
+
+\end{frame}
+
+
 \begin{frame}{Inexact matching: Random match 2}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.45]{./lecture_includes/inexact_random2}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Minimizing the Euclidean distance}
+
+\begin{itemize}
+\item Abadie and Imbens (2006) show that there exists a matching that minimizes the distance metric
+\item Thankfully, this code exists so let's just look at the output
+\item But the idea here is that any other match will always have a higher Euclidean distance
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Inexact matching by minimizing the Euclidean distance}
 
 \begin{figure}[!t]\centering
 \includegraphics[scale=0.45]{./lecture_includes/inexact_euclidean}
@@ -1614,6 +1767,15 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 
 \end{frame}
 
+\begin{frame}{Other distance metrics}
+
+\begin{itemize}
+\item  The Euclidean distance is not invariant to changes in the scale of the $X$'s.  For this reason, alternative distance metrics that \emph{are} invariant to changes in scale are used
+\item Normalized Euclidean distance and Mahalanobis distance both try to normalize it so that scale doesn't matter
+\item There's a few more, and you may want to explore all of them
+\end{itemize}
+
+\end{frame}
 
 
 \begin{frame}{Normalized Euclidean distance}
@@ -1661,14 +1823,12 @@ Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 
 \begin{frame}{Matching and the Curse of Dimensionality}
 	
-Dimensionality creates headaches for us in matching.
-	\begin{itemize}
-	\item \textcolor{red}{Bad news}: Matching discrepancies $||X_i-X_{j(i)}||$ tend to increase with $k$, the dimension of $X$
-	\item \textcolor{blue}{Good news}: Matching discrepancies converge to zero \dots
-	\item \textcolor{red}{Bad news}: \dots but they converge very slow if $k$ is large
-	\item \textcolor{blue}{Good news}: Mathematically, it can be shown that $||X_i-X_{j(i)}||$ converges to zero at the same rate as $\frac{1}{N^{\frac{1}{k}}}$
-	\item \textcolor{red}{Bad news}: It's hard to find good matches when $X$ has a large dimension:  you need many observations if $k$ is big.
-	\end{itemize}
+\begin{itemize}
+\item The larger the dimensions of the conditioning set, even if they are needed for identification, the less likely common support holds
+\item This problem is caused by the finite dataset, and it introduces selection bias
+\item Abadie and Imbens (2011) derived a solution called bias correction matching
+\end{itemize}
+
 \end{frame}
 
 
@@ -1856,6 +2016,7 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 \begin{frame}{Large sample distribution for matching estimators}
 	
 	\begin{itemize}
+	\item Cannot use the bootstrap, so Abadie and Imbens derived the variance (Abadie and Imbens 2008)
 	\item Matching estimators have a Normal distribution in large samples (provided the bias is small):
 		\begin{eqnarray*}
 		\sqrt{N_T} (\widehat{\delta}_{ATT} - \delta_{ATT}) \xrightarrow{d} N(0,\sigma^2_{ATT})
@@ -1920,6 +2081,7 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 	\item But if probability of treatment is nonlinear, this conditional mean may be less informative
 	\item Propensity scores relax the linearity assumption and have other advantages, some of which is not broadly appreciated, such as basic diagnostics provided by common support checks
 	\end{itemize}
+	
 \end{frame}
 
 
