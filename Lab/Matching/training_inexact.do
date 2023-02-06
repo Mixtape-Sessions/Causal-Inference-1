@@ -22,14 +22,15 @@ su age
 gen 	het = (age - `r(mean)') 
 
 gen earnings = 9841 + 1607.50 * treat + 100 * treat * het + 500 * age + 10.5*age_sq + rnormal(0,5) 
+
 replace earnings = round(earnings)
 
 teffects nnmatch (earnings age) (treat), atet vce(iid) gen(match) 
-drop row
-gen row=_n
-
-gsort -treat unit 
-list treat row unit age earnings match1
 
 teffects nnmatch (earnings age) (treat), atet vce(iid) gen(match2) biasadj(age)
+
+reg earnings treat age, robust
+reg earnings treat age age_sq, robust
+reg earnings treat##c.age treat##c.age_sq, robust
+
 
