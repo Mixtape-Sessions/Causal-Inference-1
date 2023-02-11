@@ -31,6 +31,4 @@ teffects nnmatch (earnings age) (treat), atet vce(iid) gen(match2) biasadj(age)
 
 reg earnings treat age, robust
 reg earnings treat age age_sq, robust
-reg earnings treat##c.age treat##c.age_sq, robust
-
 

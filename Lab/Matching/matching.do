@@ -69,3 +69,28 @@ teffects nnmatch (earnings2 age gpa) (treat), ate nn(1) metric(ivar) generate(ma
 teffects nnmatch (earnings2 age gpa) (treat), ate nn(1) metric(ivar) generate(match12)  biasadj(age gpa)
 
 
+* Potential outcomes expressions
+gen y0 = 15000 + 10.25*age + -0.5*age_sq + 25000*gpa + -0.5*gpa_sq + 500*interaction + rnormal(0,5)
+
+gen y1 = y0 + 2500*treat + 100 * treat * het
+gen delta = y1-y0
+su delta if treat==1
+
+gen earnings3 = y1*(treat) + (1-treat)*y0
+
+reg earnings3 treat age gpa, robust
+reg earnings3 treat age age_sq gpa gpa_sq, robust
+
+teffects nnmatch (earnings3 age gpa) (treat), atet vce(iid) 
+
+teffects nnmatch (earnings3 age gpa) (treat), atet vce(iid) biasadj(age gpa)
+
+* Illustrate common support problems
+logit treat age gpa age_sq gpa_sq
+predict pscore
+
+twoway (histogram pscore if treat==1,  color(green)) ///
+       (histogram pscore if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+
+
