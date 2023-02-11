@@ -33,7 +33,7 @@ reg earnings1 treat age gpa
 reg earnings1 treat##c.age gpa
 reg earnings1 treat##c.age treat##c.gpa
 
-* OLS on nonlinear model. 
+* OLS with square terms
 reg earnings2 treat
 reg earnings2 treat age gpa
 reg earnings2 treat##c.age gpa
