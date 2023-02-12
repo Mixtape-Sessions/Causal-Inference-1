@@ -16,7 +16,7 @@ gen 	gpa = rnormal(2.3,0.5) 		if treat==0
 replace gpa = rnormal(1.76,0.45) 	if treat==1
 
 * Constant treatment effects
-gen earnings = 9841 + 1607.50 * treat + 25 * age + 1.25*gpa + rnormal() 
+gen earnings = 9841 + 1607.50 * treat + 25 * age + 1.25 * gpa + rnormal() 
 
 * Multivariate regression
 reg earnings treat age gpa, robust

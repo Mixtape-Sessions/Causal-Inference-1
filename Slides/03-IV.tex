@@ -636,6 +636,7 @@ Probably not a bad idea to estimate both reduced form and first stage, just to c
 \begin{frame}{Weak instruments}
 
 \begin{itemize}
+\item Whereas exclusion restriction is not testable, the non-zero first stage 
 \item Weak instruments can happen if the two variables are independent or the sample is small
 \item If you have a weak instrument, then the bias of 2SLS is centered on the bias of OLS and the cure ends up being worse than the disease
 \item This brought into sharp focus with Angrist and Krueger (1991) quarter of birth study and some papers that followed
@@ -664,7 +665,7 @@ Somewhat inspiring to hear how Angrist reframed the weak instrument problem whic
 	\item In practice, it is often difficult to find convincing instruments -- usually because potential instruments don't satisfy the exclusion restriction
 	\item But in an early paper in the causal inference movement, Angrist and Krueger (1991) wrote a very interesting and influential study instrumental variable 
 	\item They were interested in schooling's effect on earnings and instrumented for it with \emph{which quarter of the year you were born}
-	\item Remember Chance quote - what the heck would birth quarter have to do with earnings such that it was an excludable instrument?
+	\item Remember ``strangeness principle'' - why would birth quarter cause earnings in the reduced form?
 	\end{itemize}
 	
 \end{frame}
@@ -749,7 +750,7 @@ If you're born in the fourth quarter, you hit 16 with more schooling than those 
 	\item The causal model is $$Y_i = X \pi + \delta S_i + \varepsilon$$
 	\item The first stage regression is:$$S_i=X\pi_{10} + \pi_{11}Z_i + \eta_{1i}$$
 	\item The reduced form regression is:$$Y_i=X\pi_{20} + \pi_{21}Z_i+\eta_{2i}$$
-	\item The covariate adjusted IV estimator is the sample analog of the ratio, $\frac{\pi_{21}}{\pi_{11}}$
+	\item The sample analog of the Wald estimator that adjusts for covariates: $\frac{\pi_{21}}{\pi_{11}}$
 	\end{itemize}
 
 \end{frame}
@@ -758,8 +759,8 @@ If you're born in the fourth quarter, you hit 16 with more schooling than those 
 	
 	\begin{itemize}
 	\item Angrist and Krueger instrument for schooling using three quarter of birth dummies:  a dummies for 1st, 2nd and 3rd qob
-	\item Their estimated first-stage regression is:$$S_i=X\pi_{10} + Z_{1i}\pi_{11} + Z_{2i}\pi_{12} + Z_{3i}\pi_{13}+\eta_1$$
-	\item The second stage is the same as before, but the fitted values are from the new first stage
+	\item Their initial  first-stage regression is:$$S_i=X\pi_{10} + Z_{1i}\pi_{11} + Z_{2i}\pi_{12} + Z_{3i}\pi_{13}+\eta_1$$
+	\item The second stage is the same as before (including all controls $X$), but the fitted values are from the new first stage $$Y_i = X \pi + \delta \widehat{S_i} + \epsilon$$
 	\end{itemize}
 
 \end{frame}
@@ -789,41 +790,34 @@ If you're born in the fourth quarter, you hit 16 with more schooling than those 
 
 
 
-\begin{frame}{More instruments}
+\begin{frame}{180 instruments}
 
-	\begin{figure}
-	\includegraphics[scale=.25]{./lecture_includes/weak_qob1.png}
-	\end{figure}
-	
-
-\end{frame}
-
-
-\begin{frame}{Problem enters with many quarter of birth interactions}
-	
-	\begin{itemize}
-	\item They want to increase the precision of their 2SLS estimates, so they load up their first stage with more instruments
-	\item Specifications with 30 (quarter of birth $\times$ year) dummy variables and 150 (quarter of birth $\times$ state) instruments
-		\begin{itemize}
-		\item What's the intuition here?  The effect of quarter of birth may vary by birth year or by state
-		\item By interacting their instrument with variables, they are ``saturating'' their 2SLS regression model (more on that later)
-		\end{itemize}
-	\item It reduced the standard errors, but that comes at a cost of potentially having a weak instruments problem
-	\end{itemize}
-	
-\end{frame}
-
-
-
-
-\begin{frame}{More instruments}
-
-	\begin{figure}
-	\includegraphics[scale=.25]{./lecture_includes/weak_qob2.png}
-	\end{figure}
-	
+\begin{itemize}
+\item To improve precision in their two stage least squares model, they include more instruments (causes 40 percent reduction in standard errors in 2SLS)
+\item More instruments can increase variation in the predicted schooling variable, lowering standard errors and tightening confidence intervals
+\item Three QoB dummies interacted with 50 state-of-birth dummies plus 3 QoB dummies interacted with 9 year-of-birth dummies (180 instruments)
+\item Includes 50 state-of-birth dummies so variability in education in 2SLS is solely due to differences in seasons of birth and this is allowed to vary by state and birth year for the first time
+\end{itemize}
 
 \end{frame}
+
+%	\begin{figure}
+%	\includegraphics[scale=.25]{./lecture_includes/weak_qob1.png}
+%	\end{figure}
+	
+
+
+
+
+
+%\begin{frame}{More instruments}
+
+%	\begin{figure}
+%	\includegraphics[scale=.25]{./lecture_includes/weak_qob2.png}
+%	\end{figure}
+	
+
+%\end{frame}
 
 
 \begin{frame}{More instruments}
@@ -839,8 +833,8 @@ If you're born in the fourth quarter, you hit 16 with more schooling than those 
 \begin{frame}{Weak Instruments}
 	
 	\begin{itemize}
-	\item Important paper suggesting OLS and 2SLS were pretty similar, as well as the power of natural experiments (``plausibly exogenous'')
-	\item But in the early 1990s, a number of papers highlighted that IV can be \emph{severely} biased -- in particular, when instruments have only a weak correlation with the endogenous variable of interest and when many instruments are used to instrument for one endogenous variable (i.e., there are many overidentifying restrictions).
+	\item Important paper suggesting OLS and 2SLS were pretty similar, plus introduces modern notion of seeking ``plausibly exogenous instruments''
+	\item But in the early 1990s, a number of papers showed that IV can be \emph{severely} biased with weak instruments and many instruments for one endogenous variable
 	\item In the worst case, if the instruments are so weak that there is no first stage, then the 2SLS sampling distribution is centered on the probability limit of OLS
 	\end{itemize}
 \end{frame}
@@ -858,9 +852,11 @@ If you're born in the fourth quarter, you hit 16 with more schooling than those 
 
 \begin{frame}{Weak instruments and bias towards OLS}
 
+
 \begin{itemize}
-	\item If $\nu_i$ and $\eta_i$ are correlated, estimating the first equation by OLS would lead to biased results, wherein the OLS bias is:$$E[\beta_{OLS} - \beta] = \frac{ Cov(\nu, X)}{Var(X)}$$
-	\item If $\nu_i$ and $\eta_i$ are correlated the OLS bias is therefore: $\frac{\sigma_{\nu \eta}}{\sigma^2_\eta}$
+	\item If $\nu_i$ from causal model and $\eta_i$ from first stage model are correlated, then OLS estimated $\widehat{\beta}_{OLS}$ in causal model is biased
+	\item To show the bias of OLS, take the population mean difference in $\beta$ minus estimated $\beta_{OLS}$: $$E[\widehat{\beta}_{OLS} - \beta] = \frac{ Cov(\nu, X)}{Var(X)} = \frac{\sigma_{\nu \eta}}{\sigma^2_\eta}$$
+	\item Our hope is that with 2SLS, we can drive this bias to zero in the finite sample and have a reasonably unbiased estimate of $\beta$ 
 \end{itemize}
 
 \end{frame}
@@ -869,6 +865,7 @@ If you're born in the fourth quarter, you hit 16 with more schooling than those 
 \begin{frame}{Weak instruments and 2SLS bias towards OLS}
 	
 	\begin{itemize}
+	\item Strong instruments shrink the bias term, $\frac{\sigma_{\nu \eta}}{\sigma^2_\eta}$, to an inconsequential scaled value (but cannot go to zero)
 	\item We can derive the approximate bias of 2SLS as:$$E[\widehat{\beta}_{2SLS} - \beta] \approx \frac{\sigma_{\nu \eta}}{\sigma^2_\eta} \frac{1}{F+1}$$
 	\item Consider the intuition all that work bought us now: if the first stage is weak (i.e, $F\rightarrow{0}$), then the bias of 2SLS approaches $\frac{\sigma_{\nu \eta}}{\sigma^2_\eta}$
 	\end{itemize}

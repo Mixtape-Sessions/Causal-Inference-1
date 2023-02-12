@@ -63,7 +63,7 @@ use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
 
   reg re78 i.treat [aw=inv_ps_weight], r
 
-*-> 2. Inverese propensity score weighting with trimming
+*-> 2. Inverse propensity score weighting with trimming
   preserve
   drop if pscore < 0.1 | pscore > 0.9
   reg re78 i.treat [aw=inv_ps_weight], r
