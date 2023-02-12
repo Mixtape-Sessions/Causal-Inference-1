@@ -37,6 +37,8 @@ gen 	het = (age - `r(mean)')
 
 gen earnings2 = 7450 + 1000*hs + 500 * hs*het + 500*ability + 10.25*age + rnormal(0,1)
 
-
+reg earnings1 age hs, robust
 ivregress 2sls earnings1 age (hs = iv), robust
+
+reg earnings2 age hs, robust
 ivregress 2sls earnings2 age (hs = iv), robust
