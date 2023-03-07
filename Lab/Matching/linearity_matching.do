@@ -21,6 +21,12 @@ replace treat = 1 in 2501/5000
 gen 	age = rnormal(30,2)
 gen 	gpa = rnormal(2.75,2)
 
+* Illustrate overlap
+twoway (histogram age if treat==1,  color(green)) ///
+       (histogram age if treat==0,  ///
+	   fcolor(none) lcolor(black)), title(Age by treatment status) legend(order(1 "Treated" 2 "Not treated" ))
+
+
 su age
 replace age = age - `r(mean)'
 su gpa
@@ -77,6 +83,7 @@ gen 	age = rnormal(25,2.5) 		if treat==1
 replace age = rnormal(27.5,1.75) 	if treat==0
 gen 	gpa = rnormal(2.3,0.5) 		if treat==0
 replace gpa = rnormal(1.76,0.45) 	if treat==1
+
 
 su age
 replace age = age - `r(mean)'
