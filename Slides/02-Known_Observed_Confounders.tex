@@ -1790,7 +1790,7 @@ Let's do this together -- sometimes it helps to manually calculate this
 	\begin{itemize}
 	\item Notice that the normalized Euclidean distance is equal to:
 		\begin{eqnarray*}
-		||X_i - X_j|| = \sqrt{\sum_{n=1}^k \frac{(X_{ni} - X_{nj})}{\widehat{\sigma}^2_n}}
+		||X_i - X_j|| = \sqrt{\sum_{n=1}^k \frac{(X_{ni} - X_{nj})^2}{\widehat{\sigma}^2_n}}
 		\end{eqnarray*}
 	\item Thus, if there are changes in the scale of $X_{ni}$, these changes also affect $\widehat{\sigma}^2_n$, and the normalized Euclidean distance does not change
 	\end{itemize}

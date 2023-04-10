@@ -25,6 +25,12 @@ replace treat = 1 in 2501/5000
 gen 	age = rnormal(30,2)
 gen 	gpa = rnormal(2.75,2)
 
+* Illustrate overlap
+twoway (histogram age if treat==1,  color(green)) ///
+       (histogram age if treat==0,  ///
+	   fcolor(none) lcolor(black)), title(Age by treatment status) legend(order(1 "Treated" 2 "Not treated" ))
+
+
 su age
 replace age = age - `r(mean)'
 su gpa
@@ -82,6 +88,7 @@ replace age = rnormal(27.5,1.75) 	if treat==0
 gen 	gpa = rnormal(2.3,0.5) 		if treat==0
 replace gpa = rnormal(1.76,0.45) 	if treat==1
 
+
 su age
 replace age = age - `r(mean)'
 
@@ -102,7 +109,7 @@ gen y1 = y0 + 2500 + 100 * age + 1000*gpa
 gen delta = y1 - y0
 
 su delta // ATE = 2500
-su delta if treat==1 // ATT = 2102
+su delta if treat==1 // ATT = 2112.5
 
 gen 	earnings3 = treat*y1 + (1-treat)*y0
 
@@ -140,7 +147,7 @@ gen y1 = y0 + 2500 + 100 * age + 1000*gpa
 gen delta = y1 - y0
 
 su delta // ATE = 2500
-su delta if treat==1 // ATT = 2106
+su delta if treat==1 // ATT = 2105
 
 gen 	earnings4 = treat*y1 + (1-treat)*y0
 	   
@@ -183,6 +190,8 @@ twoway (histogram age if treat==1,  color(green)) ///
 	   fcolor(none) lcolor(black)), title(Age by treatment status) legend(order(1 "Treated" 2 "Not treated" ))
 
 su age, detail
+replace age = age - `r(mean)'
+su age, detail
 
 gen 	y0 = rnormal()
 replace y0 = 200 + rnormal() if age < `r(p25)'
@@ -197,18 +206,17 @@ replace y1 = y0 + 1150 if age>`r(p75)'
 gen delta = y1-y0
 
 su delta // ATE = 838
-su delta if treat==1 // ATT = 993
+su delta if treat==1 // ATT = 608
 
 gen 	earnings5 = treat*y1 + (1-treat)*y0
 
-replace age = age - `r(mean)'
 
-reg earnings5 treat age
-reg earnings5 treat##c.age
+reg earnings5 treat age // 245
+reg earnings5 treat##c.age // -98
 
-teffects nnmatch (earnings5 age) (treat), ate nn(1) metric(maha) 
-teffects nnmatch (earnings5 age) (treat), ate nn(1) metric(maha) biasadj(age)
+teffects nnmatch (earnings5 age) (treat), ate nn(1) metric(maha) // 812 biased
+teffects nnmatch (earnings5 age) (treat), ate nn(1) metric(maha) biasadj(age) // 996 biased
 
-teffects nnmatch (earnings5 age) (treat), atet nn(1) metric(maha) 
-teffects nnmatch (earnings5 age) (treat), atet nn(1) metric(maha) biasadj(age)
+teffects nnmatch (earnings5 age) (treat), atet nn(1) metric(maha) // 603 exactly right
+teffects nnmatch (earnings5 age) (treat), atet nn(1) metric(maha) biasadj(age) // 603 exactly right
 

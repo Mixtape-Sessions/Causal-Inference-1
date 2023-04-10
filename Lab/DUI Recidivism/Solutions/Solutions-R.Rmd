@@ -1,0 +1,114 @@
+---
+output: github_document
+---
+
+```{r setup, include = F}
+# devtools::install_github("Hemken/Statamarkdown")
+library(Statamarkdown)
+```
+# Hansen DWI Replication
+
+**Directions:** Download `hansen_dwi.dta` from GitHub at the following address. Note these data are not exactly the same as his because of confidentiality issues (so he couldn’t share all of it).
+
+https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi
+
+The outcome variable is `recidivism` which is measuring whether the person showed back up in the data within 4 months. Use this data to answer the following questions.
+
+```{r load-data}
+## hansen.R --------------------------------------------------------------------
+## Kyle Butts, CU Boulder Economics
+## 
+## replicate figures and tables in Hansen 2015 AER
+
+library(fixest)
+library(ggplot2)
+library(rdrobust)
+library(rddensity)
+library(binsreg)
+
+# load the data from github
+df <- haven::read_dta("https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi.dta")
+```
+
+1. We will only focus on the 0.08 BAC cutoff; not the 0.15 cutoff. Take the following steps.
+  a. Create a treatment variable (`dui`) equaling 1 if `bac1 >= 0.08` and 0 otherwise in your do/R file.
+
+```{r create-dui}
+# 1.a. create dui treatment variable for bac1>=0.08
+df$dui = (df$bac1 > 0.08)
+```
+
+  b. Store `bac1` into `bac1_orig` and then center the `bac1` variable, i.e. subtract $0.08$ so that the cutoff is now zero. 
+
+```{r recenter-bac1}
+# 1.b. Re-center our running variable at bac1=0.08
+df$bac1_orig = df$bac1
+df$bac1 = df$bac1 - 0.08
+```
+
+  c. Replicate Hansen’s Figure 1 examining whether there is any evidence for manipulation on the running variable. Produce a raw histogram using `bac1`, then use the density test in Cattaneo, Titunik and Farrell’s `rddensity` package. Can you find any evidence for manipulation? What about heaping?
+
+```{r manipulation-heaping-tests}
+# 1.c. Find evidence for manipulation or heaping using histograms
+ggplot(df) + 
+  geom_histogram(
+    aes(x = bac1), binwidth = 0.001,
+    alpha = 0.8, color = "steelblue"
+  ) + 
+  labs(
+    x = "Blood Alcohol Content",
+    y = "Frequency",
+    title = "Replicating Figure 1 of Hansen AER 2015"
+  ) + 
+  theme_bw()
+
+# Use rddensity from Cattnaeo, Titunik and Farrell papers
+rddensity::rddensity(X = df$bac1, c = 0.08) |> summary()
+```
+
+2. We are going to test for manipulation around the cutoff (following Table 2 Panel A). Run RD regressions using a local-linear estimator on `white`, `male`, age (`aged`) and accident (`acc`) as dependent variables. Are the covariates balanced at the cutoff? Use data in `bac1_orig` 0.03 to 0.13 (or `bac1` in -0.05 to 0.05). Check if the results are robust to a more narrow bandwidth of `bac1_orig` in 0.055 to 0.105. 
+
+```{r covariate-balance}
+# 2. Are the covariates balanced at the cutoff? 
+# Use two separate bandwidths (0.03 to 0.13; 0.055 to 0.105)
+# yi = Xi′γ + α1 DUIi + α2 BACi + α3 BACi × DUIi + ui
+feols(
+  c(white, male, acc, aged) ~ dui + bac1 + i(dui, bac1), 
+  df[df$bac1_orig >= 0.03 & df$bac1_orig <= 0.13, ], vcov = "hc1"
+) |> 
+  etable()
+
+feols(
+  c(white, male, acc, aged) ~ dui + bac1 + i(dui, bac1), 
+  df[df$bac1_orig >= 0.055 & df$bac1_orig <= 0.105, ], vcov = "hc1"
+) |> 
+  etable()
+```
+
+3. Now, we turn our main result, estimating the effect of getting a DUI on recidivism (`recid`).
+  a. Run an RD estimate using the `rdrobust` command (from the `rdrobust` package in R)
+
+```{r rdrobust}
+# 3. Estimate RD of DUI on Recidivism
+rdrobust(
+  y = df$recidivism, x = df$bac1, c = 0
+)
+```
+
+  b. Like all RD applications, you need to include a plot of the underlying data. Plot the RD estimator using the `rdplot` command (from the `rdrobust` package in R).
+
+```{r rdplot}
+rdplot(
+  y = df$recidivism, x = df$bac1, c = 0
+)
+```
+
+4. Repeat but drop units in the close vicinity of 0.08 (0.079-0.081) (i.e., the "donut hole" regression). Do the results stay the same?
+
+```{r donut}
+df_donut <- df[df$bac1_orig <= 0.79 | df$bac1_orig >= 0.081, ]
+rdrobust(
+  y = df_donut$recidivism, x = df_donut$bac1, c = 0
+)
+```
+
