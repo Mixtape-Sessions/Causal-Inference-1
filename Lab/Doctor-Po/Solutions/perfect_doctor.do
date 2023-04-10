@@ -8,7 +8,7 @@
  capture log close
  set seed 20200403
  
- * 100 people with differing levels of covid symptoms
+ * 100,000 people with differing levels of covid symptoms
  
  set obs 100000
  gen person = _n

@@ -1,9 +1,13 @@
 * This simulation is intended to illustrate practical challenges when faced with data generating processes that do not satisfy the requirements of exogeneity and the most common estimation procedures and specifications used.  The DGP will be as follows:
 
 * 1. Simple linearity with homogenous treatment effects, two covariates and good overlap using OLS and inexact matching with and without bias adjustment, as well as full saturation. 
+
 * 2. Simple linearity with heterogenous treatment effects, two covariates and good overlap using OLS and inexact matching with and without bias adjustment, as well as full saturation. 
+
 * 3. Simple linearity with heterogenous treatment effects, two covariates and poor overlap using OLS and inexact matching with and without bias adjustment, as well as full saturation. 
+
 * 4. Linearity with heterogenous treatment effects, two covariates and quadratics and poor overlap using OLS and inexact matching with and without bias adjustment, as well as full saturation.
+
 * 5. Nonlinearity, non-smooth with heterogenous treatment effects that vary with one covariate and poor overlap using OLS and inexact matching with and without bias adjustment, as well as full saturation.
 
 clear
