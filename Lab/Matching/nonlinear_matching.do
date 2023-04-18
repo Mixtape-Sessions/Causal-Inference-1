@@ -44,10 +44,25 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	scalar treat1 = `treat1'
 	gen treat1=`treat1'
 
-	reg earnings treat##c.age
-	local treat2=_b[1.treat]
-	scalar treat2 = `treat2'
-	gen treat2=`treat2'
+	* Regression: Heterogenous treatment effects with age
+	regress earnings i.treat##c.age, robust
+
+	* Obtain the coefficients
+	local treat_coef = _b[1.treat]
+	local age_treat_coef = _b[1.treat#c.age]
+
+	* Save the coefficients as scalars and generate variables
+	scalar treat_coef = `treat_coef'
+	gen treat_coef_var = `treat_coef'
+
+	scalar age_treat_coef = `age_treat_coef'
+	gen age_treat_coef_var = `age_treat_coef'
+
+	* Calculate the mean of the age covariate
+	egen mean_age = mean(age), by(treat)
+
+	* Calculate the ATT
+	gen treat_age = treat_coef_var + age_treat_coef_var * mean_age if treat == 1
 
 	teffects nnmatch (earnings age) (treat), atet nn(1) metric(maha) // 603 exactly right
 	mat b=e(b)
