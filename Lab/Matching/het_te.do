@@ -11,6 +11,8 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	set obs 5000
 	gen 	treat = 0 
 	replace treat = 1 in 2501/5000
+	
+	* Poor pre-treatment fit
 	gen 	age = rnormal(25,2.5) 		if treat==1
 	replace age = rnormal(30,3) 		if treat==0
 	gen 	gpa = rnormal(2.3,0.75) 	if treat==0
@@ -122,26 +124,26 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	scalar gpa_treat_coef = `gpa_treat_coef'
 	gen gpa_treat_coef_var = `gpa_treat_coef'
 
-scalar gpa_sq_treat_coef = `gpa_sq_treat_coef'
-gen gpa_sq_treat_coef_var = `gpa_sq_treat_coef'
+	scalar gpa_sq_treat_coef = `gpa_sq_treat_coef'
+	gen gpa_sq_treat_coef_var = `gpa_sq_treat_coef'
 
-scalar age_age_sq_coef = `age_age_sq_coef'
-gen age_age_sq_coef_var = `age_age_sq_coef'
+	scalar age_age_sq_coef = `age_age_sq_coef'
+	gen age_age_sq_coef_var = `age_age_sq_coef'
 
-scalar age_gpa_coef = `age_gpa_coef'
-gen age_gpa_coef_var = `age_gpa_coef'
+	scalar age_gpa_coef = `age_gpa_coef'
+	gen age_gpa_coef_var = `age_gpa_coef'
 
-scalar age_gpa_sq_coef = `age_gpa_sq_coef'
-gen age_gpa_sq_coef_var = `age_gpa_sq_coef'
+	scalar age_gpa_sq_coef = `age_gpa_sq_coef'
+	gen age_gpa_sq_coef_var = `age_gpa_sq_coef'
 
-scalar age_sq_gpa_coef = `age_sq_gpa_coef'
-gen age_sq_gpa_coef_var = `age_sq_gpa_coef'
+	scalar age_sq_gpa_coef = `age_sq_gpa_coef'
+	gen age_sq_gpa_coef_var = `age_sq_gpa_coef'
 
-scalar age_sq_gpa_sq_coef = `age_sq_gpa_sq_coef'
-gen age_sq_gpa_sq_coef_var = `age_sq_gpa_sq_coef'
+	scalar age_sq_gpa_sq_coef = `age_sq_gpa_sq_coef'
+	gen age_sq_gpa_sq_coef_var = `age_sq_gpa_sq_coef'
 
-scalar gpa_gpa_sq_coef = `gpa_gpa_sq_coef'
-gen gpa_gpa_sq_coef_var = `gpa_gpa_sq_coef'
+	scalar gpa_gpa_sq_coef = `gpa_gpa_sq_coef'
+	gen gpa_gpa_sq_coef_var = `gpa_gpa_sq_coef'
 
 * Calculate the mean of the covariates
 egen mean_age = mean(age), by(treat)
@@ -167,6 +169,7 @@ drop treat_coef_var age_treat_coef_var age_sq_treat_coef_var gpa_treat_coef_var 
      age_age_sq_coef_var age_gpa_coef_var age_gpa_sq_coef_var age_sq_gpa_coef_var age_sq_gpa_sq_coef_var gpa_gpa_sq_coef_var
 
 gen agegpa=age*gpa	 
+
 	 
 * Matching model 1	 
 	teffects nnmatch (earnings age gpa) (treat), atet nn(1) metric(maha) 
