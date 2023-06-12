@@ -1,4 +1,4 @@
-cd "/Users/scott_cunningham/Library/CloudStorage/Dropbox-MixtapeConsulting/scott cunningham/Mac/Documents/Causal-Inference-1/Lab/Matching"
+cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
 * Simulation with heterogenous treatment effects, unconfoundedness and OLS estimation
 clear all
@@ -24,16 +24,25 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	su gpa
 	replace gpa = gpa - `r(mean)'
 
-	gen age_sq = age^2
-	gen gpa_sq = gpa^2
-	gen interaction=gpa*age
+	* All combinations 
+	gen age_sq 		= age^2
+	gen age_agesq 	= age*age_sq
+	gen agesq_agesq	= age_sq^2
+	gen gpa_sq 		= gpa^2
+	gen gpa_gpasq 	= gpa*gpa_sq
+	gen gpasq_gpasq = gpa_sq^2
+	gen interaction	= gpa*age
+	gen agegpa		= age*gpa	 
+	gen age_gpasq 	= age*gpa_sq
+	gen gpa_agesq 	= gpa*age_sq
+	gen gpasq_agesq = age_sq*gpa_sq
 
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0,5)
 	gen y1 = y0 + 2500 + 100 * age + 1000*gpa
 	gen delta = y1 - y0
 
 	su delta // ATE = 2500
-	su delta if treat==1 // ATT = 1971
+	su delta if treat==1 // ATT = 1979
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
@@ -53,7 +62,7 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	gen treat2=`treat2'
 	
 
-	* Regression 3: Heterogenous treatment effects, partial saturation
+	* Regression 3: Misspecified saturated regression model
 	regress earnings i.treat##c.age##c.gpa, robust
 	local ate1=_b[1.treat]
 	scalar ate1 = `ate1'
@@ -92,83 +101,77 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	drop treat_coef_var age_treat_coef_var gpa_treat_coef_var age_gpa_treat_coef_var mean_gpa mean_age
 	
 	
-	* Regression 4: Heterogenous treatment effects, full saturation
-	regress earnings i.treat##c.age##c.age_sq##c.gpa##c.gpa_sq, robust
+	* Regression 4: Fully saturated regression model
+#delimit ;
+	regress earnings 	i.treat##c.age 
+						i.treat##c.age_sq
+						i.treat##c.gpa 
+						i.treat##c.gpa_sq					
+						i.treat##c.age##c.gpa;
+#delimit cr					
+	
 	local ate2=_b[1.treat]
 	scalar ate2 = `ate2'
 	gen ate2=`ate2'
 
 	* Obtain the coefficients
-	local treat_coef = _b[1.treat]
-	local age_treat_coef = _b[1.treat#c.age]
-	local age_sq_treat_coef = _b[1.treat#c.age_sq]
-	local gpa_treat_coef = _b[1.treat#c.gpa]
-	local gpa_sq_treat_coef = _b[1.treat#c.gpa_sq]
-	local age_age_sq_coef = _b[1.treat#c.age#c.age_sq]
-	local age_gpa_coef = _b[1.treat#c.age#c.gpa]
-	local age_gpa_sq_coef = _b[1.treat#c.age#c.gpa_sq]
-	local age_sq_gpa_coef = _b[1.treat#c.age_sq#c.gpa]
-	local age_sq_gpa_sq_coef = _b[1.treat#c.age_sq#c.gpa_sq]
-	local gpa_gpa_sq_coef = _b[1.treat#c.gpa#c.gpa_sq]
+	local treat_coef 		= _b[1.treat] // 0
+	local age_treat_coef 	= _b[1.treat#c.age] // 1
+	local agesq_treat_coef 	= _b[1.treat#c.age_sq] // 2
+	local gpa_treat_coef 	= _b[1.treat#c.gpa] // 3
+	local gpasq_treat_coef 	= _b[1.treat#c.gpa_sq] // 4
+	local age_gpa_coef 		= _b[1.treat#c.age#c.gpa] // 5
+	
 
 	* Save the coefficients as scalars and generate variables
-	scalar treat_coef = `treat_coef'
-	gen treat_coef_var = `treat_coef'
+	scalar 	treat_coef = `treat_coef'
+	gen 	treat_coef_var = `treat_coef' // 0
 
-	scalar age_treat_coef = `age_treat_coef'
-	gen age_treat_coef_var = `age_treat_coef'
+	scalar 	age_treat_coef = `age_treat_coef'
+	gen 	age_treat_coef_var = `age_treat_coef' // 1
 	
-	scalar age_sq_treat_coef = `age_sq_treat_coef'
-	gen age_sq_treat_coef_var = `age_sq_treat_coef'
+	scalar 	agesq_treat_coef = `agesq_treat_coef'
+	gen 	agesq_treat_coeff_var = `agesq_treat_coef' // 2
 
-	scalar gpa_treat_coef = `gpa_treat_coef'
-	gen gpa_treat_coef_var = `gpa_treat_coef'
+	scalar 	gpa_treat_coef = `gpa_treat_coef'
+	gen 	gpa_treat_coef_var = `gpa_treat_coef' // 3
 
-	scalar gpa_sq_treat_coef = `gpa_sq_treat_coef'
-	gen gpa_sq_treat_coef_var = `gpa_sq_treat_coef'
+	scalar 	gpasq_treat_coef = `gpasq_treat_coef'
+	gen 	gpasq_treat_coef_var = `gpasq_treat_coef' // 4
 
-	scalar age_age_sq_coef = `age_age_sq_coef'
-	gen age_age_sq_coef_var = `age_age_sq_coef'
+	scalar 	age_gpa_coef = `age_gpa_coef'
+	gen 	age_gpa_coef_var = `age_gpa_coef' // 5
+		
+	
+	* Calculate the mean of the covariates
+	su 	age if treat==1
+	local mean_age = `r(mean)'
+	gen mean_age = `mean_age'
+	
+	su age_sq if treat==1
+	local mean_agesq = `r(mean)'
+	gen mean_agesq = `mean_agesq'
+	
+	su gpa if treat==1
+	local mean_gpa = `r(mean)'
+	gen mean_gpa = `mean_gpa'
+	
+	su gpa_sq if treat==1
+	local mean_gpasq = `r(mean)'
+	gen mean_gpasq = `mean_gpasq'
+	
+	su agegpa if treat==1
+	local mean_agegpa = `r(mean)'
+	gen mean_agegpa = `mean_agegpa'
 
-	scalar age_gpa_coef = `age_gpa_coef'
-	gen age_gpa_coef_var = `age_gpa_coef'
-
-	scalar age_gpa_sq_coef = `age_gpa_sq_coef'
-	gen age_gpa_sq_coef_var = `age_gpa_sq_coef'
-
-	scalar age_sq_gpa_coef = `age_sq_gpa_coef'
-	gen age_sq_gpa_coef_var = `age_sq_gpa_coef'
-
-	scalar age_sq_gpa_sq_coef = `age_sq_gpa_sq_coef'
-	gen age_sq_gpa_sq_coef_var = `age_sq_gpa_sq_coef'
-
-	scalar gpa_gpa_sq_coef = `gpa_gpa_sq_coef'
-	gen gpa_gpa_sq_coef_var = `gpa_gpa_sq_coef'
-
-* Calculate the mean of the covariates
-egen mean_age = mean(age), by(treat)
-egen mean_age_sq = mean(age_sq), by(treat)
-egen mean_gpa = mean(gpa), by(treat)
-egen mean_gpa_sq = mean(gpa_sq), by(treat)
-
+	
 * Calculate the ATT
-gen treat4 = treat_coef_var + ///
-                age_treat_coef_var * mean_age + ///
-                age_sq_treat_coef_var * mean_age_sq + ///
-                gpa_treat_coef_var * mean_gpa + ///
-                gpa_sq_treat_coef_var * mean_gpa_sq + ///
-                age_treat_coef_var * mean_age * age_age_sq_coef + ///
-                age_treat_coef_var * mean_age * age_gpa_coef + ///
-                age_treat_coef_var * mean_age * age_gpa_sq_coef + ///
-                age_sq_treat_coef_var * mean_age_sq * age_sq_gpa_coef + ///
-                age_sq_treat_coef_var * mean_age_sq * age_sq_gpa_sq_coef + ///
-                gpa_treat_coef_var * mean_gpa * gpa_gpa_sq_coef if treat == 1
-
-* Drop coefficient variables
-drop treat_coef_var age_treat_coef_var age_sq_treat_coef_var gpa_treat_coef_var gpa_sq_treat_coef_var ///
-     age_age_sq_coef_var age_gpa_coef_var age_gpa_sq_coef_var age_sq_gpa_coef_var age_sq_gpa_sq_coef_var gpa_gpa_sq_coef_var
-
-gen agegpa=age*gpa	 
+gen treat4 = 	treat_coef_var + /// 0
+                age_treat_coef_var * mean_age + /// 1
+                agesq_treat_coeff_var * mean_agesq + /// 2
+                gpa_treat_coef_var * mean_gpa + /// 3
+                gpasq_treat_coef_var * mean_gpasq + /// 4
+                age_gpa_coef_var * mean_agegpa  
 
 	 
 * Matching model 1	 
@@ -210,23 +213,53 @@ simulate att treat1 treat2 ate1 ate2 treat3 treat4 match1 match2 match3 match4, 
 
 ** Regressions ATE
 * Figure1: Control for age and gpa
-kdensity _sim_2, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2716) xline(2716, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
+kdensity _sim_2, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2717) xline(2717, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Control for age gpa and interactions) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim2.gph", replace
 
+
 * Figure2: Control for age and gpa, polynomials and interactions
-kdensity _sim_3, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2388) xline(2388, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
+kdensity _sim_3, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2388) xline(2388, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Plus higher order polynomials) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim3.gph", replace
 
 
-* Figure3: Saturate age and gpa
-kdensity _sim_4, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2532) xline(2532, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
+graph combine ./figures/sim2.gph ./figures/sim3.gph, title(Non-saturated regressions with heterogenous treatment effects) note(ATE is 2500 and ATT is 1980)
+graph save "Graph" "./figures/combined_kernels.gph", replace
+graph export ./figures/combined_kernels.jpg, as(jpg) name("Graph") quality(90) replace
+
+
+* Figure2: Misspecified saturated regression model
+kdensity _sim_4, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2532) xline(2532, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Coefficient on Treatment) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim4.gph", replace
 
-* Figure4: Saturate age and gpa, polynomials and interactions
-kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2500) xline(2500, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
+kdensity _sim_6, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1746) xline(1746, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Sum of Treatment Coefficients times Sample Means) ytitle("") title("") note("")
+
+graph save "Graph" "./figures/sim6.gph", replace
+
+graph combine ./figures/sim4.gph ./figures/sim6.gph, title(Misspecified Saturated Regressions) note(1000 Monte Carlo simulations)
+graph save "Graph" "./figures/combined_saturated1.gph", replace
+graph export ./figures/combined_saturated1.jpg, as(jpg) name("Graph") quality(90) replace
+
+
+* Figure3: Correctly specified saturated regression model
+kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2500) xline(2500, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Coefficient on Treatment) ytitle("") title("") note("")
+
+graph save "Graph" "./figures/sim5.gph", replace
+
+kdensity _sim_7, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1980) xline(1980, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Sum of Treatment Coefficients times Sample Means) ytitle("") title("") note("")
+
+graph save "Graph" "./figures/sim7.gph", replace
+
+graph combine ./figures/sim5.gph ./figures/sim7.gph, title(Correctly Specified Saturated Regressions) note(1000 Monte Carlo simulations)
+graph save "Graph" "./figures/combined_saturated2.gph", replace
+graph export ./figures/combined_saturated2.jpg, as(jpg) name("Graph") quality(90) replace
+
+
+
+* Figure4: Correctly saturated regression model
+kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2500) xline(2500, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Correctly saturated regression) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim5.gph", replace
 
@@ -268,20 +301,27 @@ graph save "Graph" "./figures/sim_9.gph", replace
 
 
 * Figure8: Matching without bias adjustment
-kdensity _sim_10, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 2007) xline(2007, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Age and GPA polynomials and no bias adjustment) ytitle("") title("") note("")
+kdensity _sim_10, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 2007) xline(2007, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Age and GPA polynomials without bias adjustment) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim_10.gph", replace
 
 * Figure9: Matching with bias adjustment
-kdensity _sim_11, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1980) xline(1980, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Age and GPA polynomials and bias adjustment) ytitle("") title("") note("")
+kdensity _sim_11, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1980) xline(1980, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Age and GPA polynomials with bias adjustment) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim_11.gph", replace
 
 
-graph combine ./figures/sim_8.gph ./figures/sim_9.gph ./figures/sim_10.gph ./figures/sim_11.gph, title(Matching with Minimized Maha on Age and GPA) note(Four kernel density plots of estimated ATT from 1000 simulations)
+graph combine ./figures/sim_10.gph ./figures/sim_11.gph, title(Nearest Neighbor Matching with Minimized Maha Distance) note(Estimated ATT from 1000 simulations using nearest neighbor matching)
 
 graph save "Graph" "./figures/combined_kernels_maha.gph", replace
 graph export ./figures/combined_kernels_maha.jpg, as(jpg) name("Graph") quality(90) replace
 
 capture log close 
 exit
+
+
+*-> 2. Inverse propensity score weighting with trimming
+twoway (histogram pscore if treat==1,  color(green)) ///
+       (histogram pscore if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+
