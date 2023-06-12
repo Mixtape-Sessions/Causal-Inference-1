@@ -33,7 +33,7 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	gen delta = y1 - y0
 
 	su delta // ATE = 2500
-	su delta if treat==1 // ATT = 1971
+	su delta if treat==1 // ATT = 1980
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
@@ -210,16 +210,22 @@ simulate att treat1 treat2 ate1 ate2 treat3 treat4 match1 match2 match3 match4, 
 
 ** Regressions ATE
 * Figure1: Control for age and gpa
-kdensity _sim_2, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2716) xline(2716, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
+kdensity _sim_2, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2717) xline(2717, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim2.gph", replace
 
 * Figure2: Control for age and gpa, polynomials and interactions
-kdensity _sim_3, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2388) xline(2388, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
+kdensity _sim_3, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2389) xline(2389, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim3.gph", replace
 
+graph combine ./figures/sim2.gph ./figures/sim3.gph, title(OLS Estimates of ATE with heterogenous treatment effects) subtitle(Non-saturated models) note(Two kernel density plots of estimated coefficients from 1000 simulations)
 
+graph save "Graph" "./figures/combined_kernels_ate.gph", replace
+graph export ./figures/nonsaturated_kernels_ate.jpg, as(jpg) name("Graph") quality(90) replace
+
+
+**Saturated regressions
 * Figure3: Saturate age and gpa
 kdensity _sim_4, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2532) xline(2532, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
 
@@ -231,20 +237,20 @@ kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(das
 graph save "Graph" "./figures/sim5.gph", replace
 
 
-graph combine ./figures/sim2.gph ./figures/sim3.gph ./figures/sim4.gph ./figures/sim5.gph, title(OLS Estimates of ATE with heterogenous treatment effects) note(Four kernel density plots of estimated coefficients from 1000 simulations)
+graph combine ./figures/sim4.gph ./figures/sim5.gph, title(OLS Estimates of ATE with heterogenous treatment effects) subtitle(Saturated regressions) note(Two kernel density plots of estimated coefficients from 1000 simulations)
 
-graph save "Graph" "./figures/combined_kernels_ate.gph", replace
-graph export ./figures/combined_kernels_ate.jpg, as(jpg) name("Graph") quality(90) replace
+graph save "Graph" "./figures/saturated_kernels_ate.gph", replace
+graph export ./figures/saturated_kernels_ate.jpg, as(jpg) name("Graph") quality(90) replace
 
 
 ** Regressions ATT
 * Figure3: saturated treatment with age gpa and interactions
-kdensity _sim_6, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1747) xline(1747, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
+kdensity _sim_6, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1746) xline(1746, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim6.gph", replace
 
 * Figure4: saturated treatment with age gpa polynomials and interactions
-kdensity _sim_7, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1988) xline(1988, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
+kdensity _sim_7, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1972) xline(1972, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim7.gph", replace
 
