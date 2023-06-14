@@ -170,7 +170,7 @@ kdensity _sim_7, xtitle(Estimated ATT) xline(268, lwidth(medthick) lpattern(dash
 
 graph save "Graph" "./figures/_sim_7.gph", replace
 
-graph combine ./figures/_sim_5.gph ./figures/_sim_6.gph ./figures/_sim_7.gph, title(Saturated Regression and Nearest Neighbor Matching) note(The dashed blue line is estimated ATT from 1000 simulations using saturated OLS and nearest neighbor matching.)
+graph combine ./figures/_sim_5.gph ./figures/_sim_6.gph ./figures/_sim_7.gph, title(Saturated Regression and Nearest Neighbor Matching) note(The dashed blue line is estimated ATT fro 1000 simulations using saturated OLS and nearest neighbor matching with Mahanalobis distance minimization)
 
 graph save "Graph" "./figures/nonlinear_att.gph", replace
 graph export ./figures/nonlinear_att.jpg, as(jpg) name("Graph") quality(90) replace
