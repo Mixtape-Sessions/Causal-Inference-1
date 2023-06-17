@@ -3110,7 +3110,8 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
 
 \end{frame}
 
-
+
+
 
 \begin{frame}{Nonlinear DGP}
 
@@ -3571,15 +3572,27 @@ You then add weights for stratum size and analyze without matching.
 
 \end{frame}
 
-\begin{frame}{Quote from Tymon}
+\begin{frame}{Remember Imbens and Rubin}
 
+\begin{itemize}
+
+\item  Additive OLS model with exogeneity imposes strong assumptions on the DGP: constant treatment effects, unconfoundedness and functional form assumptions
+\item Matching allows for heterogenous treatment effects but requires common support; OLS uses extrapolation in its place
+\item You can address heterogenous treatment effects with fully interaction called regression adjustment (itself extremely uncommon in practice), but that does not address nonlinear DGP
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Quote from Tymon Sloczynski (Restat 2022)}
+
+\footnotesize
 \begin{quote}
 ``An important motivation for using $Y=\alpha + \delta D + \beta X + \varepsilon$ and OLS is that the linear project of $Y$ on $D$ and $X$ provides the best linear predictor of $Y$ given $D$ and $X$ (Angrist and Pischke 2009). However if our goal is to conduct causal inference, then this is not, in fact, a good reason to use this method.  Ordinary least squares is ``best'' in predicting actual outcomes, but causal inference is about predicting missing [fictional] outcomes. In other words, the OLS weights are optimal for predicting ``what is''.  Instead, we are interested in predicting ``what would be'' if treatment were assigned differently.'' (Tymon Sloczynski 2022)
 \end{quote}
 
 \bigskip
 
-The additive OLS model imposes strong assumptions like constant treatment effects and functional forms that are arguably also unnecessary.  If you are to use it, then you need to model the heterogeneity directly with full interactions, but beware as nonlinear DGP will not help you there
 
 \end{frame}
 
