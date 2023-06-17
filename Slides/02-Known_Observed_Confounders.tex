@@ -3364,6 +3364,18 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 
 \end{frame}
 
+\begin{frame}{Coding together}
+
+\begin{itemize}
+
+\item Let's spend some time together trying to replicate the Lalonde study ourselves
+\item I use replicate lightly -- our goal is syntax only
+\item It's in the Lalonde lab on githbub for this workshop
+
+\end{itemize}
+
+\end{frame}
+
 
 \subsection{Coarsened exact matching}
 
@@ -3464,95 +3476,63 @@ You then add weights for stratum size and analyze without matching.
 
 
 
+
 \section{Concluding remarks}
 
 \begin{frame}{Comments}
 
 \begin{itemize}
 
-\item Selection on observables are important and when running regressions with controls, you are in fact doing it
-\item Conditional independence requires that you \emph{know} and \emph{include} all confounders to adjust comparisons when estimating treatment effects
-\item Without a prior behavioral model guiding you, it's very hard to defend conditional independence (borderline disingenuous) 
-\item If you are unwilling to use DAGs, you may want to ask yourself why you are comfortable running regressions with covariates?
+\item Unconfoundedness means that the confounders are known and quantified, meaning they're in your data and well measured
+\item Also means that within the dimensions of those covariates is an RCT (``independence'')
+\item Common support is also needed with matching, but for OLS you rely on extrapolation and functional forms
+\item Without a prior behavioral model guiding you, it's very hard to defend unconfoundedness (identification by convenience) 
 
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{When not to use selection on observables}
+\begin{frame}{When not to use unconfoundedness methods}
 
 \begin{itemize}
-\item Conditions for selection on observables are strong and subtle
-\begin{enumerate}
-		\item $(Y^1,Y^0) \independent{D} | X$ (conditional independence)
-		\item $0<Pr(D=1|X)<1$ with probability one (common support)
-\end{enumerate}
-\item What exactly does the first thing mean?
-		\begin{itemize}
-		\item Easy to explain part: all the confounders are known and in your dataset
-		\item Not as easy to explain part: once you condition on those things, your customers or people were behaving \emph{randomly}
-		\end{itemize}
-\item A lot of matching and weighting focused on biases created by dimensionality problems, but fixing those does not fix first point (and King and Nielsen are only focused on second)
+\item Individual sorting based on rationality is strong and subtle
+	\begin{itemize}
+	\item May be easier to defend in some situations though -- we are studying the effect of a prison assignment where if you get a suicide risk score, a team of trained inmates go meet you
+	\item Only happened in 16 prisons -- I have 84 others and I know each inmate score
+	\item They are picking their score to a degree, by picking their suicidality, but you wouldn't say it was done \emph{rationally}
+	\end{itemize}
+\item College attendance, major, marriage, children, divorce -- very hard to imagine that for people with identical covariate values they all flipped coins
+\item Unconfoundedness is a strong assumption, and the weaker ones (like with respect to $Y^0$) may be easier to defend which gets you to the ATT
+
 \end{itemize}
 
 \end{frame}  
 
-\begin{frame}{Rationality issues}
+\begin{frame}{Common Support}
 
 \begin{itemize}
-\item Roy models basically suggest people usually do things because it benefits them -- called ``selection on gains''
-	\begin{itemize}
-	\item If I do something, it's because $Y^1-Y^0>0$
-	\item If I don't, it's because $Y^1-Y^0<0$
-	\end{itemize}
-\item We tend to think of this as nearly identical to rationality or intentional behavior, and when we use selection on observables methods we assume that that rationality could be absorbed by observables
-\item Very mysterious idea and Smith and Sweetman (2015) suggest some kinds of behavior may not \emph{ever} satisfy this condition
+\item Unconfoundedness says on average, $E[Y^0|D=1,X]=E[Y^0|X]$ -- that is, it doesn't depend on $D$ so you can just switch the known for unknown ones
+\item But even if unconfoundedness holds doesn't mean your dataset is large enough that the one to one matches can happen -- that's failure to have enough matches because the dimensions are too large
+\item So much of the literature is how to handle failed common support
+\item Bias adjustment methods are one way to address that but even they can't work miracles
 \end{itemize}
 
 \end{frame}
 
 
-
-\begin{frame}{Comments}
+\begin{frame}{Extrapolation and functional forms}
 
 \begin{itemize}
 
-\item One diagnostic feature of the matching, weighting and imputation methods over OLS is the steps involved to evaluate common support
-\item Unnecessary though -- you can incorporate the propensity score into regressions as weights
-\item Nevertheless as we saw with DW, simply trimming can address some of the problems with overlap and propensity score makes this easier by collapsing $K$ strata into a single scalar
-\item Histograms help to diagnoses these problems
-
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Comments}
-
-\begin{itemize}
-
-\item Don't hyper-critical or naive -- CIA may or may not hold in your data.  You can have too strong of priors in either direction
-\item All that selection on observables does is create ``look-a-likes'' on \emph{observables}, but if you left out a critical confounder, you've not fixed anything
-\item Adjusting for covariates may still be valuable even if you are worried about confounders as it can at least you know the differences are due to these known confounders
-
+\item If you do not have weak common support, then you can only estimate ATT using \emph{extrapolation} which is model dependent on functional forms
+\item If you have heterogenous treatment effects, then the standard models with additive covariates is misspecified even if those are the right variables -- you'll need regression adjustment for ``saturation''
+\item Same model contains ATT and ATE, so you need to decide which one you want
+\item Functional form extrapolation is powerful, as it can make inference far beyond the support of the data, but it's a bit of some dark magic too
 \end{itemize}
 
 \end{frame}
 
 
 
-\begin{frame}{Brief conclusion}
-
-\begin{quote}
- ``All models are wrong but some are useful'' -- George Box
- \end{quote}
- 
- \begin{itemize}
- \item Keep in mind -- you need to know your data, the area you're in, the people you're studying. 
- \item Data, credentials and classwork are not a substitute for common sense and thoughtfulness. 
- \item Sometimes CIA isn't insane and sometimes it may be and there is no rule I can give you
-
-\end{itemize}
-
-\end{frame}
 
 \end{document}
