@@ -2,7 +2,7 @@
     drop _all 
 	set obs 5000
 	gen 	treat = 0 
-	replace treat = 1 in 2501/5000
+	replace treat = 1 in 2500/5000
 
 	ssc install hettreatreg, replace
 	
@@ -126,6 +126,12 @@ su delta if treat==1
 su treat4
 
 * Heterogenous treatment effect and groups
+
+su delta
+su delta if treat==1
+su delta if treat==0
+
+reg earnings treat age gpa age_sq gpa_sq agegpa, robust
 
 hettreatreg age gpa age_sq gpa_sq agegpa, o(earnings) t(treat)
 
