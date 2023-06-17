@@ -3097,20 +3097,56 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
 
 
 
-
-
-
-\begin{frame}{Commentary}
+\begin{frame}{Nonlinear DGP}
 
 \begin{itemize}
 
-\item Unconfoundedness requires that you \emph{know} and \emph{include} all confounders to adjust comparisons when estimating treatment effects
-\item Without a prior behavioral model guiding you, it's very hard to defend conditional independence (borderline disingenuous) 
-\item If you are unwilling to use DAGs, you may want to ask yourself why you are comfortable running regressions with covariates?
+\item We've seen what happens if there's heterogenous treatment effects with respect to covariates
+\item But this was resolvable with ``full interaction'' or ``regression adjustment''
+\item But Imbens and Rubin (2015) noted that exogeneity also implied functional forms, namely linearity
+\item Let's examine this now using a very unusual DGP using \texttt{nonlinear\_matching.do}
 
 \end{itemize}
 
 \end{frame}
+
+
+
+\begin{frame}{Nonlinear DGP}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.21]{./lecture_includes/nonlinear_code}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Nonlinear DGP, OLS with RA}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.21]{./lecture_includes/nonlinear_ra}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Nonlinear DGP and Matching}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.325]{./lecture_includes/nonlinear_matching}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Nonlinear DGP, OLS and Matching}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.175]{./lecture_includes/nonlinear_att.jpg}
+\end{figure}
+
+\end{frame}
+
+
+
 
 		  
 
@@ -3479,7 +3515,10 @@ You then add weights for stratum size and analyze without matching.
 
 \section{Concluding remarks}
 
+
+
 \begin{frame}{Comments}
+
 
 \begin{itemize}
 
@@ -3529,6 +3568,18 @@ You then add weights for stratum size and analyze without matching.
 \item Same model contains ATT and ATE, so you need to decide which one you want
 \item Functional form extrapolation is powerful, as it can make inference far beyond the support of the data, but it's a bit of some dark magic too
 \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Quote from Tymon}
+
+\begin{quote}
+``An important motivation for using $Y=\alpha + \delta D + \beta X + \varepsilon$ and OLS is that the linear project of $Y$ on $D$ and $X$ provides the best linear predictor of $Y$ given $D$ and $X$ (Angrist and Pischke 2009). However if our goal is to conduct causal inference, then this is not, in fact, a good reason to use this method.  Ordinary least squares is ``best'' in predicting actual outcomes, but causal inference is about predicting missing [fictional] outcomes. In other words, the OLS weights are optimal for predicting ``what is''.  Instead, we are interested in predicting ``what would be'' if treatment were assigned differently.'' (Tymon Sloczynski 2022)
+\end{quote}
+
+\bigskip
+
+The additive OLS model imposes strong assumptions like constant treatment effects and functional forms that are arguably also unnecessary.  If you are to use it, then you need to model the heterogeneity directly with full interactions, but beware as nonlinear DGP will not help you there
 
 \end{frame}
 
