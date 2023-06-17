@@ -50,44 +50,38 @@
 
 \section{Unconfoundedness and Ignorable Treatment Assignment}
 
-\subsection{Backdoor criterion and model}
+\subsection{Choosing Covariates}
 
-\begin{frame}{Controlling for variables}
+
+
+
+
+\begin{frame}{Adjusting for variables}
 
 \begin{itemize}
 \item One of the first things you learn in a methods course is multivariate regression ``controlling for $X$''
 \item What is this? Why do we do this?  What should $X$ be? What causal parameter does it help identify?
-\item This section is traditionally taught under a variety of headings -- unconfoundedness, selection on observables, or by name (e.g., matching, subclassification)
-\item For today I will call it ``adjusting for known and quantified confounders'' to emphasize the prerequisite knowledge
+\item Unconfoundedness, selection on observables, ignorable treatment assignment are different terms describing the same thing -- the RCT is still occurring, only within the dimensions of a conditioning set of confounders and covariates
 \end{itemize}
 
 \end{frame}
+
 
 \begin{frame}{Which covariates?}
 
 \begin{itemize}
 
-\item Traditionally, we learn about ``controlling for variables'' using regressions like $$Y_i = \alpha + \delta D_i + \beta X_i + \varepsilon_i$$
-\item Today we will learn more about this method, as well as seek to understand situations where other methods may perform better
-\item But before we do, we need to have a guide as to which variables to include and which ones not to
-\item There'll be formal justifications, and there will be ad hoc ones
-
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Backdoor criterion}
-
-\begin{itemize}
-
-\item Recall that the value of causal graphs is that if you can make statements about the causal pathways into treatment and outcome, then certain model-based approaches emerge
+\item One of the values of causal directed acyclic graphs (DAG) is it allows you to formally select variables needed for covariate adjustment
 \item One such approach is the backdoor criterion which states that if you can condition on $X$ such that all backdoor paths close, then you can identify some aggregate causal parameter
 \item But this requires a model, and I don't mean a theoretical model that you might learn as some abstract theory about education
-\item It's a model of treatment assignment, which is local in nature
+\item It's a model of treatment assignment, which is local in nature, and when it occurs outside the RCT requires expert knowledge
 
 \end{itemize}
 
 \end{frame}
+
+
+
 
 \begin{frame}{Simple DAG}
 
@@ -117,6 +111,8 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 
 \end{frame}
 
+
+
 \begin{frame}{Simple DAG}
 
 \begin{figure}
@@ -135,7 +131,6 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 \draw[->, line width= 1] (c) -- (y);
 \draw[->, line width= 1] (w) -- (y);
 \end{tikzpicture}
-\label{fig:backdoor_dag1}
 \end{center}
 \end{figure}
 
@@ -164,7 +159,6 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 \draw[->, line width= 1] (c) -- (d);
 \draw[->, line width= 1] (c) -- (y);
 \end{tikzpicture}
-\label{fig:backdoor_dag2}
 \end{center}
 \end{figure}
 
@@ -191,7 +185,6 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 % edges %
 \draw[->, line width= 1] (d) -- (y);
 \end{tikzpicture}
-\label{fig:backdoor_dag}
 \end{center}
 \end{figure}
 
@@ -203,8 +196,6 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 \end{enumerate}
 \end{frame}
 
-
-\subsection{Confounders, Covariates and Colliders}
 
 \begin{frame}{Definition of Known and Quantified Confounders}
 	
@@ -339,25 +330,38 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 \begin{frame}{Summarizing ``which variables''}
 
 \begin{itemize}
-\item Known and quantified confounders are necessary and sufficient to identify causal effect of $D$ on $Y$
+\item Comparing treatment and control group of exactly the same values of known and quantified confounders will allow you to estimate aggregate causal parameters of interest
 \item Covariates can improve precision but do not reduce bias
 \item Colliders must be left alone, otherwise they introduce bias unless another non-collider can block them
 \end{itemize}
 
 \end{frame}
 
+\begin{frame}{M-bias as collider}
+
+
+
+  \centering
+  \includegraphics[scale=0.5,height=6.5cm, width=10cm]{./lecture_includes/mbias}
+
+\footnotesize
+$X$ is pre-treatment, but if you conditioned on it, then $D\leftarrow U1 \rightarrow \mbox{X} \leftarrow U2 \rightarrow Y$ and $X$ is a collider. Colliders take strange forms, so the conditioning set \emph{must} be thoughtfully chosen based on being a strong predictor of $Y^0$, preferably based on expert knowledge and not a kitchen sink of all available regressors
+
+\end{frame}
+
+
+
 \begin{frame}{Contrast this with ordinary practices}
 
 \begin{itemize}
 \item Person attempts to ``control for omitted variable bias'' by including as many ``controls'' as possible
 \item Person does not even attempt to think about treatment assignment mechanism and therefore has no idea what variables are colliders, covariates or confounders
-\item Person downloads a dataset and punts on model and just uses hunches as to what ``controls'' to include
-\item If this is you, skip this material entirely, as none of it will solve the problem
+\item Big data approaches to covariate adjustment is \emph{very dangerous} -- colliders introduce bias and without a model, there is no way you know what those are
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Ad Hoc}
+\begin{frame}{Covariate selection without DAGs}
 
 \begin{itemize}
 \item Short of an outright DAG, then the thing to be thinking about is this:
@@ -371,15 +375,69 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 
 \end{frame}
 
+\begin{frame}{Falsifications}
+
+\begin{itemize}
+\item Covariates should not be affected by the treatment, so examining them as falsifications can help establish the credibility of unconfoundedness
+\item Falsification exercises are sometimes versions of this -- a gun control law shouldn't affect automobile theft or petty larceny
+\item Imbens and Rubin (2015) suggested using the lagged outcome (pre-treatment) as a way of checking, as those have similar confounder structures
+\item One study questioned a finding that obesity was contagious in social networks by estimating the same model on things that cannot be contagious like acne, headaches and height and found the same things (likely confounding existed)
+\end{itemize}
+
+\end{frame}
 
 
-\section{Causal Definitions}
+
+
 
 \subsection{Aggregate target parameters}
 
+\begin{frame}{Self selection based on gains}
+
+\begin{itemize}
+
+\item Our focus on variables does not always clarify the exact nature of the matching and regression designs 
+\item Covariates are about randomization \emph{within} the dimensions of $X$
+\item If actors are randomly assigning themselves to treatments for identical values of $X$, then they are not choosing treatments optimally/rationally
+\item Rational actors almost by definition are thought to ``self-select into treatment'' making non-designed comparisons potentially misleading 
+\item RCTs can overcome the selection bias that emerges when independence is violated, but are there other ways too?
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{ATE vs ATT}
+
+\begin{itemize}
+
+\item The RCT will identify the ATE, but under randomization, the ATE$=$ATT$=$ATU because randomization of treatment is independent of all potential outcomes
+\item But outside the RCT, to identify the ATE requires a stronger set of assumptions than you need for ATT or ATU
+\item Questions is which parameter is it you actually do want to know for decision making?  
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{ATE vs ATT}
+
+\begin{itemize}
+\item Pfizer wants to vaccinate the world -- since everyone will get the treatment, they want to know the ATE
+\item If the goal ultimately is to implement something for every person, usually the ATE is the parameter you want to know (e.g., vaccines)
+\item But there is also the ATT -- the returns to the program for those people on the program (e.g., ventilators will only be given to compromised people not all people)
+\end{itemize}
+
+\end{frame}
+
+
 \begin{frame}{Population vs sample analogs of causal parameter}
 
-Define ATE as population mean treatment effects: $$E[\delta_i] = E[Y_i^1] - E[Y_i^0]$$
+Define ATE as population mean treatment effects: $$\delta^{ATE}= E[Y_i^1] - E[Y_i^0]$$
 
 Define ATE sample analog as: $$\frac{1}{N} \sum_i^N \delta_i =  \frac{1}{N} \sum_i^N  \bigg [ Y_i^1 - Y_i^0 \bigg ]$$
 
@@ -409,51 +467,169 @@ Show in an exercise, skip to WEIGHTS tab:
 
 \end{frame}
 
-\subsection{Estimation framework}
+\begin{frame}{Imputation}
 
-\begin{frame}{Estimates of causal parameters and weights}
+\begin{quote}
+``At some level, all methods for causal inference can be viewed as imputation methods, although some more explicitly than others.''
+\end{quote}
 
-Sample analog estimate of the ATE is also a weighted average of the sample analog estimate of the ATT and the ATU:
+\bigskip
 
-$$\frac{1}{N}\ \sum \widehat{\delta}^{ATE} = \frac{N_T}{N}\ \sum \widehat{\delta^{ATT}} + \frac{N_C}{N} \sum \widehat{\delta}^{ATU}$$
+For whichever parameter, we are always missing counterfactuals, so if we did design a method that estimated that parameter, it must be we imputed the missing conditional mean counterfactual
 
+\bigskip
 
-where $N$ is the number of units in the sample, $N_T$ is the number of units treated and $N_C$ is number of units not treated, $i$ is treated and $j$ is not treated units:
-\begin{eqnarray*}
-\widehat{\delta}^{ATT} &=& \frac{1}{N_T} \sum_{D_i=1} \bigg [Y_i^1 - \widehat{Y}_{j}^0 \bigg ] \\
-\widehat{\delta}^{ATU} &=& \frac{1}{N_C} \sum_{D_j=0} \bigg [\widehat{Y}_i^1 - Y_j^0 \bigg ]
-\end{eqnarray*}
-
+Some methods do this explicitly -- like synthetic control -- and some it's not clear, but don't ever forget that all of them are doing it
 
 \end{frame}
 
 
-\begin{frame}{Estimating missing counterfactuals}
+\begin{frame}[plain]
 
-Let's focus just on the ATT for simplicity: $$\widehat{\delta}^{ATT} = \frac{1}{N_T} \sum_{D_i=1} \bigg [Y_i^1 - \widehat{Y}_{j}^0 \bigg ] $$
+	\begin{block}{Identifying assumption I: Unconfoundedness}
+	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of known and quantified confounders such that after adjusting for them, treatment assignment is \emph{independent of potential outcomes}.
+	\end{block}
+	
+	\begin{itemize}
+	\item Conditional on $X$, treatment assignment is randomly distributed (i.e., independent of both potential outcomes) -- strong assumption
+	\item For a large group of people within the same strata, they flipped coins as opposed to sought treatments that helped them
+	\item Eliminating all backdoor paths on a DAG through blocking satisfies unconfoundedness; also called ignorability
+	\end{itemize}
+\end{frame}
 
-What is the $\widehat{Y^0_j}$ within the $\widehat{\delta^{ATT}}$ term?  It is an \textbf{estimate} of the missing $Y^0_i$ counterfactual for the $i$ treated units using the $j$ untreated units
+
+\begin{frame}[plain]
+
+	\begin{block}{Identifying assumption I: Unconfoundedness}
+	$(Y_i^0$, $Y_i^1)$ $\independent{D} | X_i$. There exists a set $X$ of known and quantified confounders such that after adjusting for them, treatment assignment is \emph{independent of potential outcomes}.
+	\end{block}
+	
+	\begin{eqnarray*}
+	\alert{E[Y^0 | D=1, X=x]} &=& E[Y^0 | D=0, X=x] \\
+	E[Y^1 | D=1, X=x] &=& \alert{E[Y^1 | D=0, X=x] }
+	\end{eqnarray*}
+	
+Unconfoundedness justifies substituting units in treatment for control based on $X=x$ -- but only if there are exact matches (next slide)
+	
+	
+\end{frame}
+
+
+
+\begin{frame}[plain]
+
+	\begin{block}{Identifying assumption II: Common support}
+	For ranges of $X$, there is a positive probability of being both treated and untreated
+	\end{block}
+	
+	\begin{itemize}
+	\item There exists units in treatment and control with same values of $X$ -- you can't make the substitutions otherwise
+	\item Dimension $k$ means every specific combination of the conditioning set (e.g., not males and old, but adult males, adult females, youth male, youth female)
+	\item Testable because common support is observable unlike unconfoundedness, but as you can imagine if the dimensions of $X$ gets large (and with a continuous covariate it's infinite!) then it won't hold in any finite sample!
+	\end{itemize}
+	
+	
+\end{frame}
+
+
+
+\begin{frame}{Assumptions combined}
+	
+But if we have them both (represented below), we can even outside of an RCT estimate the ATE through nonparametric matching
+  \begin{enumerate}
+		\item $(Y^1,Y^0) \independent{D} | X$ (strong unconfoundedness)
+		\item $0<Pr(D=1|X)<1$ with probability one (common support)
+  \end{enumerate}
+
+\bigskip
+Comparing groups of individuals \emph{who have the same values of} $X$, treatment is no longer based gains, $\delta$. 
 
 \bigskip
 
-$$\widehat{Y}^0_j \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}(X_j) Y_j^0(X_j)$$
+The second term implies we have people in treatment and control for every strata of $X$
+\end{frame}
 
-\bigskip
-We will be estimating $Y^0_i$ (counterfactual for treated units) using either \textbf{weights}, $w_{ij}$ based on $X_{ij}$ or imputing missing counterfactuals through matching based on $X_{j(i)}$
 
+\begin{frame}{Estimating ATE with Assumptions}
+
+
+	\begin{itemize}
+	\item Unconfoundedness lets you use $Y^0_j$ from control group as $i$'s $\alert{Y^0_i}$ and $Y^1_i$ from treatment group as $j$'s $\alert{Y^1_j}$ using $X$ as the matching guide
+		\begin{eqnarray*}
+		E[Y^1-Y^0|X] &=& E[Y^1 - Y^0 | X,D=1] \\
+		&=&E[Y|X,D=1] - E[Y|X,D=0]
+		\end{eqnarray*}
+	\item Common support (Assumption 2) allows the match to take place as well as weight over the covariate distribution
+		\begin{eqnarray*}
+		\delta_{ATE} &=&E[Y^1-Y^0] = E\bigg[ E[Y^1 - Y^0 \ \vert \ X] \bigg] \\
+		&=& \int E[Y^1 - Y^0 |X,D=1] dPr(X) \\
+		&=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X)
+		\end{eqnarray*}
+	\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Weights and estimates of missing counterfactuals}
 
-$$\widehat{Y}^0_j \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}(X_j) Y_j^0(X_j)$$
+
+\begin{frame}{Maybe You Want the ATT}
+
+ATE requires conditional independence with respect to both $Y^1$ and $Y^0$ which would mean complete irrationality 
+
+\bigskip
+
+If we want the ATT, we can go with strictly weaker assumptions -- weak unconfoundedness and weak overlap
+
+\bigskip
+
+You can get a PhD because you care about your happiness with one $Y^1$; you just have to have acted independent of what you gave up $Y^0$
+
+\end{frame}
+
+
+
+
+\begin{frame}{ATT Identification}
+
+We can modify those assumptions and weaken both which helps a lot
+
+\begin{enumerate}
+  \item $Y^0 \independent{D} | X$ (weak unconfoundedness)
+  \item $Pr(D=1|X)<1$ (with $Pr(D=1)>0$) (weak support)
+\end{enumerate}
+
+\bigskip
+
+We don't need full common support because we don't need to find counterfactuals for the control group -- we only need units in the control group that match with our treatment group
+
+\bigskip
+
+Selection is weaker too, like I said -- they are not entirely irrational, but who knows if it helps you
+
+\end{frame}
+
+
+
+\begin{frame}{Estimating ATT}
+
+
+Weighted averages under both assumptions:
+		\begin{eqnarray*}
+		\delta_{ATT} &=& \int \left(E[Y|X,D=1] - E[Y|X,D=0]\right)dPr(X|D=1)
+		\end{eqnarray*}
+We match units in treatment and control because under weak unconfoundedness they're substitutable, and we use weak common support so that we can actually do it, then we take weighted averages over the differences.  
+		
+\end{frame}
+
+
+
+\begin{frame}{Estimators}
 
 \begin{itemize}
-	\item We will discuss a variety of methods but broadly they can be thought of as weighting control units or matching them 
-	\item These feel different but in fact get to the place -- an imputing of the missing counterfactual $E[Y^0_i | D_i=1]$ using control units that adjust for $X_{ij}$
-	\item Confounders and covariates are used to construct the missing counterfactual as a weighted average of the other treatment category group 
-	\item $w_{ij}$ is the weight unit $j$ receives in predicting unit $i$'s counterfactual
-	\item Estimators differ in how the weights, $w_{ij}$, are calculated and how comparisons are made
+
+\item Now we will explore estimators that for lack of a better word ``use covariates'' to estimate aggregate causal parameters
+\item I will be bundling them around a few topics: exact matching, inexact matching, and regressions
+\item Themes about heterogeneous treatment effects, common support and correct (and incorrect) regression specifications will be common
+
 \end{itemize}
 
 \end{frame}
@@ -462,27 +638,7 @@ $$\widehat{Y}^0_j \equiv \frac{1}{Pr(D)} \sum_{j \in \{D_j=0\}}w_{ij}(X_j) Y_j^0
 
 
 
-
-\begin{frame}{Different approaches}
-	
-	\begin{itemize}
-	\item Stratification weighting 
-	\item Exact matching 
-	\item Inexact matching using nearest neighbors
-	\item Inexact matching using nearest neighbors with bias adjustment
-	\item Propensity scores
-	\item Somewhere in between (e.g., coarsened exact matching)
-	\item Regression
-	\end{itemize}
-	
-
-\end{frame}
-
-
-
-
-
-\section{Different estimators }
+\section{Matching Estimators }
 
 
 \subsection{Stratification weighting}
@@ -1296,7 +1452,7 @@ ATE needs independence with respect to both potential outcomes; ATT only needs i
 \end{frame}	
 
 
-\subsection{Exact matching}
+\subsection{Exact and Inexact Matching}
 
 \begin{frame}{Exact matching}
 
@@ -1306,76 +1462,30 @@ ATE needs independence with respect to both potential outcomes; ATT only needs i
 
 \end{frame}
 
-\begin{frame}{Quote from Imbens and Rubin 2015}
+\begin{frame}{Exact Matching}
 
-\begin{quote}
-``At some level, all methods for causal inference can be viewed as imputation methods, although some more explicitly than others.''
-\end{quote}
 
-\bigskip
-
-Stratification weighting doesn't exactly always help you see the imputation -- where you literally ``fill in'' missing counterfactuals either through estimating them or simply plug-in, but matching does
+Matching goes back at least to Rubin's early work on the propensity score, but we will start with nearest neighbor matching as there's ideas there we draw upon later with synth I want to emphasize
 
 \bigskip
 
-Matching will match a treated unit to a comparison unit that is similar (or in exact matching identical) on a known and quantified confounder
+Matching will match a treated unit to a comparison unit that is identical on the known and quantified confounders
+
+\bigskip
+
+If we can't find one, it means common support failed, the estimate would need to use nearest neighbors (with matching bias), which we will discuss
 
 
 
 \end{frame}
 
-\begin{frame}{ATE estimator}
 
-We can estimate the ATE using matching, but we need exact matches on both sides -- and therefore full conditional independence
-
-\bigskip
-
-\begin{equation}
-\widehat{\delta}_{ATE} = \dfrac{1}{N} \sum_{i=1}^N (2D_i - 1) \bigg [ Y_i - \bigg ( \dfrac{1}{M} \sum_{m=1}^M Y_{j_m(i)} \bigg ) \bigg ]
-\label{eq:ate_match}
-\end{equation}
-
-\bigskip
-
-I'm going to just stick with the ATT
-
-\end{frame}
-
-
-\begin{frame}{ATT estimator}
-
-Equation for ATT estimator is:
-
-\begin{equation}
-\widehat{\delta}_{ATT} = \dfrac{1}{N_T} \sum_{D_i=1}(Y_i - Y_{j(i)})
-\label{eq:att_simplematch}
-\end{equation}
-
-where $Y_{j(i)}$ is the $j$\textsuperscript{th} unit matched to the $i$\textsuperscript{th} unit based on the $j$\textsuperscript{th} being ``exactly equal to'' the $i$\textsuperscript{th} unit with respect to the $X$ conditioning set
-
-\end{frame}
-
-\begin{frame}{Number of matches}
-
-What if I find two or more $M$ units with the identical $X$ value? Then what?
-
-\begin{equation}
-\widehat{\delta}_{ATT} = \dfrac{1}{N_T} \sum_{D_i=1} \bigg ( Y_i - \bigg [\dfrac{1}{M} \sum_{m=1}^M Y_{j_m(1)} \bigg ] \bigg )
-\label{eq:att_match}
-\end{equation}
-
-\bigskip
-
-Notice that we are only dealing with $Y^0_i$ by matching; The $Y^1_i$ is fine as is.
-
-\end{frame}
 
 \begin{frame}{Training example (unmatched)}
 
-{\renewcommand{\arraystretch}{1.1}
-\tabcolsep=2.5\tabcolsep
 \begin{table}[htb]\tiny\index{rolling!3}
 \centering
+\tiny
 \begin{tabular}{ccc|ccc}
 \toprule
 	\multicolumn{3}{c}{\textbf{Trainees}}&
@@ -1411,17 +1521,10 @@ Notice that we are only dealing with $Y^0_i$ by matching; The $Y^1_i$ is fine as
 Mean & 	28.2 & 	\$24,150 & 	Mean & 	32.85 & 	\$27,923 \\
 \bottomrule
 \end{tabular}
-\label{tab:trainee1}
 \end{table}
-}
+\tiny
+$SDO = \$24,150-27,923 = -\$3,773$
 
-\end{frame}
-
-\begin{frame}{SDO}
-
-\begin{equation}
-SDO = \$24,150-27,923 = -\$3,773
-\end{equation}
 
 \end{frame}
 
@@ -1448,9 +1551,38 @@ SDO = \$24,150-27,923 = -\$3,773
 \begin{itemize}
 \item Exact matching finds a person in the control group whose value of $X_j$ is \emph{exactly} equal to each person in the treatment group $i$
 \item Will not work if the conditioning set includes a continuous variable
-\item Will also not work if $K$ gets large (curse of dimensionality)
-\item But let's see it work now
+\item Will also not work if $K$ gets large (curse of dimensionality we discuss later)
 \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{ATT estimator}
+
+We will focus on the ATT for the rest of today and the equation is:
+
+\begin{equation}
+\widehat{\delta}_{ATT} = \dfrac{1}{N_T} \sum_{D_i=1}(Y_i - Y_{j(i)})
+\label{eq:att_simplematch}
+\end{equation}
+
+where $Y_{j(i)}$ is the $j$\textsuperscript{th} unit matched to the $i$\textsuperscript{th} unit based on the $j$\textsuperscript{th} being ``exactly equal to'' the $i$\textsuperscript{th} unit with respect to the $X$ conditioning set
+
+\end{frame}
+
+\begin{frame}{Number of matches}
+
+What if I find two or more $M$ units with the identical $X$ value? Then what?
+
+\begin{equation}
+\widehat{\delta}_{ATT} = \dfrac{1}{N_T} \sum_{D_i=1} \bigg ( Y_i - \bigg [\dfrac{1}{M} \sum_{m=1}^M Y_{j_m(1)} \bigg ] \bigg )
+\label{eq:att_match}
+\end{equation}
+
+\bigskip
+
+Notice that we are only dealing with $Y^0_i$ by matching; The $Y^1_i$ is fine as is.
 
 \end{frame}
 
@@ -1465,11 +1597,6 @@ SDO = \$24,150-27,923 = -\$3,773
 
 \end{frame}
 
-\begin{frame}{Look at commands}
-
-Let's now look at this using simulated data. Lab is incomplete so this is just illustrative.  
-
-\end{frame}
 
 
 \begin{frame}{Matched sample}
@@ -1502,76 +1629,31 @@ Let's now look at this using simulated data. Lab is incomplete so this is just i
 Mean&	28.2&	\$24,210&	Mean&	28.2&	\$22,854 \\
 \bottomrule
 \end{tabular}
-\label{tab:trainee2}
 \end{table}
+\footnotesize
+$\widehat{ATT} = \$24,210 - \$22,854 = \$1,356$
+
 
 \end{frame}
 
 \begin{frame}{Estimated ATT using Exact Matching}
 
-Estimate the ATT using the sample averages in the original treatment dataset and the \emph{matched} sample
 
-\begin{equation}
-ATT = \$24,210 - \$22,854 = \$1,356
-\end{equation}
+Weak unconfoundedness of $Y^0$ with respect to age justified substituting one group for another
 
 \bigskip
 
-Just remember -- this required conditional independence of $Y^0$ with respect to age. If that's not true, then this is just garbage.
+But matching bias still exists if you fail common support -- unconfoundedness is necessary but not sufficient
 
 \bigskip
 
-Common support means that exact matching is possible.  So the only way we have selection bias is if conditional independence doesn't hold.
+Even weak support is rare due to the curse of dimensionality
 
 \end{frame}
 
 
-\begin{frame}{Failed matching when attempting to estimate the ATE}
-
-\begin{table}[htb]\tiny\index{rolling!3}
-\caption{Failed matches in the non-trainee comparison group}
-\centering
-\begin{tabular}{lcc}
-\toprule
-	\multicolumn{3}{c}{\textbf{Non-Trainees}}\\
-	\multicolumn{1}{c}{Unit}&
-	\multicolumn{1}{c}{Age}&
-	\multicolumn{1}{c}{Earnings}\\
-\midrule
-1&	27&	\$21,416 \\
-3&	33&	\$27,059 \\
-6&	39&	\$33,815 \\
-7&	36&	\$30,297 \\
-8&	33&	\$27,061 \\
-11&	27&	\$21,418 \\
-13&	41&	\$36,316 \\
-14&	41&	\$36,316 \\
-15&	43&	\$38,940 \\
-17&	49&	\$47,559 \\
-19&	27&	\$21,416 \\
-20&	46&	\$43,112 \\
-\bottomrule
-\end{tabular}
-\label{tab:trainee3}
-\end{table}
-
-\end{frame}
-
-\begin{frame}{Cause of failure}
-
-\begin{itemize}
-
-\item We were able to find ``exact matches'' for the ATT because there were comparison units in the control group with exactly the same value of $X$
-\item But we could not find ``exact matches'' for our control group in the treatment group, and therefore could not estimate the ATE (or the ATU)
-\item Cause: curse of dimensionality broke common support assumption
-\item So what can we do if that happens?  
-
-\end{itemize}
-
-\end{frame}
 
 
-\subsection{Inexact matching with nearest neighbors}
 
 \begin{frame}{Inexact matching}
 
@@ -1582,13 +1664,38 @@ Common support means that exact matching is possible.  So the only way we have s
 \end{frame}
 
 
+\begin{frame}{Curse of Dimensionality}
+	
+	\begin{itemize}
+	\item If no matches can be found, it means many cells may contain either only treatment units or only control units but not both, and that violates our common support assumption
+	\item We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
+	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS uses extrapolations based off functional form
+	\end{itemize}
+\end{frame}	
+
+
+\begin{frame}{Propensity scores}
+
+\begin{itemize}
+\item Propensity scores were developed by Rosenbaum and Rubin (1983) as a way of reducing the dimension of the conditioning set of $X$
+\item But it still requires common support -- propensity scores don't solve the curse of dimensionality problem from the perspective of bias
+\item If you don't have exact matches in the dimensions of $X$ then you'll still be matching units with similar propensity scores but it won't overcome the bias
+\item There are methods that will adjust the propensity score estimation which I'll briefly mention at the end
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
 \begin{frame}{To Look Like Someone Else}
 
 \begin{itemize}
 \item When we can make synthetic xerox copies of ourselves, that's exact matching
 \item But what if we can only make similar copies of ourselves, like fraternal, but not identical, twins? That's nearest neighbor matching -- a form of ``inexact matching'', sort of like fraternal twins
-\item Introduces bias bc of inexact matching, but the magnitude of the bias depends on the magnitude of the discrepancy
-\item There exists a method to reduce the selection bias (Abadie and Imbens 2011)
+\item Introduces bias bc of inexact matching, but the magnitude of the bias depends on the severity of the discrepancy
+\item We can improve on nearest neighbor matching using bias adjustment (Abadie and Imbens 2011) 
 \end{itemize}
 
 \end{frame}
@@ -1596,9 +1703,9 @@ Common support means that exact matching is possible.  So the only way we have s
 \begin{frame}{Nearest Neighbor Matching}
 	
 	\begin{itemize}
-	\item Estimate $\delta_{ATT}$ by \emph{imputing} the missing potential outcome of each treatment unit $i$ using the observed outcome from that outcome's ``nearest'' neighbor $j$ in the control set using $X$ for the matching
+	\item Estimate $\widehat{\delta}_{ATT}$ by \emph{imputing} the missing potential outcome of each treatment unit $i$ using the observed outcome from that outcome's ``nearest'' neighbor $j$ in the control set using $X$ for the matching
 		\begin{eqnarray*}
-		\delta_{ATT} = \frac{1}{N_T}\sum_{D_i=1} (Y_i - Y_{j(i)})
+		\widehat{\delta}_{ATT} = \frac{1}{N_T}\sum_{D_i=1} (Y_i - Y_{j(i)})
 		\end{eqnarray*}where $Y_{j(i)}$ is the observed outcome of a control unit such that $X_{j(i)}$ is the \textbf{closest} value to $X_i$ among all of the control observations (eg match on $X$)
 	\end{itemize}
 \end{frame}
@@ -1608,24 +1715,12 @@ Common support means that exact matching is possible.  So the only way we have s
 	\begin{itemize}
 	\item We could also use the average observed outcome over $M$ closest matches:
 		\begin{eqnarray*}
-		\delta_{ATT} = \frac{1}{N_T}\sum_{D_i=1}\left(Y_i-\left[\frac{1}{M}\sum_{m=1}^MY_{j_m(1)}\right]\right)
+		\widehat{\delta}_{ATT} = \frac{1}{N_T}\sum_{D_i=1}\left(Y_i-\left[\frac{1}{M}\sum_{m=1}^MY_{j_m(1)}\right]\right)
 		\end{eqnarray*}
 	\item Works well when we can find good matches for each treatment group unit, so $M$ is usually defined to be small (i.e., $M=1$ or $M=2$)
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Matching}
-	
-	\begin{itemize}
-	\item We can also use matching to estimate $\delta_{ATE}$.  In that case, we match in both directions:
-		\begin{enumerate}
-		\item If observation $i$ is treated, we impute $Y^0_i$ using the control matches,     $\{Y_{j_1(i)}, \dots, Y_{j_M(i)}\}$
-		\item If observation $i$ is control, we impute $Y^1_i$ using the treatment matches, $\{Y_{j_1(i)}, \dots, Y_{j_M(i)}\}$
-		\end{enumerate}
-	\item The estimator is:$$\widehat{\delta}_{ATE} = \frac{1}{N} \sum_{i=1}^N (2D_i -1) \left[ Y_i - \left( \frac{1}{M} \sum_{m=1}^M Y_{j_m(i)} \right) \right]$$	
-	\end{itemize}
-	
-\end{frame}
 
 
 \begin{frame}{Matching example with single covariate}
@@ -1649,7 +1744,7 @@ Common support means that exact matching is possible.  So the only way we have s
 	
 	
 	\begin{flalign*}
-		    \only<1-2>{&\text{Question: What is }\widehat{\delta_{ATT}}=\frac{1}{N_T} \sum_{D_i=1} (Y_i - Y_{j(i)})\text{?}}& \\
+		    \only<1-2>{&\text{Question: What is }\widehat{\delta}_{ATT}=\frac{1}{N_T} \sum_{D_i=1} (Y_i - Y_{j(i)})\text{?}}& \\
 		    \only<2-2>{&\text{Match and plug in!}} \\
  	\end{flalign*}
 
@@ -1749,15 +1844,24 @@ Let's do this together -- sometimes it helps to manually calculate this
 \begin{frame}{Minimizing the Euclidean distance}
 
 \begin{itemize}
-\item Abadie and Imbens (2006) show that there exists a matching that minimizes the distance metric
-\item Thankfully, this code exists so let's just look at the output
-\item But the idea here is that any other match will always have a higher Euclidean distance
+\item Abadie and Imbens (2006) show that there exists a unique solution to the matching problem that minimizes a given distance metric 
+\item \texttt{Matching} in R and \texttt{teffects} in Stata (not sure in python)
+\item But the idea here is that any other match will always have a higher Euclidean distance so I've drawn a picture!
 \end{itemize}
 
 \end{frame}
 
 
+\begin{frame}{Visualization of Optimal Match}
 
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.35]{./lecture_includes/optimal_matches}
+\end{figure}
+
+\end{frame}
+
+
+ 
 
 \begin{frame}{Inexact matching by minimizing the Euclidean distance}
 
@@ -1770,9 +1874,10 @@ Let's do this together -- sometimes it helps to manually calculate this
 \begin{frame}{Other distance metrics}
 
 \begin{itemize}
-\item  The Euclidean distance is not invariant to changes in the scale of the $X$'s.  For this reason, alternative distance metrics that \emph{are} invariant to changes in scale are used
+\item Our example treated a one unit difference in age and one unit difference in GPA as the same, but those scales are different and matter a lot
+\item The Euclidean distance is not invariant to changes in the scale of the $X$'s.  
+\item Alternative distance metrics that \emph{are} invariant to changes in scale are more commonly used 
 \item Normalized Euclidean distance and Mahalanobis distance both try to normalize it so that scale doesn't matter
-\item There's a few more, and you may want to explore all of them
 \end{itemize}
 
 \end{frame}
@@ -1812,21 +1917,14 @@ Let's do this together -- sometimes it helps to manually calculate this
 \end{frame}
 
 
-\begin{frame}{Arbitrary weights}
-	
-	Or, you could just create your own arbitrary weights
-		\begin{eqnarray*}
-		||X_i-X_j|| = \sqrt{ \sum_{n=1}^k \omega_n \cdot (X_{ni} - X_{nj})^2}
-		\end{eqnarray*}(with all $\omega_n\geq{0}$) so that we assign large $\omega_n$'s to those covariates that we want to match particularly well.
-
-\end{frame}
 
 \begin{frame}{Matching and the Curse of Dimensionality}
 	
 \begin{itemize}
-\item The larger the dimensions of the conditioning set, even if they are needed for identification, the less likely common support holds
-\item This problem is caused by the finite dataset, and it introduces selection bias
-\item Abadie and Imbens (2011) derived a solution called bias correction matching
+\item The larger the dimensions of the conditioning set, the less likely common support holds, and you can't not do it because you need these covariate dimensions to satisfy weak unconfoundedness!
+\item This problem is caused by the finite dataset, and it introduces a particular type of selection bias
+\item Curses are only overcome with new spells  
+\item Abadie and Imbens (2011) derived a way to reduce the bias (bias adjustment or bias correction)
 \end{itemize}
 
 \end{frame}
@@ -1904,16 +2002,16 @@ The bias of the matching estimator is caused by large matching discrepancies $||
 	\end{enumerate}
 \end{frame}
 
-
+ 
 \begin{frame}{Matching with bias correction}
 	
 	\begin{itemize}
-	\item Each treated observation contributes$$\mu^0(X_i) - \mu^0(X_{j(i)})$$to the bias.
+	\item Each treated observation contributes$$\alert{\mu^0(X_i)} - \mu^0(X_{j(i)})$$to the bias.
 	\item Bias-corrected (BC) matching:
 		\begin{eqnarray*}
 		\widehat{\delta}_{ATT}^{BC} = \frac{1}{N_T} \sum_{D_i=1} \left[ (Y_i - Y_{j(i)}) - ( \widehat{\mu^0}(X_i) - \widehat{\mu^0}(X_{j(i)}) ) \right]
-		\end{eqnarray*}where $\widehat{\mu^0}(X)$ is an estimate of $E[Y|X=x,D=0]$.  For example using OLS.  
-	\item Under some conditions, the bias correction eliminates the bias of the matching estimator without affecting the variance.
+		\end{eqnarray*}where $\widehat{\mu^0}(X)$ is an estimate of $E[Y|X=x,D=0]$.  For example using OLS but other maybe too (neural nets?).  
+	\item Under some conditions, the bias correction eliminates the bias of the matching estimator without affecting the estimator's variance.
 	\end{itemize}
 \end{frame}
 
@@ -2043,241 +2141,39 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Final note about bias adjustment}
 
-\begin{itemize}
-\item Identifying assumptions with selection on observables are:
-	\begin{enumerate}
-	\item Potential outcomes are distributed independent of treatment status (``conditional independence'')
-	\item Common support
-	\end{enumerate}
-\item Matching discrepancies are due to violations of second assumption caused by curse of dimensionality -- not the first
-\item Matching bias adjustments \textbf{do not} recover ATE or ATT if conditional independence fails as that implies omitting a possibly very important and influential confounder
-\end{itemize}
-
-\end{frame}
-
-\subsection{Regressions}
-
-\begin{frame}{Frisch-Waugh-Lovell theorem}
-
-	\begin{itemize}
-	\item FWL theorem concerns multiple linear regression.
-	\item Can we estimate the causal effect of family size on labor supply by regressing labor supply (\texttt{Y}) on family size (\texttt{X})?
-		\begin{align*}
-		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
-		\end{align*}
-	\item If family size is random, then number of kids is uncorrelated with the unobserved error term, which means we can interpret $\widehat{\beta_1}$ as the causal effect.
-	\item But how do we interpret $\widehat{\beta_1}$ if \texttt{numkids} is non-random?  
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}{FWL Theorem}
-	
-	\begin{itemize}
-	\item Assume that family size is random once we condition on race, age, marital status and employment.  Then the model is:
-		\begin{eqnarray*}
-Y_i &=& \beta_0 + \beta_1 X_i + \gamma_1 \texttt{White}_i + \gamma_2 \texttt{Married}_i \\
-		& & + \gamma_3 \texttt{Age}_i + \gamma_4 \texttt{Employed}_i + u_i
-		\end{eqnarray*}
-	\item If we want to estimate average causal effect of family size on labor supply, we will need two things: 
-		\begin{enumerate}
-		\item a data set with all $6$ variables; 
-		\item Number of kids ($X_i$) must be randomly assigned conditional on the other $4$ variables
-		\end{enumerate}
-	\item How do we interpret $\widehat{\beta_1}$ with the additional controls?
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{FWL Theorem}
-
-\begin{itemize}
-\item Frisch-Waugh-Lovell theorem (FWL) is about interpretation of a regression coefficient, like $\widehat{\beta}_1$ when there are covariates
-\item Angrist and Pischke (2009) call this the ``regression anatomy theorem'', as does Filoso (2013)
-\item Allows you to also convert a multivariate regression into a univariate regression which can help with interpretation and visualization
-\item It says that $\widehat{\beta_1}$ is simply a scaled covariance with the $\tilde{x_1}$ residual used instead of the actual data $x$
-\item Filoso (2013) has an excellent simplification of the historical more complex proof
-\end{itemize}
-
-\end{frame}
-
-		
-
-\begin{frame}{FWL Theorem}
-
-	\begin{block}{FWL Theorem }
-	Assume your main multiple regression model of interest:$$y_i=\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i$$ and an auxiliary regression in which the variable $x_{1i}$ is regressed on all the remaining independent variables$$x_{1i} = \gamma_0 + \gamma_{k-1}x_{k-1 i}+\gamma_{k+1}x_{k+1 i} + \dots + \gamma_Kx_{Ki}+f_i$$and $\tilde{x}_{1i} = x_{1i} - \widehat{x}_{1i}$ being the residual from the auxiliary regression. The parameter $\beta_1$ can be rewritten as:$$\beta_1=\frac{Cov(y_i,\tilde{x}_{1i})}{Var(\tilde{x}_{1i})}$$
-
-	\end{block}
-
-\end{frame}
-
-
-\begin{frame}[plain, shrink=20]
-
-\bigskip
-
-	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
-	To prove the theorem, note $E[\tilde{x}_{ki}]=E[x_{ki}]-E[\widehat{x}_{ki}]=E[f_i]$, and plug $y_i$ and residual $\tilde{x}_{ki}$ from $x_{ki}$ auxiliary regression into the covariance $cov(y_i, \tilde{x}_{ki})$
-	\begin{eqnarray*}
-	\beta_k &=& \frac{ cov(y_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
-			 &=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
-			&=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i,f_i)}{var(f_i)}
-	\end{eqnarray*}
-	\begin{enumerate}
-	\item Since by construction $E[f_i]=0$, it follows that the term $\beta_0E[f_i]=0$.
-	\item Since $f_i$ is a linear combination of all the independent variables with the exception of $x_{ki}$, it must be that$$\beta_1E[f_ix_{1i}] = \dots = \beta_{k-1}E[f_ix_{k-1 i}] = \beta_{k+1}E[f_ix_{k+1 i}] = \dots = \beta_KE[f_ix_{KI}] = 0$$
-	\end{enumerate}
-	\end{block}
-\end{frame}
-
-
-\begin{frame}[plain, shrink=20]
-
-	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
-		\begin{enumerate}\addtocounter{enumi}{2}
-		\item Consider now the term $E[e_if_i]$.  This can be written as:
-			\begin{eqnarray*}
-			E[e_if_i] &=& E[e_if_i] \\
-			&=& E[e_i\tilde{x}_{ki}] \\
-			&=& E[e_i(x_{ki} - \widehat{x}_{ki})] \\
-			&=& E[e_ix_{ki}] - E[e_i\tilde{x}_{ki}]
-			\end{eqnarray*}Since $e_i$ is uncorrelated with any independent variable, it is also uncorrelated with $x_{ki}$: accordingly, we have $E[e_ix_{ki}]=0$. With regard to the second term of the subtraction, substituting the predicted value from the $x_{ki}$ auxiliary regression, we get$$E[e_i\tilde{x}_{ki}] = E[e_i(\widehat{\gamma_0} + \widehat{\gamma_1}x_{1i} + \dots + \widehat{\gamma}_{k-1}x_{k-1}i+\widehat{\gamma}_{k+1}x_{k+1 i} + \dots + \widehat{\gamma}_Kx_{Ki})]$$Once again, since $e_i$ is uncorrelated with any independent variable, the expected value of the terms is equal to zero.  Then, it follows $E[e_if_i]=0$.
-		
-		\end{enumerate}
-	\end{block}
-
-\end{frame}
-
-\begin{frame}[plain, shrink=25]
-
-	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
-		\begin{enumerate}\addtocounter{enumi}{3}
-		\item The only remaining term is $E[\beta_kx_{ki}f_i]$ which equals $E[\beta_kx_{ki}\tilde{x}_{ki}]$ since $f_i=\tilde{x}_{ki}$. The term $x_{ki}$ can be substituted using a rewriting of the auxiliary regression model, $x_{ki}$, such that$$x_{ki} = E[x_{ki} | X_{-k}] + \tilde{x}_{ki}$$This gives
-			\begin{eqnarray*}
-			E[\beta_kx_{ki}\tilde{x}_{ki}] &=& E[\beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})]] \\
-			&=& \beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})] \\
-			&=&\beta_k\{E[\tilde{x}^2_{ki}] + E[(E[x_{ki}|X_{-k}]\tilde{x}_{ki})]\} \\
-			&=& \beta_k var(\tilde{x}_{ki})
-			\end{eqnarray*}which follows directly from the orthogonoality between $E[x_{ki} | X_{-k}]$ and $\tilde{x}_{ki}$. From previous derivations we finally get$$cov(y_i,\tilde{x}_{ki}) = \beta_kvar(\tilde{x}_{ki})$$which completes the proof. \qedhere
-		\end{enumerate}
-	\end{block}
-
-\end{frame}
-
-\begin{frame}{FWL}
-
-\begin{itemize}
-\item Let's review the FWL ``partialing out'' interpretation of OLS estimated $\widehat{\beta_1}$ in code
-\item We will use the fwl.so at /Labs/Matching for this
-\end{itemize}
-
-\end{frame}
-
-
-
-	
-
-\begin{frame}{Linear regression}
-
-\begin{itemize}
-\item Under constant treatment effects, then given exogeneity of the error with respect to covariates, OLS is unbiased estimator of the constant causal effect
-\item It is also best of all linear unbiased estimators (BLUE)
-\item But as Imbens and Rubin (2015) note here, complex functional forms and heterogeneous treatment effects create some challenges
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{What about OLS?  (Imbens and Rubin 2015)}
-
-	\begin{quote} 
-	``In many empirical studies in social sciences, causal effects are estimated through linear regression, where, typically it is implicitly assumed that in the super-population, $$E[Y_i^D | X_i] = \alpha + \delta_{sp} \cdot D + X_i \beta$$ for some values of the three unknown parameters, $\alpha$, $\delta_{sp}$ and $\beta$ where $\delta_{sp} = E_{sp} [ Y_i^1 - Y_i^0]$.''
-	\end{quote}
-	
-\end{frame}
-
-\begin{frame}{What about OLS?  (Imbens and Rubin 2015)}
-
-\begin{quote}
-``Defining $\varepsilon_i = Y_i - \delta_{sp} \cdot D_i - X_i \beta$ so that we can write $$Y_i = \alpha + \delta_{sp} \cdot D_i + X_i \beta  + \varepsilon_i$$ it is then assumed that $$\varepsilon_i \independent D_i, X_i$$This assumption is often referred to as \textbf{exogeneity} of the treatment (and the pre-treatment variables) in the econometrics literature.''
-
-\end{quote}
-
-\end{frame}
-
-\begin{frame}{What about OLS?  (Imbens and Rubin 2015)}
-
-\begin{quote}
-``The regression function is interpreted as a causal relation, in our sense of the term ``causal'', namely that if we manipulate the treatment $D_i$, then tht outcome would change in expectation by an amount $\delta_{sp}$.  Hence in the potential outcomes formulation, we have 
-\begin{eqnarray*}
-Y_i^0 &=& \alpha + X_i \beta + \varepsilon_i \\ 
-Y_i^1 &=& Y_i^0 + \delta_{sp}
-\end{eqnarray*} 
-
-\end{quote}
-	
-\end{frame}
-
-\begin{frame}{What about OLS?  (Imbens and Rubin 2015)}
-
-\begin{quote}
-``Then, because $\varepsilon_i$ is a function of $Y^0_i$ and $X_i$ given the parameters, $$Pr(D_i=1 | Y_i^0, Y_i^1 X_i ) = Pr(D_i | \varepsilon_i, X_i),$$ and by exogeneity of the treatment indicator, we have $$Pr(D_i|\varepsilon_i, X_i) = Pr(D_i | X_i)$$ and thus [conditional independence] holds.'' 
-\end{quote}
-
-\end{frame}
-
-\begin{frame}{What about OLS?  (Imbens and Rubin 2015)}
-
-\begin{quote}
-\textbf{``However, the exogeneity assumption combines [conditional independence] with functional form and constant treatment effect assumptions that are quite strong, and arguably unnecessary.''}
-\end{quote}
-
-\end{frame}
-
-\begin{frame}{Illustration}
-
-\begin{enumerate}
-
-\item Contrast matching with exact matching, constant treatment effects and additive treatment effects and OLS using \texttt{constant\_te.do}
-\item Contrast inexact matching, heterogeneous treatment effects, and nonlinearities with small selection bias and OLS using \texttt{training_inexact.do}
-\item Contrast matching with inexact matching, heterogeneous treatment effects, and nonlinearities and OLS with significant common support problems and bias adjustment using \texttt{matching.do}
-
-\end{enumerate}
-
-\end{frame}
-
-
-		  
 \subsection{Propensity scores}
 
-\begin{frame}{Avoiding dimensionality problems}
+
+\begin{frame}{Propensity score as dimension reduction}
 	
 	\begin{itemize}
-	\item Curse of dimensionality makes matching on $K$ covariates challenging but earlier work before nearest neighbor covariate matching existed
-	\item Rubin (1977) and Rosenbaum and Rubin (1983) developed the propensity score method which reduced $K$ covariates used for adjusting into a single scalar
-	\item Insofar as treatment is random conditional on $K$ covariates, then one can use the propensity score to adjust for confounders
+	\item Curse of dimensionality makes matching on $K$ covariates challenging as the dimensions grew with $K$ (and continuous covariates had no exact matches)
+	\item Rubin (1977) and Rosenbaum and Rubin (1983) developed the propensity score method to reduce $K$ covariates into a single scalar without loss of information
+	\item Insofar as treatment is random conditional on $K$ covariates, then it will also be random conditional on propensity score 
 	\item Variety of ways to incorporate the propensity score, but first we describe the propensity score as a dimension reduction method 
 	\end{itemize}
 	
 \end{frame}
 
 
+\begin{frame}{What's the propensity score for?}
 
+\begin{itemize}
 
+\item Once you obtain the propensity score, you typically use it to carefully explore problems with common support with respect to your selection parameter of interest
+\item Estimators abound and can be a little bewildering so to summarize them:
+	\begin{enumerate}
+	\item Match units from one group to another using the propensity score (with various rules for finding how close to be)
+	\item Weighting by the inverse propensity score
+	\end{enumerate}
+\item Variety of techniques to derive standard errors from parametric and bootstrapping
+\item Can even introduce ``doubly robust'' methods to deal with matching bias like we did with bias correction
 
+\end{itemize}
 
-\begin{frame}{Basic idea behind propensity scores}
-	
-	\begin{itemize}
-	\item Earlier we matched on $X$'s to compare units ``near'' one another based on some distance but matching discrepancies and sparseness created problems
-	\item Propensity scores summarize covariate information about treatment selection into a single number bounded between 0 and 1 (i.e., a probability)
-	\item Rather than compare units with similar values of $X$, we compare units with similar \textbf{estimated conditional probabilities of treatment}
-	\item Important theorem shows that once we adjust comparisons using the propensity score, we do not need to adjust for $X$
-	\end{itemize}
 \end{frame}
+
 
 
 
@@ -2286,201 +2182,145 @@ Y_i^1 &=& Y_i^0 + \delta_{sp}
 	\begin{block}{Definition of Propensity score}
 	A propensity score is a number bounded between 0 and 1 measuring the probability of treatment assignment conditional on a vector of confounding variables: $p(X)=Pr(D=1 | X)$
 	\end{block}
-
-\end{frame}
-
-\begin{frame}{Assumptions}
-
-	Two sufficient and necessary identification assumptions:
-	\begin{enumerate}
-	\item $(Y^0,Y^1) \independent{D}|X$ (conditional independence assumption, CIA)
-	\item $0<Pr(D=1|X)<1$ (common support)
-	\end{enumerate}
 	
-	With both, we can incorporate the propensity score into comparisons of treated and untreated units and obtain unbiased and consistent estimates of the ATE
 
 \end{frame}
 
-
-\begin{frame}{Propensity score methods}
+\begin{frame}{Propensity score theorem}
 	
-Covariate adjustment using the propensity score is a three step process	
-		\begin{enumerate}
-		\item Estimate the propensity score using logit/probit
-		\item Estimate a particular average treatment effect (e.g., ATE, ATT) incorporating the estimated propensity score (e.g., stratification, imputation, regression, or inverse probability weighting)
-		\item Estimate standard errors
-		\end{enumerate}
+	\begin{block}{Propensity score theorem}
+	If $(Y^1,Y^0)\independent{D}|X$ (full unconfoundedness), then $(Y^1,Y^0)\independent{D} | \rho(X)$ where $\rho(X)=Pr(D=1|X)$, the propensity score
+	\end{block}
+	
+	\begin{itemize}
+	\item Conditioning on the propensity score is enough to have independence between $D$ and $(Y^1,Y^0)$ (Rosenbaum and Rubin 1983)
+	\item With full unconfoundedness, you can estimate the ATE (ATT recall needs weak unconfoundedness)
+	\end{itemize}
+\end{frame}
 
-Between steps 1 and 2 are various design-like diagnostic steps such as examining common support	using histograms, trimming, etc.
+\begin{frame}{True vs Estimating Propensity Score}
+
+
+\begin{itemize}
+\item In an experiment, we know the true propensity score because we controlled it -- could be uniform, could be different by groups
+\item Outside an experiment, we don't know it
+	\begin{itemize}
+	\item We use DAGs or hunches to select covariates, careful not to include outcomes or colliders
+	\item But we may still not know the functional form
+	\end{itemize}
+\item Often then people will use higher order terms and interactions to provide flexibility but it does technically have misspecification biases
+\item This is an area most likely where machine learning could greatly enhance the estimation
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{Step 1: Estimating the propensity score}
+\begin{frame}{Estimating with the Propensity Score}
+
+\begin{itemize}
+
+\item All the propensity score will do is collapse or ``reduce'' the dimensions of X from $K$ to a single scalar, but then what?
+\item Weight or impute -- only things you can do
+\item We will start with weighting and then move into imputation after
+\item Inverse probability weighting to estimate the ATT
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Step 1: Estimate the propensity score}
 
 		\begin{itemize}
-		\item Estimate the conditional probability of treatment using probit or logit model$$Pr(D_i=1|X_i) = F(\beta X_i)$$
-		\item Use the estimated coefficients to calculate the propensity score for each unit $i$$$\widehat{\rho}_i(X_i) = \widehat{\beta} X_i$$
+		\item Estimate the conditional probability of treatment using probit or logit model (or ML) $$Pr(D_i=1|X_i) = F(\beta X_i)$$
+		\item Use the estimated coefficients to predict the propensity score for each unit $i$$$\widehat{\rho}_i(X_i) = \widehat{\beta} X_i$$
 		\item Note that each unit $i$ now has a predicted probability of treatment given the values of their covariates relative to everyone else's 
 		\item Frequentist probability -- you've basically just obtained the likelihood someone who ``looks like you'' would be treated (regardless of whether you were in fact treated)
 		\end{itemize}
 \end{frame}
 
-\begin{frame}{Identification}
-	
-	\begin{itemize}
-	\item Write down the definition of the ATE conditional on $X_i$
-		\begin{eqnarray*}
-		E[\delta_i(X_i) ]&=& E[Y^1_i - Y^0_i | X_i=x] \\
-		&=&E[Y^1_i | X_i=x] - E[Y^0_i | X_i=x]
-		\end{eqnarray*}
-	\item Given conditional independence, we can substitute average values of $Y$ for potential outcomes using the switching equation: $$E[Y_i | D_i =1, X_i=x]=E[Y_i^1 | D_i=1, X_i=x]$$ and similar for other term $Y^0$
-	\item We need common support (assumption 2) so that both terms can be estimated
-	\end{itemize}
-\end{frame}		
-
-
-\begin{frame}{Propensity score theorem}
-	
-	\begin{block}{Propensity score theorem}
-	If $(Y^1,Y^0)\independent{D}|X$ (CIA), then $(Y^1,Y^0)\independent{D} | \rho(X)$ where $\rho(X)=Pr(D=1|X)$, the propensity score
-	\end{block}
-	
-	\begin{itemize}
-	\item Conditioning on the propensity score is enough to have independence between $D$ and $(Y^1,Y^0)$ (Rosenbaum and Rubin 1983)
-	 \item Valuable theorem because of dimension reduction and convergence rate issues which can introduce biases
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Propensity score theorem}
-	
-	\begin{itemize}
-	\item This theorem tells us the \emph{only} covariate we need to adjust for is the conditional probability of treatment itself (i.e., the propensity score)
-	\item It does not tell us which method we should use to do that adjustment, though, which is an estimation question
-	\item There are options: inverse probability weighting, forms of imputation, stratification, and sometimes even regressions will incorporate the score as weights
-	\end{itemize}
-\end{frame}
 
 
 
-\begin{frame}{Estimating ATE with propensity score}
-
-	\begin{block}{Unbiased Estimate of ATE}
-	If $(Y^1,Y^0)\independent{D}|X$, we can estimate average treatment effects:
- $$E[Y^1-Y^0|\rho(X)] = E[Y|D=1,\rho(X)] - E[Y|D=0,\rho(X)]$$
-	\end{block}
-
-
-	
-\end{frame}
-
-
-\begin{frame}{Propensity Score Theorem Proof}
-	
-	 Details of the proof are provided for those who want to study it more closely
-	\begin{itemize}
-	\item First note that$$Pr(D=1|Y^0,Y^1\rho(X)) = E[D | Y^0,Y^1,\rho(X)]$$because
-		\begin{eqnarray*}
-		E[D|Y^0,Y^1,\rho(X)] &=& 1\times Pr(D=1|Y^0,Y^1,\rho(X)) \\
-		& & + 0 \times Pr(D=0 | Y^0,Y^1,\rho(X))
-		\end{eqnarray*}and the second term cancels out.
-	\item Rest of the proof is straightforward and I've drawn it out in case you need to see all the steps
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[plain,shrink=5]
-	
-	\begin{proof}
-	Assume $(Y^1,Y^0)\independent{D}|X$ (CIA).  Then:
-		\begin{eqnarray*}
-		Pr(D=1 | Y^1,Y^0, \rho(X)) &=& \underbrace{\textcolor{blue}{E[D | Y^1, Y^0, \rho(X)]}}_{ \mathclap{\text{See previous slide}}} \\
-		&=&\underbrace{\textcolor{blue}{E} [ E [ D | Y^1,Y^0, \rho(X), X] \textcolor{blue}{| Y^1,Y^0,\rho(X)]}}_{ \mathclap{\text{by LIE}}} \\
-		&=&\underbrace{\textcolor{blue}{E} [ E [ D | Y^1,Y^0,X] \textcolor{blue}{| Y^1,Y^0,\rho(X)]}}_{ \mathclap{\text{Given $X$, we know $p(X)$}}} \\
-		&=&\underbrace{\textcolor{blue}{E} [E [D | X] \textcolor{blue}{| Y^1,Y^0,\rho(X)]}}_{ \mathclap{\text{by CIA}}} \\
-		&=& \underbrace{\textcolor{blue}{E}[\rho(X) \textcolor{blue}{| Y^1, Y^0, \rho(X)]}}_{ \mathclap{\text{propensity score definition}}} \\
-		&=& \rho(X)
-		\end{eqnarray*}
-	\end{proof}
-	
-\end{frame}
-
-\begin{frame}{Similar proof}
-
-	 We also can show that the probability of treatment conditional on the propensity score is the propensity score using a similar argument:
-		\begin{eqnarray*}
-		Pr(D=1| \rho(X)) &=& \underbrace{E[ D | \rho(X) ]}_{\mathclap{\text{Previous slide}}} \\
-		&=& \underbrace{E [ E [D | X] | \rho(X)]}_{ \mathclap{\text{LIE}}} \\
-		&=& \underbrace{E[p(X) | \rho(X)]}_{ \mathclap{\text{definition}}} \\
-		&=& \rho(X)
-		\end{eqnarray*}and $Pr(D=1 | Y^1, Y^0, \rho(X)) = Pr(D=1| \rho(X))$ by CIA
-\end{frame}
-
-
-
-\begin{frame}{Propensity score balances covariates}
-	
-	\begin{itemize}
-	\item  $D$ and $X$ are independent conditional on $p(X)$: $$D\independent{X} | \rho(X)$$
-	\item This implies that the distribution of the covariates should be the same for treatment and control groups: $$Pr(X|D=1,p(X)) = Pr(X|D=0, p(X))$$ 
-	\item But we should check it ourselves. For propensity score ranges (e.g., 0.1 to 0.2, 0.2 to 0.3, \dots), what percent of the treatment group are male? What percent of control group are male?
-	\end{itemize}
-\end{frame}
-
-
-
-
-
-
-\begin{frame}{Checking common support}
-	
-	\begin{itemize}
-	\item Common support is required for unbiased estimation of the ATE or ATT, and it is often violated in practice depending on the distribution of the included confounders for selecting into treatment
-	\item A histogram of propensity scores by treatment and control group is a key diagnostic in highlighting the overlap problem
-	\item Crump, et al. (2009) suggest keeping units whose propensity scores are within the interval [0.1,0.9] (called ``trimming'')
-	\item Note that trimming comes at a price -- you are no longer estimating the ATE or the ATT if you are dropping units
-	\end{itemize}
-	
-\end{frame}
-
-
-
-
-\begin{frame}{Estimation with the propensity score}
-
-\begin{itemize}
-\item Propensity scores have many value to us, such as checking for common support, but the goal is ultimately to estimate an average treatment effect
-\item Many different ways have been developed over the years to incorporate the propensity score into estimation
-\item Sometimes you are imputing missing counterfactuals finding nearest neighbors with similar propensity scores, and sometimes you are weighting by the propensity score
-\item We'll discuss a few of them starting with weighting by the propensity score -- inverse probability weighting (IPW)
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Inverse probability weighting}
+\begin{frame}{Step 2: Estimation of ATT with IPW}
 
 \begin{itemize}
 	\item IPW uses the estimated propensity score to reweight the outcomes (e.g., Robins and Rotnitzky 1995, Imbens 2000, Hirano and Imbens 2001)
-	\item The weights can be expressed in two ways (the difference being how well either approach can handle extreme values of the propensity score)
-		\begin{enumerate}
-		\item Without normalization (Horvitz and Thompson 1952) 
-		\item Normalized (Hajek1971) 
-		\end{enumerate}
-	\item We'll introduce IPW without normalization first as normalized weights can be a little intimidating at first glance
-\end{itemize}
-
-\end{frame}
-	
-\begin{frame}{Inverse probability weighting}
-
-\begin{itemize}
 	\item IPW is non-parametric -- you are just taking averages and multiplying by weights
 	\item There are also fewer implementation choices -- you aren't choosing how many neighbors to include, how far away a neighbor can be -- but you still have to closely examine common support
-	\item Fun fact: two new diff-in-diff estimators use IPW to incorporate covariates into estimation (Sant'anna and Zhao 2020; Callaway and Sant'anna 2020)
+	\item There are bias adjustment methods called double robust where you combine imputing counterfactuals with weighting by the propensity score
+\end{itemize}
+
+\end{frame}
+	
+	
+
+\begin{frame}{Step 2: Estimation of ATT with IPW}
+	
+		\begin{block}{Estimating ATT with IPW}
+	Given $Y^0 \independent{D}|X$ and weak common support, then
+		\begin{eqnarray*}
+		\delta_{ATT}&=&E[Y^1-Y^0|D=1] \\
+		&=& \frac{1}{Pr(D=1)} \cdot  E \left[ Y \cdot \frac{D-\rho(X)}{1-\rho(X)} \right]
+		\end{eqnarray*}
+	\end{block}Notice that when $D=1$, the outcome is not weighted, but when $D=0$ it is. You're missing the $Y^0$ for the treatment, not $Y^1$ so you the treatment group $Y$ values alone and weight ``up'' or ``down'' the comparison groups by their propensity scores
+
+\end{frame}
+
+
+\begin{frame}{Step 3: Standard Errors}
+	
+		
+Standard errors can be constructed a few different ways:
+	\begin{itemize}
+	\item We need to adjust the standard errors for first-step estimation of $\rho(X)$
+		\begin{itemize}
+		\item Parameteric first step: Newey and McFadden (1994)
+		\item Non-parametric first step: Newey (1994)
+		\end{itemize}
+	\item IPW is a smooth estimator which means the bootstrap is valid for inference  (Adudumilli 2018 and Bodory et al. 2020) 
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Check for common support using histograms}
+
+\begin{itemize}
+
+\item Recall that the matching/weighting methods all require unconfoundedness \emph{and} common support, and whereas the first is not testable, the latter is
+\item Assessing whether there are units it both groups for whichever parameter you're focused on is simple with propensity score -- just create histograms of the propensity score distribution for treatment and control
+\item Crump, et al. (2009) suggest keeping propensity scores within the interval [0.1,0.9] (``trimming'') but any trimming will drop units and dropping units means moving away from the parameter
+\item ``Parameters first!''
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Assessing overlap}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.12]{./lecture_includes/pscore_overlap}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Estimating ATE with IPW}
+
+\begin{itemize}
+\item \emph{Any} of the parameters including the ATE are possible with propensity scores
+
+\item Assumptions are strongest for ATE:  full unconfoundedness and full support versus weak versions of both 
+
+\item You should only pursue the ATE if that is your preferred estimate, which also requires full unconfoundedness/support to be believable
+
 \end{itemize}
 
 \end{frame}
 	
 
-\begin{frame}{Inverse Probability Weighting}
+
+\begin{frame}{Estimating ATE with IPW}
+
 	
 		\begin{block}{Estimating ATE with IPW}
 	Given $Y^1,Y^0 \independent{D}|X$ and common support, then
@@ -2490,7 +2330,10 @@ Between steps 1 and 2 are various design-like diagnostic steps such as examining
 		\end{eqnarray*}
 	\end{block}
 
+Notice that since treated units are missing counterfactuals, but so are controls, all of the data is weighted for the ATE (not just the controls for ATT)
+
 \end{frame}
+
 
 \begin{frame}{Inverse Probability Weighting}
 
@@ -2504,64 +2347,23 @@ Between steps 1 and 2 are various design-like diagnostic steps such as examining
 
 \end{frame}
 
-\begin{frame}{Inverse Probability Weighting}
-	
-		\begin{block}{Estimating ATT with IPW}
-	Given $Y^0 \independent{D}|X$ and common support, then
-		\begin{eqnarray*}
-		\delta_{ATT}&=&E[Y^1-Y^0|D=1] \\
-		&=& \frac{1}{Pr(D=1)} \cdot  E \left[ Y \cdot \frac{D-\rho(X)}{1-\rho(X)} \right]
-		\end{eqnarray*}
-	\end{block}Similar proof as ATE
-
-\end{frame}
-
-
-
-\begin{frame}{Weighting on the propensity score}
-
-Previous formulas used population concepts. Switching to samples, we use a two-step estimator:
-	\begin{enumerate}
-	\item Estimate ech unit $i$'s propensity score: $\widehat{\rho_i}(X_i)$
-	\item Use estimated score to produce analog estimators. Let $\widehat{\delta}_{ATE}$ and $\widehat{\delta}_{ATT}$  be an estimate of the $ATE$ and $ATT$ parameter:
-		\begin{eqnarray*}
-		\widehat{\delta}_{ATE} &=& \frac{1}{N} \sum_{i=1}^N Y_i \cdot \frac{D_i - \widehat{\rho_i}(X_i)}{\widehat{\rho_i}(X_i) \cdot (1-\widehat{\rho_i}(X_i))}\\
-		\widehat{\delta}_{ATT} &=& \frac{1}{N_T} \sum_{i=1}^N Y_i \cdot \frac{D_i - \widehat{\rho_i}(X_i)}{1-\widehat{\rho_i}(X_i)}
-		\end{eqnarray*}
-	\end{enumerate}Note that we are simply averaging and differencing after weighting each unit by its propensity score
-\end{frame}
-
-\begin{frame}{Weighting on the propensity score}
-	
-		
-Standard errors can be constructed a few different ways:
-	\begin{itemize}
-	\item We need to adjust the standard errors for first-step estimation of $\rho(X)$
-		\begin{itemize}
-		\item Parameteric first step: Newey and McFadden (1994)
-		\item Non-parametric first step: Newey (1994)
-		\end{itemize}
-	\item IPW is a smooth estimator which means the bootstrap is valid for inference  (Adudumilli 2018 and Bodory et al. 2020) unlike covariate nearest neighbor matching which Abadie and Imbens (2008) show is not valid
-	\end{itemize}
-\end{frame}
-
-
-
-\begin{frame}{Implementation with software}
+\begin{frame}{Other comments about propensity scores}
 
 \begin{itemize}
-\item I like estimating with IPW manually because I like being reminded how simple a procedure it is
-\item You'll probably want to use Stata's -teffects- or R's -ipw- so that you can get standard errors
-\item Note that Stata's -teffects- uses the Hajek normalization weights which will produce identical estimates to my program in the Mixtape
-\item My book doesn't manually do the inference, but it would be fun and easy to do using the bootstrap
+
+\item Only other comments to make is that you can get outlier weights
+\item If the propensity score is very high for a control group in the ATT, the weight can explode
+\item Certain normalizations of the way the IPW is constructed to try and minimize those influences
+\item Stata's \texttt{teffects} or R's \texttt{ipw} both let you estimate parameters using IPW and get standard errors
+
 \end{itemize}
 
 \end{frame}
 
+
 \begin{frame}{Double robust estimators}
 
 \begin{itemize}
-\item Propensity scores and estimated propensity scores are not the same thing
 \item You can have the right covariates but the wrong model and unbiasedness requires the correct model
 \item What if you had a way to control for the covariates using propensity scores and something else like regression?
 \item Buys you some insurance against model misspecification if such a thing existed
@@ -2586,13 +2388,6 @@ Standard errors can be constructed a few different ways:
 
 
 
-\begin{frame}{Estimation of outcome model}
-
-\begin{eqnarray*}
-y_i = \alpha_0 + X_i\beta + \tilde{\alpha_1} D_i + \theta_0 \frac{D_i}{\widehat{\rho (X_i)}} + \theta_1 \frac{1-D_i}{1- \widehat{\rho (X_i)}} + \tilde{\varepsilon_i}
-\end{eqnarray*}
-
-\end{frame}
 
 
 \begin{frame}{Propensity score matching}
@@ -2762,6 +2557,562 @@ How far away on the propensity score will you use is what makes some of the diff
 \end{frame}
 
 
+
+
+
+\subsection{Regressions}
+
+\begin{frame}{OLS with controls}
+
+\begin{itemize}
+
+\item Most common causal model, arguably, is OLS with covariate controls used to establish mean exogeneity and eliminate omitted variable bias
+
+\begin{eqnarray*}
+Y_{it} = \alpha + \delta D_{it} + \beta X_{it} + \varepsilon_{it}
+\end{eqnarray*}
+
+\item This as it turns out is related to what we've discovered but the ways that is different matter a lot for estimation and unbiasedness
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Interpreting OLS coefficients}
+
+\begin{itemize}
+
+\item OLS can do a lot of things, but one thing it does it find the best linear fit of the data
+\item Finding the best linear fit is the same as finding the counterfactual, so to get OLS to serve that function is another task
+
+		\begin{align*}
+		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
+		\end{align*}
+
+\item When we estimate this model, it can be easily visualized with data
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{OLS Simulated Code}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.40]{./lecture_includes/ols_code}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{OLS Plot and Line}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.4]{./lecture_includes/ols_line}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Bivariate vs multivariate regressions}
+
+\begin{itemize}
+
+\item Interpreting the OLS coefficient in bivariate regression also has a simple express as a scaled covariance:
+
+ $$\widehat{\beta_1}=\frac{Cov(Y_i,X_i)}{Var(X_i)}$$
+ 
+ \item But what about when we are looking at a multivariate regression -- too many dimensions to visualize it
+ \item A trick called the Frisch-Waugh-Lovell (FWL) theorem will turn the multivariate regression into the simple bivariate one
+\item FWL also helps us interpret $\widehat{\beta}_1$ when there are covariates
+ 
+ \end{itemize}
+ 
+ \end{frame}
+ 
+ \begin{frame}{Applying FWL theorem}
+
+\begin{itemize}
+\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem'', as does Filoso (2013)
+\item Filoso (2013) has an excellent simplification of what is a historically complex proof
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Applying FWL theorem}
+
+	\begin{itemize}
+	\item FWL theorem concerns multiple linear regression and helps us interpret regression coefficients with multiple controls.
+	\item Can we estimate the causal effect of family size on labor supply by regressing labor supply (\texttt{Y}) on family size (\texttt{X})?
+		\begin{eqnarray*}
+		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
+		\end{eqnarray*}
+	\item If family size is random, then number of kids is uncorrelated with the unobserved error term, which means we can interpret $\widehat{\beta_1}$ as the ATE.
+	\item But how do we interpret $\widehat{\beta_1}$ if \texttt{family size} is non-random?  
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Applying FWL theorem}
+	
+	\begin{itemize}
+	\item Assume that family size is random once we condition on race, age, marital status and employment.  Then the model is:
+		\begin{eqnarray*}
+Y_i &=& \beta_0 + \beta_1 X_i + \gamma_1 \texttt{White}_i + \gamma_2 \texttt{Married}_i \\
+		& & + \gamma_3 \texttt{Age}_i + \gamma_4 \texttt{Employed}_i + u_i
+		\end{eqnarray*}
+	\item If we want to estimate average causal effect of family size on labor supply, we will need two things: 
+		\begin{enumerate}
+		\item a data set with all $6$ variables; 
+		\item Number of kids ($X_i$) must be randomly assigned conditional on the other $4$ variables
+		\end{enumerate}
+	\item How do we interpret $\widehat{\beta_1}$ with the additional controls?
+	\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}{Applying FWL theorem}
+
+\begin{itemize}
+\item FWL shows you that in a multivariate regression, any one coefficient fitted can be reconceived as a simple scaled covariance of two variables
+\item It says that $\widehat{\beta_1}$ is simply a scaled covariance with the $\tilde{X_1}$ residual used instead of the actual data $X$
+\end{itemize}
+
+\end{frame}
+
+
+		
+
+\begin{frame}{FWL Theorem}
+
+	\begin{block}{FWL Theorem }
+	Assume your main multiple regression model of interest:$$y_i=\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i$$ and an auxiliary regression in which the variable $x_{1i}$ is regressed on all the remaining independent variables$$x_{1i} = \gamma_0 + \gamma_{k-1}x_{k-1 i}+\gamma_{k+1}x_{k+1 i} + \dots + \gamma_Kx_{Ki}+f_i$$and $\tilde{x}_{1i} = x_{1i} - \widehat{x}_{1i}$ being the residual from the auxiliary regression. The parameter $\beta_1$ can be rewritten as:$$\beta_1=\frac{Cov(y_i,\tilde{x}_{1i})}{Var(\tilde{x}_{1i})}$$
+
+	\end{block}
+
+\end{frame}
+
+
+\begin{frame}[plain, shrink=20]
+
+\bigskip
+
+	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
+	To prove the theorem, note $E[\tilde{x}_{ki}]=E[x_{ki}]-E[\widehat{x}_{ki}]=E[f_i]$, and plug $y_i$ and residual $\tilde{x}_{ki}$ from $x_{ki}$ auxiliary regression into the covariance $cov(y_i, \tilde{x}_{ki})$
+	\begin{eqnarray*}
+	\beta_k &=& \frac{ cov(y_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
+			 &=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
+			&=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i,f_i)}{var(f_i)}
+	\end{eqnarray*}
+	\begin{enumerate}
+	\item Since by construction $E[f_i]=0$, it follows that the term $\beta_0E[f_i]=0$.
+	\item Since $f_i$ is a linear combination of all the independent variables with the exception of $x_{ki}$, it must be that$$\beta_1E[f_ix_{1i}] = \dots = \beta_{k-1}E[f_ix_{k-1 i}] = \beta_{k+1}E[f_ix_{k+1 i}] = \dots = \beta_KE[f_ix_{KI}] = 0$$
+	\end{enumerate}
+	\end{block}
+\end{frame}
+
+
+\begin{frame}[plain, shrink=20]
+
+	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
+		\begin{enumerate}\addtocounter{enumi}{2}
+		\item Consider now the term $E[e_if_i]$.  This can be written as:
+			\begin{eqnarray*}
+			E[e_if_i] &=& E[e_if_i] \\
+			&=& E[e_i\tilde{x}_{ki}] \\
+			&=& E[e_i(x_{ki} - \widehat{x}_{ki})] \\
+			&=& E[e_ix_{ki}] - E[e_i\tilde{x}_{ki}]
+			\end{eqnarray*}Since $e_i$ is uncorrelated with any independent variable, it is also uncorrelated with $x_{ki}$: accordingly, we have $E[e_ix_{ki}]=0$. With regard to the second term of the subtraction, substituting the predicted value from the $x_{ki}$ auxiliary regression, we get$$E[e_i\tilde{x}_{ki}] = E[e_i(\widehat{\gamma_0} + \widehat{\gamma_1}x_{1i} + \dots + \widehat{\gamma}_{k-1}x_{k-1}i+\widehat{\gamma}_{k+1}x_{k+1 i} + \dots + \widehat{\gamma}_Kx_{Ki})]$$Once again, since $e_i$ is uncorrelated with any independent variable, the expected value of the terms is equal to zero.  Then, it follows $E[e_if_i]=0$.
+		
+		\end{enumerate}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}[plain, shrink=25]
+
+	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
+		\begin{enumerate}\addtocounter{enumi}{3}
+		\item The only remaining term is $E[\beta_kx_{ki}f_i]$ which equals $E[\beta_kx_{ki}\tilde{x}_{ki}]$ since $f_i=\tilde{x}_{ki}$. The term $x_{ki}$ can be substituted using a rewriting of the auxiliary regression model, $x_{ki}$, such that$$x_{ki} = E[x_{ki} | X_{-k}] + \tilde{x}_{ki}$$This gives
+			\begin{eqnarray*}
+			E[\beta_kx_{ki}\tilde{x}_{ki}] &=& E[\beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})]] \\
+			&=& \beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})] \\
+			&=&\beta_k\{E[\tilde{x}^2_{ki}] + E[(E[x_{ki}|X_{-k}]\tilde{x}_{ki})]\} \\
+			&=& \beta_k var(\tilde{x}_{ki})
+			\end{eqnarray*}which follows directly from the orthogonoality between $E[x_{ki} | X_{-k}]$ and $\tilde{x}_{ki}$. From previous derivations we finally get$$cov(y_i,\tilde{x}_{ki}) = \beta_kvar(\tilde{x}_{ki})$$which completes the proof. \qedhere
+		\end{enumerate}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}{FWL}
+
+\begin{itemize}
+\item Let's review the FWL ``partialing out'' interpretation of OLS estimated $\widehat{\beta_1}$ in code
+\item We will use the fwl.do at /Labs/Matching for this
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Core OLS assumptions}
+
+\begin{itemize}
+\item Most common causal model is OLS with covariates is additive in controls: $$Y_i = \alpha + \delta D_i + \beta X_i + \gamma Z_i + \varepsilon_i$$
+\item Which average treatment effect parameter does $\widehat{\delta}$ estimate?  What assumptions are imposed by exogeneity?
+\item Next we explore the OLS model and its ability (or not) to recover a given parameter of interest
+\item This hopefully is where I'll be able to convince you of how important it is that you identify ahead of time \emph{which} causal effect
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{OLS Assumptions}
+
+\begin{itemize}
+
+\item Typically we assume that the mean error is zero conditional on all covariates, called exogeneity
+\item This is a pregnant assumption as it turns out
+\item Imbens and Rubin discussed it in their book on causal inference from 2015
+\item I'll pull out their quote and proof but we will then discuss some other materials
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{OLS Assumptions}
+
+	\begin{quote} 
+	``In many empirical studies in social sciences, causal effects are estimated through linear regression, where, typically it is implicitly assumed that in the super-population, $$E[Y_i^D | X_i] = \alpha + \delta_{sp} \cdot D + X_i \beta$$ for some values of the three unknown parameters, $\alpha$, $\delta_{sp}$ and $\beta$ where $\delta_{sp} = E_{sp} [ Y_i^1 - Y_i^0]$.''
+	\end{quote}
+	
+\end{frame}
+
+\begin{frame}{What about OLS?  (Imbens and Rubin 2015)}
+
+\begin{quote}
+``Defining $\varepsilon_i = Y_i - \delta_{sp} \cdot D_i - X_i \beta$ so that we can write $$Y_i = \alpha + \delta_{sp} \cdot D_i + X_i \beta  + \varepsilon_i$$ it is then assumed that $$\varepsilon_i \independent D_i, X_i$$This assumption is often referred to as \textbf{exogeneity} of the treatment (and the pre-treatment variables) in the econometrics literature.''
+
+\end{quote}
+
+\end{frame}
+
+\begin{frame}{OLS Assumptions}
+
+\begin{quote}
+``The regression function is interpreted as a causal relation, in our sense of the term ``causal'', namely that if we manipulate the treatment $D_i$, then tht outcome would change in expectation by an amount $\delta_{sp}$.  Hence in the potential outcomes formulation, we have 
+\begin{eqnarray*}
+Y_i^0 &=& \alpha + X_i \beta + \varepsilon_i \\ 
+Y_i^1 &=& Y_i^0 + \delta_{sp}
+\end{eqnarray*} 
+
+\end{quote}
+	
+\end{frame}
+
+\begin{frame}{OLS Assumptions}
+
+\begin{quote}
+``Then, because $\varepsilon_i$ is a function of $Y^0_i$ and $X_i$ given the parameters, $$Pr(D_i=1 | Y_i^0, Y_i^1 X_i ) = Pr(D_i | \varepsilon_i, X_i),$$ and by exogeneity of the treatment indicator, we have $$Pr(D_i|\varepsilon_i, X_i) = Pr(D_i | X_i)$$ and thus [conditional independence] holds.'' 
+\end{quote}
+
+\end{frame}
+
+\begin{frame}{OLS Assumptions}
+
+\begin{quote}
+``However, the exogeneity assumption combines unconfoundedness with functional form and constant treatment effect assumptions that are quite strong, and arguably unnecessary.'' -- Imbens and Rubin (2015)
+\end{quote}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Constant Treatment Effects and Linearity}
+
+Most commonly used method is OLS where the outcome is an additive model of the observed outcome, $Y$, on the treatment, $D$, and covariates, $X$ like:
+
+\begin{eqnarray*}
+Y_{i} &=& \alpha + \delta D_i + \beta_1 X_i +  \varepsilon_i \\
+\end{eqnarray*}
+
+Take conditional expectations 
+
+\begin{eqnarray*}
+E[Y_i | D_i = 1, X_i] &=& \alpha + \delta E[D_i | D_i=1, X_i] + \beta_1 E[X_i | D_i=1, X_i] \\
+E[Y_i | D_i = 0, X_i] &=& \alpha + \delta E[D_i | D_i=0, X_i] + \beta_1 E[X_i | D_i=0, X_i] 
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}{Constant Treatment Effects and Linearity}
+
+Replace realized variables with potential notation (both outcomes and covariates):
+\begin{eqnarray*}
+E[Y^1_i | D_i = 1,X_i] &=& \alpha + \delta + \beta_{11} E[X^1_i | D_i=1, X_i] \\
+E[Y^0_i | D_i = 0,X_i] &=& \alpha + \beta_{01} E[X^0_i | D_i=0, X_i] 
+\end{eqnarray*}
+
+\bigskip
+
+May seem somewhat unorthodox to also let $X$ have potential status, but you'll see why in a minute
+
+
+\end{frame}
+
+
+\begin{frame}{Constant Treatment Effects and Linearity}
+
+OLS Estimator is a simple difference in conditional means:
+
+\begin{eqnarray*}
+\widehat{\delta} &=& E[Y^1_i | D_i = 1, X_i]  - E[Y^0_i | D_i = 0, X_i]  \\
+\widehat{\delta} &=& \bigg (\alpha + \delta E[D_i | D_i=1, X_i] + \beta_{11} E[X^1_i | D_i=1, X_i] \bigg ) \\
+&& - \bigg (\alpha + \delta E[D_i | D_i = 0, X_i] + \beta_{01} E[X^0_i | D_i = 0, X_i] \bigg ) \\
+&=& \delta + \beta_{11} E[X^1_i | D_i =1, X_i] - \beta_{01} E[X^0_i | D_i = 0, X_i] 
+\end{eqnarray*}
+
+\bigskip
+
+OLS model requires three things: (1) linearity, (2) covariates to be independent of treatment status (i.e., treatment cannot cause covariates to change), (3) $\beta_{11}=\beta_{01}$ (homogenous treatment effects with respect to $X$).  
+
+\end{frame}
+
+\begin{frame}{Simulation}
+
+\begin{itemize}
+
+\item Following code will maintain linearity but have common support violation to show OLS does not require common support, but does require linearity (it extrapolates based on functional form which is quite spectacular with correct model)
+\item I will also create heterogenous treatment effects 
+\item But I will also violate the previous requirement that $\beta_{11}=\beta_{01}$ so that you can see the bias that forms on average across 1,000 simulations
+\item Will show a variety of estimators and specifications so that we see how to recover causal parameters with regression and matching
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Heterogenous Treatment Effects wrt $X$}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.27]{./lecture_includes/stata_matching_code}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Parameters}
+
+\begin{itemize}
+
+\item Ordinarily we look at the coefficient on the treatment dummy to obtain an estimate
+\item But we have two parameters: the ATE is \$2500 but the ATT is \$1980
+\item How do we get both of them? Let's look at what people usually do
+\item 1,000 simulations of DGP with regression estimates plotting coefficient on treatment dummy: first with just age and GPA, second with the precise model used for $Y^0$ (but not $Y^1$)
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Constant Treatment Effects and Linearity}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.45]{./lecture_includes/stata_reg_constant}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Coefficient on Treatment Dummy is Wrong}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.1]{./lecture_includes/combined_kernels.jpg}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Commentary}
+
+\begin{itemize}
+
+\item Three ifs and a then:
+
+	\begin{itemize}
+	\item \emph{If} unconfoundedness held, and 
+	\item \emph{if} the potential outcome model was linear, and
+	\item  \emph{if} the treatment effect had been homogenous with respect to age and GPA, 
+	\item \emph{then} the coefficient on the treatment variable would have been the ATE 
+	\end{itemize}
+	
+\item But it wasn't because homogeneity with respect to $X$ was not true (recall $Y(0)$ coefficients were not the same as $Y(1)$ coefficients)
+\item So what had we done?  Bear with me but this will pay off
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Heterogenous treatment effects}
+
+Write down a simplified version of the DGP from the code:
+
+\begin{eqnarray*}
+Y^0_i &=& \alpha + \beta_{01} X^0_i + \varepsilon_i \\
+Y^1_i &=& \alpha + \beta_{01} X^0_i + \delta D_i + \beta_{11} X^1_i \times D_i + \varepsilon_i
+\end{eqnarray*}
+
+\bigskip
+
+Notice that the setup before, $X_i$ had a different effect on $Y^0$ than it did on $Y_i^1$ -- that's because of heterogenous treatment effects with respect to conditioning set. 
+
+\end{frame}
+
+\begin{frame}{Heterogenous treatment x`effects}
+
+Take conditional expectations of the \emph{potential} outcomes:
+
+\begin{eqnarray*}
+E[Y^0_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X^0_i] \\
+E[Y^1_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X^0_i] + \delta + \beta_{11} E[X^1_i \times D_i | D_i=1,X_i^1]
+\end{eqnarray*}
+
+\bigskip
+
+Average treatment effect is: 
+
+\bigskip
+
+\footnotesize
+
+\begin{eqnarray*}
+E[Y_i^1 | D_i, X^1_i] - E[Y^0_i | D_i, X^0_i] &=& \bigg (  \alpha + \beta_{01} E[X^0_i] + \delta + \beta_{11} E[X^1_i \times D_i | D_i=1,X_i^1] \bigg ) \\
+&& -  \bigg (\alpha + \beta_{01} E[X^0_i] \bigg ) \\
+&=& \delta + \beta_{11}  E[X^1_i | D_i=1] 
+\end{eqnarray*}assuming $X^1_i=X^0_i$. OLS model accounting for heterogeneity must be ``fully saturated''.
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Estimation}
+
+Our saturated OLS model is:
+
+\bigskip
+
+\begin{eqnarray*}
+Y_i = \alpha + \delta D_i + \beta_{01} X_i + \beta_{11} D_i \times X_i + \varepsilon_i
+\end{eqnarray*}
+
+$\widehat{\delta}$ is the ATE but the ATT is equal to $\widehat{\delta} + \beta_{11} E[X_i | D_i = 1]$ where $E[X_i | D_i=1]$ is the sample average of $X_i$ for the treatment group
+
+\bigskip
+
+We will estimate two models: (1) once with simplified but incorrectly specified saturated and (2) another with the correctly specified saturated model -- warning, it's a huge pain and you can easily mess it up even with just a few variables
+
+\end{frame}
+
+
+
+\begin{frame}{Misspecified Saturated OLS Regression}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.3]{./lecture_includes/saturated_reg3}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Misspecified Saturated OLS Regression}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.1]{./lecture_includes/combined_saturated1.jpg}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Comically Long Saturated OLS Regression}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.26]{./lecture_includes/stata_full_code}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Correctly Saturated OLS Regression}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.1]{./lecture_includes/combined_saturated2.jpg}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Regression adjustment}
+
+\begin{itemize}
+
+\item Notice how the same regression (fully interacted) led to \emph{both} the ATE and the ATT?
+\item That means if you don't state ahead of time which parameter you want, how are you going to know how to set it up, and how will you know how to recover it?
+\item Thankfully software exists that does this for you called ``regression adjustment'' by Wooldridge (2010) or Oaxaca-Blinder (Kline 2011; Graham and Pinto 2022) 
+\item In Stata teffects, you can just the \texttt{ra} to get it -- see \texttt{comparison.do}
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Matching}
+
+\begin{itemize}
+
+\item Now let's estimate the ATT (\$1980) using nearest neighbor matching by minimizing Mahalanobis distance on age, GPA, polynomials and interaction
+\item One line in Stata using \texttt{teffects} and only 1 match (variance is simple to estimate until we use matches multiple times, then the variance grows)
+\item In R, the package is \texttt{Matching}, not sure in python
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Matching Estimation}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.1]{./lecture_includes/combined_kernels_maha.jpg}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Commentary}
+
+\begin{itemize}
+
+\item Technically I was only ``fully interacting'' -- full saturation would be to interact the treatment dummy with every value of the covariates yielding a huge number of parameters likely that cannot be estimated
+\item Regression adjustment within -teffects- will do this for you
+\item But note, with heterogeneity you have to use the fully saturated model (I just hadn't dummied every value of the covariates) to get both the ATE and the ATT
+\item Otherwise you are imposing strong and unnecessary assumptions on the data that the treatment effects are the same for all values of $X$ and constant treatment effects so that the single coefficient is the ATE and the ATT
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Commentary}
+
+\begin{itemize}
+
+\item Unconfoundedness requires that you \emph{know} and \emph{include} all confounders to adjust comparisons when estimating treatment effects
+\item Without a prior behavioral model guiding you, it's very hard to defend conditional independence (borderline disingenuous) 
+\item If you are unwilling to use DAGs, you may want to ask yourself why you are comfortable running regressions with covariates?
+
+\end{itemize}
+
+\end{frame}
+
+		  
 
 \begin{frame}{Failure of econometric estimators (LaLonde 1986)}
 	
@@ -2981,8 +3332,6 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \imageframe{./lecture_includes/dw_4.pdf}
 \imageframe{./lecture_includes/dw_5.pdf}
 \imageframe{./lecture_includes/dw_6.pdf}
-
-
 
 
 

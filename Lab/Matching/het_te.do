@@ -42,11 +42,8 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	gen delta = y1 - y0
 
 	su delta // ATE = 2500
-<<<<<<< HEAD
 	su delta if treat==1 // ATT = 1980
-=======
 	su delta if treat==1 // ATT = 1979
->>>>>>> 804d709acf05851a830892820199d63ce98f3403
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
