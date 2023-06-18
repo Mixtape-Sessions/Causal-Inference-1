@@ -27,7 +27,7 @@ b. Further, show baseline covariate balance on the following variables: `re74`, 
 
 3. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
 
-4. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement, (ii) nearest neighbor matchting Mahanalobis distance minimization with and without bias adjustment and (iv) regression adjustment, estimate the ATT. You should use the same covariates as part b. 
+4. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement, (ii) nearest neighbor matching Mahanalobis distance minimization with and without bias adjustment and (iv) regression adjustment, estimate the ATT. You should use the same covariates as part b. 
 
 
 *Note: for Stata, you can use `-teffects-` for these. For R, you can use the `{MatchIt}` and `{Matching}` packages*

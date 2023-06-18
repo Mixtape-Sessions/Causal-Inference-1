@@ -49,9 +49,9 @@ use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
   
 *-> 1. Simple additive control model
 
-  reg re78 treaage agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, r
+  reg re78 treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, r
 
-*-> 1. Inverse propensity score weighting
+*-> 2. Inverse propensity score weighting
   logit treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75
   
   * predict propensity score
@@ -69,7 +69,7 @@ use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
 
   reg re78 i.treat [aw=inv_ps_weight], r
 
-*-> 2. Inverse propensity score weighting with trimming
+*-> 3. Inverse propensity score weighting with trimming
 twoway (histogram pscore if treat==1,  color(green)) ///
        (histogram pscore if treat==0,  ///
 	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
@@ -79,12 +79,18 @@ twoway (histogram pscore if treat==1,  color(green)) ///
   reg re78 i.treat [aw=inv_ps_weight], r
   restore
 
-*-> 3. Propensity Score Matching
+*-> 4(i). Propensity Score Matching
   teffects psmatch (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, logit), atet gen(ps_cps) nn(1)
 
-*-> 4. Abadie and Imbens nearest neighbor matching with bias adjustment
-teffects nnmatch (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet nn(1) metric(maha) biasadj(age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75)
+*-> 4(ii). Abadie and Imbens nearest neighbor matching with bias adjustment
+teffects nnmatch (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet nn(1) metric(maha) 
   
+teffects nnmatch (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet nn(1) metric(maha) biasadj(age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75)
+
+*-> 4(iii). Regression adjustment
+teffects ra (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet
+ 
+ssc install cem
 *-> 5. Coarsened Exact Matching
   cem age (10 20 30 40 60) agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, treatment(treat) 
   reg re78 treat [iweight=cem_weights], robust
