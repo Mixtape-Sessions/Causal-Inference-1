@@ -35,7 +35,6 @@
 
 	su delta // ATE = 2500
 	su delta if treat==1 // ATT = 1980
-	su delta if treat==1 // ATT = 1979
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'

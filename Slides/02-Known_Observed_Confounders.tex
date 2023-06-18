@@ -2393,35 +2393,19 @@ How far away on the propensity score will you use is what makes some of the diff
 
 \subsection{Regressions}
 
-\begin{frame}{OLS with controls}
-
-\begin{itemize}
-
-\item Most common causal model, arguably, is OLS with covariate controls used to establish mean exogeneity and eliminate omitted variable bias
-
-\begin{eqnarray*}
-Y_{it} = \alpha + \delta D_{it} + \beta X_{it} + \varepsilon_{it}
-\end{eqnarray*}
-
-\item This as it turns out is related to what we've discovered but the ways that is different matter a lot for estimation and unbiasedness
-
-\end{itemize}
-
-\end{frame}
 
 
 \begin{frame}{Interpreting OLS coefficients}
 
-\begin{itemize}
-
-\item OLS can do a lot of things, but one thing it does it find the best linear fit of the data
-\item Finding the best linear fit is the same as finding the counterfactual, so to get OLS to serve that function is another task
 
 		\begin{align*}
 		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
 		\end{align*}
 
-\item When we estimate this model, it can be easily visualized with data
+\begin{itemize}
+\item Most common causal model, arguably, is OLS with covariate controls used to establish mean exogeneity and eliminate omitted variable bias
+\item OLS can do a lot of things, but one thing it does it find the best linear fit of the data
+\item Finding the best linear fit is not the same as finding the counterfactual, so to get OLS to serve that function is another task
 
 \end{itemize}
 
