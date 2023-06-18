@@ -2403,7 +2403,7 @@ How far away on the propensity score will you use is what makes some of the diff
 		\end{align*}
 
 \begin{itemize}
-\item Most common causal model, arguably, is OLS with covariate controls used to establish mean exogeneity and eliminate omitted variable bias
+\item Most common causal model is OLS with covariate controls 
 \item OLS can do a lot of things, but one thing it does it find the best linear fit of the data
 \item Finding the best linear fit is not the same as finding the counterfactual, so to get OLS to serve that function is another task
 
@@ -2431,13 +2431,11 @@ How far away on the propensity score will you use is what makes some of the diff
 
 \begin{itemize}
 
-\item Interpreting the OLS coefficient in bivariate regression also has a simple express as a scaled covariance:
+\item Interpreting the OLS coefficient in bivariate regression is written out as a scaled covariance:
 
  $$\widehat{\beta_1}=\frac{Cov(Y_i,X_i)}{Var(X_i)}$$
  
- \item But what about when we are looking at a multivariate regression -- too many dimensions to visualize it
- \item A trick called the Frisch-Waugh-Lovell (FWL) theorem will turn the multivariate regression into the simple bivariate one
-\item FWL also helps us interpret $\widehat{\beta}_1$ when there are covariates
+ \item But when we are looking at a multivariate regression, what is it?
  
  \end{itemize}
  
@@ -2446,8 +2444,10 @@ How far away on the propensity score will you use is what makes some of the diff
  \begin{frame}{Applying FWL theorem}
 
 \begin{itemize}
-\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem'', as does Filoso (2013)
-\item Filoso (2013) has an excellent simplification of what is a historically complex proof
+\item Frisch-Waugh-Lovell also helps us interpret $\widehat{\beta}_1$ when there are covariates
+ \item Use the FWL theorem to turn the multivariate regression coefficient into the simple bivariate one
+\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem''
+\item Filoso (2013) has an excellent proof
 \end{itemize}
 
 \end{frame}
@@ -2457,13 +2457,12 @@ How far away on the propensity score will you use is what makes some of the diff
 \begin{frame}{Applying FWL theorem}
 
 	\begin{itemize}
-	\item FWL theorem concerns multiple linear regression and helps us interpret regression coefficients with multiple controls.
 	\item Can we estimate the causal effect of family size on labor supply by regressing labor supply (\texttt{Y}) on family size (\texttt{X})?
 		\begin{eqnarray*}
 		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
 		\end{eqnarray*}
-	\item If family size is random, then number of kids is uncorrelated with the unobserved error term, which means we can interpret $\widehat{\beta_1}$ as the ATE.
-	\item But how do we interpret $\widehat{\beta_1}$ if \texttt{family size} is non-random?  
+	\item If family size is random, then we can interpret $\widehat{\beta_1}$ as the ATE
+	\item But how do we interpret $\widehat{\beta_1}$ if \texttt{family size} is only conditionally random?  
 	\end{itemize}
 \end{frame}
 
@@ -2471,30 +2470,18 @@ How far away on the propensity score will you use is what makes some of the diff
 \begin{frame}{Applying FWL theorem}
 	
 	\begin{itemize}
-	\item Assume that family size is random once we condition on race, age, marital status and employment.  Then the model is:
+	\item Assume the longer model is:
 		\begin{eqnarray*}
 Y_i &=& \beta_0 + \beta_1 X_i + \gamma_1 \texttt{White}_i + \gamma_2 \texttt{Married}_i \\
 		& & + \gamma_3 \texttt{Age}_i + \gamma_4 \texttt{Employed}_i + u_i
 		\end{eqnarray*}
-	\item If we want to estimate average causal effect of family size on labor supply, we will need two things: 
-		\begin{enumerate}
-		\item a data set with all $6$ variables; 
-		\item Number of kids ($X_i$) must be randomly assigned conditional on the other $4$ variables
-		\end{enumerate}
-	\item How do we interpret $\widehat{\beta_1}$ with the additional controls?
+	\item Assume unconfoundedness and constant treatment effects so that family size is independent conditional on all controls
+	\item FWL shows that in a multivariate regression, any one coefficient fitted can be reconceived as a simple scaled covariance of the outcome and residualized treatment variable
 	\end{itemize}
 	
 \end{frame}
 
 
-\begin{frame}{Applying FWL theorem}
-
-\begin{itemize}
-\item FWL shows you that in a multivariate regression, any one coefficient fitted can be reconceived as a simple scaled covariance of two variables
-\item It says that $\widehat{\beta_1}$ is simply a scaled covariance with the $\tilde{X_1}$ residual used instead of the actual data $X$
-\end{itemize}
-
-\end{frame}
 
 
 		
@@ -2575,10 +2562,10 @@ Y_i &=& \beta_0 + \beta_1 X_i + \gamma_1 \texttt{White}_i + \gamma_2 \texttt{Mar
 \begin{frame}{Core OLS assumptions}
 
 \begin{itemize}
-\item Most common causal model is OLS with covariates is additive in controls: $$Y_i = \alpha + \delta D_i + \beta X_i + \gamma Z_i + \varepsilon_i$$
+\item Return to OLS model with additive covariates  controls: $$Y_i = \alpha + \delta D_i + \beta X_i + \gamma Z_i + \varepsilon_i$$
 \item Which average treatment effect parameter does $\widehat{\delta}$ estimate?  What assumptions are imposed by exogeneity?
-\item Next we explore the OLS model and its ability (or not) to recover a given parameter of interest
 \item This hopefully is where I'll be able to convince you of how important it is that you identify ahead of time \emph{which} causal effect
+\item This is \textbf{not} a criticism of OLS but rather of that specification above
 \end{itemize}
 
 \end{frame}
@@ -2673,7 +2660,7 @@ E[Y^0_i | D_i = 0,X_i] &=& \alpha + \beta_{01} E[X^0_i | D_i=0, X_i]
 
 \bigskip
 
-May seem somewhat unorthodox to also let $X$ have potential status, but you'll see why in a minute
+$X^1$ is the effect of $X$ on $Y^1$ when treated and $X^0$ is effect on $Y^0$ when not treated; note if treatment changes $X$ then $X^1 \neq X^0$ and it will be a problem
 
 
 \end{frame}
@@ -2681,18 +2668,18 @@ May seem somewhat unorthodox to also let $X$ have potential status, but you'll s
 
 \begin{frame}{Constant Treatment Effects and Linearity}
 
-OLS Estimator is a simple difference in conditional means:
+With a binary treatment variable, the OLS estimator is equivalent to simple difference in conditional means:
 
 \begin{eqnarray*}
 \widehat{\delta} &=& E[Y^1_i | D_i = 1, X_i]  - E[Y^0_i | D_i = 0, X_i]  \\
-\widehat{\delta} &=& \bigg (\alpha + \delta E[D_i | D_i=1, X_i] + \beta_{11} E[X^1_i | D_i=1, X_i] \bigg ) \\
+ &=& \bigg (\alpha + \delta E[D_i | D_i=1, X_i] + \beta_{11} E[X^1_i | D_i=1, X_i] \bigg ) \\
 && - \bigg (\alpha + \delta E[D_i | D_i = 0, X_i] + \beta_{01} E[X^0_i | D_i = 0, X_i] \bigg ) \\
 &=& \delta + \beta_{11} E[X^1_i | D_i =1, X_i] - \beta_{01} E[X^0_i | D_i = 0, X_i] 
 \end{eqnarray*}
 
 \bigskip
 
-OLS model requires three things: (1) linearity, (2) covariates to be independent of treatment status (i.e., treatment cannot cause covariates to change), (3) $\beta_{11}=\beta_{01}$ (homogenous treatment effects with respect to $X$).  
+OLS model requires: (1) linearity, (2)  treatment cannot change covariate values (e.g., bad controls), (3) $\beta_{11}=\beta_{01}$ (homogenous treatment effects with respect to $X$).  
 
 \end{frame}
 
@@ -2700,10 +2687,9 @@ OLS model requires three things: (1) linearity, (2) covariates to be independent
 
 \begin{itemize}
 
-\item Following code will maintain linearity but have common support violation to show OLS does not require common support, but does require linearity (it extrapolates based on functional form which is quite spectacular with correct model)
-\item I will also create heterogenous treatment effects 
-\item But I will also violate the previous requirement that $\beta_{11}=\beta_{01}$ so that you can see the bias that forms on average across 1,000 simulations
+\item Simulation will have linear DGP, heterogeneity with respect to covariates and common support violation (1000 trials)
 \item Will show a variety of estimators and specifications so that we see how to recover causal parameters with regression and matching
+\item Focus is on estimated ATE and estimated ATT under a variety of specifications
 \end{itemize}
 
 \end{frame}
@@ -2720,9 +2706,9 @@ OLS model requires three things: (1) linearity, (2) covariates to be independent
 
 \begin{itemize}
 
-\item Ordinarily we look at the coefficient on the treatment dummy to obtain an estimate
-\item But we have two parameters: the ATE is \$2500 but the ATT is \$1980
-\item How do we get both of them? Let's look at what people usually do
+\item We have two parameters: the ATE is \$2500 but the ATT is \$1980
+\item What is the specification for each of them?
+\item Let's look at what people usually do
 \item 1,000 simulations of DGP with regression estimates plotting coefficient on treatment dummy: first with just age and GPA, second with the precise model used for $Y^0$ (but not $Y^1$)
 
 \end{itemize}
@@ -2761,7 +2747,7 @@ OLS model requires three things: (1) linearity, (2) covariates to be independent
 	\end{itemize}
 	
 \item But it wasn't because homogeneity with respect to $X$ was not true (recall $Y(0)$ coefficients were not the same as $Y(1)$ coefficients)
-\item So what had we done?  Bear with me but this will pay off
+\item Why were these models biased?  Didn't we have the correct specification in the second graph? 
 \end{itemize}
 
 \end{frame}
@@ -2771,8 +2757,8 @@ OLS model requires three things: (1) linearity, (2) covariates to be independent
 Write down a simplified version of the DGP from the code:
 
 \begin{eqnarray*}
-Y^0_i &=& \alpha + \beta_{01} X^0_i + \varepsilon_i \\
-Y^1_i &=& \alpha + \beta_{01} X^0_i + \delta D_i + \beta_{11} X^1_i \times D_i + \varepsilon_i
+Y^0_i &=& \alpha + \beta_{01} X_i + \varepsilon_i \\
+Y^1_i &=& \alpha + \beta_{01} X_i + \delta D_i + \beta_{11} X_i \times D_i + \varepsilon_i
 \end{eqnarray*}
 
 \bigskip
@@ -2781,13 +2767,14 @@ Notice that the setup before, $X_i$ had a different effect on $Y^0$ than it did 
 
 \end{frame}
 
-\begin{frame}{Heterogenous treatment x`effects}
+\begin{frame}{Heterogenous treatment effects}
 
 Take conditional expectations of the \emph{potential} outcomes:
 
 \begin{eqnarray*}
-E[Y^0_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X^0_i] \\
-E[Y^1_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X^0_i] + \delta + \beta_{11} E[X^1_i \times D_i | D_i=1,X_i^1]
+E[Y^0_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X_i | D_i = 1, X_i] \\
+E[Y^1_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X_i | D_i = 1, X_i]  \\
+&& + \delta + \beta_{11} E[X_i | D_i=1,X_i]
 \end{eqnarray*}
 
 \bigskip
@@ -2799,10 +2786,10 @@ Average treatment effect is:
 \footnotesize
 
 \begin{eqnarray*}
-E[Y_i^1 | D_i, X^1_i] - E[Y^0_i | D_i, X^0_i] &=& \bigg (  \alpha + \beta_{01} E[X^0_i] + \delta + \beta_{11} E[X^1_i \times D_i | D_i=1,X_i^1] \bigg ) \\
-&& -  \bigg (\alpha + \beta_{01} E[X^0_i] \bigg ) \\
-&=& \delta + \beta_{11}  E[X^1_i | D_i=1] 
-\end{eqnarray*}assuming $X^1_i=X^0_i$. OLS model accounting for heterogeneity must be ``fully saturated''.
+E[Y_i^1 | D_i, X^1_i] - E[Y^0_i | D_i, X_i] &=& \bigg (  \alpha + \beta_{01} E[X_i] + \delta + \beta_{11} E[X_i \times D_i | D_i=1,X_i] \bigg ) \\
+&& -  \bigg (\alpha + \beta_{01} E[X_i] \bigg ) \\
+&=& \delta + \beta_{11}  E[X_i \times D_i | D_i=1] 
+\end{eqnarray*}OLS model accounting for heterogeneity must be ``fully saturated''.
 
 
 \end{frame}
@@ -2810,9 +2797,9 @@ E[Y_i^1 | D_i, X^1_i] - E[Y^0_i | D_i, X^0_i] &=& \bigg (  \alpha + \beta_{01} E
 
 
 
-\begin{frame}{Estimation}
+\begin{frame}{Regression adjustment}
 
-Our saturated OLS model is:
+This implies an interacted OLS model or what Wooldridge (2010) calls regression adjustment:
 
 \bigskip
 
@@ -2820,7 +2807,7 @@ Our saturated OLS model is:
 Y_i = \alpha + \delta D_i + \beta_{01} X_i + \beta_{11} D_i \times X_i + \varepsilon_i
 \end{eqnarray*}
 
-$\widehat{\delta}$ is the ATE but the ATT is equal to $\widehat{\delta} + \beta_{11} E[X_i | D_i = 1]$ where $E[X_i | D_i=1]$ is the sample average of $X_i$ for the treatment group
+$\widehat{\delta}$ is the ATE but the ATT is equal to $\widehat{\delta} + \widehat{\beta_{11}} E[X_i | D_i = 1]$ where $E[X_i | D_i=1]$ is the sample average of $X_i$ for the treatment group
 
 \bigskip
 
