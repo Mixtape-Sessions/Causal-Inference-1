@@ -25,7 +25,7 @@ b. Further, show baseline covariate balance on the following variables: `re74`, 
 
 2. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights for the ATT and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
 
-3. Note that the previous estimate was still negative. That is because we have extreme values for the estimated propensity score. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
+3. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
 
 4. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement, (ii) nearest neighbor matchting Mahanalobis distance minimization with and without bias adjustment and (iv) regression adjustment, estimate the ATT. You should use the same covariates as part b. 
 

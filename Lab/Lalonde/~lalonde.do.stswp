@@ -49,7 +49,7 @@ use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
   
 *-> 1. Simple additive control model
 
-  reg re78 treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, r
+  reg re78 treaage agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, r
 
 *-> 1. Inverse propensity score weighting
   logit treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75
