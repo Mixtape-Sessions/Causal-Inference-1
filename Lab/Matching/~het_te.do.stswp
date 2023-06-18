@@ -206,14 +206,14 @@ simulate att treat1 treat2 ate1 ate2 treat3 treat4 match1 match2 match3 match4, 
 
 ** Regressions ATE
 * Figure1: Control for age and gpa
-kdensity _sim_2, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2717) xline(2717, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
+
 kdensity _sim_2, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2717) xline(2717, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Control for age gpa and interactions) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim2.gph", replace
 
 
 * Figure2: Control for age and gpa, polynomials and interactions
-kdensity _sim_3, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2389) xline(2389, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
+
 kdensity _sim_3, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2388) xline(2388, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Plus higher order polynomials) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim3.gph", replace
@@ -226,68 +226,32 @@ graph export ./figures/nonsaturated_kernels_ate.jpg, as(jpg) name("Graph") quali
 
 **Saturated regressions
 * Figure3: Saturate age and gpa
-kdensity _sim_4, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2532) xline(2532, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
-graph combine ./figures/sim2.gph ./figures/sim3.gph, title(Non-saturated regressions with heterogenous treatment effects) note(ATE is 2500 and ATT is 1980)
+kdensity _sim_4, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2532) xline(2532, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Interactions w/ age gpa and interactions) ytitle("") title("") note("")
+
+graph save "Graph" "./figures/sim4.gph", replace
+
+kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500) xline(2500, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Interactions w/ quadratics and interactions) ytitle("") title("") note("")
+
+graph save "Graph" "./figures/sim5.gph", replace
+
+graph combine ./figures/sim4.gph ./figures/sim5.gph, title(Interacted regression estimates of ATE) note(ATE is 2500 from 1000 simulations.)
 graph save "Graph" "./figures/combined_kernels.gph", replace
 graph export ./figures/combined_kernels.jpg, as(jpg) name("Graph") quality(90) replace
 
 
-* Figure2: Misspecified saturated regression model
-kdensity _sim_4, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2532) xline(2532, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Coefficient on Treatment) ytitle("") title("") note("")
+* Figure2: Regression adjustment estimates of the ATT
 
-graph save "Graph" "./figures/sim4.gph", replace
-
-kdensity _sim_6, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1746) xline(1746, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Sum of Treatment Coefficients times Sample Means) ytitle("") title("") note("")
+kdensity _sim_6, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1746) xline(1746, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Shorter ATT interaction model) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim6.gph", replace
 
-graph combine ./figures/sim4.gph ./figures/sim6.gph, title(Misspecified Saturated Regressions) note(1000 Monte Carlo simulations)
-graph save "Graph" "./figures/combined_saturated1.gph", replace
-graph export ./figures/combined_saturated1.jpg, as(jpg) name("Graph") quality(90) replace
-
-
-* Figure3: Correctly specified saturated regression model
-kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2500) xline(2500, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Coefficient on Treatment) ytitle("") title("") note("")
-
-graph save "Graph" "./figures/sim5.gph", replace
-
-kdensity _sim_7, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1980) xline(1980, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Sum of Treatment Coefficients times Sample Means) ytitle("") title("") note("")
+kdensity _sim_7, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980) xline(1980, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Longer ATT interaction model) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim7.gph", replace
 
-graph combine ./figures/sim5.gph ./figures/sim7.gph, title(Correctly Specified Saturated Regressions) note(1000 Monte Carlo simulations)
-graph save "Graph" "./figures/combined_saturated2.gph", replace
-graph export ./figures/combined_saturated2.jpg, as(jpg) name("Graph") quality(90) replace
-
-
-
-* Figure4: Correctly saturated regression model
-kdensity _sim_5, xtitle(Estimated ATE) xline(2500, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(2500 2500) xline(2500, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Correctly saturated regression) ytitle("") title("") note("")
-
-graph save "Graph" "./figures/sim5.gph", replace
-
-
-graph combine ./figures/sim4.gph ./figures/sim5.gph, title(OLS Estimates of ATE with heterogenous treatment effects) subtitle(Saturated regressions) note(Two kernel density plots of estimated coefficients from 1000 simulations)
-
-graph save "Graph" "./figures/saturated_kernels_ate.gph", replace
-graph export ./figures/saturated_kernels_ate.jpg, as(jpg) name("Graph") quality(90) replace
-
-
-** Regressions ATT
-* Figure3: saturated treatment with age gpa and interactions
-kdensity _sim_6, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1746) xline(1746, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa and interactions) ytitle("") title("") note("")
-
-graph save "Graph" "./figures/sim6.gph", replace
-
-* Figure4: saturated treatment with age gpa polynomials and interactions
-kdensity _sim_7, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1972) xline(1972, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Saturated w/ age gpa polynomials and interactions) ytitle("") title("") note("")
-
-graph save "Graph" "./figures/sim7.gph", replace
-
-graph combine ./figures/sim6.gph ./figures/sim7.gph, title(OLS Estimates of ATT with heterogenous treatment effects) note(Two kernel density plots of estimated coefficients from two regressions and 1000 simulations)
-
-graph save "Graph" "./figures/combined_kernels_att.gph", replace
-graph export ./figures/combined_kernels_att.jpg, as(jpg) name("Graph") quality(90) replace
+graph combine ./figures/sim6.gph ./figures/sim7.gph, title(Regression adjustment OLS) note(1000 Monte Carlo simulations)
+graph save "Graph" "./figures/combined_ra.gph", replace
+graph export ./figures/combined_ra.jpg, as(jpg) name("Graph") quality(90) replace
 
 
 
@@ -298,7 +262,7 @@ kdensity _sim_8, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(das
 graph save "Graph" "./figures/sim_8.gph", replace
 
 * Figure6: Matching with bias adjustment
-kdensity _sim_9, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1998) xline(1998, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Age and GPA and bias adjustment) ytitle("") title("") note("")
+kdensity _sim_9, xtitle(Estimated ATT) xline(1980, lwidth(medthick) lpattern(dash) lcolor(blue) extend) xlabel(1980 1998) xline(1998, lwidth(med) lpattern(solid) lcolor(red) extend) subtitle(Age and GPA with bias adjustment) ytitle("") title("") note("")
 
 graph save "Graph" "./figures/sim_9.gph", replace
 
@@ -321,10 +285,3 @@ graph export ./figures/combined_kernels_maha.jpg, as(jpg) name("Graph") quality(
 
 capture log close 
 exit
-
-
-*-> 2. Inverse propensity score weighting with trimming
-twoway (histogram pscore if treat==1,  color(green)) ///
-       (histogram pscore if treat==0,  ///
-	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
-

@@ -21,10 +21,9 @@
 	* All combinations 
 	gen age_sq 		= age^2
 	gen gpa_sq 		= gpa^2
-	gen interaction	= gpa*age
 	gen agegpa		= age*gpa	 
 
-	gen y0 = 15000 + 10.25*age - 1*age_sq + 1000*gpa - 2 * gpa_sq + rnormal(0,5)
+	gen y0 = 15000 + 10.25*age - 1 * age_sq + 1000*gpa - 2 * gpa_sq + rnormal(0,5)
 	gen y1 = y0 + 2500 + 20 * age + 10 * gpa
 	gen delta = y1 - y0
 
