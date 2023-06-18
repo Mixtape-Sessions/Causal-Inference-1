@@ -21,13 +21,14 @@ b. Further, show baseline covariate balance on the following variables: `re74`, 
 
 ## Part 2: Selection on Observable Methods
 
-1. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights for the ATT and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
+1. Estimate a simple OLS model with `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75` as additive controls listed.  Interpret the coefficient.  
 
-2. Note that the previous estimate was still negative. That is because we have extremem values for pscore. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
+2. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights for the ATT and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
 
-3. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement, (ii) inverse probabilty weighting, (iii) nearest neighbor matchting with and without bias adjustment and (iv) regression adjustment, estimate the ATT. You should use the same covariates as part b. 
+3. Note that the previous estimate was still negative. That is because we have extreme values for the estimated propensity score. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
 
-4. Now run a simple OLS model with additive controls listed in part b.  Interpret the coefficient and compare it to what you found in part 2 question 3.  
+4. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement, (ii) nearest neighbor matchting Mahanalobis distance minimization with and without bias adjustment and (iv) regression adjustment, estimate the ATT. You should use the same covariates as part b. 
+
 
 *Note: for Stata, you can use `-teffects-` for these. For R, you can use the `{MatchIt}` and `{Matching}` packages*
 

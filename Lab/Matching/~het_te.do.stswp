@@ -29,9 +29,6 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	gen gpa_sq 		= gpa^2
 	gen interaction	= gpa*age
 	gen agegpa		= age*gpa	 
-	gen age_gpasq 	= age*gpa_sq
-	gen gpa_agesq 	= gpa*age_sq
-	gen gpasq_agesq = age_sq*gpa_sq
 
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0,5)
 	gen y1 = y0 + 2500 + 100 * age + 1000 * gpa
@@ -57,7 +54,6 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	scalar treat2 = `treat2'
 	gen treat2=`treat2'
 	
-
 	* Regression 3: Misspecified interacted regression model
 	regress earnings i.treat##c.age##c.gpa, robust
 	local ate1=_b[1.treat]
@@ -86,7 +82,7 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	* Calculate the mean of the covariates
 	egen mean_age 		= mean(age) if treat==1
 	egen mean_gpa 		= mean(gpa) if treat==1
-	egen mean_age_gpa 	= mean)(agegpa) if treat==1
+	egen mean_age_gpa 	= mean(agegpa) if treat==1
 	
 	* Calculate the ATT
 	gen treat3 = treat_coef_var + ///
@@ -96,8 +92,7 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 
 	* Drop coefficient variables
 	drop treat_coef_var age_treat_coef_var gpa_treat_coef_var age_gpa_treat_coef_var mean_gpa mean_age
-	
-	
+		
 	* Regression 4: Fully interacted regression model
 	#delimit ;
 	

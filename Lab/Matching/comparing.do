@@ -44,13 +44,13 @@
 
 	* Regression: Fully interacted regression model
 	
-#delimit ;
+	#delimit ;
 	regress earnings 	i.treat##c.age 
 						i.treat##c.age_sq
 						i.treat##c.gpa 
 						i.treat##c.gpa_sq					
 						i.treat##c.age##c.gpa;
-#delimit cr					
+	#delimit cr					
 	
 	local ate2=_b[1.treat]
 	scalar ate2 = `ate2'

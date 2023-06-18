@@ -82,7 +82,7 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	* Calculate the mean of the covariates
 	egen mean_age 		= mean(age) if treat==1
 	egen mean_gpa 		= mean(gpa) if treat==1
-	egen mean_age_gpa 	= mean)(agegpa) if treat==1
+	egen mean_age_gpa 	= mean(agegpa) if treat==1
 	
 	* Calculate the ATT
 	gen treat3 = treat_coef_var + ///

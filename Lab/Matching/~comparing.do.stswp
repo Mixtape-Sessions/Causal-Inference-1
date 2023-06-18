@@ -35,7 +35,6 @@
 
 	su delta // ATE = 2500
 	su delta if treat==1 // ATT = 1980
-	su delta if treat==1 // ATT = 1979
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
@@ -45,13 +44,13 @@
 
 	* Regression: Fully interacted regression model
 	
-#delimit ;
+	#delimit ;
 	regress earnings 	i.treat##c.age 
 						i.treat##c.age_sq
 						i.treat##c.gpa 
 						i.treat##c.gpa_sq					
 						i.treat##c.age##c.gpa;
-#delimit cr					
+	#delimit cr					
 	
 	local ate2=_b[1.treat]
 	scalar ate2 = `ate2'
@@ -118,7 +117,7 @@ gen treat4 = 	treat_coef_var + /// 0
 
 * Or use RA in teffects
 
-teffects ra (earnings age gpa age_sq gpa_sq age_gpa) (treat), atet
+teffects ra (earnings age gpa age_sq gpa_sq agegpa) (treat), atet
 
 su delta if treat==1
 su treat4
