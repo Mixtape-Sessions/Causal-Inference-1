@@ -1,7 +1,9 @@
 ** Lalonde.do ******************************************************************
+** Scott Cunningham, Baylor University and
 ** Kyle Butts, CU Boulder Economics
 ** 
 ** replicate analysis of Lalonde (1986) and Dehejia and Wahba (2002)
+** Lalonde.do ******************************************************************
 
 use "https://raw.github.com/scunning1975/mixtape/master/nsw_mixtape.dta", clear
 
@@ -90,7 +92,7 @@ teffects nnmatch (re78 age agesq agecube educ edusq marr nodegree black hisp re7
 *-> 4(iii). Regression adjustment
 teffects ra (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet
  
-ssc install cem
+ssc install cem, replace
 *-> 5. Coarsened Exact Matching
   cem age (10 20 30 40 60) agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, treatment(treat) 
   reg re78 treat [iweight=cem_weights], robust

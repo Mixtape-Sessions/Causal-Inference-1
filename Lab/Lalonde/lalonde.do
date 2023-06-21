@@ -1,4 +1,5 @@
 ** Lalonde.do ******************************************************************
+** Scott Cunningham, Baylor University and
 ** Kyle Butts, CU Boulder Economics
 ** 
 ** replicate analysis of Lalonde (1986) and Dehejia and Wahba (2002)
