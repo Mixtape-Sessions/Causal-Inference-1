@@ -15,7 +15,7 @@ gen person = _n
 * Treatment and unobserved ability
 gen 	ability = rnormal()
 
-gen 	iv = rnormal()
+gen 	iv = rnormal(5,1)
 
 gen 	school = 6 + 2*iv + 100*ability + rnormal(0,1)
 replace school = 1 if school<0

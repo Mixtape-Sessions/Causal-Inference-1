@@ -24,7 +24,7 @@
   reg lwage educ exper i.black i.south i.married i.smsa, r
   ivregress 2sls lwage exper i.black i.south i.married i.smsa (educ = i.nearc4), r first
   weakivtest
-  twostepweakiv 2sls lwage (educ = i.nearc4 ) exper i.black i.south i.married i.smsa, robust
+  twostepweakiv 2sls lwage (educ = i.nearc4 ) i.Mon i.Tue i.Wed i.Thu, robust
 
 
 *-> 2.a. Describing the compliers
