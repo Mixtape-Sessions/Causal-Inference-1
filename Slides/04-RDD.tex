@@ -814,14 +814,6 @@ We have a broad set of writings and suggestions around each of these things, and
 \end{frame}
 
 
-\begin{frame}{Local regressions with kernels}
-
-		\begin{figure}
-		\includegraphics[scale=0.24]{./lecture_includes/cattaneo_local}
-		\caption{From Cattaneo, et al. (2019)}
-		\end{figure}
-
-\end{frame}
 
 \begin{frame}{Estimation with kernels}
 
@@ -838,6 +830,16 @@ The kernel function $K(\cdot)$ assigns non-negative weights to each re-centered 
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+
+		\begin{figure}
+		\includegraphics[scale=0.4]{./lecture_includes/cattaneo_kernels}
+		\caption{From Cattaneo, et al. (2019)}
+		\end{figure}
+
+\end{frame}
+
+
 \begin{frame}{Estimation with kernels}
 
 
@@ -849,14 +851,9 @@ The kernel function $K(\cdot)$ assigns non-negative weights to each re-centered 
 
 \end{frame}
 
-\begin{frame}
 
-		\begin{figure}
-		\includegraphics[scale=0.4]{./lecture_includes/cattaneo_kernels}
-		\caption{From Cattaneo, et al. (2019)}
-		\end{figure}
 
-\end{frame}
+
 
 \begin{frame}{Polynomial order}
 
@@ -895,30 +892,35 @@ The kernel function $K(\cdot)$ assigns non-negative weights to each re-centered 
 
 
 
-
 \begin{frame}{Bias and variance}
 
-\begin{itemize}
-\item \textbf{Bias term}
+\textbf{Bias term}
 	\begin{itemize}
 	\item When we approximate the unknown functions with $p$, $h$ and $K(\cdot)$, there's some approximation error because we do now actually know the true function
 	\item Think about the earlier picture -- when we used the larger bandwidth and $p$ of zero, we came up short. Why? Because of the curvature of the functions we were approximating
 	\end{itemize}
-\item \textbf{Variance term}
+
+\end{frame}
+
+
+
+\begin{frame}{Bias and variance}
+
+ \textbf{Variance term}
 	\begin{itemize}
 	\item Variance depends on sample size and bandwidth $h$
 	\item As number of observations near the cutoff falls, the contribution of the variance term to MSE grows and vice versa
 	\item Variability of the the point estimator depends therefore on density at the cutoff (which gets back to why RD tends to be data intensive in the first place)
 	\end{itemize}
-\end{itemize}
 
 \end{frame}
+
 
 \begin{frame}{Optimal Bandwidths}
 
 \begin{itemize}
 \item Most approaches have some balancing act between bias and variance that they're trying to address
-\item Minimizing the MSE of the local estimator, $\widehat{\delta}$, given a choice of $p$ and $K(\cdot)$ has become the most popular since MSE is the sum of squared bias and variance $$MSE(\widehat{\delta}) = Bias^2(\widehat{\delta}) + Variance^(\widehat{\delta})$$
+\item Minimizing the MSE of the local estimator, $\widehat{\delta}$, given a choice of $p$ and $K(\cdot)$ has become the most popular since MSE is the sum of squared bias and variance $$MSE(\widehat{\delta}) = Bias^2(\widehat{\delta}) + Variance(\widehat{\delta})$$
 \item If you choose to minimize MSE, you are choosing $h$ -- hence ``optimal bandwidths'' $$min_{h>0} \bigg (h^{2(p+1)}B^2+\frac{1}{nh}V \bigg )$$
 \end{itemize}
 

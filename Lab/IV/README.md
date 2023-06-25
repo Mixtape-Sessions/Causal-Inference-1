@@ -12,13 +12,17 @@ Since price and quantity are simultaneous equations, we need an instrument that 
 Load the Fulton Fish Market data from `https://github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta`
 
 
-1. Run OLS of `q` on `p` controlling for indicators for day of the week (`Mon`, `Tue`, `Wed`, `Thu`).  Interpret the elasticity.  
+1. Run OLS of `q` on `p` controlling for indicators for day of the week (`Mon`, `Tue`, `Wed`, `Thu`).  Interpret the elasticity.
 
-2. Instrument for `p` using the variable `Stormy` which is an indicator for it being stormy in the past two days.  Interpret the elasticity. 
+2. Estimate the Wald estimator using reduced form and first stage regressions with day of week fixed effects using `Stormy` as the instrument. Interpret the elasticity.
 
-3. Calculate the Olea and Pfleuger effective F-statistic and interpret the strength of the instrument.
+3. Instrument for `p` using the variable `Stormy` which is an indicator for it being stormy in the past two days.  Interpret the elasticity.  Compare your answer to the Wald estimator.  
 
-4. Calculate the Anderson-Rubin confidence intervals. 
+4. Calculate the Olea and Pfleuger effective F-statistic and interpret the strength of the instrument.
+
+5. Calculate the Anderson-Rubin confidence intervals. 
+
+6. What might be a great figure of the reduced form and the first stage separately?
 
 
 # Card Replication
@@ -38,6 +42,8 @@ Load the Card data from `https://raw.github.com/scunning1975/mixtape/master/card
 5. Compare the two results, does the IV estimate move in the direction we predicted above? Use the concept of LATE to describe why the coefficient moved in the direction it did.  
 
 6. If your schooling result is a LATE, then what do the five assumptions mean in the context of this study?  
+
+7. What might be a great figure of the reduced form and the first stage separately?
 
 
 *Note: for Stata, you can use `-weakivtest-` for the Olea and Pfleuger effective F and `-twostepweakiv-` for the Anderson-Rubin confidence intervals. For R, you can use the `{}` and `{}` packages*
