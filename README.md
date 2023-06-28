@@ -19,7 +19,8 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 <b>Slides</b>
            
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/01-Foundations.pdf">Foundations of causality</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/01-Foundations.pdf">Foundations of causality</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/01-Foundations-DAG.pdf">DAGs</a>
 
 <b>Code</b>
            
@@ -47,13 +48,13 @@ In observational studies, researchers typically are not able to assume that a tr
 
 <b>Slides</b>
 
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/02-Matching_and_Weighting.pdf">Matching Methods</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/02-Known_Observed_Confounders.pdf">Known & observed confounders</a>
 
 <b>Code</b>
 
 [Titanic exercise using stratification weighting] (see lab section under Titanic)
 
-[Replication of Lalonde (1986) and Dehejia and Wahba (2002)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Thornton)
+[Replication of Lalonde (1986) and Dehejia and Wahba (2002)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Lalonde)
 
 <b>Readings</b>
 
@@ -73,7 +74,7 @@ In settings where we are not willing to assume *selection on observables*, resea
 
 <b>Slides</b>
 
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/03-IV.pdf">Instrumental Variables</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/03-IV.pdf">Instrumental Variables</a>
 
 <b>Code</b>
 
@@ -92,7 +93,7 @@ One of the most desired quasi-experimental designs -- desired because it is view
 
 <b>Slides</b>
 
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/04-RDD.pdf">Regression Discontinuity Designs</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/04-RDD.pdf">Regression Discontinuity Designs</a>
 
 
 <b>Code</b>
