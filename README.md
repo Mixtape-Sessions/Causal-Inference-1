@@ -19,7 +19,7 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 <b>Slides</b>
            
-<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/01-Foundations.pdf">Foundations of causality</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/01-Foundations.pdf">Foundations of causality</a><br>
 <a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/6435975ca08883a415889c32efdb52e9bbe1d81a/Slides/01-Foundations-DAG.pdf">DAGs</a>
 
 <b>Code</b>
@@ -98,7 +98,7 @@ One of the most desired quasi-experimental designs -- desired because it is view
 
 <b>Code</b>
 
-[Replication of Hansen (2015)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Hansen)
+[Replication of Hansen (2015)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/DUI%20Recidivism)
 
 [Shiny App for RD Optimal Bandwidth](https://mixtape.shinyapps.io/RD-Bandwidth/)
 
