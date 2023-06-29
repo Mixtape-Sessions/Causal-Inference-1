@@ -18,7 +18,7 @@ gen earnings = 9841 + 1607.50 * treat + 25 * age + rnormal()
 * OLS
 reg earnings treat age, robust
 
-cap n teffects nnmatch (earnings) (treat), ate ematch(age) vce(iid) gen(match1) 
+cap n teffects nnmatch (earnings) (treat), atet ematch(age) vce(iid) gen(match1) 
 
 teffects nnmatch (earnings age) (treat), ate vce(iid) gen(match2) 
 

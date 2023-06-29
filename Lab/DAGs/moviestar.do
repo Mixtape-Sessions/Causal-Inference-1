@@ -6,6 +6,10 @@ set obs 2500
 generate beauty=rnormal()  // indepedent identical draw from standard normal distribution
 generate talent=rnormal()  // indepedent identical draw from standard normal distribution
 
+* No correlation between beauty and talent
+twoway (scatter beauty talent, mcolor(black) msize(small) msymbol(smx)), ytitle(Beauty) xtitle(Talent) subtitle(All people) 
+
+reg beauty talent
 
 * Creating the collider variable (star) 
 gen score=(beauty+talent) 

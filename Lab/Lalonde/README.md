@@ -21,12 +21,17 @@ b. Further, show baseline covariate balance on the following variables: `re74`, 
 
 ## Part 2: Selection on Observable Methods
 
-1. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Take those weights and calculate the inverse propensity-score weights and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
+1. Estimate a simple OLS model with `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75` as additive controls listed.  Interpret the coefficient.  
 
-2. Note that the previous estimate was still negative. That is because we have extremem values for pscore. For example, a control unit with pscore $=0.0001$ receives a huge weight: $(1/0.0001) = 1000$. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
+2. Fit a propensity score (logit) model using the following covariates `age + agesq + agecube + educ + educsq + marr + nodegree + black + hisp + re74 + re75 + u74 + u75`, where `u74` and `u75` are indicators for being unemployed in 1974 and 1975 (`re74`/`re75` = 0). Create a histogram showing the distribution of this propensity score separately for the treatment group as the control group. Comment on the upper and lower values of the propensity score for each group.  Which aggregate causal parameters (ATT, ATE, ATU) will suffer from overlap problems and why?
 
-3. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement and (ii) coarsened exact matching, estimate a treatment effect. You should use the same covariates as part b. 
+4. Take those weights and calculate the inverse propensity-score weights for the ATT and use these weights in a simple regression of `re78` on the treatment dummy, `treat`. 
 
-*Note: for Stata, you can use `-teffects-` command for (i) and the `-cem-` package for (ii). For R, you can use the `{MatchIt}` package*
+5. Trim the data to observations with pscore $> 0.1$ and $< 0.9$ and reestimate the inverse propensity-score weighted regression of `re78` on `treat`.
+
+6. Using (i) 1:1 nearest-neighbor propensity-score matching with replacement, (ii) nearest neighbor matching Mahanalobis distance minimization with and without bias adjustment and (iv) regression adjustment, estimate the ATT. You should use the same covariates as part b. 
+
+
+*Note: for Stata, you can use `-teffects-` for these. For R, you can use the `{MatchIt}` and `{Matching}` packages*
 
 

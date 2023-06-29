@@ -1,0 +1,240 @@
+% xcolor and define colors -------------------------
+\usepackage{xcolor}
+
+% https://www.viget.com/articles/color-contrast/
+\definecolor{purple}{HTML}{5601A4}
+\definecolor{navy}{HTML}{0D3D56}
+\definecolor{ruby}{HTML}{9a2515}
+\definecolor{alice}{HTML}{107895}
+\definecolor{daisy}{HTML}{EBC944}
+\definecolor{coral}{HTML}{F26D21}
+\definecolor{kelly}{HTML}{829356}
+\definecolor{cranberry}{HTML}{E64173}
+\definecolor{jet}{HTML}{131516}
+\definecolor{asher}{HTML}{555F61}
+\definecolor{slate}{HTML}{314F4F}
+
+% Mixtape Sessions
+\definecolor{picton-blue}{HTML}{00b7ff}
+\definecolor{violet-red}{HTML}{ff3881}
+\definecolor{sun}{HTML}{ffaf18}
+\definecolor{electric-violet}{HTML}{871EFF}
+
+% Main theme colors
+\definecolor{accent}{HTML}{00b7ff}
+\definecolor{accent2}{HTML}{871EFF}
+\definecolor{gray100}{HTML}{f3f4f6}
+\definecolor{gray800}{HTML}{1F292D}
+
+
+% Beamer Options -------------------------------------
+
+% Background
+\setbeamercolor{background canvas}{bg = white}
+
+% Change text margins
+\setbeamersize{text margin left = 15pt, text margin right = 15pt} 
+
+% \alert
+\setbeamercolor{alerted text}{fg = accent2}
+
+% Frame title
+\setbeamercolor{frametitle}{bg = white, fg = jet}
+\setbeamercolor{framesubtitle}{bg = white, fg = accent}
+\setbeamerfont{framesubtitle}{size = \small, shape = \itshape}
+
+% Block
+\setbeamercolor{block title}{fg = white, bg = accent2}
+\setbeamercolor{block body}{fg = gray800, bg = gray100}
+
+% Title page
+\setbeamercolor{title}{fg = gray800}
+\setbeamercolor{subtitle}{fg = accent}
+
+%% Custom \maketitle and \titlepage
+\setbeamertemplate{title page}
+{
+    %\begin{centering}
+        \vspace{20mm}
+        {\Large \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle}\\
+        {\large \itshape \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle}\\ \vspace{10mm}
+        {\insertauthor}\\
+        {\color{asher}\small{\insertdate}}\\
+    %\end{centering}
+}
+
+% Table of Contents
+\setbeamercolor{section in toc}{fg = accent!70!jet}
+\setbeamercolor{subsection in toc}{fg = jet}
+
+% Button 
+\setbeamercolor{button}{bg = accent}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Table and Figure captions
+\setbeamercolor{caption}{fg=jet!70!white}
+\setbeamercolor{caption name}{fg=jet}
+\setbeamerfont{caption name}{shape = \itshape}
+
+% Bullet points
+
+%% Fix left-margins
+\settowidth{\leftmargini}{\usebeamertemplate{itemize item}}
+\addtolength{\leftmargini}{\labelsep}
+
+%% enumerate item color
+\setbeamercolor{enumerate item}{fg = accent}
+\setbeamerfont{enumerate item}{size = \small}
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+
+%% itemize
+\setbeamercolor{itemize item}{fg = accent!70!white}
+\setbeamerfont{itemize item}{size = \small}
+\setbeamertemplate{itemize item}[circle]
+
+%% right arrow for subitems
+\setbeamercolor{itemize subitem}{fg = accent!60!white}
+\setbeamerfont{itemize subitem}{size = \small}
+\setbeamertemplate{itemize subitem}{$\rightarrow$}
+
+\setbeamertemplate{itemize subsubitem}[square]
+\setbeamercolor{itemize subsubitem}{fg = jet}
+\setbeamerfont{itemize subsubitem}{size = \small}
+
+% Special characters
+
+\usepackage{collectbox}
+
+\makeatletter
+\newcommand{\mybox}{%
+    \collectbox{%
+        \setlength{\fboxsep}{1pt}%
+        \fbox{\BOXCONTENT}%
+    }%
+}
+\makeatother
+
+
+
+
+
+
+% Links ----------------------------------------------
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor = accent2,
+  filecolor = accent2,
+  urlcolor = accent2,
+  citecolor = accent2,
+}
+
+
+% Line spacing --------------------------------------
+\usepackage{setspace}
+\setstretch{1.2}
+
+
+% \begin{columns} -----------------------------------
+\usepackage{multicol}
+
+
+% Fonts ---------------------------------------------
+% Beamer Option to use custom fonts
+\usefonttheme{professionalfonts}
+
+% \usepackage[utopia, smallerops, varg]{newtxmath}
+% \usepackage{utopia}
+\usepackage[sfdefault,light]{roboto}
+
+% Small adjustments to text kerning
+\usepackage{microtype}
+
+
+
+% Remove annoying over-full box warnings -----------
+\vfuzz2pt 
+\hfuzz2pt
+
+
+% Table of Contents with Sections
+\setbeamerfont{myTOC}{series=\bfseries, size=\Large}
+\AtBeginSection[]{
+        \frame{
+            \frametitle{Roadmap}
+            \tableofcontents[current]   
+        }
+    }
+
+
+% Tables -------------------------------------------
+% Tables too big
+% \begin{adjustbox}{width = 1.2\textwidth, center}
+\usepackage{adjustbox}
+\usepackage{array}
+\usepackage{threeparttable, booktabs, adjustbox}
+    
+% Fix \input with tables
+% \input fails when \\ is at end of external .tex file
+\makeatletter
+\let\input\@@input
+\makeatother
+
+% Tables too narrow
+% \begin{tabularx}{\linewidth}{cols}
+% col-types: X - center, L - left, R -right
+% Relative scale: >{\hsize=.8\hsize}X/L/R
+\usepackage{tabularx}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+% Figures
+
+% \imageframe{img_name} -----------------------------
+% from https://github.com/mattjetwell/cousteau
+\newcommand{\imageframe}[1]{%
+    \begin{frame}[plain]
+        \begin{tikzpicture}[remember picture, overlay]
+            \node[at = (current page.center), xshift = 0cm] (cover) {%
+                \includegraphics[keepaspectratio, width=\paperwidth, height=\paperheight]{#1}
+            };
+        \end{tikzpicture}
+    \end{frame}%
+}
+
+% subfigures
+\usepackage{subfigure}
+
+
+% Highlight slide -----------------------------------
+% \begin{transitionframe} Text \end{transitionframe}
+% from paulgp's beamer tips
+\newenvironment{transitionframe}{
+    \setbeamercolor{background canvas}{bg=accent!40!black}
+    \begin{frame}\color{accent!10!white}\LARGE\centering
+}{
+    \end{frame}
+}
+
+
+% Table Highlighting --------------------------------
+% Create top-left and bottom-right markets in tabular cells with a unique matching id and these commands will outline those cells
+\usepackage[beamer,customcolors]{hf-tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{fit,shapes.misc}
+
+% To set the hypothesis highlighting boxes red.
+\newcommand\marktopleft[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (0,1.5ex) {};%
+}
+\newcommand\markbottomright[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0,0) {};%
+    \tikz[accent!80!jet, ultra thick, overlay, remember picture, inner sep=4pt]
+        \node[draw, rectangle, fit=(marker-#1-a.center) (marker-#1-b.center)] {};%
+}

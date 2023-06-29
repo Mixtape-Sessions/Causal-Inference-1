@@ -96,30 +96,10 @@ Often thought to be the most ``credible'' of the observational designs, even tho
 
 	\begin{itemize}	
 	\item We want to estimate some causal effect of a treatment on some outcome
-	\item But we can't compare two groups (treated and not treated) because of the self selection (perfect doctor) which creates selection bias
+	\item But we can't compare two groups (treated and not treated) because of the self selection which creates selection bias
 	\item But what if treatment assignment was forced on units because the firm or agency uses a multi valued variable and splits the sample when units are above or below some threshold?
 	\item RDD formalizes this setup and under some assumptions will identify causal effects
 	\end{itemize}
-\end{frame}
-
-\begin{frame}{Classes of identification assumptions}
-
-
-\begin{itemize}
-\item \textbf{Independence assumption} -- largely associated with physical randomization, eliminates selection bias
-	\begin{itemize}
-	\item RCTs and A/B tests
-	\item Matching and weighting (selection on observables)
-	\item Instrumental variables
-	\end{itemize}
-\item \textbf{Restricting potential outcomes} -- largely associated with RDD, DiD and synthetic control
-	\begin{itemize}
-	\item Regression discontinuity design -- restricts $E[Y^0]$ and $E[Y^1]$ across some threshold
-	\item Difference-in-differences -- restricts $E[Y^0 | D=1]$ to change over time in a restricted way\
-	\item Synthetic control -- models $Y^0$ as a factor model
-	\end{itemize}
-\end{itemize}
-	
 \end{frame}
 
 \begin{frame}{Breakout: RDD pictures}
@@ -195,107 +175,21 @@ Help me understand the questions at the bottom of each picture by discussing wha
 	\item Anderson and Magruder (2011) look at wait times at restaurants, 
 	\item Dell and Querubin (2018) look at bombing runs in Vietnam war
 	\end{itemize}
-\item Let's summarize these at a high level
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Example: Yelp and Tripadvisor}
-
-\begin{itemize}
-\item \textbf{Basic idea}: Customers review a firm which creates an average and continuous score, but for reasons related to customer expectations, platforms round the score to the nearest star or half star
-\item \textbf{Research question}: Helps address effect selection bias related to firm quality and outcomes; estimates the effect of stars on outcomes
-\item \textbf{Application}: Yelp and Tripadvisor data and application
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Stars and Restaurant Revenue}
-
-\begin{itemize}
-
-\item Michael Luca wants to know the effect of restaurant ``stars'' on restaurant revenue
-\item Problem is, if you compare restaurants with different stars, it's almost certainly contaminated with selection bias$$E[Y^0|Star=4] \neq E[Y^0|Star=3]$$
-\item That's because people \emph{give} stars to \emph{better} restaurants which likely would have had revenue even without the star (because they're great!  Word of mouth, etc.)
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Naive comparisons}
-	
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{./lecture_includes/luca_ols}}%
-	\end{figure}
-
-	
-	
-\end{frame}
-
-
-
-\begin{frame}{Strategy: RDD}
-
-\begin{itemize}
-
-\item Luca's idea (and others) to address selection bias is to take advantage of a quirk on Yelp's website
-\item Customers review the restaurants, which creates an average score, but Yelp only displays stars based on the score rounded to nearest half star
-\item RDD will identify the LATE \emph{at} the point where firms' average score just barely tipped them over to the higher star
-
+\item Let's summarize one of them at a high level to get us going
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Rounding to nearest star}
-	
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=0.75\textwidth]{./lecture_includes/luca_model}}%
-	\end{figure}
-
-	
-	
-\end{frame}
-
-
-
-\begin{frame}{Data}
-
-\begin{itemize}
-\item \textbf{Yelp data}: Unclear how Luca got this.  Either he worked with them (possible) or he scraped the site (also possible). But this is where he gets stars and the continuous mean review
-\item \textbf{Revenue data}:Washington Department of Revenue allows him to identify 3,582 unique restaurants at the time he got the data; 143 chains
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Estimation}
-
-\begin{itemize}
-\item \textbf{Pictures}:  I will focus on the pictures for now
-\item \textbf{OLS regressions}: Luca accompanies his pictures with regression models \emph{of a particular specification}
-\end{itemize}
-
-\end{frame} 
-
-
-\begin{frame}{Rounding to nearest star}
-	
-	\begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./lecture_includes/luca_revenue}}%
-	\end{figure}
-
-\bigskip
-
-\textbf{Discussion}: Approximately how much does an additional half-star change revenue? And what is Luca's evidence?
-	
-\end{frame}
 
 
 \begin{frame}{Good Restaurants are Popular}
 
 \begin{itemize}
-\item Anderson and Magruder (2011) -- same idea. Higher rated stars have longer wait times
-\item But we still don't know -- is it the star?  Or is the underlying quality?  Stars are based on unobserved quality
-\item How will they separate selection bias from causality: Yelp average reviews, star rounding, merged wait times
+\item Anderson and Magruder (2011) wonder if higher rated stars make restaurants popular or if it's the other way around
+\item They'll look at higher rated stars effect on longer wait times
+\item But stars are based on unobserved quality
+\item They will separate selection bias from causality using rounded Yelp average reviews with merged wait times
 \end{itemize}
 
 \end{frame}
@@ -310,6 +204,17 @@ Help me understand the questions at the bottom of each picture by discussing wha
 \end{itemize}
 
 \end{frame}
+
+\begin{frame}{Yelp used to show the rounded star only}
+	
+	\begin{figure}
+  \makebox[\textwidth][c]{\includegraphics[width=0.75\textwidth]{./lecture_includes/luca_model}}%
+	\end{figure}
+
+	
+	
+\end{frame}
+
 
 \begin{frame}{Wait times and star: pictures}
 	
@@ -329,32 +234,53 @@ Help me understand the questions at the bottom of each picture by discussing wha
 	
 \end{frame}
 
-\begin{frame}{Discussion}
-
-
-\begin{enumerate}
-\item  ``Explain to me like I'm 5'' your interpretation of their conclusions.
-\item What parameter have they identified?
-\end{enumerate}
-
-\end{frame}
-
-
-
-
-
-
 
 \subsection{Identification Basics}
 
+\begin{frame}{RDD Words and Pictures}
 
-\begin{frame}{Some RDD jargon terms}
+\begin{itemize}
+
+\item Just keep in mind as do this -- RDD is a method of mimicking the experimental design, as opposed to merely a regression model
+\item There's a lot of new terminology if you're new to RDD
+\item Tons of pictures, but tons of weird concepts too
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{RDD language}
 
 \begin{itemize}
 \item \textbf{Running variable}: a usually continuous score that some firm or agency uses to assign treatments to units
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{RDD language}
+
+\begin{itemize}
 \item \textbf{Trends}: Not time trends; changing outcomes along the running variable (e.g., food gets better for restaurants with higher star ratings)
+\end{itemize}
+
+\end{frame}
+\begin{frame}{RDD language}
+
+\begin{itemize}
 \item \textbf{Cutoff} or \textbf{threshold}: a particular value at a point on the running variable above which the firm or agency assigns treatments to unit
+\end{itemize}
+
+\end{frame}
+\begin{frame}{RDD language}
+
+\begin{itemize}
 \item \textbf{Discontinuity} and/or \textbf{Jump}: Since we are \emph{estimating} breaks in the outcome right at the cutoff, and when that happens we say that there is a ``discontinuity''
+\end{itemize}
+
+\end{frame}
+\begin{frame}{RDD language}
+
+\begin{itemize}
 \item \textbf{Regression}: Many of the models are simple difference in means, local regressions from OLS or global regressions from OLS
 \end{itemize}
 
@@ -362,23 +288,7 @@ Help me understand the questions at the bottom of each picture by discussing wha
 
 
 
-
 	
-\begin{frame}{Switching equation}
-
-Recall our definitions around notation $Y$
-
-\begin{enumerate}
-\item Potential outcomes have superscripts, $Y^1_i$, $Y^0$. They refer to a person $i$ hypotheticals in worlds with or without treatment \emph{regardless if that happened}
-\item One of these two is chosen when a treatment, $D_i$, is chosen according to the switching equation $$Y_i = DY^1_i + (1-D)Y^0_i$$
-\item Observed outcomes have no superscripts, $Y_i$. They refer to a person $i$ observed outcome which is selected from one of their two potential outcomes (with binary treatments)
-\end{enumerate}
-\bigskip
-The idea of a counterfactual is based on (1), not (2)
-
-\end{frame}
-
-
 
 
 \begin{frame}{Some common types of RDD}
@@ -411,6 +321,36 @@ Might explain why the method never caught on until the 00's
 
 
 \subsection{Sharp Design}
+
+\begin{frame}{Switching equation}
+
+Recall our definitions around notation $Y$ vs $Y^0$ and $Y^1$
+
+\begin{enumerate}
+\item Potential outcomes have superscripts, $Y^1_i$, $Y_i^0$. They refer to a person $i$ hypotheticals in worlds with or without treatment \emph{regardless if that happened}
+\item One of these two is chosen when a treatment, $D_i$, is chosen according to the switching equation $$Y_i = D_iY^1_i + (1-D_i)Y^0_i$$
+\item Observed outcomes have no superscripts, $Y_i$. They refer to a person $i$ observed outcome which is selected from one of their two potential outcomes (with binary treatments)
+\end{enumerate}
+\bigskip
+The idea of a counterfactual is based on (1), not (2)
+
+\end{frame}
+
+
+\begin{frame}{Why did I bring that up?}
+
+\begin{itemize}
+
+\item Something about RDD makes the subtlety of potential outcomes even more subtle
+\item The identifying assumptions are expressed purely in terms of $E[Y^1]$ and $[Y^0]$ which we'll see
+\item But you'll be looking for changes in $E[Y]$, and so it's very easy for this to really be confusing
+\item So just remember -- we move from potential outcomes to realized outcomes based on treatment assignment
+
+\end{itemize}
+
+\end{frame}
+
+
 
 \begin{frame}{Sharp vs. Fuzzy RDD}
 	
@@ -471,34 +411,15 @@ Might explain why the method never caught on until the 00's
 \begin{frame}{Some RDD issues}
 
 \begin{itemize}
-\item \textbf{Common support}: we don't have units in treatment and control along the running variable which makes comparisons across the running variable impossible
-\item \textbf{Treatment effects}: we are estimating LATEs, like IV, because we are only estimating treatment effects \emph{at the cutoff} and that may not be informative of any other point on the running variable with extremely heterogeneity
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Some RDD issues}
-
-\begin{itemize}
-\item \textbf{Identification}: RDD does not requires the independence assumption for our estimators to ``work'', so what does it require?
-\item \textbf{Extrapolation}: RDD uses regression and nonparametric methods by comparing units just below and above the cutoff to one another
-\item \textbf{Variance vs bias}: Comparisons around the cutoff require large samples at that point, which will often require ``moving away'' from the cutoff and that re-introduces the selection bias we are concerned with
+\item \textbf{Common support}: We don't have units in treatment and control along the running variable which makes comparisons across the running variable impossible
+\item \textbf{Extrapolation}: Without common support, we extrapolate using models like regression and nonparametric methods by comparing units just below and above the cutoff to one another but this is sensitive to trends, bandwidths, and number of observations
+\item \textbf{Treatment effects}: We are estimating average treatment effects but only for people \emph{at the cutoff} and that may not be informative of any other point on the running variable with extreme heterogeneity
 \end{itemize}
 
 \end{frame}
 
 
 
-
-\begin{frame}{Extrapolation, common support and functional form}
-
-\begin{itemize}
-\item Lacking common support, we must compare units ``around the cutoff'' (i.e., $X<c_0$ and $X\geq c_0$)
-\item This requires ``extrapolation''; prediction beyond the support of the data (i.e., where treatment switches at cutoff)
-\item But since you're predicting, modeling choices like \textbf{functional form} are key and that's a structural assumption
-\end{itemize}
-
-\end{frame}
 
 \begin{frame}{Treatment assignment in the sharp RDD}
 
@@ -507,6 +428,17 @@ Might explain why the method never caught on until the 00's
 		\end{block}
 	
 \end{frame}	
+
+\begin{frame}{Extrapolation, common support and functional form}
+
+\begin{itemize}
+\item Sharp designs create common support problems because there will literally \emph{never} be a unit in treatment and control across the running variable
+\item This requires ``extrapolation''; prediction beyond the support of the data (i.e., where treatment switches at cutoff)
+\item But since you're predicting, modeling choices like \textbf{functional form} are key and that's a structural assumption
+\end{itemize}
+
+\end{frame}
+
 
 
 \begin{frame}{Treatment effect definition and estimation}
@@ -520,16 +452,9 @@ Might explain why the method never caught on until the 00's
 	\end{block}
 \end{frame}
 
-\begin{frame}{Discussion}
-
-In social policy, Medicare, age and age 65 are decent examples of a sharp RDD.
-
-\bigskip
-
-What's an example of running variables you've seen in your fields?  What's a treatment and cutoff?
 
 
-\end{frame}
+
 	
 
 
@@ -538,24 +463,30 @@ What's an example of running variables you've seen in your fields?  What's a tre
 
 \subsection{Smoothness and Identification}
 
+\begin{frame}{Classes of identification assumptions}
 
 
-\begin{frame}{Smoothness vs Treatment Effect}
-\begin{figure}
-    \centering
-    \includegraphics[width=5cm]{./lecture_includes/smoothness.png}
-    \qquad
-    \includegraphics[width=5cm]{./lecture_includes/LATE_RDD.png}
-    \caption{Smoothness of potential outcomes (left) vs estimation of LATE (right)}
-\end{figure}
-
-\textbf{Discussion}: Why is the left picture different from the right picture? Where did the two lines go?
-
-
-
+\textbf{Independence assumption} -- largely associated with physical randomization, eliminates selection bias
+	\begin{itemize}
+	\item RCTs and A/B tests
+	\item Matching and weighting (selection on observables)
+	\item Instrumental variables
+	\end{itemize}
+	
 \end{frame}
 
 
+\begin{frame}{Classes of identification assumptions}
+
+
+\textbf{Restricting potential outcomes} -- largely associated with RDD, DiD and synthetic control
+	\begin{itemize}
+	\item Regression discontinuity design -- restricts $E[Y^0]$ and $E[Y^1]$ across some threshold
+	\item Difference-in-differences -- restricts $E[Y^0 | D=1]$ to change over time in a restricted way\
+	\item Synthetic control -- models $Y^0$ as a factor model
+	\end{itemize}
+	
+\end{frame}
 
 
 \begin{frame}{Smoothness as the identifying assumption}
@@ -572,32 +503,72 @@ What's an example of running variables you've seen in your fields?  What's a tre
 \end{frame}
 
 
-\begin{frame}{Smoothness is untestable}
-	
 
-	\begin{itemize}
-	\item Smoothness lets us justify extrapolation across $c_0$ 
-	\item Average causal effect is defined \emph{at the cutoff}, but estimation uses data \emph{around the cutoff} 
-	\item IOW, identification and estimation are not the same thing -- smoothness is what gives our estimates a causal interpretation
-	\end{itemize}
-	
+
+\begin{frame}{Smoothness vs Treatment Effect}
+\begin{figure}
+    \centering
+    \includegraphics[width=5cm]{./lecture_includes/smoothness.png}
+    \qquad
+    \includegraphics[width=5cm]{./lecture_includes/LATE_RDD.png}
+    \caption{Smoothness of potential outcomes (left) vs estimation of LATE (right)}
+\end{figure}
+
+\textbf{Discussion}: Why is the left picture different from the right picture? Where did the two lines go?
+
 \end{frame}
+
 
 
 \begin{frame}{Potential and observable outcomes}
 
+\begin{itemize}
+
+\item Smoothness is about potential outcomes: 
 	\begin{itemize}
-	\item \textbf{Question}: Why doesn't a discontinuity in $Y$ at $X=c_0$ imply smoothness is violated?
-	\item \textbf{Hint}: Recall how we moved between potential and observable outcomes using the switching equation in ``perfect doctor'': $$Y_i = DY^1_i + (1-D)Y^0_i$$
-	\item \textbf{Answer}: We \emph{observe} $E[Y_i|X_i]$ but smoothness is about the performance of expected potential outcome functions, $E[Y^0_i|X_i]$ or $E[Y^1_i|X_i]$
+	\item Potential outcomes are on average smoothly changing across the threshold 
+	\item But remember: once we pass the threshold, we switch between potential outcomes
 	\end{itemize}
+\item Discontinuity is about realized outcomes: 
+	\begin{itemize}
+	\item The cutoff \emph{is the assignment mechanism}
+	\item The cutoff switches between potential outcomes
+	\item Therefore if there is a treatment effect, we can observe the \emph{realized} outcomes jump at the cutoff
+	\item If there is a treatment effect, it would be visible but it requires some extrapolation to see
+	\end{itemize}
+\end{itemize}
+
 
 \end{frame}
 
+\begin{frame}{Smoothness permits extrapolation}
+	
+
+	\begin{itemize}
+	\item Smoothness justifies the use of regression models to extrapolate missing potential outcomes from one side of the cutoff to the other (has a matching feel)
+	\item Average causal effect is defined \emph{at the cutoff}, but estimation uses data left and right \emph{around the cutoff} 
+	\item Remember: identification and estimation are not the same thing -- smoothness is what gives our estimates a causal interpretation
+	\end{itemize}
+	
+\end{frame}
+
+
+
 \section{Estimation}
 
-\subsection{Global and Local Regressions}
+\subsection{Local Regressions}
 
+\begin{frame}{Approximate the functional form}
+
+Two ways to estimate the treatment effect at $X=c_0$
+
+\bigskip
+
+		\begin{enumerate}
+		\item Use global and local regressions with $f(X_i)$ equalling a $p^{th}$ order polynomial (highly sensitive to functional form)
+		\item Nonparametric kernel methods and local linear regressions (less sensitive)
+		\end{enumerate}
+\end{frame}
 
 
 \begin{frame}{Estimation with extrapolation}
@@ -640,7 +611,7 @@ What's an example of running variables you've seen in your fields?  What's a tre
 \end{frame}
 
 
-\begin{frame}{Smooth but nonlinear conditional expected potential outcome functions}
+\begin{frame}{Smooth but nonlinear expected potential outcomes}
 	
 	\begin{itemize}
 	\item Smoothness is an assumption about the behavior of the conditional expected potential outcomes as we move across the running variable and through the cutoff
@@ -650,27 +621,36 @@ What's an example of running variables you've seen in your fields?  What's a tre
 
 \end{frame}
 
-
-\begin{frame}{Approximate the functional form}
-
-Two ways to estimate the treatment effect at $X=c_0$
-
-\bigskip
-
-		\begin{enumerate}
-		\item Use global and local regressions with $f(X_i)$ equalling a $p^{th}$ order polynomial 
-		\begin{eqnarray*}
-		Y_i&=&\alpha +\delta{D_i}  +  \beta_1x_i + \beta_2x_i^2 + \dots + \beta_px_i^p + \eta_i
-		\end{eqnarray*}
-		\item Nonparametric kernel methods
-		\end{enumerate}
+\begin{frame}{Smooth but nonlinear expected potential outcomes}
+	
+	\begin{itemize}
+	\item Suppose the nonlinear relationship is $E[Y_i^0 | X_i]=f(X_i)$ for some reasonably smooth function $f(X_i)$ (e.g., quadratic in $X$) 
+	\item In that case we'd fit the regression model:$$Y_i=f(X_i) + \delta{D_i} + \eta_i$$
+	\item $f(X_i)$ models the counterfactual values of $Y^0$ and since we are extrapolating, we need an estimator that we think is extrapolating correctly
+	\item You'll likely use higher order polynomial transformations of the running variable 
+	\end{itemize}
 \end{frame}
+
+
+
+
+
+
+
 
 \begin{frame}{Potential outcomes and nonlinear running variable}
 	
 	\begin{itemize}
-	\item We can generalize the function, $f(x_i)$, by allowing it to differ on both sides of the cutoff by including them both individually and interacting them with $D_i$.  
-	\item In that case we have:
+	\item But what if the potential outcomes aren't just nonlinear -- the nonlinearities are different for $E[Y^1]$ than they are for $E[Y^0]$
+	\item We can generalize the potential outcome expressions by allowing them to depend on the running variables, but in different ways depending on whether it is or is not treated
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Potential outcomes and nonlinear running variable}
+	
+	\begin{itemize}
+	\item This will require saturated models in which you include them both individually and interacting them with $D_i$.  
 		\begin{eqnarray*}
 		E[Y_i^0 | X_i] &=& \alpha + \beta_{01}\tilde{X}_i + \beta_{02}\tilde{X}_i^2 + \dots + \beta_{0p}\tilde{X}_i^p \\
 		E[Y_i^1 | X_i] &=& \alpha + \delta + \beta_{11}\tilde{X}_i + \beta_{12}\tilde{X}_i^2 + \dots + \beta_{1p}\tilde{X}_i^p
@@ -685,6 +665,7 @@ Two ways to estimate the treatment effect at $X=c_0$
 \begin{itemize}
 		\item Re-centering at $c_0$ ensures that the treatment effect at $X_i=c_0$ is the coefficient on $D_i$ in a regression model with interaction terms
 		\item Interactions of treatment with running variable terms, $D \times X$, where $X$ has be re-centered allows for the ``two line'' pictures we've been looking at
+		\item The sole coefficient will yield the ATE at the cutoff and it obtains this estimating by extrapolating both sides to the other
 \end{itemize}
 
 \end{frame}
@@ -706,7 +687,6 @@ Two ways to estimate the treatment effect at $X=c_0$
 
 \end{frame}
 
-
 \begin{frame}{Estimation without and with specifying nonlinear running variable}
 \begin{figure}
     \centering
@@ -721,17 +701,6 @@ Two ways to estimate the treatment effect at $X=c_0$
 \end{frame}
 
 
-
-\begin{frame}{Sharp RDD: Nonlinear Case}
-	
-	\begin{itemize}
-	\item Suppose the nonlinear relationship is $E[Y_i^0 | X_i]=f(X_i)$ for some reasonably smooth function $f(X_i)$ (e.g., quadratic in $X$) 
-	\item In that case we'd fit the regression model:$$Y_i=f(X_i) + \delta{D_i} + \eta_i$$
-	\item But what is this $f(X_i)$? It models the counterfactual values of $Y^0$ and since we are extrapolating, we need an estimator that we think is extrapolating correctly
-	\item There are 2 common ways of approximating $f(X_i)$	
-	\end{itemize}
-\end{frame}
-
 \begin{frame}{OLS estimation with 3rd order polynomial}
 	
 	\begin{figure}
@@ -741,15 +710,22 @@ Two ways to estimate the treatment effect at $X=c_0$
 	
 \end{frame}
 
+
+
 \begin{frame}{Comment about higher order polynomials}
 
 \begin{itemize}
-\item Very common to see polynomials introduced to model nonlinearities in potential outcomes
+\item If you don't have a lot of data, you will likely have to have very large bandwidths just to get the sample size up
+\item With a lot of data far from the cutoff, you'll likely overfit with a higher order polynomial series
 \item But higher order polynomials can have overfitting problems leading to poor prediction beyond the cutoff 
 \item Gelman and Imbens (2018) caution against overfitting on these global regressions (i.e., quadratics) 
+
 \end{itemize}
 
 \end{frame}
+
+
+
 
 
 \subsection{Nonparametric estimation}
@@ -838,14 +814,6 @@ We have a broad set of writings and suggestions around each of these things, and
 \end{frame}
 
 
-\begin{frame}{Local regressions with kernels}
-
-		\begin{figure}
-		\includegraphics[scale=0.24]{./lecture_includes/cattaneo_local}
-		\caption{From Cattaneo, et al. (2019)}
-		\end{figure}
-
-\end{frame}
 
 \begin{frame}{Estimation with kernels}
 
@@ -857,9 +825,20 @@ The kernel function $K(\cdot)$ assigns non-negative weights to each re-centered 
 
 \begin{itemize}
 	\item \textbf{Rectangular} uniform weights equivalent to $E[Y]$ at a given bin on $X$
-	\item \textbf{Triangular} give more importance to observations close to the center
+	\item \textbf{Triangular} draws a straight line from the threshold to the edge of the bandwidth and weights along the line
+	\item \textbf{Epanechnikov} is similar but is more like a parabola
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+
+		\begin{figure}
+		\includegraphics[scale=0.4]{./lecture_includes/cattaneo_kernels}
+		\caption{From Cattaneo, et al. (2019)}
+		\end{figure}
+
+\end{frame}
+
 
 \begin{frame}{Estimation with kernels}
 
@@ -872,14 +851,9 @@ The kernel function $K(\cdot)$ assigns non-negative weights to each re-centered 
 
 \end{frame}
 
-\begin{frame}
 
-		\begin{figure}
-		\includegraphics[scale=0.4]{./lecture_includes/cattaneo_kernels}
-		\caption{From Cattaneo, et al. (2019)}
-		\end{figure}
 
-\end{frame}
+
 
 \begin{frame}{Polynomial order}
 
@@ -918,30 +892,35 @@ The kernel function $K(\cdot)$ assigns non-negative weights to each re-centered 
 
 
 
-
 \begin{frame}{Bias and variance}
 
-\begin{itemize}
-\item \textbf{Bias term}
+\textbf{Bias term}
 	\begin{itemize}
 	\item When we approximate the unknown functions with $p$, $h$ and $K(\cdot)$, there's some approximation error because we do now actually know the true function
 	\item Think about the earlier picture -- when we used the larger bandwidth and $p$ of zero, we came up short. Why? Because of the curvature of the functions we were approximating
 	\end{itemize}
-\item \textbf{Variance term}
+
+\end{frame}
+
+
+
+\begin{frame}{Bias and variance}
+
+ \textbf{Variance term}
 	\begin{itemize}
 	\item Variance depends on sample size and bandwidth $h$
 	\item As number of observations near the cutoff falls, the contribution of the variance term to MSE grows and vice versa
 	\item Variability of the the point estimator depends therefore on density at the cutoff (which gets back to why RD tends to be data intensive in the first place)
 	\end{itemize}
-\end{itemize}
 
 \end{frame}
+
 
 \begin{frame}{Optimal Bandwidths}
 
 \begin{itemize}
 \item Most approaches have some balancing act between bias and variance that they're trying to address
-\item Minimizing the MSE of the local estimator, $\widehat{\delta}$, given a choice of $p$ and $K(\cdot)$ has become the most popular since MSE is the sum of squared bias and variance $$MSE(\widehat{\delta}) = Bias^2(\widehat{\delta}) + Variance^(\widehat{\delta})$$
+\item Minimizing the MSE of the local estimator, $\widehat{\delta}$, given a choice of $p$ and $K(\cdot)$ has become the most popular since MSE is the sum of squared bias and variance $$MSE(\widehat{\delta}) = Bias^2(\widehat{\delta}) + Variance(\widehat{\delta})$$
 \item If you choose to minimize MSE, you are choosing $h$ -- hence ``optimal bandwidths'' $$min_{h>0} \bigg (h^{2(p+1)}B^2+\frac{1}{nh}V \bigg )$$
 \end{itemize}
 

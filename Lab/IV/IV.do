@@ -1,22 +1,30 @@
 ** IV.do ***********************************************************************
 ** Kyle Butts, CU Boulder Economics
-** 
-** replicate figures and tables in Hansen 2015 AER and Graddy 1995
+** scott cunningham, baylor
+** replicate figures and tables in card and Graddy 1995
 
 * ssc install ivreg2
+* ssc install weakivtest
+* ssc install twostepweakiv
+* ssc install moremata
+
 
 *-> 1. Fulton Fish Market `Stormy' instrument
   use "https://github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta", clear
 
   reg q p i.Mon i.Tue i.Wed i.Thu, r
-  ivreg2 q i.Mon i.Tue i.Wed i.Thu (p = Stormy), r
-
+  ivregress 2sls q i.Mon i.Tue i.Wed i.Thu (p = Stormy), r first
+  weakivtest
+  twostepweakiv 2sls q (p = Stormy ) i.Mon i.Tue i.Wed i.Thu, robust
+  
 
 *-> 2. Card College instrument
   use "https://raw.github.com/scunning1975/mixtape/master/card.dta", clear
 
   reg lwage educ exper i.black i.south i.married i.smsa, r
-  ivreg2 lwage exper i.black i.south i.married i.smsa (educ = i.nearc4), r
+  ivregress 2sls lwage exper i.black i.south i.married i.smsa (educ = i.nearc4), r first
+  weakivtest
+  twostepweakiv 2sls lwage (educ = i.nearc4 ) exper i.black i.south i.married i.smsa, robust
 
 
 *-> 2.a. Describing the compliers
