@@ -19,7 +19,8 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 <b>Slides</b>
            
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/01-Foundations.pdf">Foundations of causality</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations.pdf">Foundations of causality</a><br/>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations-DAG.pdf">DAGs</a>
 
 <b>Code</b>
            
@@ -47,7 +48,7 @@ In observational studies, researchers typically are not able to assume that a tr
 
 <b>Slides</b>
 
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/02-Matching_and_Weighting.pdf">Matching Methods</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/02-Known_Observed_Confounders.pdf">Known Observed Confounders</a>
 
 <b>Code</b>
 
@@ -73,7 +74,7 @@ In settings where we are not willing to assume *selection on observables*, resea
 
 <b>Slides</b>
 
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/03-IV.pdf">Instrumental Variables</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/03-IV.pdf">Instrumental Variables</a>
 
 <b>Code</b>
 
@@ -92,12 +93,12 @@ One of the most desired quasi-experimental designs -- desired because it is view
 
 <b>Slides</b>
 
-<a href="https://raw.githubusercontent.com/Mixtape-Sessions/Causal-Inference-1/main/Slides/auxiliary/04-RDD.pdf">Regression Discontinuity Designs</a>
+<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/04-RDD.pdf">Regression Discontinuity Designs</a>
 
 
 <b>Code</b>
 
-[Replication of Hansen (2015)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Hansen)
+[Replication of Hansen (2015)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/DUI%20Recidivism)
 
 [Shiny App for RD Optimal Bandwidth](https://mixtape.shinyapps.io/RD-Bandwidth/)
 

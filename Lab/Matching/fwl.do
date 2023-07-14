@@ -28,8 +28,8 @@ reg earnings treat age gpa, robust
 * FWL auxilary regression
 reg treat age gpa, robust
 predict treat_hat
-gen treat_squiggle = treat - treat_hat
-reg earnings treat_squiggle, robust
+gen treat_tilde = treat - treat_hat
+reg earnings treat_tilde, robust
 
 * FWL in code
 
