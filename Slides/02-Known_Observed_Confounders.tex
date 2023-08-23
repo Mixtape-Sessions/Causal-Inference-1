@@ -2863,6 +2863,14 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
 
 \end{frame}
 
+\begin{frame}{Great quote}
+
+\begin{quote}
+``OLS is \dots the linear projection of Y on D and X [and] provides the best linear predictor of Y given D and X (Angrist and Pishcke 2009).  However, if our goal is to conduct causal inference, then this is not, in fact, a good reason to use this method.  OLS is `best' in predicting actual outcomes, but causal inference is about predicting [fictional potential] outcomes.  \dots In other words, OLS \dots is optimal for predicting `what is'.  Instead we are interested in predicting `what would be' if treatment were assigned differently.'' - Tymon Sloczynski, Restat 2022
+\end{quote}
+
+\end{frame}
+
 
 \begin{frame}{Matching}
 
@@ -3216,104 +3224,6 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \end{frame}
 
 
-\subsection{Coarsened exact matching}
-
-
-
-\begin{frame}{Coarsened exact matching}
-	
-\begin{itemize}
-\item There are two kinds of matching as we've said
-	\begin{enumerate}
-	\item \emph{Exact matching} matches a treated unit to all of the control units with the same covariate value. Sometimes this is impossible (e.g., continuous covariate). 
-	\item \emph{Approximate matching} specifies a metric to find control units that are close to the treated unit. Requires a distance metric, such as Euclidean, Mahalanobis, or the propensity score.  All of which can be implemented in Stata's \texttt{teffects}.
-	\end{enumerate}
-\item 	Iacus, King and Porro (2011) propose another version of matching they call coarsened exact matching (CEM). Some big picture ideas
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Checking imbalance}
-
-\begin{itemize}
-\item Iacus, King and Porro (2008) say that in practice approximate matching requires setting the matching solution beforehand, then checking for imbalance after.  
-\item Start over, repeat, until the user is exhausted by checking for imbalance.
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{CEM Algorithm}
-	
-\begin{enumerate}
-\item Begin with covariates $X$. Make a copy called $X*$
-\item Coarsen $X*$ according to user-defined cutpoints or CEM's automatic binning algorithm
-	\begin{itemize}
-	\item Schooling $\rightarrow$ less than high school, high school, some college, college, post college
-	\end{itemize}
-\item Create one stratum per unique observation of $X*$ and place each observation in a stratum
-\item Assign these strata to the original data, $X$, and drop any observation whose stratum doesn't contain at least one treated and control unit
-\end{enumerate}
-
-You then add weights for stratum size and analyze without matching.
-
-\end{frame}
-
-\begin{frame}{Tradeoffs}
-	
-	\begin{itemize}
-	\item Larger bins mean more coarsening.  This results in fewer strata.  
-	\item Fewer strata result in more diverse observations within the same strata and thus higher imbalance
-	\item CEM prunes both treatment and control group units, which changes the parameter of interest.  Be transparent about this as you're not estimating the ATE or the ATT when you start pruning
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{Benefits}
-	
-	\begin{itemize}
-	\item The key benefit of CEM is that it is in a class of matching methods called \emph{monotonic imbalance bounding}
-	\item MIB methods bound the maximum imbalance in some feature of the empirical distributions by an ex ante decision by the user
-	\item In CEM, this ex ante choice is the coarsening decision
-	\item By choosing the coarsening beforehand, users can control the amount of imbalance in the matching solution
-	\item It's also wicked fast.
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Imbalance}
-	
-	\begin{itemize}
-	\item There are several ways of measuring imbalance, but here we focus on the $\mathcal{L}_1(f,g)$ measure which is$$\mathcal{L}_1(f,g) = \frac{1}{2} \sum_{l_1 \dots l_k} | f_{l_1 \dots l_k} - g_{l_1 \dots l_k} |$$where the $f$ and $g$ record the relative frequencies for the treatment and control group units.
-	\item Perfect global imbalance is indicated by $\mathcal{L}_1=0$.  Larger values indicate larger imbalance between the groups, with a maximum of $\mathcal{L}_1=1$. 
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Stata}
-	
-	\begin{itemize}
-	\item Download $\texttt{cem}$ from Stata:  \texttt{ssc install cem, replace}
-	\item You will automatically compute the global imbalance measure, as well as several unidimensional measures of imbalance, when using $\texttt{cem}$
-	\item I got a $\mathcal{L}_1=0.55$.  What does it mean?
-		\begin{itemize}
-		\item By itself, it's meaningless.  It's a reference point between matching solutions.
-		\item Once we have a matching solution, we will compare its $\mathcal{L}_1$ to 0.55 and gauge the increase in balance due to the matching solution from that difference.
-		\item Thus $\mathcal{L}_1$ works for imbalance as $R^2$ works for model fit: the absolute values mean less than comparisons between matching solutions.
-		\end{itemize}
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{More Stata}
-	
-	\begin{itemize}
-	\item Because $\texttt{cem}$ bounds the imbalance ex ante, the most important information in the Stata output is the number of observations matched.
-	\item You can also choose the coarsening as opposed to relying on the algorithm's automated binning.  
-	\item Once you have estimated the strata, you regress the outcome onto the treatment and then weight the regression by $\texttt{cem_weights}$.  For instance, $$\texttt{regress re78 treat [iweight=cem\_weight]}$$
-	\item For more on this, see Blackwell, et al. Stata journal article from 2009.  
-	\end{itemize}
-\end{frame}
-
-
-
 
 
 \section{Concluding remarks}
@@ -3386,11 +3296,11 @@ You then add weights for stratum size and analyze without matching.
 
 \end{frame}
 
-\begin{frame}{Quote from Tymon Sloczynski (Restat 2022)}
+\begin{frame}{Quote that great Tymon Sloczynski quote (Restat 2022)}
 
 \footnotesize
 \begin{quote}
-``An important motivation for using $Y=\alpha + \delta D + \beta X + \varepsilon$ and OLS is that the linear project of $Y$ on $D$ and $X$ provides the best linear predictor of $Y$ given $D$ and $X$ (Angrist and Pischke 2009). However if our goal is to conduct causal inference, then this is not, in fact, a good reason to use this method.  Ordinary least squares is ``best'' in predicting actual outcomes, but causal inference is about predicting missing [fictional] outcomes. In other words, the OLS weights are optimal for predicting ``what is''.  Instead, we are interested in predicting ``what would be'' if treatment were assigned differently.'' (Tymon Sloczynski 2022)
+``An important motivation for using $Y=\alpha + \delta D + \beta X + \varepsilon$ and OLS is that the linear project of $Y$ on $D$ and $X$ provides the best linear predictor of $Y$ given $D$ and $X$ (Angrist and Pischke 2009). However if our goal is to conduct causal inference, then this is not, in fact, a good reason to use this method.  Ordinary least squares is ``best'' in predicting actual outcomes, but causal inference is about predicting missing [fictional] outcomes. In other words, the OLS weights are optimal for predicting ``what is''.  Instead, we are interested in predicting ``what would be'' if treatment were assigned differently.'' (Tymon Sloczynski, Restat 2022)
 \end{quote}
 
 \bigskip
