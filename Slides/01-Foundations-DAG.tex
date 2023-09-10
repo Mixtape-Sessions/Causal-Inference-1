@@ -103,29 +103,20 @@
   \begin{itemize}
     \item DAGs tend to be focused more on the theory of treatment assignment in the world
     \item As such it's compatible with design-based approaches
-    \item But assumptions in design based approaches tend to emphasize selection into treatment which is not exactly what is meant here
+    \item DAGs have become extremely common in industry and machine learning, so consider my review very basic comparatively as I will use them mainly to illustrate ``good vs bad controls'' as well instrumental variables
   \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Summarizing Value of DAGs}
-
-  \begin{enumerate}
-    \item Facilitates the task of designing identification strategy for estimating average causal effects
-    \item Facilitates the task of testing compatibility of the model with your data
-    \item Visualizes the identifying assumptions which opens up the model to critical scrutiny
-  \end{enumerate}
-
-\end{frame}
 
 
 \begin{frame}{Causal model}
 
   \begin{itemize}
     \item The causal model is sometimes called the structural model, but for us, I prefer the former as it's less alienating
-    \item Think of this as more connected to the model-based approach discussed earlier
     \item It's the system of equations describing the relevant aspects of the world
     \item It necessarily is filled with causal effects associated with some particular comparative statics
+    \item Consider the following diagram representing the returns to education with simplified confounders
   \end{itemize}
 
 \end{frame}
@@ -162,47 +153,15 @@
 \end{frame}
 
 
-\begin{frame}{Colliders}
-
-  \begin{center}
-    \begin{tikzpicture}[node distance=1.5cm]
-      % nodes %
-      \node[text centered] (d) {$D$};
-      \node[right of = d, text centered] (y) {$Y$};
-      \node[above left of = d, text centered] (i) {$I$};
-      \node[left of = i, text centered] (pe) {$PE$};
-      \node[below of = pe, text centered] (b) {$B$};
-      % edges %
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1,] (i) -- (d);
-      \draw[->, line width= 1,] (pe) -- (i);
-      \draw[->, line width= 1,] (pe) -- (d);
-      \draw[->, line width= 1, dashed] (b) -- (pe);
-      \draw[->, line width= 1, dashed] (b) -- (d);
-      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
-    \end{tikzpicture}
-  \end{center}
-
-  \bigskip
-
-  Notice anything different with this DAG?  Look closely.
-  \begin{itemize}
-
-    \item $D$ is a \textbf{collider} along the path $PE\rightarrow D\leftarrow I$ (i.e., ``colliding'' at $D$)
-    \item $D$ is a \textbf{noncollider} along the path $PE\rightarrow D\rightarrow Y$
-
-  \end{itemize}
-
-\end{frame}
 
 
 
-\begin{frame}{Creating DAGs}
+\begin{frame}{Where do DAGs come from?}
 
 	\begin{itemize}
+	\item DAGs are meant to represent ``contemporary agreement among experts'' -- if you aren't willing to present your DAG before a room of experts, it's likely you shouldn't use it at all
 	\item Your DAG should be a reasonable approximation of $D$ and $Y$ parents (confounders) and direct and indirect effects of $D$ on $Y$
-	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition
-	\item Sometimes called the data generating process.
+	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition, as well as conversations with domain experts
 	\end{itemize}
 
 \end{frame}
@@ -212,14 +171,14 @@
 
 \subsection{Backdoor criterion}
 
-\begin{frame}{Research designs: Selection on observables}
+\begin{frame}{Unconfoundedness and the backdoor criterion}
 
   \begin{itemize}
 
     \item DAGs help us understand the source of problems in our observational (non-experimental) data that make inferring causality hard
-    \item But it also can help us see a way out (this whole class is a way out)
-    \item First way out is the selection on observables research design, which is best described in causal graphs using the \textbf{backdoor criterion}
-    \item Selection on observables is not technically difficult, but it does require a reasonable level of confidence in the DAG
+    \item But it also can help us see a way out in some situations
+    \item We will focus today on the unconfoundedness research design, which is best described in causal graphs with the concept of the \textbf{backdoor criterion}
+    \item As we will see, the DAG helps you solve the problem of choosing covariates for a model to resolve selection bias, but to do so requires confidence in your DAG
   \end{itemize}
 
 \end{frame}
@@ -227,7 +186,7 @@
 \begin{frame}{Confounding}
 
   \begin{itemize}
-    \item Confounding occurs when when the treatment and the outcomes have a common cause or parent which creates spurious correlation between $D$ and $Y$
+    \item Confounding occurs when when the treatment and the outcomes have a common parent node as that creates spurious correlation between $D$ and $Y$
 
           \begin{center}
             \begin{tikzpicture}
@@ -244,7 +203,7 @@
             \end{tikzpicture}
           \end{center}
 
-          \item The \emph{correlation} between $D$ and $Y$ no longer reflects the causal effect of $D$ on $Y$ because of selection bias due to a confounder
+          \item The \emph{correlation} between $D$ and $Y$ is a biased measure of the average causal effect of $D$ on $Y$ because of selection bias from the confounder (ignoring for now heterogenous treatment effects bias)
   \end{itemize}
 \end{frame}
 
@@ -252,10 +211,13 @@
 
   \begin{itemize}
     \item Confounding creates \textbf{backdoor paths} between treatment and outcome ($D\leftarrow X\rightarrow Y$) -- i.e., spurious correlations
-    \item Not the same as mediation ($D \rightarrow X \rightarrow Y$)
-    \item We can ``block'' backdoor paths by conditioning on the common cause $X$
+		\begin{itemize}
+		\item Not the same as a collider path ($D \rightarrow X \leftarrow Y$)
+		\item and not the same as a mediator path ($D \rightarrow X \rightarrow Y$)
+		\end{itemize}
+    \item We can ``block'' any particular backdoor path by conditioning on variable $X$ so long as it is not a collider
     \item Once we condition on $X$, the correlation between $D$ and $Y$ estimates the causal effect of $D$ on $Y$
-    \item Conditioning means calculating $E[Y|D=1,X]-E[Y|D=0,X]$ for each value of $X$ then combining (e.g., integrating)
+    \item Conditioning means calculating $E[Y|D=1,X]-E[Y|D=0,X]$ for each value of $X$ then combining (e.g., integrating) but we discuss this more later
 
   \end{itemize}
 
@@ -277,6 +239,7 @@
 \end{frame}
 
 
+
 \begin{frame}{Blocked backdoor paths}
 
   A backdoor path is blocked if and only if:
@@ -292,60 +255,6 @@ Note: A path which has a conditioned-on-collider can still be closed, but only w
 \end{frame}
 
 
-\begin{frame}{Examples of blocked paths}
-
-  Examples:
-  \begin{enumerate}
-    \item Conditioning on a noncollider blocks a path:
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered, rectangle, draw, thin] (x) {$X$};
-              \node[right of = x, text centered] (z) {$Z$};
-              \node[right of = z, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (x) -- (z);
-              \draw[->, line width= .5] (x) to [out=45,in=135, looseness=0.5] (y);
-            \end{tikzpicture}
-          \end{center}
-
-    \item Conditioning on a collider opens a path (i.e., creates spurious correlations):
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered] (z) {$Z$};
-              \node[right of = z, text centered, rectangle, draw, thin] (x) {$X$};
-              \node[right of = x, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (z) -- (x);
-              \draw[->, line width= .5] (y) -- (x);
-            \end{tikzpicture}
-          \end{center}
-
-    \item \emph{Not} conditioning on a collider blocks a path:
-
-          \begin{center}
-            \begin{tikzpicture}
-              [node distance=1.5cm]
-              % nodes %
-              \node[text centered] (z) {$Z$};
-              \node[right of = z, text centered] (x) {$X$};
-              \node[right of = x, text centered] (y) {$Y$};
-
-              % edges %
-              \draw[->, line width= .5] (z) -- (x);
-              \draw[->, line width= .5] (y) -- (x);
-            \end{tikzpicture}
-          \end{center}
-
-  \end{enumerate}
-\end{frame}
 
 
 \begin{frame}{Backdoor criterion}
@@ -494,20 +403,19 @@ Note: A path which has a conditioned-on-collider can still be closed, but only w
 \begin{frame}{Collider bias}
 
 \begin{itemize}
-\item You can identify average causal effects using a covariate adjustment strategy so long as you do not in the process inadvertently ``open'' backdoor paths
 \item Backdoor paths can remain open in covariate adjustment strategies through two ways:
 	\begin{enumerate}
 	\item You did not close the path because you did not condition on the confounder
 	\item Your conditioning variable opened up a previously closed backdoor path because on that path the variable was a \textbf{collider}
 	\end{enumerate}
-\item Colliders are ``bad controls''; they are often outcomes, but not always and not all outcomes create this problem
+\item Colliders are ``bad controls'' which when you control for them, \emph{create} new previously non-existent spurious correlations (not commonly discussed, even in economics)
 \item This is the risk of blindly controlling for variables (``kitchen sink regressions'')
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Movie star example of collider bias}
+\begin{frame}{Example 1: Movie stars}
 
   \alert{Important}: Since unconditioned colliders block back-door paths, what exactly does conditioning on a collider do? Let's illustrate with a fun example and some made-up data\\
   \begin{itemize}
@@ -562,7 +470,7 @@ Talent and beauty can become correlated even though they are independent
 \end{frame}
 
 
-\begin{frame}{Occupational sorting and discrimination example of collider bias}
+\begin{frame}{Example 2: Discrimination}
 
   \begin{itemize}
     \item Let's look at another example: very common for think tanks and journalists to say that the gender gap in earnings disappears once you control for occupation.
@@ -723,13 +631,13 @@ Talent and beauty can become correlated even though they are independent
                     \end{tikzpicture}
                   \end{center}
 
-            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$
+            \item Conditioning on $X_2$ opens up a new path, creating new spurious correlations between $D$ and $Y$ 
           \end{itemize}
 
           \framebreak
 
 
-    \item \textbf{Colliders could be pre-treatment covariates}
+    \item \textbf{Colliders could be pre-treatment covariates (called M-bias because it looks like an M)}
           \begin{itemize}
             \item Name the backdoor paths.  Is it open or closed?
 
@@ -788,7 +696,7 @@ Talent and beauty can become correlated even though they are independent
     \item The DAG makes testable predictions
     \item Conditional on $D$ and $I$, parental education ($PE$) should no longer be correlated with $Y$
     \item Can be hard to figure this out by hand, but software can help (e.g., Daggity.net is browser based, Causal Fusion is more advanced)
-    \item Causal algorithms tend to be DAG based and are becoming popular in industry
+    \item Causal algorithms tend to be DAG based and are becoming popular in industry 
   \end{itemize}
 
   \begin{center}
@@ -809,6 +717,41 @@ Talent and beauty can become correlated even though they are independent
       \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
     \end{tikzpicture}
   \end{center}
+
+\end{frame}
+
+
+
+
+\subsection{Concluding remarks}
+
+
+\begin{frame}{Summarizing all of this}
+
+  \begin{itemize}
+    \item Your dataset will not come with a codebook flagging some variables as ``confounders'', ``mechanisms'' and ``colliders'' because those terms are always context specific
+    \item Except for some unique situations that aren't generally applicable, you also don't always know statistically you have an omitted variable bias problem; but both of these are fatal for any application
+    \item You only know to do what you're doing based on \emph{knowledge about data generating process}.
+    \item All identification must be guided by theory, experience, observation, common sense and knowledge of institutions
+    \item DAGs absorb that information and can be then used to write out the explicit identifying model
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+
+\end{document}
+
+\begin{frame}{DAGs are not panacea}
+
+  \begin{itemize}
+    \item DAGs cannot handle, though, reverse causality or simultaneity
+    \item So there are limitations.  ``All models are wrong but some are useful''
+    \item But I think they are helpful and while not \emph{necessary}, showcase what is necessary -- assumptions
+    \item Heckman (1979) can maybe provide some justification at times
+  \end{itemize}
 
 \end{frame}
 
@@ -1178,35 +1121,89 @@ Talent and beauty can become correlated even though they are independent
 
 
 
+\begin{frame}{Colliders}
 
-\subsection{Concluding remarks}
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm]
+      % nodes %
+      \node[text centered] (d) {$D$};
+      \node[right of = d, text centered] (y) {$Y$};
+      \node[above left of = d, text centered] (i) {$I$};
+      \node[left of = i, text centered] (pe) {$PE$};
+      \node[below of = pe, text centered] (b) {$B$};
+      % edges %
+      \draw[->, line width= 1] (d) -- (y);
+      \draw[->, line width= 1,] (i) -- (d);
+      \draw[->, line width= 1,] (pe) -- (i);
+      \draw[->, line width= 1,] (pe) -- (d);
+      \draw[->, line width= 1, dashed] (b) -- (pe);
+      \draw[->, line width= 1, dashed] (b) -- (d);
+      \draw[->, line width= .5] (i) to [out=45,in=135, looseness=0.5] (y);
+    \end{tikzpicture}
+  \end{center}
 
+  \bigskip
 
-\begin{frame}{Summarizing all of this}
-
+  Notice anything different with this DAG?  Look closely.
   \begin{itemize}
-    \item Your dataset will not come with a codebook flagging some variables as ``confounders'', ``mechanisms'' and ``colliders'' because those terms are always context specific
-    \item Except for some unique situations that aren't generally applicable, you also don't always know statistically you have an omitted variable bias problem; but both of these are fatal for any application
-    \item You only know to do what you're doing based on \emph{knowledge about data generating process}.
-    \item All identification must be guided by theory, experience, observation, common sense and knowledge of institutions
-    \item DAGs absorb that information and can be then used to write out the explicit identifying model
+
+    \item $D$ is a \textbf{collider} along the path $PE\rightarrow D\leftarrow I$ (i.e., ``colliding'' at $D$)
+    \item $D$ is a \textbf{noncollider} along the path $PE\rightarrow D\rightarrow Y$
+
   \end{itemize}
 
 \end{frame}
+\begin{frame}{Examples of blocked paths}
 
-\begin{frame}{DAGs are not panacea}
+  Examples:
+  \begin{enumerate}
+    \item Conditioning on a noncollider blocks a path:
 
-  \begin{itemize}
-    \item DAGs cannot handle, though, reverse causality or simultaneity
-    \item So there are limitations.  ``All models are wrong but some are useful''
-    \item They are also not everywhere popular (see Twitter ongoing debates which have descended into light hearted jokes as well as aggressive debates)
-    \item But I think they are helpful and while not \emph{necessary}, showcase what is necessary -- assumptions
-    \item Heckman (1979) can maybe provide some justification at times
-  \end{itemize}
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered, rectangle, draw, thin] (x) {$X$};
+              \node[right of = x, text centered] (z) {$Z$};
+              \node[right of = z, text centered] (y) {$Y$};
 
+              % edges %
+              \draw[->, line width= .5] (x) -- (z);
+              \draw[->, line width= .5] (x) to [out=45,in=135, looseness=0.5] (y);
+            \end{tikzpicture}
+          \end{center}
+
+    \item Conditioning on a collider opens a path (i.e., creates spurious correlations):
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered] (z) {$Z$};
+              \node[right of = z, text centered, rectangle, draw, thin] (x) {$X$};
+              \node[right of = x, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5] (z) -- (x);
+              \draw[->, line width= .5] (y) -- (x);
+            \end{tikzpicture}
+          \end{center}
+
+    \item \emph{Not} conditioning on a collider blocks a path:
+
+          \begin{center}
+            \begin{tikzpicture}
+              [node distance=1.5cm]
+              % nodes %
+              \node[text centered] (z) {$Z$};
+              \node[right of = z, text centered] (x) {$X$};
+              \node[right of = x, text centered] (y) {$Y$};
+
+              % edges %
+              \draw[->, line width= .5] (z) -- (x);
+              \draw[->, line width= .5] (y) -- (x);
+            \end{tikzpicture}
+          \end{center}
+
+  \end{enumerate}
 \end{frame}
-
-
-
-
-\end{document}
