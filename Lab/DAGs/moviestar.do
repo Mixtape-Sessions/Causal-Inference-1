@@ -22,9 +22,9 @@ twoway (scatter beauty talent, mcolor(black) msize(small) msymbol(smx)), ytitle(
 
 * Regressions
 
-reg beauty talent // uncorrelated
-reg beauty talent if star==1 // correlated
-reg beauty talent if star==0 // correlated
+reg beauty talent 				// uncorrelated
+reg beauty talent if star==1 	// correlated
+reg beauty talent if star==0 	// correlated
 
 * It is not just caused by sample selection; it's caused by collider
 
