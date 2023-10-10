@@ -91,7 +91,12 @@ teffects nnmatch (re78 age agesq agecube educ edusq marr nodegree black hisp re7
 *-> 4(iii). Regression adjustment
 teffects ra (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet
  
+
+capture log close
+exit
+
 ssc install cem, replace
+
 *-> 5. Coarsened Exact Matching
   cem age (10 20 30 40 60) agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, treatment(treat) 
   reg re78 treat [iweight=cem_weights], robust
