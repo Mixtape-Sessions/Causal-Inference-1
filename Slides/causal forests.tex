@@ -1194,8 +1194,98 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
     \item Achieves a more "honest" treatment effect estimate.
     \item Mitigates the risk of the model being overly optimistic about its own performance.
     \item The tree structure is determined without "peeking" at treatment effect outcomes, minimizing the likelihood of identifying false patterns.
+    \item Let's walk through a numerical example together to see if we understand
 \end{itemize}
 \end{frame}
+
+\subsection{Numerical Example: Understanding Honesty}
+
+\begin{frame}
+\frametitle{1. The Dataset}
+\begin{itemize}
+    \item Dataset of 1,000 individuals.
+    \item Variables:
+    \begin{itemize}
+        \item \textbf{GPA} (continuous, ranging from 1.0 to 4.0)
+        \item \textbf{Age} (multivalued, ranging from 20 to 60 years)
+    \end{itemize}
+    \item Outcome: \textbf{Wages}
+    \item Treatment: \textbf{Job Training Program}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{2. Data Splitting}
+\begin{itemize}
+    \item Split the data into two parts:
+    \begin{itemize}
+        \item \textbf{Splitting Sample}: 500 individuals
+        \item \textbf{Estimation Sample}: 500 individuals
+    \end{itemize}
+    \item Randomly assign individuals to each sample.
+    \item Each sample is representative of the overall data distribution.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{3. Tree Building with the Splitting Sample}
+\begin{itemize}
+    \item Using the splitting sample:
+    \begin{itemize}
+        \item First split might be on GPA, say GPA $< 3.0$ vs. GPA $\geq 3.0$.
+        \item Within each GPA subgroup, further splits might be on age, e.g., Age $< 30$ vs. Age $\geq 30$.
+    \end{itemize}
+    \item End up with leaves representing specific combinations, e.g., GPA $< 3.0$ and Age $< 30$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What the Algorithm IS Doing}
+\begin{itemize}
+    \item At each node, it evaluates \textbf{all possible splits} for every variable.
+    \item The split criterion, e.g., maximizing the difference in treatment effects, determines the "best" split.
+    \item Once the best split is chosen, data divides accordingly, creating two child nodes.
+    \item The process continues recursively, now evaluating potential splits at the child nodes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What the Algorithm is NOT Doing}
+\begin{itemize}
+    \item It does \textbf{not} make a split, then backtrack and try another split at the same node.
+    \item It does \textbf{not} randomly choose a split without evaluating its quality.
+    \item It does \textbf{not} use the same data for both determining the best split and estimating the treatment effect, thanks to the "honesty" principle.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summarizing the Process}
+\begin{itemize}
+    \item The algorithm's objective is to find splits that best segregate data based on the difference in treatment effects.
+    \item This involves thorough evaluations at each node, ensuring the best possible decision at every step.
+    \item While it might sound computationally intensive, modern computing power and algorithmic optimizations make this feasible. However, the process can take time, especially with large datasets or numerous variables.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{4. Treatment Effect Estimation with the Estimation Sample}
+\begin{itemize}
+    \item Apply the tree structure to the estimation sample.
+    \item For each individual in a leaf, compute the difference in wages between those who underwent the job training and those who didn't.
+    \item This difference provides the treatment effect for individuals in that specific leaf.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{5. Intuitive Takeaway}
+\begin{itemize}
+    \item The tree structure was decided without knowing the exact treatment effect in the estimation sample.
+    \item By keeping the structure and effect estimation separate, we minimize the risk of "chasing" random patterns in the data.
+    \item This ensures a robust and "honest" estimate of treatment effects.
+\end{itemize}
+\end{frame}
+
 
 
 
