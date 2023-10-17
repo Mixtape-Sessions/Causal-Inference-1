@@ -1146,34 +1146,54 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \end{itemize}
 \end{frame}
 
+\subsection{Understanding Honesty in Causal Forests}
+
 \begin{frame}
-\frametitle{Data Splitting in Honest Causal Trees}
+\frametitle{1. Data Splitting}
 \begin{itemize}
-\item Split your dataset randomly into two equal halves.
-\item One half (splitting sample) is used to decide the tree structure.
-\item The other half (estimation sample) is used to estimate treatment effects.
-\item This division ensures unbiasedness and reduces overfitting.
+    \item The data is divided into two distinct parts:
+    \begin{itemize}
+        \item \textbf{Splitting Sample}: Used to structure the tree.
+        \item \textbf{Estimation Sample}: Used to compute treatment effects.
+    \end{itemize}
+    \item This split ensures a clear distinction between the model's structure and its performance evaluation.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Benefits of Data Splitting}
+\frametitle{2. Tree Building with the Splitting Sample}
 \begin{itemize}
-\item Provides a check against over-optimism.
-\item Ensures that treatment effect estimates are based on fresh, unseen data.
-\item Though each half has reduced data, the benefits in terms of model robustness are significant.
-\item In causal forests, each data point ends up being in the estimation sample for many trees.
+    \item The tree's structure (i.e., where to make splits based on covariates) is decided using the splitting sample.
+    \item At this stage, the algorithm is \textbf{not} evaluating treatment effects.
+    \item It's focusing on defining the "framework" based on covariates and potential treatment interactions.
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{3. Treatment Effect Estimation with the Estimation Sample}
+\begin{itemize}
+    \item The pre-constructed tree is now applied to the estimation sample.
+    \item As each data point lands in a leaf node, the treatment effect within that leaf is computed.
+    \item This is done by calculating the difference in outcomes between the treated and control groups within the leaf.
+\end{itemize}
+\end{frame}
 
 \begin{frame}
-\frametitle{Splitting Criteria in Causal Trees}
+\frametitle{4. The Intuition Behind Honesty}
 \begin{itemize}
-    \item Traditional trees split nodes to optimize prediction.
-    \item Causal trees have a different objective: to maximize differences in treatment effects.
-    \item This involves finding covariate splits where treatment and control groups have notably different outcomes.
-    \item The goal is to highlight areas of the covariate space with the most pronounced or variable treatment effects.
+    \item The splitting sample sets the "stage" or "framework."
+    \item The estimation sample acts as the "actors" that play out within that framework.
+    \item By separating these roles, the model's structure isn't biased by the treatment effects it later evaluates.
+    \item This approach guards against overfitting and provides a more genuine estimate of treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Implication of Honesty}
+\begin{itemize}
+    \item Achieves a more "honest" treatment effect estimate.
+    \item Mitigates the risk of the model being overly optimistic about its own performance.
+    \item The tree structure is determined without "peeking" at treatment effect outcomes, minimizing the likelihood of identifying false patterns.
 \end{itemize}
 \end{frame}
 
