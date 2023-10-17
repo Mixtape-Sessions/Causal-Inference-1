@@ -1,0 +1,469 @@
+\documentclass{beamer}
+
+\input{preamble.tex}
+\usepackage{breqn} % Breaks lines
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\usepackage{pdfpages} % \includepdf
+
+\usepackage{listings} % R code
+\usepackage{verbatim} % verbatim
+
+% Video stuff
+\usepackage{media9}
+
+% packages for bibs and cites
+\usepackage{natbib}
+\usepackage{har2nat}
+\newcommand{\possessivecite}[1]{\citeauthor{#1}'s \citeyearpar{#1}}
+\usepackage{breakcites}
+\usepackage{alltt}
+
+% tikz
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{calc, positioning, decorations.pathreplacing, arrows.meta, intersections}
+\pgfdeclarelayer{bg}
+\pgfdeclarelayer{back}
+\pgfdeclarelayer{fg}
+\pgfsetlayers{bg,main,fg,back}
+\usetikzlibrary{shapes,arrows}
+
+% Setup math operators
+\DeclareMathOperator{\E}{E} \DeclareMathOperator{\tr}{tr} \DeclareMathOperator{\se}{se} \DeclareMathOperator{\I}{I} \DeclareMathOperator{\sign}{sign} \DeclareMathOperator{\supp}{supp} \DeclareMathOperator{\plim}{plim}
+\DeclareMathOperator*{\dlim}{\mathnormal{d}\mkern2mu-lim}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+   \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand*\colvec[1]{\begin{pmatrix}#1\end{pmatrix}}
+
+\newcommand{\myurlshort}[2]{\href{#1}{\textcolor{gray}{\textsf{#2}}}}
+
+
+\begin{document}
+
+\imageframe{./lecture_includes/mixtape_ci_cover.png}
+
+
+% ---- Content ----
+
+\section{Causal Forests}
+
+\subsection{Introduction to causal forests}
+
+
+
+\begin{frame}
+\frametitle{Causal Forests: Bridging Machine Learning \& Causal Inference}
+
+Causal forests are \dots
+
+\begin{itemize}
+    \item A powerful tool for estimating heterogeneous treatment effects using tree-based methods.
+    \item Combining the strengths of random forests with the principles of causal inference to uncover nuanced relationships.
+    \item Addressing challenges in observational data: leveraging the unconfoundedness assumption and advanced modeling techniques.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Origins of Causal Forests}
+\begin{itemize}
+    \item Birthed from the intersection of causal inference and machine learning.
+    \item Preceded by methods like propensity score matching, regression discontinuity, and instrumental variables.
+    \item Motivated by the need for more flexible, non-parametric methods to estimate heterogeneous treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Athey and Wager: Pioneering Work on Causal Forests}
+\begin{itemize}
+    \item Susan Athey \& Stefan Wager's foundational work: "Estimation and Inference of Heterogeneous Treatment Effects using Random Forests" in 2019 JASA
+    \item Addressed challenges in traditional methods: Bias-variance trade-off and overfitting.
+    \item Introduced causal trees as building blocks for causal forests, leveraging bootstrapping and honest splitting.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Overfitting in Propensity Score Estimation}
+\begin{itemize}
+    \item Estimating propensity scores often involves logistic regression with many covariates.
+    \item Overfitting can arise with a large set of covariates relative to sample size or with high-degree interactions.
+    \item Overfitted models yield scores too close to 0 or 1, complicating matching.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Nearest Neighbor Matching \& Common Support}
+\begin{itemize}
+    \item Common support ensures overlap in propensity score distributions.
+    \item Yet, nearest neighbor matching might pair units not very close in propensity scores.
+    \item Especially problematic when untreated units greatly outnumber treated ones.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Quality of Matches}
+\begin{itemize}
+    \item Common support as measured by propensity scores doesn't guarantee high-quality matches.
+    \item This is because common support should be a concept we are thinking of as holding, not in the propensity score, but in the actual stratification of the data using the dimensions of the covariates
+    \item Units with similar propensity scores might differ on key covariates given the curse of dimensionality kicks in very quickly as we increase covariates with high dimensions.
+    \item Matching without replacement can lead to lower-quality subsequent matches.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sensitivity to Specification}
+\begin{itemize}
+	\item Recall that we are \emph{estimating} the propensity score; we don't know the truth even if we know the covariates to use for estimation
+    \item Match quality and causal estimates can be sensitive to propensity score model specification.
+    \item Minor model changes can lead to different matched samples and different matched samples means we have variation in treatment effect estimation that is due to these matching irregularities
+    \item Highlights the importance of robustness checks.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Challenges of High-Dimensional Covariate Spaces}
+\begin{itemize}
+    \item Modern datasets often have a vast number of covariates, making the "curse of dimensionality" a prominent concern.
+    \item Even with a few covariates, the curse can arise, but it's especially pronounced in high-dimensional settings.
+    \item While the assumption of unconfoundedness requires controlling for all confounders, in practice, ensuring this in high dimensions is challenging.
+    \item The "kitchen sink" approach, adding numerous covariates to control for confounding, can introduce its own problems.
+    \item Causal forests offer a flexible way to address these challenges, capturing complex relationships without the need for overly restrictive linear specifications.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Heterogeneous Treatment Effects}
+\begin{itemize}
+    \item Causal forests estimate heterogeneous treatment effects, capturing variations across subgroups.
+    \item In high-dimensional settings, treatment effects can vary across many dimensions.
+    \item Enables insights into how treatment effects manifest in different segments of the data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Adaptive Partitioning}
+\begin{itemize}
+    \item Trees partition data based on covariate values.
+    \item Causal forests adaptively find splits relevant for estimating treatment effects.
+    \item "Zooming in" on areas with pronounced or variable treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization}
+\begin{itemize}
+    \item Random forests introduce randomness via bootstrapping and random subsets of predictors.
+    \item This randomness acts as a form of regularization.
+    \item Helps prevent overfitting in high-dimensional settings.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Key Challenges in Causal Inference}
+\begin{itemize}
+    \item Confounding: Hidden biases that can skew results.
+    \item Selection bias: Non-random assignment to treatment.
+    \item Measurement error: Inaccuracies in data collection.
+\end{itemize}
+
+\bigskip
+
+If we can address the problem using covariates, then we may be in a situation to use causal forests (but not all problems fit this scenario)
+
+\end{frame}
+
+
+\subsection{Unconfoundedness and common support assumptions}
+
+\begin{frame}
+\frametitle{Assumption of Unconfoundedness}
+\begin{itemize}
+    \item Unconfoundedness: Treatment is independent of potential outcomes (i.e., as good as random) for units with identical covariate values or ``strata''.$$(Y^1, Y^0) \perp\!\!\!\perp D \mid X$$
+
+    \item Causal forests are in the ``branch'' of causal inference that assumes unconfoundedness (like DML, propensity scores, regression and matching)
+    \item But their strength is in their adaptability to large dimensions which makes them powerful tools under this assumption.
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Common Support in High Dimensions}
+\begin{itemize}
+	\item After unconfoundedness, we need ``common support'' -- non-empty cells for the entire stratification of the data based on the covariates in treatment and control
+	\item Unconfoundedness says we are allowed to use covariates for causal inference, but common supports says it's actually possible to do it because we have units in treatment and control for all dimensions of X
+    \item In high-dimensional settings, ensuring common support becomes challenging though (slide after next for more)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Target Estimand: The Conditional Average Treatment Effect (CATE)}
+\begin{itemize}
+    \item Definition: \( \tau(x) = \mathbb{E}[Y^1 - Y^0 | X = x] \)
+    \item Represents the difference in potential outcomes for treated vs. untreated units, conditioned on covariate values \(x\).
+    \item Allows us to capture heterogeneous treatment effects across different subgroups.
+    \item Causal forests excel at estimating CATE by leveraging the adaptiveness of trees to capture interactions and non-linearities in the relationship between covariates and treatment effects.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Example: Breakdown of Common Support}
+\begin{itemize}
+    \item Consider two binary covariates, sex (male/female) and age (adult/child).
+    \item Even if sex and age individually have overlap, the joint distribution (e.g., sex=0, age=1) might lack overlap.
+    \item With more covariates, gaps in joint distribution become more probable: the "curse of dimensionality."
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Table 1: Stratified sample with common support}
+
+{\renewcommand{\arraystretch}{1.1}
+\tabcolsep=1.3\tabcolsep 		
+\begin{table}\small\index{rolling!3}
+\caption{Counts and Titanic survival rates by strata and first class status.}
+\centering
+\begin{tabular}{lcc|cc|c}
+\toprule
+\multicolumn{1}{c}{\textbf{}}&
+\multicolumn{2}{c}{\textbf{First class}}&
+\multicolumn{2}{c}{\textbf{All other classes}}&
+\multicolumn{1}{c}{\textbf{}}\\
+\multicolumn{1}{l}{Strata}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Total}\\
+\midrule
+Male adult		& 175	& 0.326	& 1,492	& 0.188	& 1,667 \\
+Female adult	& 144	& 0.972	& 281	& 0.626	& 425 \\
+Male child		& 5		& 1		& 59		& 0.407 	& 64\\
+Female child	& 1		& 1		& 44		& 0.613 	& 45\\
+\midrule
+Total	observations	& 325	&&	1,876	 && 2,201\\
+\bottomrule
+\end{tabular}
+\label{tab:titanic-counts}
+\end{table}}
+
+\end{frame}
+
+\begin{frame}{Table 2: Stratified sample without common support}
+
+{\renewcommand{\arraystretch}{1.1}
+\tabcolsep=1.3\tabcolsep 		
+\begin{table}\small\index{rolling!3}
+\caption{Counts and Titanic survival rates by strata and first class status.}
+\centering
+\begin{tabular}{lcc|cc|c}
+\toprule
+\multicolumn{1}{c}{\textbf{}}&
+\multicolumn{2}{c}{\textbf{First class}}&
+\multicolumn{2}{c}{\textbf{All other classes}}&
+\multicolumn{1}{c}{\textbf{}}\\
+\multicolumn{1}{l}{Strata}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Total}\\
+\midrule
+Male adult		& 175	& 0.326	& 1,492	& 0.188	& 1,667 \\
+Female adult	& 144	& 0.972	& 281	& 0.626	& 425 \\
+Male child		& 5		& 1		& 59		& 0.407 	& 64\\
+Female child	& 0		& n/a		& 44		& 0.613 	& 44\\
+\midrule
+Total	observations	& 324	&&	1,876	 && 2,200\\
+\bottomrule
+\end{tabular}
+\label{tab:titanic-counts}
+\end{table}}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Strata vs. Partition}
+\begin{itemize}
+    \item Historically, in many statistical contexts, we use "strata" and "stratification" to refer to dividing data into subsets based on certain criteria.
+    \item In the literature on causal forests and decision trees, the term "partition" is more commonly used.
+    \item This terminology traces back to the computer science and machine learning origins of decision trees, where data is "partitioned" into subsets during the tree-building process.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why the Difference?}
+\begin{itemize}
+    \item "Stratification" often implies a deliberate, predefined division of data based on known, important criteria.
+    \item "Partitioning" in trees is more dynamic and adaptive, with divisions made based on data-driven decisions to optimize a specific objective.
+    \item While they conceptually overlap, the terms have different historical and contextual connotations.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{A Word of Caution}
+\begin{itemize}
+    \item As we delve into causal forests, be mindful of the term "partition" and its usage.
+    \item It aligns closely with "stratification," but remember the adaptive, data-driven nature of partitioning in this context.
+    \item Terminology can sometimes be a barrier, but understanding the underlying concepts bridges the gap.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Causal Forests: Addressing the Challenge}
+\begin{itemize}
+    \item Causal forests partition the covariate space, estimating effects within partitions.
+    \item Allows for local treatment effect estimation where there's overlap.
+    \item Highlights regions where common support might be violated.
+\end{itemize}
+\end{frame}
+
+
+
+\subsection{A Brief History of Trees}
+
+\begin{frame}
+\frametitle{Origins of Decision Trees: The 1960s}
+\begin{itemize}
+    \item The foundational concepts of decision trees emerged in the 1960s.
+    \item Initially explored in cognitive psychology to model human decision processes.
+    \item Used in medical decision-making to aid doctors in diagnosing diseases based on a hierarchical structure of symptoms and outcomes.
+    \item These early trees were simplistic and manually constructed, but they paved the way for algorithmic tree-building methods in the subsequent decades.
+    \item The concept gained traction as it offered a visual and interpretable way to make decisions based on multiple criteria.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Early Beginnings}
+\begin{itemize}
+    \item Ross Quinlan's ID3 in the 1980s: pioneering tree algorithm.
+    \item ID3 uses an information-theoretic approach: It selects the attribute that provides the best split (maximizing information gain) at each node, building the tree iteratively.
+    \item Real-world example: Diagnosing medical conditions. ID3 could be applied to a dataset where symptoms are attributes and diseases are classes. The tree would guide medical professionals by asking about the most informative symptoms first, helping narrow down potential diagnoses.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Classification and Regression Trees (CART)}
+\begin{itemize}
+    \item Introduced by Breiman et al. in 1986.
+    \item CART allows for the creation of binary trees for both classification (categorizing data into classes) and regression (predicting numerical values).
+    \item Uses a "greedy" approach: At each step, it selects the best split based on a specific criterion (like Gini impurity for classification or mean squared error for regression) without concern for future decisions.
+    \item Real-world example: Predicting housing prices. Using a dataset with features like house size, location, and age, CART can be used in regression mode to predict the price of a house based on these attributes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ensemble Methods and Random Forests}
+\begin{itemize}
+    \item Leo Breiman introduced Random Forests in 2001.
+    \item Random Forests are an ensemble method: They combine predictions from multiple decision trees to produce a more robust and accurate result.
+    \item The method introduces randomness in two ways: By bootstrapping samples for training each tree and by selecting a random subset of features at each split.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ensemble Methods and Random Forests Example}
+\begin{itemize}
+    \item Real-world example: Credit scoring.
+    \item  Banks use Random Forests to predict the likelihood of a loan applicant defaulting.
+    \item The model takes into account various factors like income, employment history, and credit score, aggregating insights from multiple trees to assess risk.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Boosting and Gradient Boosted Trees}
+\begin{itemize}
+    \item Boosting introduced by Schapire in 1990; later refined by Freund; is an ensemble technique that focuses on reducing bias by giving more weight to misclassified instances in subsequent models.
+    \item Gradient Boosted Trees introduced by Friedman in the late 1990s and early 2000s builds trees sequentially, where each tree tries to correct the errors made by the previous ones and uses gradient descent to minimize the loss function.
+    \item Both methods aim to improve prediction accuracy by combining weak learners (models slightly better than random guessing) to form a strong learner (a model with high predictive accuracy).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Boosting and Gradient Boosted Trees Example}
+\begin{itemize}
+    \item Real-world example: Customer churn prediction. 
+    \item Telecom companies use Gradient Boosted Trees to predict which customers are likely to terminate their services.
+    \item By analyzing data like call patterns, customer complaints, and billing information, the model identifies high-risk customers, helping companies take proactive retention measures.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Modern Use and Software Development}
+\begin{itemize}
+    \item Trees are staples in machine learning toolkits.
+    \item Libraries: scikit-learn (Python), rpart and randomForest (R).
+    \item Popular for interpretability and visualization.
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\subsection{Fundamental Machine Learning Concepts}
+
+\begin{frame}
+\frametitle{Decision Trees}
+\begin{itemize}
+    \item Flowchart-like structure used for making decisions.
+    \item Decisions made by asking a series of questions.
+    \item Comprises nodes (questions), branches (answers), and leaves (decisions/outcomes).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Random Forests}
+\begin{itemize}
+    \item An ensemble of decision trees.
+    \item Uses bootstrapped samples to build individual trees.
+    \item Aggregates predictions: majority vote or averaging.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Leaves in Trees}
+\begin{itemize}
+    \item Leaves are the terminal nodes of trees.
+    \item In causal forests, leaves estimate treatment effects.
+    \item Allows capturing heterogeneous effects across data segments.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization}
+\begin{itemize}
+    \item A technique to prevent overfitting.
+    \item In trees: limit depth, minimum samples in a leaf, randomness in feature selection.
+    \item Ensures the model generalizes well to new data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Benefits of Ensemble Methods}
+\begin{itemize}
+    \item Strength in numbers: multiple trees reduce variance.
+    \item Can capture complex, non-linear relationships.
+    \item Improved accuracy and robustness.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Decision Trees in Causal Inference}
+\begin{itemize}
+	\item Which brings us to now -- causal inference
+    \item Transition to causal inference frameworks in the 2000s.
+    \item Scholars like Susan Athey, Stefan Wager and Guido Imbens developed Causal Trees and Forests.
+\end{itemize}
+\end{frame}
+
+\end{document}
