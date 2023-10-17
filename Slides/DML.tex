@@ -474,118 +474,6 @@ Talent and beauty can become correlated even though they are independent
 \end{frame}
 
 
-\begin{frame}{Example 2: Discrimination}
-
-  \begin{itemize}
-    \item Let's look at another example: very common for think tanks and journalists to say that the gender gap in earnings disappears once you control for occupation.
-    \item But what if occupation is a collider, which it could be in a model with occupational sorting
-    \item Then controlling for occupation in a wage regression searching for discrimination can lead to all kinds of crazy results \emph{even in a simulation where we explicitly design there to be discrimination}
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{DAG}
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=1.5cm]
-      % nodes %
-      \node[text centered] (f) {$F$};
-      \node[above right of = f, text centered] (d) {$d$};
-      \node[right of = f] (y) {$y$};
-      \node[below  of = f, text centered] (o) {$o$};
-      \node[right of = o, text centered] (a) {$A$};
-
-      % edges %
-      \draw[->, line width= 1] (f) -- (d);
-      \draw[->, line width= 1] (d) -- (o);
-      \draw[->, line width= 1, dashed] (a) -- (o);
-
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1] (o) -- (y);
-      \draw[->, line width= 1, dashed] (a) -- (y);
-
-    \end{tikzpicture}
-  \end{center}
-
-  $F$ is female, $d$ is discrimination, $o$ is occupation, $y$ is earnings and $A$ is ability. Dashed lines mean the variable cannot be observed. Note, by design, being a female has no effect on earnings or occupation, and has no relationship with ability. So earnings is coming through discrimination, occupation, and ability.
-
-\end{frame}
-
-
-\begin{frame}[plain]
-
-  \begin{center}
-    \begin{tikzpicture}
-      [node distance=1.5cm]
-      % nodes %
-      \node[text centered] (f) {$F$};
-      \node[above right of = f, text centered] (d) {$d$};
-      \node[right of = f] (y) {$y$};
-      \node[below  of = f, text centered] (o) {$o$};
-      \node[right of = o, text centered] (a) {$A$};
-
-      % edges %
-      \draw[->, line width= 1] (f) -- (d);
-      \draw[->, line width= 1] (d) -- (o);
-      \draw[->, line width= 1, dashed] (a) -- (o);
-
-      \draw[->, line width= 1] (d) -- (y);
-      \draw[->, line width= 1] (o) -- (y);
-      \draw[->, line width= 1, dashed] (a) -- (y);
-
-    \end{tikzpicture}
-  \end{center}
-
-
-  Mediation and Backdoor paths
-
-  \begin{enumerate}
-
-    \item $d$ $\rightarrow o \rightarrow y$
-    \item $d$ $\rightarrow o \leftarrow A \rightarrow y$
-  \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}[plain, shrink=20]
-
-  \begin{table}[htbp]\centering
-    \scriptsize
-    \caption{Regressions illustrating collider bias with simulated gender disparity}
-    \begin{center}
-      \begin{tabular}{l*{3}{c}}
-        \toprule
-        \multicolumn{1}{l}{Covariates: }&
-        \multicolumn{1}{c}{\textbf{Unbiased combined effect}}&
-        \multicolumn{1}{c}{\textbf{Biased }}&
-        \multicolumn{1}{c}{\textbf{Unbiased wage effect only}}\\
-        \midrule
-        Female                     & -3.074*** & 0.601*** & -0.994*** \\
-                                   & (0.000)   & (0.000)  & (0.000)   \\
-        Occupation                 &           & 1.793*** & 0.991***  \\
-                                   &           & (0.000)  & (0.000)   \\
-        Ability                    &           &          & 2.017***  \\
-                                   &           &          & (0.000)   \\
-        \\
-        \midrule
-        N                          & 10,000    & 10,000   & 10,000    \\
-        Mean of dependent variable & 0.45      & 0.45     & 0.45      \\
-        \bottomrule
-      \end{tabular}
-    \end{center}
-  \end{table}
-
-  \begin{itemize}
-    \item Recall we designed there to be a discrimination coefficient of -1
-    \item If we do not control for occupation, then we get the combined effect of $d \rightarrow o \rightarrow y$ and $d  \rightarrow y$
-    \item Because it seems intuitive to control for occupation, notice column 2 - the sign flips!
-    \item We are only able to isolate the direct causal effect by conditioning on ability and occupation, but ability is unobserved
-  \end{itemize}
-
-\end{frame}
-
 \begin{frame}[allowframebreaks,plain]
 
   \begin{itemize}
@@ -744,17 +632,45 @@ Talent and beauty can become correlated even though they are independent
 
 \end{frame}
 
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/wrong_covariates}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/dogs_unconfoundedness}
+  \end{figure}
+\end{frame}
+
+
+
+
+
+
 \begin{frame}{Falsifications as a test}
 
 \begin{itemize}
 \item Covariates should not be affected by the treatment, so examining them as falsifications can help establish the credibility of unconfoundedness
 \item Falsification exercises are sometimes versions of this -- a gun control law shouldn't affect automobile theft or petty larceny or average age of the state
 \item Imbens and Rubin (2015) suggested using the lagged outcome (pre-treatment) as a way of checking, as those have similar confounder structures
-\item One study questioned a finding that obesity was contagious in social networks by estimating the same model on things that cannot be contagious like acne, headaches and height and found the same things (likely confounding existed)
+\item But just be careful because without some understanding of the treatment assignment mechanism, you could make serious mistakes
 \end{itemize}
 
 \end{frame}
 
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/trail_runner}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/trail_runner_2}
+  \end{figure}
+\end{frame}
 
 
 
@@ -763,15 +679,6 @@ Talent and beauty can become correlated even though they are independent
 \subsection{Motivating estimation with an example}
 
 
-\begin{frame}{Shifting gears}
-
-\begin{itemize}
-\item Having reviewed the fundamentals of DAGs, we will now move into the practical realm
-\item You have a non-experimental study.  You need to control for variables, but which ones?
-\item Let's work through an example together: the sinking of the Titanic
-\end{itemize}
-
-\end{frame}
 
 
 
@@ -1057,12 +964,21 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 \begin{itemize}
 \item So you want to estimate causal effects using ``controls'' -- remember our steps, though -- step 1 is to define the parameter (e.g., $ATE$, $ATT$, $ATU$)
 \item Also something called the $CATE$ -- conditional ATE which is an ATE for certain values of $X$ (e.g., ATE for men) -- which is quite common in ML because of the focus on estimating more targeted "individual treatment effects" defined by observables
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Defining the target parameter comes first}
+
+\begin{itemize}
 \item Covariate adjustment strategies like regression or matching can identify these, but they aren't the same in non-experimental data if there's heterogenous treatment effects (i.e., $\delta_i$ differs for different $i$ people)
 \item So it is imperative up front you decide which aggregate causal parameter you're going to be trying to estimate as each one has different assumptions and different methodologies (as well as interpretations)
 
 \end{itemize}
 
 \end{frame}
+
 
 
 
@@ -1073,9 +989,9 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 
 
 \begin{itemize}
-\item Every aggregate causal parameter is missing some potential outcome (e.g., ATT is missing $E[Y^0|D=1]$
+\item Every aggregate causal parameter is missing some potential outcome (e.g., ATT is missing $E[Y^0|D=1])$
 \item If we are going to estimate the ATT, then it must be we are estimating $E[Y^0|D=1]$ somehow, but how?
-\item If we are using controls, then we in some way, shape or form ``filling in'' the missing counterfactual using the covariates the comparison group
+\item If we are using controls, then we in some way, shape or form ``filling in'' the missing counterfactual using the covariates of the comparison group
 \item ``At some level, all methods for causal inference can be viewed as imputation methods, although some more explicitly than others.'' -- Imbens and Rubin (2015)
 
 \end{itemize}
@@ -1357,9 +1273,6 @@ Backdoor criterion can be satisfied by blocking on $W$ and $C$.  These are our k
 \item \textbf{Aggregate differences across strata using weights}: Estimate the ATE by aggregating the difference in survival rates over the four strata with each strata-specific difference weighted by that strata's weight
 \end{enumerate}
 
-\bigskip
-
-Go to lab
 
 \end{frame}
 
@@ -1471,7 +1384,7 @@ Female child	& 0.387 &	0.02 &	0.00	&0.02	\\
 
 \begin{frame}
 
-\begin{table}\tiny\index{rolling!3}
+\begin{table}\small\index{rolling!3}
 \caption{Counts and Titanic survival rates by strata and first class status.}
 \centering
 \begin{tabular}{lcc|cc|c}
@@ -1561,96 +1474,6 @@ Differences in survival rates, stratification weights, and estimated parameters.
 
 \end{frame}
 
-\begin{frame}{Review stratification weighting in light of this}
-
-\begin{itemize}
-
-\item Let's now look at the way in this works within stratification if we are missing some observations
-\item The reason that this happens is because the dimensions $K$ of the $X$ conditioning set is getting larger
-
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Weighting by Age ($K=2$)}
-	
-	\begin{table}\centering
-		\begin{center}
-		\begin{tabular}{lccccc}
-		\hline \hline
-		\multicolumn{1}{l}{}&
-		\multicolumn{2}{c}{Death Rate}&
-		\multicolumn{1}{c}{}&
-		\multicolumn{2}{c}{Number of}\\
-
-		\multicolumn{1}{l}{$X_k$}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}&
-		\multicolumn{1}{c}{Diff.}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}\\
-		\hline
-		Old & 28 & 24 & 4 & 3 & 10 \\
-		Young & 22 & 16 & 6 & 7 & 10 \\
-		Total & & & & 10 & 20 \\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-	
-
-	\begin{flalign*}
-		    \only<1-2>{&\text{Question: What is $\widehat{\delta_{ATE}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k}{N}\right)$?}&}\\
-		    \only<2-2>{&4\cdot\left(\frac{13}{30}\right)+6\cdot\left(\frac{17}{30}\right)=5.13} \\
-		    \only<3-4>{&\text{Question: What is $\widehat{\delta_{ATT}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k_T}{N_T}\right)$?}} \\ 
-		    \only<4-4>{&4\cdot\left(\frac{3}{10}\right)+6\cdot\left(\frac{7}{10}\right)=5.4} 
-	\end{flalign*}
-
-\end{frame}
-	
-		
- 
-
-\begin{frame}[shrink=20,plain]{Weighting by Age and Gender ($K=4$)}
-	
-	\begin{table}\centering
-		\begin{center}
-		\begin{tabular}{lccccc}
-		\hline \hline
-		\multicolumn{1}{l}{}&
-		\multicolumn{2}{c}{Death Rate}&
-		\multicolumn{1}{c}{}&
-		\multicolumn{2}{c}{Number of}\\
-
-		\multicolumn{1}{l}{$X_k$}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}&
-		\multicolumn{1}{c}{Diff.}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}\\
-		\hline
-		Old Males & 28 & 22 & 4 & 3 & 7 \\
-		Old Females &   & 24 &   &   & 3 \\
-		Young Males & 21 & 16 & 5 & 3 & 4 \\
-		Young Females & 23 & 17 & 6 & 4 & 6 \\
-		Total & & & & 10 & 20 \\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-	
-
-	\begin{flalign*}
-		    \only<1-2>{&\text{Problem: What is $\widehat{\delta_{ATE}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k}{N}\right)$?}&}\\
-		    \only<2-2>{&\text{Not identified! What went wrong?}} \\
-		    \only<3-4>{&\text{Question: What is $\widehat{\delta_{ATT}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k_T}{N_T}\right)$?}} \\ 
-		    \only<4-4>{&4\cdot\left(\frac{3}{10}\right)+5\cdot\left(\frac{3}{10}\right)+6\cdot\left(\frac{4}{10}\right)=5.1}
-	\end{flalign*}
-
-\end{frame}
-
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
@@ -1671,20 +1494,33 @@ Differences in survival rates, stratification weights, and estimated parameters.
 	\end{itemize}
 \end{frame}	
 
+
+
 \begin{frame}{Curse of dimensionality and DML}
 
 The curse of dimensionality is  a concern in any high-dimensional estimation problem, but there are a few reasons it may not be as emphasized in discussions of DML
 
 \begin{enumerate}
-\item Machine Learning Techniques: DML often incorporates machine learning methods that are robust to high-dimensional data. Methods like Lasso, Random Forests, or Gradient Boosting are designed to handle large numbers of features, potentially mitigating the curse of dimensionality to some extent.
+\item[1. ] Machine Learning Techniques: DML often incorporates machine learning methods that are robust to high-dimensional data. Methods like Lasso, Random Forests, or Gradient Boosting are designed to handle large numbers of features, potentially mitigating the curse of dimensionality to some extent.
 
-\item Double-Residualization: The double-residualization step in DML could help reduce dimensionality by focusing on the component of the target variable and treatment variable that cannot be explained by the high-dimensional controls.
+\item[2. ] Double-Residualization: The double-residualization step in DML could help reduce dimensionality by focusing on the component of the target variable and treatment variable that cannot be explained by the high-dimensional controls.
 
-\item Sparsity: In many empirical applications, the true underlying model may be sparse, even if it's high-dimensional. Many machine learning techniques incorporated within DML are good at picking up this sparsity.
 
 \end{enumerate}
 
 \end{frame}
+
+\begin{frame}{Curse of dimensionality and DML}
+
+
+\begin{enumerate}
+
+\item[3. ] Sparsity: In many empirical applications, the true underlying model may be sparse, even if it's high-dimensional. Many machine learning techniques incorporated within DML are good at picking up this sparsity.
+
+\end{enumerate}
+
+\end{frame}
+
 
 \begin{frame}{Curse of dimensionality and DML}
 
@@ -1701,6 +1537,59 @@ The curse of dimensionality is  a concern in any high-dimensional estimation pro
 \end{enumerate}
 
 \end{frame}
+
+\begin{frame}{Overfitting - The 'Overeager Student'}
+\begin{itemize}
+\item An overfit model performs exceedingly well on the data it's trained on, but poorly on new, unseen data.
+\item Imagine a student who memorizes every question in the textbook but fails to understand the underlying concepts.
+\item It’s like fitting a curve that passes through every data point, capturing noise as well as the trend.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/overfit_snake.png}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Underfitting - The 'Lazy Student'}
+\begin{itemize}
+\item Imagine a student who only studies the chapter titles, missing all the details.
+\item An underfit model is too simple to capture the complexities in the data.
+\item It performs poorly both on the data it was trained on and on new, unseen data.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/underfit_snake.png}
+  \end{figure}
+\end{frame}
+
+
+
+\begin{frame}{The 'Goldilocks Zone' - Best Fitting}
+\begin{itemize}
+\item The ideal model is in the 'Goldilocks Zone': Not too simple, not too complex.
+\item It performs well on both the training data and new, unseen data.
+\item Balancing bias (systematic error) and variance (random error) is key to finding this sweet spot.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Balancing Bias and Variance}
+\begin{itemize}
+\item \textbf{Bias}: Tendency of the model to consistently learn the wrong thing. High bias leads to underfitting.
+\item \textbf{Variance}: Tendency of the model to be overly sensitive to fluctuations in the training data. High variance leads to overfitting.
+\item The goal is to find a balance: Low bias and low variance, which equates to high accuracy on unseen data.
+\end{itemize}
+\end{frame}
+
+
 
 \subsection{Regression}
 
@@ -2280,11 +2169,10 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
   \[
     Y = X \beta + D \gamma + \epsilon
   \]
-  The FWL theorem tells us that we can obtain \( \gamma \) (effect of \( D \)) by:
+  Recall from earlier -- the FWL theorem tells us that we can obtain \( \gamma \) (effect of \( D \)) by:
   \begin{enumerate}
-    \item Regressing \( Y \) on \( X \) to get residuals \( \tilde{Y} \)
     \item Regressing \( D \) on \( X \) to get residuals \( \tilde{D} \)
-    \item Regressing \( \tilde{Y} \) on \( \tilde{D} \) to get \( \gamma \)
+    \item Regressing \( {Y} \) on \( \tilde{D} \) to get \( \gamma \)
   \end{enumerate}
 \end{frame}
 
@@ -2330,6 +2218,40 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
     \item For inference, use robust standard errors from the last step.
   \end{itemize}
 \end{frame}
+
+\begin{frame}{Role of Tuning Parameters in ML Models}
+\begin{itemize}
+\item Tuning parameters, also known as hyperparameters, control the complexity of the machine learning models used.
+\item For example, in Lasso, the regularization term $\lambda$  is a tuning parameter.
+\item These parameters are not learned from the data but must be set prior to the learning process.
+\item Too high or too low values can lead to overfitting or underfitting.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cross-Validation for Tuning Parameter Selection}
+\begin{itemize}
+\item Cross-validation helps us to choose the optimal tuning parameters.
+\item By splitting the data into training and validation sets multiple times, we can find the parameters that yield the best out-of-sample performance.
+\item This makes the DML approach more robust.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why Out-of-Fold Prediction?}
+\begin{itemize}
+\item Using the same data for training and prediction can introduce bias.
+\item Out-of-fold prediction ensures that each observation's residual is computed using a model that did not train on that observation.
+\item This step is crucial for unbiased treatment effect estimation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Stability and Generalization in DML}
+\begin{itemize}
+\item Cross-validation ensures the model's findings are stable across different subsamples.
+\item This adds an extra layer of validation and makes the findings more likely to generalize.
+\end{itemize}
+\end{frame}
+
+
 
 
 \begin{frame}{What is K-Folding?}
