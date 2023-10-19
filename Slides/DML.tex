@@ -1490,135 +1490,10 @@ Differences in survival rates, stratification weights, and estimated parameters.
 	
 	\begin{itemize}
 	\item When some slice is empty, it means there's no one in that cell -- so maybe you don't have any female children in first class, but you do have them in other cabins
-	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS (as we'll see) overcomes the problem by just assuming a linearity (it doesn't match; it extrapolates)
 	\item When you have empty cells, you can't match within that dimension of the data, and so the "curse of dimensionality" is one of the reasons why the kitchen sink approach breaks down so fast
+	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS (as we'll see) overcomes the problem by just assuming a linearity (it doesn't match; it extrapolates)
 	\end{itemize}
 \end{frame}	
-
-
-
-\begin{frame}{Curse of dimensionality and DML}
-
-The curse of dimensionality is a concern in any high-dimensional estimation problem, but you don't hear it discussed often with the DML method and there are a few reasons it may not be
-
-\begin{enumerate}
-\item[1. ] Machine Learning Techniques: DML often incorporates machine learning methods that are robust to high-dimensional data. Methods like Lasso, Random Forests, or Gradient Boosting are designed to handle large numbers of features, potentially mitigating the curse of dimensionality to some extent.
-
-
-
-\end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Curse of dimensionality and DML}
-
-\begin{enumerate}
-
-\item[2. ] Double-Residualization: The double-residualization step in DML could help reduce dimensionality by focusing on the component of the target variable and treatment variable that cannot be explained by the high-dimensional controls.
-
-
-\end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}{Curse of dimensionality and DML}
-
-
-\begin{enumerate}
-
-\item[3. ] Sparsity: In many empirical applications, the true underlying model may be sparse, even if it's high-dimensional. Many machine learning techniques incorporated within DML are good at picking up this sparsity.
-
-\end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Sparsity in DML}
-
-\begin{itemize}
-\item \textbf{What is Sparsity?}: In high-dimensional models, sparsity refers to the property where only a small number of variables (features) have a significant impact on the outcome, even though there could be a large number of variables involved.
-
-\item \textbf{Why is it Important?}
-\begin{itemize}
-\item \textit{Efficiency}: A sparse model reduces computational burden.
-\item \textit{Interpretability}: Easier to focus on key variables, making the model more understandable.
-\item \textit{Generalizability}: Sparse models are less likely to overfit, improving their performance on unseen data.
-\end{itemize}
-
-\item \textbf{DML and Sparsity}: Many machine learning techniques used within DML are adept at identifying these significant, non-zero parameters. Algorithms like LASSO, Random Forests, and certain neural networks can efficiently pick up this sparsity.
-\end{itemize}
-
-\end{frame}
-
-
-
-
-\begin{frame}{Curse of dimensionality and DML}
-
-
-\begin{enumerate}
-
-
-\item[4. ] Regularization: Regularization methods used in machine learning can help to avoid overfitting, which is closely related to the curse of dimensionality. By penalizing the complexity of the model, regularization can help make the estimation problem more manageable, even in high dimensions.
-
-\item[5. ]Cross-Fitting: This approach ensures that the model used to predict each observation is fitted on a separate sample, which can help to alleviate overfitting and, consequently, some issues related to high dimensionality.
-
-\item[6. ]Interpretable Parameters: DML is often used to estimate a low-dimensional target (the treatment effect) while controlling for high-dimensional covariates. The curse of dimensionality is less of an issue when the parameter of interest is low-dimensional.
-
-\end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Overfitting - The 'Overeager Student'}
-\begin{itemize}
-\item An overfit model performs exceedingly well on the data it's trained on, but poorly on new, unseen data.
-\item Imagine a student who memorizes every question in the textbook but fails to understand the underlying concepts.
-\item It’s like fitting a curve that passes through every data point, capturing noise as well as the trend.
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}
-  \begin{figure}
-    \includegraphics[scale=0.25]{./lecture_includes/overfit_snake.png}
-  \end{figure}
-\end{frame}
-
-
-\begin{frame}{Underfitting - The 'Lazy Student'}
-\begin{itemize}
-\item Imagine a student who only studies the chapter titles, missing all the details.
-\item An underfit model is too simple to capture the complexities in the data.
-\item It performs poorly both on the data it was trained on and on new, unseen data.
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-  \begin{figure}
-    \includegraphics[scale=0.25]{./lecture_includes/underfit_snake.png}
-  \end{figure}
-\end{frame}
-
-
-
-\begin{frame}{The 'Goldilocks Zone' - Best Fitting}
-\begin{itemize}
-\item The ideal model is in the 'Goldilocks Zone': Not too simple, not too complex.
-\item It performs well on both the training data and new, unseen data.
-\item Balancing bias (systematic error) and variance (random error) is key to finding this sweet spot.
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Balancing Bias and Variance}
-\begin{itemize}
-\item \textbf{Bias}: Tendency of the model to consistently learn the wrong thing. High bias leads to underfitting.
-\item \textbf{Variance}: Tendency of the model to be overly sensitive to fluctuations in the training data. High variance leads to overfitting.
-\item The goal is to find a balance: Low bias and low variance, which equates to high accuracy on unseen data.
-\end{itemize}
-\end{frame}
 
 
 
@@ -1707,24 +1582,6 @@ Y_i^1 &=& Y_i^0 + \delta_{sp}
 
 \end{frame}
 
-
-
-\begin{frame}{Interpreting OLS coefficients}
-
-
-		\begin{align*}
-		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
-		\end{align*}
-
-\begin{itemize}
-\item OLS can do a lot of things, but one thing it does it find the best linear fit of the data
-\item Finding the best linear fit is not the same as finding the counterfactual, so to get OLS to serve that function is another task
-\item Let's look at a quote
-
-\end{itemize}
-
-\end{frame}
-
 \begin{frame}{Great quote}
 
 \begin{quote}
@@ -1733,158 +1590,20 @@ Y_i^1 &=& Y_i^0 + \delta_{sp}
 
 \end{frame}
 
-\begin{frame}{Frisch-Waugh-Lovell}
+
+
+
+\begin{frame}{Prediction vs causal inference and OLS}
+
+
+
 
 \begin{itemize}
-\item Old theorem showing that you can decompose a multivariate regression into a set of steps and get numerically the same number
-\item Used by DML so we should review it, though it is more often called ``orthogonalized''
-\end{itemize}
+\item OLS is the ``best linear predictor'' given the covariates because it minimizes the sum of all the residuals (squared)
+\item So it's like it finds a \emph{line} that goes through the data in such a way that the prediction error is on average as small as possible
+\item But out of sample is another matter -- that line \emph{fits the data} and ML has been about trying to improve it for prediction \emph{out of the data}
+\item But to Tymon's point, that still isn't causal inference because in causal inference we are predicting fictional counterfactuals, not realized outcomes
 
-\end{frame}
-
-
-\begin{frame}{OLS Simulated Code}
-
-\begin{figure}[!t]\centering
-\includegraphics[scale=0.40]{./lecture_includes/ols_code}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{OLS Plot and Line}
-
-\begin{figure}[!t]\centering
-\includegraphics[scale=0.4]{./lecture_includes/ols_line}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{Bivariate vs multivariate regressions}
-
-\begin{itemize}
-
-\item Interpreting the OLS coefficient in bivariate regression is written out as a scaled covariance:
-
- $$\widehat{\beta_1}=\frac{Cov(Y_i,X_i)}{Var(X_i)}$$
- 
- \item But when we are looking at a multivariate regression, what is it?
- 
- \end{itemize}
- 
- \end{frame}
- 
- \begin{frame}{Applying FWL theorem}
-
-\begin{itemize}
-\item Frisch-Waugh-Lovell also helps us interpret $\widehat{\beta}_1$ when there are covariates
- \item Use the FWL theorem to turn the multivariate regression coefficient into the simple bivariate one
-\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem''
-\item Filoso (2013) has an excellent proof
-\end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}{Applying FWL theorem}
-
-	\begin{itemize}
-	\item Can we estimate the causal effect of family size on labor supply by regressing labor supply (\texttt{Y}) on family size (\texttt{X})?
-		\begin{eqnarray*}
-		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
-		\end{eqnarray*}
-	\item If family size is random, then we can interpret $\widehat{\beta_1}$ as the ATE
-	\item But how do we interpret $\widehat{\beta_1}$ if \texttt{family size} is only conditionally random?  
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Applying FWL theorem}
-	
-	\begin{itemize}
-	\item Assume the longer model is:
-		\begin{eqnarray*}
-Y_i &=& \beta_0 + \beta_1 X_i + \gamma_1 \texttt{White}_i + \gamma_2 \texttt{Married}_i \\
-		& & + \gamma_3 \texttt{Age}_i + \gamma_4 \texttt{Employed}_i + u_i
-		\end{eqnarray*}
-	\item Assume unconfoundedness and constant treatment effects so that family size is independent conditional on all controls
-	\item FWL shows that in a multivariate regression, any one coefficient fitted can be reconceived as a simple scaled covariance of the outcome and residualized treatment variable
-	\end{itemize}
-	
-\end{frame}
-
-
-
-
-		
-
-\begin{frame}{FWL Theorem}
-
-	\begin{block}{FWL Theorem }
-	Assume your main multiple regression model of interest:$$y_i=\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i$$ and an auxiliary regression in which the variable $x_{1i}$ is regressed on all the remaining independent variables$$x_{1i} = \gamma_0 + \gamma_{k-1}x_{k-1 i}+\gamma_{k+1}x_{k+1 i} + \dots + \gamma_Kx_{Ki}+f_i$$and $\tilde{x}_{1i} = x_{1i} - \widehat{x}_{1i}$ being the residual from the auxiliary regression. The parameter $\beta_1$ can be rewritten as:$$\beta_1=\frac{Cov(y_i,\tilde{x}_{1i})}{Var(\tilde{x}_{1i})}$$
-
-	\end{block}
-
-\end{frame}
-
-
-\begin{frame}[plain, shrink=20]
-
-\bigskip
-
-	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
-	To prove the theorem, note $E[\tilde{x}_{ki}]=E[x_{ki}]-E[\widehat{x}_{ki}]=E[f_i]$, and plug $y_i$ and residual $\tilde{x}_{ki}$ from $x_{ki}$ auxiliary regression into the covariance $cov(y_i, \tilde{x}_{ki})$
-	\begin{eqnarray*}
-	\beta_k &=& \frac{ cov(y_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
-			 &=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
-			&=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i,f_i)}{var(f_i)}
-	\end{eqnarray*}
-	\begin{enumerate}
-	\item Since by construction $E[f_i]=0$, it follows that the term $\beta_0E[f_i]=0$.
-	\item Since $f_i$ is a linear combination of all the independent variables with the exception of $x_{ki}$, it must be that$$\beta_1E[f_ix_{1i}] = \dots = \beta_{k-1}E[f_ix_{k-1 i}] = \beta_{k+1}E[f_ix_{k+1 i}] = \dots = \beta_KE[f_ix_{KI}] = 0$$
-	\end{enumerate}
-	\end{block}
-\end{frame}
-
-
-\begin{frame}[plain, shrink=20]
-
-	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
-		\begin{enumerate}\addtocounter{enumi}{2}
-		\item Consider now the term $E[e_if_i]$.  This can be written as:
-			\begin{eqnarray*}
-			E[e_if_i] &=& E[e_if_i] \\
-			&=& E[e_i\tilde{x}_{ki}] \\
-			&=& E[e_i(x_{ki} - \widehat{x}_{ki})] \\
-			&=& E[e_ix_{ki}] - E[e_i\tilde{x}_{ki}]
-			\end{eqnarray*}Since $e_i$ is uncorrelated with any independent variable, it is also uncorrelated with $x_{ki}$: accordingly, we have $E[e_ix_{ki}]=0$. With regard to the second term of the subtraction, substituting the predicted value from the $x_{ki}$ auxiliary regression, we get$$E[e_i\tilde{x}_{ki}] = E[e_i(\widehat{\gamma_0} + \widehat{\gamma_1}x_{1i} + \dots + \widehat{\gamma}_{k-1}x_{k-1}i+\widehat{\gamma}_{k+1}x_{k+1 i} + \dots + \widehat{\gamma}_Kx_{Ki})]$$Once again, since $e_i$ is uncorrelated with any independent variable, the expected value of the terms is equal to zero.  Then, it follows $E[e_if_i]=0$.
-		
-		\end{enumerate}
-	\end{block}
-
-\end{frame}
-
-\begin{frame}[plain, shrink=25]
-
-	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
-		\begin{enumerate}\addtocounter{enumi}{3}
-		\item The only remaining term is $E[\beta_kx_{ki}f_i]$ which equals $E[\beta_kx_{ki}\tilde{x}_{ki}]$ since $f_i=\tilde{x}_{ki}$. The term $x_{ki}$ can be substituted using a rewriting of the auxiliary regression model, $x_{ki}$, such that$$x_{ki} = E[x_{ki} | X_{-k}] + \tilde{x}_{ki}$$This gives
-			\begin{eqnarray*}
-			E[\beta_kx_{ki}\tilde{x}_{ki}] &=& E[\beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})]] \\
-			&=& \beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})] \\
-			&=&\beta_k\{E[\tilde{x}^2_{ki}] + E[(E[x_{ki}|X_{-k}]\tilde{x}_{ki})]\} \\
-			&=& \beta_k var(\tilde{x}_{ki})
-			\end{eqnarray*}which follows directly from the orthogonoality between $E[x_{ki} | X_{-k}]$ and $\tilde{x}_{ki}$. From previous derivations we finally get$$cov(y_i,\tilde{x}_{ki}) = \beta_kvar(\tilde{x}_{ki})$$which completes the proof. \qedhere
-		\end{enumerate}
-	\end{block}
-
-\end{frame}
-
-\begin{frame}{FWL}
-
-\begin{itemize}
-\item Let's review the FWL ``partialing out'' interpretation of OLS estimated $\widehat{\beta_1}$ in code
-\item We will use the fwl.do at /Labs/Matching for this
 \end{itemize}
 
 \end{frame}
@@ -2126,6 +1845,153 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
 \subsection{DML}
 
 
+\begin{frame}{Curse of dimensionality and DML}
+
+So recall our conversation then that we needed both unconfoundedness and common support, but you won't hear much about common support with DML because it extrapolates -- but there's some other reasons too
+
+\begin{enumerate}
+\item[1. ] Machine Learning Techniques: DML  incorporates machine learning methods that are robust to high-dimensional data. Methods like Lasso, Random Forests, or Gradient Boosting are designed to handle large numbers of features, potentially mitigating the curse of dimensionality to some extent.
+
+
+
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Curse of dimensionality and DML}
+
+\begin{enumerate}
+
+\item[2. ] Double-Residualization: The double-residualization step in DML can help reduce dimensionality by focusing on the component of the outcome and treatment variable that cannot be explained by the high-dimensional controls (we'll see this in a second with the Frisch-Waugh-Lovell theorem)
+
+
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Curse of dimensionality and DML}
+
+
+\begin{enumerate}
+
+\item[3. ] Sparsity: In many empirical applications, the true underlying model may be sparse, even if it's high-dimensional. Many machine learning techniques incorporated within DML are good at picking up this sparsity.  But what is sparsity in this context?
+
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Sparsity in DML}
+
+\begin{itemize}
+\item \textbf{What is Sparsity?}: In high-dimensional models, sparsity refers to the property where only a small number of variables (features) have a significant impact on the outcome, even though there could be a large number of variables involved.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sparsity in DML}
+
+\begin{itemize}
+
+\item \textbf{Why is it Important?}
+\begin{itemize}
+\item \textit{Efficiency}: A sparse model reduces computational burden.
+\item \textit{Interpretability}: Easier to focus on key variables, making the model more understandable.
+\item \textit{Generalizability}: Sparse models are less likely to overfit, improving their performance on unseen data.
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Sparsity in DML}
+
+\begin{itemize}
+
+\item \textbf{DML and Sparsity}: Many machine learning techniques used within DML are adept at identifying these significant, non-zero parameters. Algorithms like LASSO, Random Forests, and certain neural networks can efficiently pick up this sparsity.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Curse of dimensionality and DML}
+
+
+\begin{enumerate}
+
+
+\item[4. ] Regularization: Regularization methods used in machine learning can help to avoid overfitting, which is closely related to the curse of dimensionality. By penalizing the complexity of the model, regularization can help make the estimation problem more manageable, even in high dimensions.
+
+\item[5. ]Cross-Fitting: This approach ensures that the model used to predict each observation is fitted on a separate sample, which can help to alleviate overfitting and, consequently, some issues related to high dimensionality.
+
+
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Overfitting - The 'Overeager Student'}
+\begin{itemize}
+\item An overfit model performs exceedingly well on the data it's trained on, but poorly on new, unseen data.
+\item Imagine a student who memorizes every question in the textbook but fails to understand the underlying concepts.
+\item It’s like fitting a curve that passes through every data point, capturing noise as well as the trend.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/overfit_snake.png}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Underfitting - The 'Lazy Student'}
+\begin{itemize}
+\item Imagine a student who only studies the chapter titles, missing all the details.
+\item An underfit model is too simple to capture the complexities in the data.
+\item It performs poorly both on the data it was trained on and on new, unseen data.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/underfit_snake.png}
+  \end{figure}
+\end{frame}
+
+
+
+\begin{frame}{The 'Goldilocks Zone' - Best Fitting}
+\begin{itemize}
+\item The ideal model is in the 'Goldilocks Zone': Not too simple, not too complex.
+\item It performs well on both the training data and new, unseen data.
+\item Balancing bias (systematic error) and variance (random error) is key to finding this sweet spot.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Balancing Bias and Variance}
+\begin{itemize}
+\item \textbf{Bias}: Tendency of the model to consistently learn the wrong thing. High bias leads to underfitting.
+\item \textbf{Variance}: Tendency of the model to be overly sensitive to fluctuations in the training data. High variance leads to overfitting.
+\item The goal is to find a balance: Low bias and low variance, which equates to high accuracy on unseen data.
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+
 \begin{frame}{Flexibility and Overfitting in ML}
   \textit{Credits: Facure's Online Book}
   \begin{itemize}
@@ -2158,12 +2024,185 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Curse of dimensionality and DML}
+
+
+\begin{enumerate}
+
+
+
+\item[6. ]Interpretable Parameters: DML is often used to estimate a low-dimensional target (the treatment effect) while controlling for high-dimensional covariates. The curse of dimensionality is less of an issue when the parameter of interest is low-dimensional.
+
+\end{enumerate}
+
+\end{frame}
+
+
 \begin{frame}{Summary and Next Steps}
   \begin{itemize}
     \item We've covered the challenges and solutions in using ML for DML.
     \item Next, let's dive into a step-by-step example with more technical discussion
   \end{itemize}
 \end{frame}
+
+\begin{frame}{Frisch-Waugh-Lovell}
+
+\begin{itemize}
+\item Old theorem showing that you can decompose a multivariate regression into a set of steps and get numerically the same number
+\item Used by DML so we should review it, though it is more often called ``orthogonalized''
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{OLS Simulated Code}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.40]{./lecture_includes/ols_code}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{OLS Plot and Line}
+
+\begin{figure}[!t]\centering
+\includegraphics[scale=0.4]{./lecture_includes/ols_line}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Bivariate vs multivariate regressions}
+
+\begin{itemize}
+
+\item Interpreting the OLS coefficient in bivariate regression is written out as a scaled covariance:
+
+ $$\widehat{\beta_1}=\frac{Cov(Y_i,X_i)}{Var(X_i)}$$
+ 
+ \item But when we are looking at a multivariate regression, what is it?
+ 
+ \end{itemize}
+ 
+ \end{frame}
+ 
+ \begin{frame}{Applying FWL theorem}
+
+\begin{itemize}
+\item Frisch-Waugh-Lovell also helps us interpret $\widehat{\beta}_1$ when there are covariates
+ \item Use the FWL theorem to turn the multivariate regression coefficient into the simple bivariate one
+\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem''
+\item Filoso (2013) has an excellent proof
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Applying FWL theorem}
+
+	\begin{itemize}
+	\item Can we estimate the causal effect of family size on labor supply by regressing labor supply (\texttt{Y}) on family size (\texttt{X})?
+		\begin{eqnarray*}
+		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
+		\end{eqnarray*}
+	\item If family size is random, then we can interpret $\widehat{\beta_1}$ as the ATE
+	\item But how do we interpret $\widehat{\beta_1}$ if \texttt{family size} is only conditionally random?  
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Applying FWL theorem}
+	
+	\begin{itemize}
+	\item Assume the longer model is:
+		\begin{eqnarray*}
+Y_i &=& \beta_0 + \beta_1 X_i + \gamma_1 \texttt{White}_i + \gamma_2 \texttt{Married}_i \\
+		& & + \gamma_3 \texttt{Age}_i + \gamma_4 \texttt{Employed}_i + u_i
+		\end{eqnarray*}
+	\item Assume unconfoundedness and constant treatment effects so that family size is independent conditional on all controls
+	\item FWL shows that in a multivariate regression, any one coefficient fitted can be reconceived as a simple scaled covariance of the outcome and residualized treatment variable
+	\end{itemize}
+	
+\end{frame}
+
+
+
+
+		
+
+\begin{frame}{FWL Theorem}
+
+	\begin{block}{FWL Theorem }
+	Assume your main multiple regression model of interest:$$y_i=\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i$$ and an auxiliary regression in which the variable $x_{1i}$ is regressed on all the remaining independent variables$$x_{1i} = \gamma_0 + \gamma_{k-1}x_{k-1 i}+\gamma_{k+1}x_{k+1 i} + \dots + \gamma_Kx_{Ki}+f_i$$and $\tilde{x}_{1i} = x_{1i} - \widehat{x}_{1i}$ being the residual from the auxiliary regression. The parameter $\beta_1$ can be rewritten as:$$\beta_1=\frac{Cov(y_i,\tilde{x}_{1i})}{Var(\tilde{x}_{1i})}$$
+
+	\end{block}
+
+\end{frame}
+
+
+\begin{frame}[plain, shrink=20]
+
+\bigskip
+
+	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
+	To prove the theorem, note $E[\tilde{x}_{ki}]=E[x_{ki}]-E[\widehat{x}_{ki}]=E[f_i]$, and plug $y_i$ and residual $\tilde{x}_{ki}$ from $x_{ki}$ auxiliary regression into the covariance $cov(y_i, \tilde{x}_{ki})$
+	\begin{eqnarray*}
+	\beta_k &=& \frac{ cov(y_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
+			 &=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i, \tilde{x}_{ki})}{var(\tilde{x}_{ki})} \\
+			&=& \frac{ cov(\beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + \dots + \beta_Kx_{Ki} + e_i,f_i)}{var(f_i)}
+	\end{eqnarray*}
+	\begin{enumerate}
+	\item Since by construction $E[f_i]=0$, it follows that the term $\beta_0E[f_i]=0$.
+	\item Since $f_i$ is a linear combination of all the independent variables with the exception of $x_{ki}$, it must be that$$\beta_1E[f_ix_{1i}] = \dots = \beta_{k-1}E[f_ix_{k-1 i}] = \beta_{k+1}E[f_ix_{k+1 i}] = \dots = \beta_KE[f_ix_{KI}] = 0$$
+	\end{enumerate}
+	\end{block}
+\end{frame}
+
+
+\begin{frame}[plain, shrink=20]
+
+	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
+		\begin{enumerate}\addtocounter{enumi}{2}
+		\item Consider now the term $E[e_if_i]$.  This can be written as:
+			\begin{eqnarray*}
+			E[e_if_i] &=& E[e_if_i] \\
+			&=& E[e_i\tilde{x}_{ki}] \\
+			&=& E[e_i(x_{ki} - \widehat{x}_{ki})] \\
+			&=& E[e_ix_{ki}] - E[e_i\tilde{x}_{ki}]
+			\end{eqnarray*}Since $e_i$ is uncorrelated with any independent variable, it is also uncorrelated with $x_{ki}$: accordingly, we have $E[e_ix_{ki}]=0$. With regard to the second term of the subtraction, substituting the predicted value from the $x_{ki}$ auxiliary regression, we get$$E[e_i\tilde{x}_{ki}] = E[e_i(\widehat{\gamma_0} + \widehat{\gamma_1}x_{1i} + \dots + \widehat{\gamma}_{k-1}x_{k-1}i+\widehat{\gamma}_{k+1}x_{k+1 i} + \dots + \widehat{\gamma}_Kx_{Ki})]$$Once again, since $e_i$ is uncorrelated with any independent variable, the expected value of the terms is equal to zero.  Then, it follows $E[e_if_i]=0$.
+		
+		\end{enumerate}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}[plain, shrink=25]
+
+	\begin{block}{FWL Proof  (Proof by Filoso 2013)}
+		\begin{enumerate}\addtocounter{enumi}{3}
+		\item The only remaining term is $E[\beta_kx_{ki}f_i]$ which equals $E[\beta_kx_{ki}\tilde{x}_{ki}]$ since $f_i=\tilde{x}_{ki}$. The term $x_{ki}$ can be substituted using a rewriting of the auxiliary regression model, $x_{ki}$, such that$$x_{ki} = E[x_{ki} | X_{-k}] + \tilde{x}_{ki}$$This gives
+			\begin{eqnarray*}
+			E[\beta_kx_{ki}\tilde{x}_{ki}] &=& E[\beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})]] \\
+			&=& \beta_kE[\tilde{x}_{ki}(E[x_{ki}|X_{-k}]+\tilde{x}_{ki})] \\
+			&=&\beta_k\{E[\tilde{x}^2_{ki}] + E[(E[x_{ki}|X_{-k}]\tilde{x}_{ki})]\} \\
+			&=& \beta_k var(\tilde{x}_{ki})
+			\end{eqnarray*}which follows directly from the orthogonoality between $E[x_{ki} | X_{-k}]$ and $\tilde{x}_{ki}$. From previous derivations we finally get$$cov(y_i,\tilde{x}_{ki}) = \beta_kvar(\tilde{x}_{ki})$$which completes the proof. \qedhere
+		\end{enumerate}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}{FWL}
+
+\begin{itemize}
+\item Let's review the FWL ``partialing out'' interpretation of OLS estimated $\widehat{\beta_1}$ in code
+\item We will use the fwl.do at /Labs/Matching for this
+\end{itemize}
+
+\end{frame}
+
+
+
 
 
 \begin{frame}{Flexible Regression Model}
