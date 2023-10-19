@@ -1479,20 +1479,19 @@ Differences in survival rates, stratification weights, and estimated parameters.
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item Stratification methods, including OLS, may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
+	\item Stratification methods break down in finite samples because as increase the number of covariates, the "dimension" grows even faster -- dimensions and covariates aren't the same in other words
 	\item Assume we have $k$ covariates and we divide each into 3 coarse categories (e.g., age: young, middle age, old; income: low, medium, high, etc.)
 	\item The number of strata is $3^k$. For $k=10$, then it's $3^{10}=59,049$
-	\item The problem isn't just the number of covariates; it's the number of strata based on those covariates (you can hit the curse fast)
+	\item The curse of dimensionality is based on the slices of all interactions of the covariates, not just the covariates, and that explodes fast
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Curse of Dimensionality}
+\begin{frame}{Empty cells}
 	
 	\begin{itemize}
-	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both, and that violates our second assumption
-	\item We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
-	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS doesn't tell us it is just doing various extrapolations
-	\item Simple weighting methods is also a problem if the cells are ``too coarse''
+	\item When some slice is empty, it means there's no one in that cell -- so maybe you don't have any female children in first class, but you do have them in other cabins
+	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS (as we'll see) overcomes the problem by just assuming a linearity (it doesn't match; it extrapolates)
+	\item When you have empty cells, you can't match within that dimension of the data, and so the "curse of dimensionality" is one of the reasons why the kitchen sink approach breaks down so fast
 	\end{itemize}
 \end{frame}	
 
@@ -1500,10 +1499,20 @@ Differences in survival rates, stratification weights, and estimated parameters.
 
 \begin{frame}{Curse of dimensionality and DML}
 
-The curse of dimensionality is  a concern in any high-dimensional estimation problem, but there are a few reasons it may not be as emphasized in discussions of DML
+The curse of dimensionality is a concern in any high-dimensional estimation problem, but you don't hear it discussed often with the DML method and there are a few reasons it may not be
 
 \begin{enumerate}
 \item[1. ] Machine Learning Techniques: DML often incorporates machine learning methods that are robust to high-dimensional data. Methods like Lasso, Random Forests, or Gradient Boosting are designed to handle large numbers of features, potentially mitigating the curse of dimensionality to some extent.
+
+
+
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Curse of dimensionality and DML}
+
+\begin{enumerate}
 
 \item[2. ] Double-Residualization: The double-residualization step in DML could help reduce dimensionality by focusing on the component of the target variable and treatment variable that cannot be explained by the high-dimensional controls.
 
@@ -1511,6 +1520,7 @@ The curse of dimensionality is  a concern in any high-dimensional estimation pro
 \end{enumerate}
 
 \end{frame}
+
 
 \begin{frame}{Curse of dimensionality and DML}
 
@@ -1522,6 +1532,25 @@ The curse of dimensionality is  a concern in any high-dimensional estimation pro
 \end{enumerate}
 
 \end{frame}
+
+\begin{frame}{Sparsity in DML}
+
+\begin{itemize}
+\item \textbf{What is Sparsity?}: In high-dimensional models, sparsity refers to the property where only a small number of variables (features) have a significant impact on the outcome, even though there could be a large number of variables involved.
+
+\item \textbf{Why is it Important?}
+\begin{itemize}
+\item \textit{Efficiency}: A sparse model reduces computational burden.
+\item \textit{Interpretability}: Easier to focus on key variables, making the model more understandable.
+\item \textit{Generalizability}: Sparse models are less likely to overfit, improving their performance on unseen data.
+\end{itemize}
+
+\item \textbf{DML and Sparsity}: Many machine learning techniques used within DML are adept at identifying these significant, non-zero parameters. Algorithms like LASSO, Random Forests, and certain neural networks can efficiently pick up this sparsity.
+\end{itemize}
+
+\end{frame}
+
+
 
 
 \begin{frame}{Curse of dimensionality and DML}
