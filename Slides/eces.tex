@@ -5,6 +5,7 @@
 
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{subcaption}
 
 \usepackage{pdfpages} % \includepdf
 
@@ -43,6 +44,14 @@
 
 \begin{document}
 
+
+
+
+\title{Discussing causal inference and impact evaluation of Takaful and Karama}
+\author{by Scott Cunningham (Baylor University)}
+\date{\today}
+
+\maketitle
 
 
 % ---- Content ----
@@ -90,7 +99,7 @@
 \item Firstly, we'll explore \emph{causal inference}: 
     \begin{itemize}
     \item What is it?  Why is it important?  What is at stake? % what is the value added of the techniques in causal inference and what are examples of assessment. I need to use the 10 minutes to make the point for causal inference -- focusing on the range of methods. 
-    \item Emphasizing the importance of \emph{controlled randomization} and options when that fails.
+    \item Importance of \emph{controlled randomization} and options when we can't.
     \end{itemize}
 \item Secondly, we'll delve into a recent evaluation by Breisinger and coauthors:
     \begin{itemize}
@@ -108,8 +117,8 @@ What is causal inference?  What is causality?  They are related but not the same
 \bigskip
 
 \begin{itemize}
-\item \emph{Causality} is a metaphysical concept which is stored within the branch of philosophy focusing on the nature of reality
-\item \emph{Causal Inference} is an epistemological concept which is stored within the branch of philosophy focused on the nature of knowledge and beliefs
+\item \emph{Causality} is a metaphysical concept focusing on the theory of causality
+\item \emph{Causal Inference} is an epistemological concept focused on how we can know causal effects in data
 \end{itemize}
 \end{frame}
 
@@ -122,7 +131,7 @@ What is correlation?  When is it causal and when is it not?
 
 \begin{itemize}
 \item \emph{Correlation} is a purely statistical concept measuring movements between two things
-\item \emph{Causal Inference} cuts into the causal relationships in data using credible methods
+\item \emph{Causal Inference} uses in data, assumptions and statistical models to estimate causal effects
 \end{itemize}
 \end{frame}
 
@@ -130,8 +139,9 @@ What is correlation?  When is it causal and when is it not?
 
 \begin{itemize}
 
-\item What do we gain from the developments in causal inference?
-\item Discuss the advantages and the costs of not adopting it
+\item Causal effects inform policy because they tell us that if we were to undertake a policy, then the estimated causal effects found in our data would likely occur again
+\item The gains from causal inference help us not only know whether things work (as opposed to driven by spurious and uninformative relationships found in our data sources) but also the magnitude
+\item Both the direction and the magnitude are critical for policy because they can help determine the size of the impact of what may be expensive programs
 
 \end{itemize}
 \end{frame}
@@ -218,12 +228,13 @@ What is correlation?  When is it causal and when is it not?
 \begin{frame}{Correlations, Causal Effects, and Selection Bias}
 
 \begin{itemize}
-\item Comparing any two groups to one another has two main components:
+\item The aliens' error was caused by being unable to separate \emph{selection} from \emph{causal effects}, 
 	\begin{enumerate}
-	\item \textbf{Average causal effect}: What is the average effect of the Takaful  and Karama programs on nutrition?
-	\item \textbf{Selection bias}: How much of the observed differences between program participants is due to differences between them that would've existed regardless if they were on the program
+	\item \textbf{Average causal effect}: What is the average effect of ventilators on mortality?
+	\item \textbf{Selection bias}: How much of the observed differences between people on and off vents is simply because of baseline differences in mortality that would've been there even had they not been on vents in the first place
 	\end{enumerate}
-\item Causal inference goal is to find a reason where we can believe there is no selection bias, and to do that we need to understand why people got into the program in the first place
+\item The first one is our goal in policy evaluation, but the second is the problem we seek to overcome with causal inference methods
+\item Discerning causal effects requires, not statistics, but deciphering the  \emph{behavioral reason} that individuals were exposed to some intervention like a poverty program, or what's called the ``treatment assignment''
 
 \end{itemize}
 
@@ -236,49 +247,31 @@ What is correlation?  When is it causal and when is it not?
 
 
 
-\begin{frame}{Understanding why they enrolled}
-\begin{itemize}
-\item People naturally avoid pain and move towards pleasure, and ironically, this is usually what causes correlations to not represent causal effects
-	\begin{itemize}
-	\item If people with severe COVID symptoms are placed on ventilators, then you will likely see much higher mortality rates among them
-	\item But it's unlikely that the ventilators are killing them -- they got on the vents \emph{because} they were dying
-	\end{itemize}
-\item Discerning causal effects requires, not statistics, but deciphering the  \emph{behavioral reason} that individuals were exposed to some intervention like a poverty program
-\item Large spectrum of relevant reasons why people got into a program, starting with sel-selection
-\end{itemize}
-\end{frame}
 
 \begin{frame}{Spectrum of Treatment Assignment}
+
 \begin{itemize}
-\item \textbf{Self-selection:} Individuals voluntarily choose based on rationality, desperation, or a desire for improvement.
-\begin{itemize}
-\item Humans naturally gravitate towards decisions that minimize pain and maximize pleasure.
-\item Challenging for causal inference due to selection bias and different responses to programs (i.e., some are helped, some nothing happens, some may even be hurt).
+
+\item Treatment assignment \emph{mechanisms} refer to how and why a person participated into a program in the first place and the most common reason -- voluntary participation -- is a threat to causal inference
+\item Happens the better run the program is because humans naturally gravitate towards pleasure and away from pain (e.g., vents if COVID symptoms are severe)
+\item Sometimes the unobserved factors differ between program participants so much that all \emph{observed correlation} between program participants and non-participants is selection bias which leads to incorrect conclusions
+\item Overcoming this, researchers typically need something that put them into the program other than their own voluntary participation, but what?
+
 \end{itemize}
-\item Under the most extreme versions of self selection, it's practically impossible to know how much is selection bias and how much is causal
-\item We typically need something that robbed the person of their agency and instead of self selection, that other thing put them in the program
-\end{itemize}
+
 \end{frame}
+
+
 
 
 \begin{frame}{Randomization}
-\begin{itemize}
-\item Easiest and most straightforward method, balances determinants of the outcome across groups, eliminates selection bias to isolates the average treatment effect.
-\item Randomization is not a \emph{statistical model} -- it's a \emph{mechanism} that assigns people to a program
-\item Randomized experiments are where the scientist controls the physical randomization (e.g., vaccine trials), but sometimes that may not be feasible or ethical, and stakeholders may be opposed to doing it, despite being important
-\item Example: We want to understand the long-term effects of high-quality primary education on career success and overall well-being, but randomizing children into receiving a subpar education versus a high-quality one, even though understanding this is crucial for future educational policies, may be infeasible most of the time
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Randomized Takful Graphic}
 \begin{center}
 \begin{tikzpicture}[node distance=2.5cm]
     % Nodes
     \node (Z) {Z (Lottery)};
-    \node [below right of=Z] (T) {Takaful};
-    \node [right=3cm of T] (N) {Nutrition};  % Adjusted distance here
-    \node [right=1.5cm of Z] (U) {Economic Strain};
+    \node [below right of=Z] (T) {Vents};
+    \node [right=3cm of T] (N) {Mortality};  % Adjusted distance here
+    \node [right=1.5cm of Z] (U) {Severe illness};
     
     % Paths
     \draw[->] (Z) -- (T);
@@ -290,34 +283,25 @@ What is correlation?  When is it causal and when is it not?
 
 \bigskip
 
-Randomized controlled trials (RCT) use randomization, but so does a non-experimental method called instrumental variables which takes advantage of some naturally occurring randomization that assigned people to Takaful; if an instrument can be found, it is powerful
-
-\end{frame}
-
-
-
-
-
-\begin{frame}{Running Variables}
 \begin{itemize}
-\item People take a test, and if their score on the test exceeds some number, administrators put them into the social program
-\item It isn't random, but depending on the nature of the effort put into the test, can still be used to estimate the effect of the social program on life outcomes
-\item Example: Being assigned to a welfare program based on fixed income
+\item Randomized experiments are valuable for causal inference because program participation is \emph{not} based on voluntary participation, and therefore selection bias is minimized almost to nothing
+\item But for some questions, the \emph{controlled} randomization may not be possible due to feasibility, expense or ethical concerns
+\item Randomized controlled trials (RCT) use randomization to assign people to vents, but good luck randomizing extremely sick people to ventilators
 \end{itemize}
+
+
+
 \end{frame}
 
-\begin{frame}{Takaful and Karama Program}
-\begin{itemize}
-\item Initiated in 2015 as part of Egypt's economic reforms from 2014.
-\item Targeted cash transfers to poor households.
-\item Two main assignment mechanisms used: IV and Running Variables.
-\end{itemize}
-\end{frame}
 
-\begin{frame}{Focus of our Discussion}
+
+
+
+\begin{frame}{Running Variables and Regression Discontinuity}
 \begin{itemize}
-\item We will delve deeper into Instrumental Variables (IV) and Running Variables.
-\item These mechanisms, combining randomized experiments and non-randomized scoring, are pivotal in the evaluation of Takaful and Karama.
+\item But sometimes people don't choose to participate and aren't even randomized but are assigned to treatment based on a \emph{test}
+\item When their \emph{grade} on a test is used to put them in a program, we call the test a \emph{running variable} and the eligibility a \emph{cutoff}
+\item  Breisinger and coauthors used this method (also called \emph{regression discontinuity} to study the impact of Takaful and Karama on a variety of health and life outcomes
 \end{itemize}
 \end{frame}
 
@@ -327,192 +311,181 @@ Randomized controlled trials (RCT) use randomization, but so does a non-experime
 
 \subsection{Description of program and methodology}
 
-% Slide 1
-\begin{frame}{Takaful and Karama Programs}
-\begin{itemize}
-    \item \textbf{Takaful (Solidarity):} A \textit{conditional} cash transfer program targeting poor families with children under 18 years of age. Conditions for school attendance and health care utilization were planned but not yet implemented.
-    \item \textbf{Karama (Dignity):} An \textit{unconditional} cash transfer program targeting the elderly (aged 65 and above) and persons with severe disabilities.
-\item Initiated in 2015, part of Egypt's economic reforms since 2014, co-financed by the Egyptian government and the World Bank.
-\end{itemize}
-\end{frame}
-
-% Slide for Europe
-\begin{frame}{Poverty Rate Comparison: Europe (2015)}
-
-Egypt poverty in context
-
-\begin{itemize}
-    \item \textbf{Egypt}: Poverty rate in 2015: 27.8\%.
-    \item \textbf{United Kingdom}: Approx. 15\% (below 60% of median income)
-    \item \textbf{Germany}: 16.7\%
-    \item \textbf{France}: 14\%
-\end{itemize}
-\small Note: Comparisons can vary due to different poverty measurement methods.
-\end{frame}
-
-% Slide for North America
-\begin{frame}{Poverty Rate Comparison: North America (2015)}
-Egypt poverty in context
-
-\begin{itemize}
-    \item \textbf{Egypt}: Poverty rate in 2015: 27.8\%.
-    \item \textbf{United States}: 13.5\%
-    \item \textbf{Canada}: 9.5\% (Low Income Measure, After Tax)
-\end{itemize}
-\small Note: Comparisons can vary due to different poverty measurement methods.
-\end{frame}
-
-% Slide for Middle East
-\begin{frame}{Poverty Rate Comparison: Middle East (Around 2015)}
-Egypt poverty in context
-
-\begin{itemize}
-    \item \textbf{Egypt}: Poverty rate in 2015: 27.8\%.
-    \item \textbf{Yemen} (Upper bound): >50\% (before conflict intensification)
-    \item \textbf{Jordan} (Lower bound): 14.4\% (2010 estimate, might have changed after Syrian refugee crisis)
-\end{itemize}
-\small Note: Comparisons can vary due to different poverty measurement methods.
-\end{frame}
-
-
-
-
-
-% Slide 3
-\begin{frame}{Egyptian Context, Survey and Data Collection}
-\begin{itemize}
-\item Post-economic reforms: Likely increase in poverty due to rising price levels.
-\item Study's consumption survey: 40\% below the 2015 poverty line (EGP 482 per capita/month).
-\item Survey conducted from July 15 – August 30, 2017.
-\item Data on expenditure, well-being, schooling, health, nutrition, decision-making, shocks.
-\item Total sample: 6,541 households for evaluation + 1,692 for targeting analysis.
-\end{itemize}
-\end{frame}
-
 % Slide 4
-\begin{frame}{RDD and IV}
+\begin{frame}{Proxy Means Test}
 \begin{itemize}
-\item People are assigned into cash transfer programs, not so much because they volunteered, but because their ``score'' on some ``test'' passed some ``cutoff'' of eligibility
-\item Insofar as people are voluntarily sorting into the program, and thus bypassing the threshold eligibility rule, then selection bias gets reintroduced
-\item Authors will augment the RD approach with the instrument approach
-\end{itemize}
-\end{frame}
-
-% Slide 4
-\begin{frame}{PMT Score and Eligibility Rule}
-\begin{itemize}
-\item Households selected based on Proxy Means Test (PMT) score across three waves.
-\item Compares outcomes for beneficiaries below vs. non-beneficiaries above the threshold.
-\item Large number of households with PMT score near eligibility thresholds.
-\end{itemize}
-\end{frame}
-
-
-% Slide 5
-\begin{frame}{PMT Score and Eligibility}
-\begin{itemize}
-\item Three thresholds of PMT score determine eligibility.
-\item Covariate based methods (e.g., propensity scores) ruled out due to lack of pre-program baseline data.
-\item Used two methods for impact estimation: IV and Fuzzy RD.
-\end{itemize}
-\end{frame}
-
-% Slide explaining PMT and its role in Takaful and Karama Programs
-\begin{frame}{Proxy Means Test (PMT) and Program Enrollment}
-\begin{itemize}
-    \item \textbf{Proxy Means Test (PMT):} A tool used to estimate household's economic well-being based on observable household attributes. 
-    \item \textbf{PMT Score Generation:} Derived from data collected during three waves of registration. Households are given scores based on various socio-economic indicators.
-    \item \textbf{Eligibility Rule:} Households with PMT scores below a set threshold become eligible for the programs.
+\item PMT formula is based on a statistical model measuring log per capita spending and the PMT score used for eligibility into Takaful and Karama was originally 5.003 and lowered to 4.5 for Takaful in Nov 2015
+	\begin{itemize}
+	\tiny
+\item ``\emph{PMT [is] an index of well-being based on household demographics, income,
+housing quality, assets and other characteristics. In poor districts, potentially eligible households
+were registered and interviewed to collect information for the PMT. Households with a PMT score
+below a preset threshold were considered eligible for the program and would begin receiving
+transfers}'' -- authors
+\item ``The PMT has been used to identify
+the poor within the selected districts, based on selection criteria and a set cutoff score, based on the
+poverty line derived from Egypt’s Household Income, Expenditure and Consumption Survey (HIECS)
+for 2012/13'' -- authors
+	\end{itemize}
+\item When this rule is followed perfectly, there is no selection bias when we compare program participants with non-participants, but \emph{only} for the people who just \emph{barely missed} because their score was too low (compared to those who just barely got in)
 \end{itemize}
 \end{frame}
 
 
-
-\subsection{Takaful Impact}
-
-% Slide for Introduction to Takaful Results
-\begin{frame}{Takaful Impact Results: Introduction}
-\begin{itemize}
-    \item Takaful aimed to assist poor households by increasing household consumption.
-    \item Impact comparable to successful cash transfer programs in other countries.
-    \item Significant reduction in the prevalence of poverty among beneficiaries.
-\end{itemize}
+\begin{frame}{Changing thresholds}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/takaful_table1.png}
+        \caption{PMT thresholds over time for both programs}
+    \end{figure}
 \end{frame}
 
-% Slide for Food Consumption & Diet Quality
-\begin{frame}{Takaful Impact Results: Food Consumption \& Diet Quality}
+\begin{frame}{Fuzzy participation}
+
 \begin{itemize}
-    \item Beneficiaries increased food consumption by 8.3 - 8.9\% per AEU.
-    \item Notable increase in value of fruit and meat consumption.
-    \item No significant impact on dietary diversity, possibly due to already diverse diets.
+\item Does not work, though, if administrators sometimes break the rules (i.e., it isn't followed perfectly)
+\item Authors note that sometimes people who are eligible still won't participate (sometimes called ``non-compliance'')
+\item Authors augment their study to account for this type of \emph{voluntary compliance} using ``fuzzy RDD'' 
+\item But pretty sharp as you'll see, at least for one of the cutoffs (4.5)
 \end{itemize}
+
 \end{frame}
 
-% Slide for Child Nutrition
-\begin{frame}{Takaful Impact Results: Child Nutrition}
-\begin{itemize}
-    \item Positive impact on weight-for-height z-scores for children under 2.
-    \item Reduction in children under 5 treated for malnourishment.
-    \item No significant change in rates of child stunting.
-\end{itemize}
+\subsection{Authors' findings}
+
+\begin{frame}{Outcomes}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/takaful_density.png}
+        \caption{Participation by score}
+    \end{figure}
 \end{frame}
 
-% Slide for Women’s Decision Making
-\begin{frame}{Takaful Impact Results: Women’s Decision Making}
-\begin{itemize}
-    \item 90\% of Takaful beneficiaries were female as of June 2017.
-    \item Negative impact on women’s control over decision making.
-    \item Contrary to patterns found in other countries and intended program impact.
-\end{itemize}
-\end{frame}
+\begin{frame}{Poverty (top), food and total spending (bottom)}
+    \begin{figure}
+        \centering
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{./lecture_includes/takaful_rdd4.png}
+        \end{minipage}\hfill
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{./lecture_includes/takaful_rdd3.png}
+        \end{minipage}
 
-\begin{frame}{Exploring Takaful's Impact on Women’s Decision Making}
-\begin{itemize}
-    \item \textbf{Unexpected Finding:} Takaful's negative impact on women’s decision-making is counterintuitive.
-    \item \textbf{Potential Selection Bias:} Women with already limited decision-making power may have been more likely to enroll.
-    \item \textbf{Absence of Baseline Data:} Without initial data, hard to determine if the program caused the observed outcome.
-    \item \textbf{Cultural Dynamics:} External financial support might alter household power dynamics, potentially leading to conflicts.
-    \item \textbf{Next Steps:} Qualitative studies can offer deeper insights into household dynamics and perceptions.
-\end{itemize}
-\end{frame}
+        \vspace{0.5cm} % Adjust the vertical spacing if needed
 
-
-% Slide for Schooling and Healthcare
-\begin{frame}{Takaful Impact Results: Schooling and Healthcare}
-\begin{itemize}
-    \item No significant impacts on school enrollment or health care utilization.
-    \item Increased spending on school supplies and transportation.
-    \item Likely due to absence of conditionalities at evaluation time.
-\end{itemize}
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{./lecture_includes/takaful_rdd2.png}
+        \end{minipage}\hfill
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{./lecture_includes/takaful_rdd1.png}
+        \end{minipage}
+    \end{figure}
 \end{frame}
 
 
-\subsection{Karama Impact}
+\begin{frame}{Summary}
 
-% Slide for Introduction to Karama Results
-\begin{frame}{Karama Impact Results: Introduction}
 \begin{itemize}
-    \item The RD approach faced challenges due to a shifting inclusion threshold.
-    \item More than half of the intended Karama comparison group was lost.
+\item Some effects are clearer than others
+
+	\begin{itemize}
+	\item Large effects on food spending (around 8\%) and total spending (around 9\%)
+	\item Large reductions in poverty (around 12\% reduction in living under poverty line)
+	\item Huge effects on child ``weight-for-length/height'' (30-40\% SD) and reduced malnourishment (3-4\%)
+	\end{itemize}
+\item Some effects, particularly on food and clothes spending are unclear
+	\begin{itemize}
+	\item Increased consumption of fruit (around 25\%) but this is a little noisy and only shows up for one model
+	\item Large increases in meat consumption (around 30-40\%)
+	\item Some evidence for increased spending on clothes but also noisy
+	\end{itemize}
+\item Inconsistent evidence for optimism about future, spending on schooling, but some paradoxes like weakened female bargaining power over children schooling and healthcare
 \end{itemize}
+
 \end{frame}
 
-% Slide for Karama's Sample and Challenges
-\begin{frame}{Karama Impact Results: Challenges}
+\begin{frame}{Comments}
+
 \begin{itemize}
-    \item Smaller sample size due to the program's smaller scale.
-    \item Efficiency in enrolling newly eligible households led to a loss of comparison group.
+\item Very thorough, very contemporary in many ways, very interesting, very valuable -- highly encourage people to study it carefully, and re-evaluations done to confirm, as many good news and somewhat bad news (lots of null results)
+\item RDD and the fuzzy method helps paint a picture that particularly around 4.5 there seems to be some improvements due to the program
+\item Some things are strange too -- like worsened female bargaining power around child welfare, which I think makes this a somewhat intriguing finding meriting more research later
+\item Much stronger evidence for Takaful than Karama, which is also puzzling
+
 \end{itemize}
+
 \end{frame}
 
-% Slide for Lack of Measured Impact
-\begin{frame}{Karama Impact Results: Measured Impact}
+\subsection{Comments and suggestions}
+
+\begin{frame}{Comments}
+
 \begin{itemize}
-    \item No measurable impacts on outcome variables examined.
-    \item Karama transfers represented 28\% of household expenditure per person.
-    \item Lack of impact likely due to challenges faced in the study.
+\item Authors estimate the average causal effect of the program \emph{at the thresholds only} and this is a strength and limitation
+\item Means we can only learn average effects at the cutoff, but if there is large sweeping differences in returns elsewhere, then this will not be informative about program's average effect
+\item Means the finding has \emph{internal validity} (i.e., they found an average effect) but it lacks \emph{external validity} unless everyone has that same effect
+\item Future work will need to try and determine to what degree that is the case 
 \end{itemize}
+
 \end{frame}
+
+\begin{frame}{More pictures needed}
+
+\begin{itemize}
+\item To really communicate the findings, I think the authors need to find a way to communicate these results without so many tables
+\item They may want to consider presenting the results using a boxplot of coefficients after normalizing scores into $z$-scores everywhere (see the following example)
+\item This could help summarize the results as 150 pages is being chewed up by tons and tons of tables
+\item RDD plots are hard to evaluate without scatter plot means along the bandwidth -- is this noise? Is this linear like they show?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Example of $z$-score box plots from another paper}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/facebook_2.png}
+        \caption{Example of alternative data visualization}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}{Comments}
+
+\begin{itemize}
+\item Authors model uses each threshold, I would prefer to see a single eligibility threshold with a re-centered running PMT score so they can interact eligibility with score
+\item Doing so will give a \emph{single instrument} which will minimize biases due to weak instruments (and it seems like they're acknowledging that they may have some weak response to the threshold except for 4.5 on PMT)
+\item Standard first stage statistical tests on the strength of the participation will be needed but looking at the earlier table, it appears particularly strong for 4.5 -- just check anyway 
+\item Not sure the first stage measurements of strength are correct if they're using multiple instruments (i.e., multiple cutoffs), but highly recommend using only 4.5 or combining them so you can use the more appropriate ``strength of eligibility tests"
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Comments}
+
+\begin{itemize}
+\item First and second stage of instrumental variables should have same controls, but authors only control for strata in second stage according to their equation
+\item Highly encourage the authors to use IV models like \texttt{ivregress 2sls} in Stata (or equivalent in R) so that this is guaranteed
+\item Consider controlling for score and a quadratic in score to model nonlinearities because ultimately RDD ``extrapolates'' based on the functional form and they may have underfitting
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Conclusion}
+
+\begin{itemize}
+\item Paper's strengths are its rigor and focus on strong methods for overcoming selection bias
+\item Some findings stronger than others
+\item Causal inference methodologies have advanced in the non-randomized setting, but have not replaced the controlled randomization and never will
+\item Policymakers can consider studying programs using these methods, and should, but keep in mind limitations and challenges in inference
+\end{itemize}
+
+\end{frame}
+
+% Mention that the first stage regression equation needs to interact the threshold with the score and examine both the linear and second order polynomials
+% Mention too that the second stage will need to have the same  controls as the first, and it doesn't appear that it does.  Authors seem to not control for the score in the second stage.  IV models use the same covariate controls in both stages,  Highly encourage the authors to use -ivregress 2sls- in Stata or equivalent in R. 
+
 
 
 \end{document}

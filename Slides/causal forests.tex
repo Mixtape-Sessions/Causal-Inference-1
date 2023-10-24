@@ -859,6 +859,11 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 
 \subsection{Causal forest algorithm}
 
+\begin{frame}{Data}
+
+For causal forests to perform well, you typically need a large number of observations (large N) because the method benefits from having a lot of data to find nuanced treatment effects. However, having a variety of covariates can also be beneficial as it allows the algorithm to find more refined subgroups of interest.
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Causal Forests: Estimating HTEs}
@@ -889,29 +894,64 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
     \item Causal forests partition the covariate space, estimating effects within partitions.
     \item Allows for local treatment effect estimation where there's overlap.
     \item Highlights regions where common support might be violated.
-    \item Let's dive now into the algorithm
+    \item Before going into the algorithm, let me review a high level idea
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Regularization in Causal Forests}
+\begin{itemize}
+\item First, regularization, one of the things I usually associate with machine learning predictive analytic techniques
+\item Regularization is crucial to prevent overfitting in machine learning.
+\item In tree-based methods, regularization isn't a direct term but is achieved through various techniques.
+\item In causal forests, regularization is accomplished a particular way, but first I want to just say it's purpose and lead us into that
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization Techniques}
+\begin{itemize}
+\item \textbf{Tree Pruning}: Simplify the model by removing some leaves after a tree is fully grown (more later).
+\item \textbf{Minimum Leaf Size}: Prevent overly granular splits by setting a minimum number of observations in a leaf (more later!)
+\item \textbf{Maximum Depth}: Limit how deep a tree can grow. (more later!!)
+\item \textbf{Bagging}: Average predictions over multiple trees. (more later!!!)
+\item \textbf{Random Feature Selection}: At each split, only consider a random subset of features. (more later !!!!)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Honesty as Regularization}
+\begin{itemize}
+\item In causal forests, the "honesty" principle acts as a form of regularization
+\item Data is split into tree-building and outcome estimation sets which is going to be how avoidijng overfitting are accomplished.
+\item This separation ensures the model doesn't overfit when estimating treatment effects.
+\item So keep this in mind as we dive now into the algorithm
+\end{itemize}
+\end{frame}
+
+
+
 
 
 
 \begin{frame}
 \frametitle{The Causal Forest Algorithm}
 \begin{itemize}
-    \item Combines multiple causal trees to estimate treatment effects.
-    \item Each tree is built on a bootstrapped sample of the data.
-    \item Random subsets of covariates are chosen at each split, adding robustness.
-    \item Treatment effects are aggregated across trees, providing a more stable and accurate estimate.
+    \item Combines multiple causal trees to estimate heterogeneous treatment effects.
+    \item Each tree is built using a bootstrapped sample, introducing variability and reducing overfitting.
+    \item Random subsets of covariates ("feature bagging") are chosen at each split, preventing domination by a few strong predictors.
+    \item Treatment effects are aggregated across trees, stabilizing estimates and improving accuracy.
 \end{itemize}
 \end{frame}
+
 
 
 \begin{frame}
 \frametitle{1. Objective Function for Splits}
 \begin{itemize}
-\item Causal trees aim to find differences in treatment effects, not just reduce variance.
-\item Splits are chosen based on maximizing differences in estimated treatment effects between resulting groups.
-\item Unlike regular regression trees, the focus is on treatment effect heterogeneity, not just outcome prediction.
+\item Causal trees prioritize identifying differences in treatment effects over just reducing variance.
+\item Splits are made by maximizing the differences in estimated treatment effects between subgroups.
+\item Unlike traditional regression trees, which focus on outcome prediction, causal trees home in on treatment effect heterogeneity.
 \end{itemize}
 \end{frame}
 
@@ -964,9 +1004,23 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \begin{frame}
 \frametitle{Pitfalls of Overfitting}
 \begin{itemize}
-\item \textbf{Issue}: This subgroup might just be a random cluster in the training data. Maybe by sheer chance, a few patients with those exact metrics got sick, but it doesn't reflect a broader, generalizable trend.
-\item \textbf{Result}: When the model is tested on new data, the predictions for this subgroup are highly inaccurate. The model was too tailored to the noise of the training data.
-\item \textbf{Honest Approach}: By separating tree-building from outcome estimation, an honest tree wouldn't be swayed by such random clusters. It would be more robust to the inherent randomness in any dataset.
+\item \textbf{Issue}: This subgroup might just be a random cluster in the training data -- maybe by sheer chance, a few patients with those exact metrics got sick, but it doesn't reflect a broader, generalizable trend.
+\item \textbf{Result}: When the model is tested on new data, the predictions for this subgroup are highly inaccurate due to the model being too tailored to the noise of the training data.
+\item \textbf{Honest Approach}: By separating tree-building from outcome estimation, an honest tree wouldn't be swayed by such random clusters and would be more robust to the inherent randomness in any dataset.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Honesty is a Guard Against Overfitting}
+\begin{itemize}
+\item \textbf{Conventional Issue}: Decision trees often capture noise by tailoring the subgroups too closely to the training data's outcomes.
+\item \textbf{Overfitting Manifestation}: A subgroup in the training data might not reflect a broader, generalizable trend. This can lead to poor predictions on new data.
+\item \textbf{Honest Approach}:
+\begin{itemize}
+\item Use one sample to determine tree structure based on covariates.
+\item Use a separate, unbiased sample to estimate outcomes for the defined subgroups.
+\end{itemize}
+\item \textbf{Benefit}: This separation ensures the model doesn't overfit to the idiosyncrasies of a single dataset, resulting in more robust and reliable predictions.
 \end{itemize}
 \end{frame}
 
@@ -982,40 +1036,22 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \end{frame}
 
 \begin{frame}
+\frametitle{Understanding Over-Segmentation}
+\begin{itemize}
+\item \textbf{Definition}: Over-segmentation occurs when data is divided into excessive, often tiny, subgroups that don't capture meaningful patterns but rather capture noise.
+\item \textbf{Simple Example}: Imagine a classroom where students are grouped by height to predict their test scores. Over-segmentation would mean creating groups for every centimeter increase in height, even when such minute differences don't meaningfully correlate with scores.
+\item \textbf{In Context of First Sample}: When building the tree with the first sample, there's a risk of over-segmentation as the model tries to find the "best" splits. This is why pruning and setting minimum leaf sizes are crucial.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
 \frametitle{Over-Segmentation and Common Support}
 \begin{itemize}
 \item Over-segmentation can lead to tiny subgroups with limited data, producing unreliable estimates.
 \item It can also result in subgroups without both treatment and control observations, violating the common support assumption.
 \item Pruning and setting minimum leaf sizes address these issues, ensuring more reliable and robust treatment effect estimates.
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Regularization in Causal Forests}
-\begin{itemize}
-\item Regularization is crucial to prevent overfitting in machine learning.
-\item In tree-based methods, regularization isn't a direct term but is achieved through various techniques.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Regularization Techniques}
-\begin{itemize}
-\item \textbf{Tree Pruning}: Simplify the model by removing some leaves after a tree is fully grown.
-\item \textbf{Minimum Leaf Size}: Prevent overly granular splits by setting a minimum number of observations in a leaf.
-\item \textbf{Maximum Depth}: Limit how deep a tree can grow.
-\item \textbf{Bagging}: Average predictions over multiple trees.
-\item \textbf{Random Feature Selection}: At each split, only consider a random subset of features.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Honesty as Regularization}
-\begin{itemize}
-\item In causal forests, the "honesty" principle acts as a form of regularization.
-\item Data is split into tree-building and outcome estimation sets.
-\item This separation ensures the model doesn't overfit when estimating treatment effects.
 \end{itemize}
 \end{frame}
 
@@ -1036,7 +1072,7 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \begin{itemize}
 \item "Bagging" stands for Bootstrap AGGregatING.
 \item It involves taking multiple random samples (with replacement) from the dataset and building a separate decision tree for each sample.
-\item For example, if our dataset has 1000 rows, we might create 10 bootstrapped samples. Each sample might contain duplicates of some rows and might miss some others.
+\item For instance, if our dataset has 1000 rows, we might create 10 bootstrapped samples. Each sample might contain duplicates of some rows and might omit some others.
 \item Each of these samples will be used to build a separate tree.
 \end{itemize}
 \end{frame}
@@ -1044,10 +1080,10 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \begin{frame}
 \frametitle{Why Bagging?}
 \begin{itemize}
-\item Trees built on different samples will have variability.
+\item Trees built on different samples will show variability.
 \item A single decision tree can be sensitive to small changes in data (high variance).
 \item By averaging predictions over multiple trees, bagging reduces this variance.
-\item Think of it like asking multiple experts and then taking a majority vote.
+\item Think of it as consulting multiple experts and then averaging their opinions.
 \end{itemize}
 \end{frame}
 
@@ -1056,35 +1092,34 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \begin{itemize}
 \item In addition to bootstrapped samples, each tree in a random forest considers only a random subset of predictors at each split.
 \item If we have 10 predictors, a single tree might only look at 3 or 4 of them for deciding a split.
-\item This introduces further variability among trees and ensures that the forest doesn't rely too heavily on any one predictor.
+\item This introduces further variability among trees and ensures that the forest doesn't overly rely on any one predictor.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Combining Predictions}
+\frametitle{Combining Predictions: Understanding Averaging}
 \begin{itemize}
 \item After building many trees, the random forest aggregates their predictions.
-\item For regression problems, this means averaging the predicted values.
-\item For classification problems, it's like taking a majority vote.
-\item This aggregation process reduces the risk of overfitting and provides a more stable and robust prediction.
+\item For estimating treatment effects, this means averaging the predicted values.
+\item Averaging helps in reducing the noise and provides a more stable and consistent estimate.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Concrete Example: Netflix Show Recommendations}
+\frametitle{Concrete Example: Advertising Campaign Impact on Sales}
 \begin{itemize}
-\item Imagine Netflix wants to recommend a new show to its users.
-\item The "treatment" is the recommendation. The outcome is whether a user watches the show or not.
-\item Different users have different tastes based on their viewing history, age, genre preferences, etc.
+\item Imagine a company launching a large advertising campaign. 
+\item The "treatment" is the exposure to the campaign. The outcome is the increase in sales.
+\item Different consumers might respond differently based on their previous purchase history, demographics, etc.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Concrete Example: Netflix Show Recommendations}
+\frametitle{Concrete Example: Advertising Campaign Impact on Sales}
 \begin{itemize}
-\item We bootstrap our user data to create diverse samples. One bootstrapped sample might end up with more users who love action movies, while another might have more of those who prefer romantic comedies due to sampling with replacement.
-\item Each tree in our causal forest focuses on different attributes. One tree might split heavily on genre preference, another on viewing frequency.
-\item By averaging the predictions from all trees, Netflix can better identify which users are most likely to watch the recommended show based on their individual attributes, estimating the HTEs.
+\item We bootstrap our consumer data to create diverse samples. One bootstrapped sample might end up with more young consumers, while another might have more elderly consumers due to sampling with replacement.
+\item Each tree in our causal forest focuses on different attributes. One tree might split based on age groups, another on previous purchase frequency.
+\item By averaging the predictions from all trees, the company can better identify which consumers are most likely to increase their purchases after being exposed to the campaign, estimating the HTEs.
 \end{itemize}
 \end{frame}
 
@@ -1105,13 +1140,13 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 
 
 
-\subsection{Honest causal forests}
 
 
 
 \begin{frame}
 \frametitle{What Makes it Honest?}
 \begin{itemize}
+	\item So let's return to the honesty principle from earliers
     \item Overfitting is a concern: How to ensure we're not identifying random quirks as significant treatment effects?
     \item Solution: Split training data into two subsamples: a splitting subsample and an estimating subsample.
     \item Build the causal tree using the splitting sample.
@@ -1136,22 +1171,13 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Honesty in Causal Trees}
-\begin{itemize}
-    \item "Honesty" refers to using separate data for constructing the tree and estimating treatment effects.
-    \item Prevents overfitting and provides unbiased treatment effect estimates.
-    \item Data is typically split into two: one half for tree building and the other for effect estimation.
-    \item Ensures that the method is not overly optimistic about its own performance.
-\end{itemize}
-\end{frame}
-
 \subsection{Understanding Honesty in Causal Forests}
 
 \begin{frame}
 \frametitle{1. Data Splitting}
+
 \begin{itemize}
-    \item The data is divided into two distinct parts:
+    \item So let's review now: the data is divided into two distinct parts:
     \begin{itemize}
         \item \textbf{Splitting Sample}: Used to structure the tree.
         \item \textbf{Estimation Sample}: Used to compute treatment effects.
@@ -1166,15 +1192,18 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
     \item The tree's structure (i.e., where to make splits based on covariates) is decided using the splitting sample.
     \item At this stage, the algorithm is \textbf{not} evaluating treatment effects.
     \item It's focusing on defining the "framework" based on covariates and potential treatment interactions.
+    \item \textbf{Framework Explained}: The "framework" refers to the foundational structure of the tree which sets up the subgroups based on covariates without yet assigning or evaluating treatment effects to these groups.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{3. Treatment Effect Estimation with the Estimation Sample}
 \begin{itemize}
-    \item The pre-constructed tree is now applied to the estimation sample.
+	\item So we have the framework setting up subgroups based on covariates, but what? 
+    \item We apply this pre-constructed tree to the estimation sample -- a kind of ``moving over" from the training data to the estimation sample.
     \item As each data point lands in a leaf node, the treatment effect within that leaf is computed.
-    \item This is done by calculating the difference in outcomes between the treated and control groups within the leaf.
+    \item This is done by calculating the difference in outcomes (e.g., means, medians) between the treated and control groups within the leaf.
+    \item Recall what unconfoundedness means -- randomization \emph{within} covariate strata, and leaves \emph{are} covariate strata
 \end{itemize}
 \end{frame}
 
@@ -1198,54 +1227,24 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \end{itemize}
 \end{frame}
 
-\subsection{Numerical Example: Understanding Honesty}
-
-\begin{frame}
-\frametitle{1. The Dataset}
-\begin{itemize}
-    \item Dataset of 1,000 individuals.
-    \item Variables:
-    \begin{itemize}
-        \item \textbf{GPA} (continuous, ranging from 1.0 to 4.0)
-        \item \textbf{Age} (multivalued, ranging from 20 to 60 years)
-    \end{itemize}
-    \item Outcome: \textbf{Wages}
-    \item Treatment: \textbf{Job Training Program}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{2. Data Splitting}
-\begin{itemize}
-    \item Split the data into two parts:
-    \begin{itemize}
-        \item \textbf{Splitting Sample}: 500 individuals
-        \item \textbf{Estimation Sample}: 500 individuals
-    \end{itemize}
-    \item Randomly assign individuals to each sample.
-    \item Each sample is representative of the overall data distribution.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{3. Tree Building with the Splitting Sample}
-\begin{itemize}
-    \item Using the splitting sample:
-    \begin{itemize}
-        \item First split might be on GPA, say GPA $< 3.0$ vs. GPA $\geq 3.0$.
-        \item Within each GPA subgroup, further splits might be on age, e.g., Age $< 30$ vs. Age $\geq 30$.
-    \end{itemize}
-    \item End up with leaves representing specific combinations, e.g., GPA $< 3.0$ and Age $< 30$.
-\end{itemize}
-\end{frame}
-
 \begin{frame}
 \frametitle{What the Algorithm IS Doing}
 \begin{itemize}
-    \item At each node, it evaluates \textbf{all possible splits} for every variable.
+    \item At each node, it evaluates potential split points for every variable, not necessarily every unique value.
+    \item For continuous variables like GPA, it might consider natural breakpoints or where there are significant changes in the treatment effect.
     \item The split criterion, e.g., maximizing the difference in treatment effects, determines the "best" split.
     \item Once the best split is chosen, data divides accordingly, creating two child nodes.
     \item The process continues recursively, now evaluating potential splits at the child nodes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Bagging in the Context}
+\begin{itemize}
+    \item Bagging involves creating multiple datasets by sampling with replacement from the original dataset.
+    \item A separate tree is built for each of these bootstrapped datasets.
+    \item Final prediction (or estimated treatment effect) is an average of outputs from all these trees.
+    \item By leveraging the diversity in these bootstrapped samples, bagging reduces the variance in predictions.
 \end{itemize}
 \end{frame}
 
@@ -1266,7 +1265,6 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
     \item While it might sound computationally intensive, modern computing power and algorithmic optimizations make this feasible. However, the process can take time, especially with large datasets or numerous variables.
 \end{itemize}
 \end{frame}
-
 
 \begin{frame}
 \frametitle{4. Treatment Effect Estimation with the Estimation Sample}
@@ -1355,7 +1353,7 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
     \item **Limitations**:
         \begin{itemize}
             \item Requires a good deal of computational resources.
-            \item Assumption of unconfoundedness needs to hold.
+            \item Assumption of unconfoundedness needs to hold (imo this is most likely being blurred by practitioners; would they use propensity scores?  Probably not)
             \item Might not perform well with very sparse data.
         \end{itemize}
 \end{itemize}
@@ -1373,38 +1371,69 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Conclusion and Key Points}
-\begin{itemize}
-    \item Causal forests elegantly combine machine learning with causal inference.
-    \item They address challenges of high dimensionality and heterogeneous effects.
-    \item A powerful tool, but like all methods, they have their strengths and limitations.
-    \item With continuous research, the potential and applications of causal forests are ever-expanding.
-\end{itemize}
-\end{frame}
 
 
 
 
-\subsection{In-depth Exploration of CRF}
+\subsection{Final comments}
 
 \begin{frame}
 \frametitle{Data Preparation for CRF}
 \begin{itemize}
-    \item Understand the dataset: Ensure you have both treatment and control groups.
+    \item Understand the dataset: Ensure you have both treatment and control groups. 
+    	\begin{itemize} 
+	\item \emph{``What's on the LHS? The RHS?} - JohnDinardo"
+	\end{itemize}
     \item Pre-process the data: Clean and handle missing values.
     \item Split the data: Create training and test datasets to evaluate the model's performance.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Setting Up and Training the Model}
+\frametitle{CRF Review: Data Preparation}
 \begin{itemize}
-    \item Start by setting up the Causal Random Forest (CRF) in R (using the `grf` package).
-    \item Adjust settings (hyperparameters) to get the best balance between making accurate predictions and drawing reliable conclusions about causes and effects.
-    \item Use your main set of data (training dataset) to teach the model.
+    \item Ensure both treatment and control groups are present.
+    \item Clean and handle missing values.
+    \item Split the dataset for training and testing to evaluate model performance.
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: The Bagging Procedure}
+\begin{itemize}
+    \item Bootstrap the data (Bagging) to create multiple bootstrapped samples drawn (with replacement) from the dataset.
+    \item A tree is constructed for each sample, capturing diverse data characteristics.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Tree Construction}
+\begin{itemize}
+    \item Trees segregate data based on covariates to maximize differences in treatment effects 
+    \item But not in the same dataset; two datasets -- a type of "training dataset" and a type of "estimation dataset" (as opposed to a prediction dataset)
+    \item "Honesty" principle ensures separate samples for tree structure and treatment effect estimation.
+    \item Iteratively evaluates potential split points for every variable.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Treatment Effect Estimation}
+\begin{itemize}
+    \item Applied on the estimation sample using the pre-constructed tree.
+    \item Treatment effects computed within leaf nodes by calculating differences in outcomes between treated and control groups.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Hyperparameters and Evaluation}
+\begin{itemize}
+    \item Number of trees (iterations) can be tuned for optimal performance.
+    \item Model evaluation done using test dataset to assess predictive and causal inference accuracy.
+    \item Iterative process: hyperparameter tuning and cross-validation for optimal results.
+\end{itemize}
+\end{frame}
+
+
 
 \begin{frame}
 \frametitle{Interpreting CRF Results}
@@ -1434,6 +1463,15 @@ Total	observations	& 324	&&	1,876	 && 2,200\\
 \end{frame}
 
 
+\begin{frame}
+\frametitle{Conclusion and Key Points}
+\begin{itemize}
+    \item Causal forests elegantly combine machine learning with causal inference.
+    \item They address challenges of high dimensionality and heterogeneous effects.
+    \item A powerful tool, but like all methods, they have their strengths and limitations.
+    \item With continuous research, the potential and applications of causal forests are ever-expanding.
+\end{itemize}
+\end{frame}
 
 
 
