@@ -122,13 +122,15 @@
 \begin{frame}{Advances in causal inference}
 
 \begin{itemize}
+\item Causal inference is having its day in the sun
 \item Explosion in advances in causal inference recently awarded with several major awards: 
 	\begin{itemize}
 	\item Josh Angrist, David Card and Guido Imbens (2021 Nobel Prize in Economics)
 	\item Judea Pearl (2011 Turing Award in computer science)
 	\item James Robins, Miguel Hernán, Thomas Richardson, Andrea Rotnitzky, and Eric Tchetgen Tchetgen (2022 Rousseeuw Prize for Statistics)
 	\end{itemize}
-\item Advances in non-experimental methods and experimental methods are too numerous to name
+\item Widespread adoption of causal inference for data driven decision making, both in government and commerce, has replaced simpler correlational methods
+\item Exciting time!
 \end{itemize}
 
 \end{frame}
@@ -144,7 +146,7 @@ Causal inference helps us know whether things work and by how much
 
 
 \begin{itemize}
-\item  What is the effect of a vaccine on a person’s health? 
+\item  Will mandatory vaccinations 
 \item  How will a early reading curriculum impact youth literacy?  
 \item  By how much will a cash transfer to the poor impact overall well-being?
 \end{itemize}
@@ -449,17 +451,6 @@ for 2012/13'' -- authors
 
 \subsection{Comments and suggestions}
 
-\begin{frame}{Comments}
-
-\begin{itemize}
-\item Authors estimate the average causal effect of the program \emph{at the thresholds only} and this is a strength and limitation
-\item Means we can only learn average effects at the cutoff, but if there is large sweeping differences in returns elsewhere, then this will not be informative about program's average effect
-\item Means the finding has \emph{internal validity} (i.e., they found an average effect) but it lacks \emph{external validity} unless everyone has that same effect
-\item Future work will need to try and determine to what degree that is the case 
-\end{itemize}
-
-\end{frame}
-
 \begin{frame}{More pictures needed}
 
 \begin{itemize}
@@ -481,18 +472,17 @@ for 2012/13'' -- authors
 \end{frame}
 
 
-\begin{frame}{Comments}
+\begin{frame}{Comments on fuzzy model}
 
 \begin{itemize}
-\item Authors model uses each threshold, I would prefer to see a single eligibility threshold with a re-centered running PMT score so they can interact eligibility with score
-\item Doing so will give a \emph{single instrument} which will minimize biases due to weak instruments (and it seems like they're acknowledging that they may have some weak response to the threshold except for 4.5 on PMT)
-\item Standard first stage statistical tests on the strength of the participation will be needed but looking at the earlier table, it appears particularly strong for 4.5 -- just check anyway 
-\item Not sure the first stage measurements of strength are correct if they're using multiple instruments (i.e., multiple cutoffs), but highly recommend using only 4.5 or combining them so you can use the more appropriate ``strength of eligibility tests"
+\item Note, it is inappropriate to use either the conventional or heteroskedasticity robust F-test for evaluating first stage strength
+\item Strongest instrument seems to be the 4.5 threshold, but authors are using multiple thresholds; would prefer to see a single eligibility threshold with a re-centered running PMT score so they can interact eligibility with score, plus this is then just identified which makes first stage tests easier 
+\item Doing so will give a \emph{single instrument} which will minimize biases due to weak instruments (unclear strength of first stage beyond 4.5 PMT)
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Comments}
+\begin{frame}{Comments on fuzzy model}
 
 \begin{itemize}
 \item First and second stage of instrumental variables should have same controls, but authors only control for strata in second stage according to their equation
@@ -518,10 +508,12 @@ for 2012/13'' -- authors
 
 \begin{itemize}
 
-\item No method is more scientific than another
-\item All valid causal inference requires understanding behavioral reasons people were and were exposed to intervention
-\item Some reasons make it simple (randomization); some make it hard (voluntary participation)
-\item Requires deeply institutional knowledge to discern that reason, but if known, then it is potentially possible
+\item Validity in causal inference is based on methods that reflect the reality of why people entered a program (i.e., all methods are equally scientific)
+\item Fuzzy RDD \emph{only} estimates the "local average treatment effect" which is only the average effect for people at 4.5 (internal but not external validity unless effects are the same for everyone)
+\item Future avenues need to examine the average effect for \emph{all participants} as treatment effect heterogeneity could strengthen or weaken results found at 4.5
+participants
+\item Machine learning methods, such as causal forests and double debiased machine learning, can do this, but require a lot of information on observable confounders related to participation and outcomes
+\item \textcolor{blue}{Thank you!!}
 
 \end{itemize}
 
@@ -534,6 +526,20 @@ for 2012/13'' -- authors
 
 \end{document}
 
+\begin{frame}{Comments}
+
+\begin{itemize}
+\item Authors estimate the average causal effect of the program \emph{at the thresholds only} and this is a strength and limitation
+\item Means we can only learn average effects at the cutoff, but if there is large sweeping differences in returns elsewhere, then this will not be informative about program's average effect
+\item Means the finding has \emph{internal validity} (i.e., they found an average effect) but it lacks \emph{external validity} unless everyone has that same effect
+\item Future work will need to try and determine to what degree that is the case 
+\end{itemize}
+
+\end{frame}
+
+
+
+I have just one final comment. At the conclusion of the presentation, it would be highly beneficial to outline the next steps or the way forward. This should involve mentioning specific advanced methods or techniques that have the potential to yield better results and address the limitations of IFPRI's assessment. Such an addition could open doors to future projects. In our experience, all participants will be eager to hear about the possibility of conducting scenario analysis (what-if) to measure the potential impact of different program designs or policy alternatives.
 
 
 % ---- Content ----
