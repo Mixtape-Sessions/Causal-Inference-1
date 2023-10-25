@@ -147,7 +147,7 @@ Causal inference helps us know whether things work and by how much
 
 \begin{itemize}
 \item  Will mandatory vaccination laws reduce the spread of COVID?
-\item  How will a early reading curriculum impact youth literacy?  
+\item  How will a new early reading curriculum impact youth literacy?  
 \item  How much, if any, will cash transfers impact poor family's overall well-being?
 \end{itemize}
 
@@ -157,7 +157,7 @@ Causal inference helps us know whether things work and by how much
 
 \begin{frame}{Counterfactuals and causal inference}
 
- Ladder of causation: observe relationships, intervene, and counterfactual
+ Ladder of causation: observe relationships, intervene, and reason out the counterfactual
 
 \bigskip
 
@@ -165,7 +165,7 @@ Causal inference helps us know whether things work and by how much
 
 \bigskip
 
-Causal inference \emph{estimate} counterfactuals to understand intervention's impact but as counterfactuals don't exist, estimation require \emph{assumptions}, data and appropriate methods
+Causal inference methods \emph{estimate} counterfactuals to understand intervention's impact but as counterfactuals don't exist, estimation require \emph{assumptions}, data and appropriate methods
 
 
 \end{frame}
@@ -276,8 +276,8 @@ Causal inference \emph{estimate} counterfactuals to understand intervention's im
 %\item Treatment assignment \emph{mechanisms} refer to how and why a person participated into a program in the first place and the most common reason -- voluntary participation -- is a threat to causal inference
 \item Ironically, the better run a program is, the more difficult it is to infer the effect 
 % \item because humans naturally gravitate towards pleasure and away from pain (e.g., vents if COVID symptoms are severe)
-\item Voluntary participation in well run programs can make it impossible because the selection bias can be extreme
-\item Overcoming this, researchers typically need something that put them into the program other than their own voluntary participation, but what?
+\item Voluntary participation in well run programs become dominated by selection bias and may make it impossible to know average causal effects
+\item Overcoming selection bias requires something external that put them into the program other than their own voluntary participation, but what?
 
 \end{itemize}
 
@@ -308,7 +308,7 @@ Causal inference \emph{estimate} counterfactuals to understand intervention's im
 \begin{itemize}
 \item Randomized experiments are valuable for causal inference because program participation is \emph{not} based on voluntary participation, and therefore selection bias is minimized almost to nothing
 \item But for some questions, the \emph{controlled} randomization may not be possible 
-\item Randomized assignment rural regions to good and bad schools would definitively measure the impact of schools on female children, but this might be too expensive, infeasible or unethical to knowingly deprive some areas of crucial educational improvements
+\item Randomized assignment of rural regions to good and bad schools would definitively measure the impact of schools on children, but this might be too expensive, infeasible or unethical to knowingly deprive some areas of crucial educational improvements
 \end{itemize}
 
 
@@ -321,18 +321,19 @@ Causal inference \emph{estimate} counterfactuals to understand intervention's im
 
 \begin{frame}{Running Variables and Regression Discontinuity}
 \begin{itemize}
-\item But sometimes people don't choose to participate and aren't even randomized but are assigned to treatment based on a \emph{test}
+\item But sometimes people were limited in their voluntary participation, not because they were in a controlled randomized experiment, but because their participation was based on a \emph{test} and their \emph{score}
 \item When their \emph{grade} on a test is used to put them in a program, we call the test a \emph{running variable} and the eligibility a \emph{cutoff}
-\item  Impact study by IFPRI published in 2018 used this method (also called \emph{regression discontinuity} to study the impact of Takaful and Karama on a variety of health and life outcomes
+\item  Impact study by IFPRI published in 2018 used this method (also called \emph{regression discontinuity}) to study the impact of Takaful and Karama on a variety of health and life outcomes
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Methodology commentary}
 
 \begin{itemize}
-\item RDD is a design that can under certain assumptions identify the average effect of the program on well being for those people right at the cutoff
+\item RDD is a design can under certain assumptions identify the average effect of the program on well being but \emph{only} for those people right above and below the eligibility cutoff
+\item Insofar as those people differ from everyone else, the causal effects may lack external validity despite being true for those people
 \item Method has a variety of techniques but at their core, they compare program participants who just barely got in because of some score they received on a running variable to those who just barely missed the cutoff
-\item Not the ``most scientific'' -- all causal inference is equally scientific and valid so long as the assumptions hold; for RDD is a truly randomized experiment at the threshold
+\item No more ``scientific'' or valid than any other method so long as the behavioral assignments meet the assumptions required for inference
 
 \end{itemize}
 
@@ -347,7 +348,7 @@ Causal inference \emph{estimate} counterfactuals to understand intervention's im
 % Slide 4
 \begin{frame}{Proxy Means Test}
 \begin{itemize}
-\item PMT formula is based on a statistical model measuring log per capita spending and the PMT score used for eligibility into Takaful and Karama was originally 5.003 and lowered to 4.5 for Takaful in Nov 2015
+\item PMT formula is based on household characteristics and the PMT score used for eligibility into Takaful and Karama was originally 5.003 and lowered to 4.5 for Takaful in Nov 2015 (but raised for Karama)
 	\begin{itemize}
 	\tiny
 \item ``\emph{PMT [is] an index of well-being based on household demographics, income,
@@ -386,7 +387,7 @@ for 2012/13'' -- authors
 
 \subsection{Authors' findings}
 
-\begin{frame}{Outcomes}
+\begin{frame}{Program Participation at 4.5 PMT}
     \begin{figure}
         \centering
         \includegraphics[width=0.8\textwidth]{./lecture_includes/takaful_density.png}
@@ -437,19 +438,35 @@ for 2012/13'' -- authors
 
 \end{frame}
 
+
+
+
+\subsection{Comments and suggestions}
+
 \begin{frame}{Comments}
 
 \begin{itemize}
-\item Very thorough, very contemporary in many ways, very interesting, very valuable -- highly encourage people to study it carefully, and re-evaluations done to confirm, as many good news and somewhat bad news (lots of null results)
-\item RDD and the fuzzy method helps paint a picture that particularly around 4.5 there seems to be some improvements due to the program
-\item Some things are strange too -- like worsened female bargaining power around child welfare, which I think makes this a somewhat intriguing finding meriting more research later
+\item Very thorough, very contemporary, very interesting, very valuable -- highly encourage people to study it carefully, and re-evaluations done to confirm, as many good news (but lots of null results too)
+\item RDD with and without fuzzy design paint a picture that around 4.5 there are some improvements from Takaful participation
+\item But some things are strange too -- like worsened female bargaining power around child welfare, which I think makes this a somewhat intriguing finding meriting more research later
 \item Much stronger evidence for Takaful than Karama, which is also puzzling
 
 \end{itemize}
 
 \end{frame}
 
-\subsection{Comments and suggestions}
+\begin{frame}{Local average treatment effects}
+
+\begin{itemize}
+\item Authors estimate the average causal effect of the program \emph{at the thresholds only} and this is a strength and limitation
+\item We can only learn average effects for people who just barely missed and got in because of the cutoff, as opposed to all program participants, 
+\item If there is large differences in program effects, then this will not be informative about program's average effect (external validity), and policy should be judged by everyone, not just a thin slice at some arbitrary cutoff
+%\item Means the finding has \emph{internal validity} (i.e., they found an average effect) but it lacks \emph{external validity} unless everyone has that same effect
+\item Future work will need to try evaluate effects on everyone to determine to what degree that is the case which will require moving away from RDD 
+\end{itemize}
+
+\end{frame}
+
 
 \begin{frame}{More pictures needed}
 
@@ -475,9 +492,10 @@ for 2012/13'' -- authors
 \begin{frame}{Comments on fuzzy model}
 
 \begin{itemize}
-\item Note, it is inappropriate to use either the conventional or heteroskedasticity robust F-test for evaluating first stage strength
-\item Strongest instrument seems to be the 4.5 threshold, but authors are using multiple thresholds; would prefer to see a single eligibility threshold with a re-centered running PMT score so they can interact eligibility with score, plus this is then just identified which makes first stage tests easier 
+\item Strongest instrument seems to be the 4.5 threshold, but authors are using multiple thresholds
+\item Would prefer to see a single eligibility threshold with a re-centered running PMT score so they can interact eligibility with score, as this is just identified which makes first stage tests easier and weakness less a problem
 \item Doing so will give a \emph{single instrument} which will minimize biases due to weak instruments (unclear strength of first stage beyond 4.5 PMT)
+\item Another reason is it is inappropriate to use either the conventional or heteroskedasticity robust F-test for evaluating first stage strength 
 \end{itemize}
 
 \end{frame}
@@ -493,18 +511,18 @@ for 2012/13'' -- authors
 \end{frame}
 
 
-\begin{frame}{Conclusion}
+\begin{frame}{Strengths and implications}
 
 \begin{itemize}
 \item Paper's strengths are its rigor and focus on strong methods for overcoming selection bias
 \item Some findings stronger than others
-\item Causal inference methodologies have advanced in the non-randomized setting, but have not replaced the controlled randomization and never will
 \item Policymakers can consider studying programs using these methods, and should, but keep in mind limitations and challenges in inference
+\item Causal inference methodologies have advanced in the non-randomized setting, but have not replaced the controlled randomization and never will
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Credible Causal Inference}
+\begin{frame}{Credible Causal Inference and Parting Remarks}
 
 \begin{itemize}
 
@@ -525,17 +543,6 @@ participants
 
 
 \end{document}
-
-\begin{frame}{Comments}
-
-\begin{itemize}
-\item Authors estimate the average causal effect of the program \emph{at the thresholds only} and this is a strength and limitation
-\item Means we can only learn average effects at the cutoff, but if there is large sweeping differences in returns elsewhere, then this will not be informative about program's average effect
-\item Means the finding has \emph{internal validity} (i.e., they found an average effect) but it lacks \emph{external validity} unless everyone has that same effect
-\item Future work will need to try and determine to what degree that is the case 
-\end{itemize}
-
-\end{frame}
 
 
 
