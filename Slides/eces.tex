@@ -44,39 +44,14 @@
 
 \begin{document}
 
-
-
-
-\title{Discussing causal inference and impact evaluation of Takaful and Karama}
+\title{About Causal Inference and How It Can Improve Impact Evaluation of Takaful and Karama}
 \author{by Scott Cunningham (Baylor University)}
 \date{\today}
 
-\maketitle
+\begin{frame}
+\titlepage
+\end{frame}
 
-
-% ---- Content ----
-
-% 20 min. no more than 20 slides (15 ideally). The goal is to keep the audience's attention 
-
-% 7 min of causal inference as a methodology
-% advances in this line of work --> more specific impact assessment
-% 10 min commenting on the study, the type of assessment that took place
-% "based on what I've seen, Causal Infernce in its newest version, it can give more room for answering questions about impact of programs".  Position causal inference within the impact evaluation methodology.  It can do "1 2 3 4 5" and then show examples.  First 10 minutes.  
-
-% goal: to formulate a program (expensive currently to Egyptian government).  We need to know the proper assessment.  Are the methodologies proper enough to justify how much money is being spent? 
-% my advantage is that I am an outsider; I'm watching it but talking about it from my own expertise.
-% Other panelists will speak about the study they undertook.  We want to know what they are doing -- everyone is involved in the assessment (JPAL, for instance).  Some of the panelists will be critical (e.g., an anthropologist may be critical).  I can use examples.  But use examples to illustrate the methodologies using benign topics that aren't offensive or polarizing.  
-% What can be done with quasi-experimental methodologies versus what I have seen being assessed.  I want to open doors.  They're going to put in a proposal for an assessment of the program. 
-
-% Can I discuss "treatment assignment mechanism" but without so much detail?  And can I drop the potential outcomes material and just assume the average treatment effect. 
-
-% Be critical of the study, say what I think what kinds of improvements can be done.  
-
-% I won't need to explain the program as that'll be described before my talk.  Go into an assessment of its impact. Cost benefit is important for normative questions.
-
-% Use as a thread the program so that I wrap people into this idea.  
-
-% Common errors for conclusions for not understanding.  I need entry points for grabbing people. 
 
 \section{What is causal inference?}
 
@@ -101,7 +76,7 @@
     \item What is it?  Why is it important?  What is at stake? % what is the value added of the techniques in causal inference and what are examples of assessment. I need to use the 10 minutes to make the point for causal inference -- focusing on the range of methods. 
     \item Importance of \emph{controlled randomization} and options when we can't.
     \end{itemize}
-\item Secondly, we'll delve into a recent evaluation by Breisinger and coauthors:
+\item Secondly, we'll delve into a 2018 evaluation by IFPRI:
     \begin{itemize}
     \item Focusing on the Takaful (Solidarity) and Karama (Dignity) programs.
     \item Understanding the evaluation's findings and implications.
@@ -110,41 +85,20 @@
 \end{frame}
 
 
-\begin{frame}{Important Distinctions: Causality vs. Causal Inference}
 
-What is causal inference?  What is causality?  They are related but not the same thing. 
+%\begin{frame}{Important Distinctions: Correlation vs. Causal Inference}
 
-\bigskip
+%What is correlation?  When is it causal and when is it not? 
 
-\begin{itemize}
-\item \emph{Causality} is a metaphysical concept focusing on the theory of causality
-\item \emph{Causal Inference} is an epistemological concept focused on how we can know causal effects in data
-\end{itemize}
-\end{frame}
+%\bigskip
+
+%\begin{itemize}
+%\item \emph{Correlation} is a purely statistical concept measuring movements between two things
+%\item \emph{Causal Inference} uses in data, assumptions and statistical models to estimate causal effects
+%\end{itemize}
+%\end{frame}
 
 
-\begin{frame}{Important Distinctions: Correlation vs. Causal Inference}
-
-What is correlation?  When is it causal and when is it not? 
-
-\bigskip
-
-\begin{itemize}
-\item \emph{Correlation} is a purely statistical concept measuring movements between two things
-\item \emph{Causal Inference} uses in data, assumptions and statistical models to estimate causal effects
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Causal Inference Gains}
-
-\begin{itemize}
-
-\item Causal effects inform policy because they tell us that if we were to undertake a policy, then the estimated causal effects found in our data would likely occur again
-\item The gains from causal inference help us not only know whether things work (as opposed to driven by spurious and uninformative relationships found in our data sources) but also the magnitude
-\item Both the direction and the magnitude are critical for policy because they can help determine the size of the impact of what may be expensive programs
-
-\end{itemize}
-\end{frame}
 
 
 %\begin{frame}{Metaphysics of Causality}
@@ -165,51 +119,131 @@ What is correlation?  When is it causal and when is it not?
 %\end{itemize}
 %\end{frame}
 
+\begin{frame}{Advances in causal inference}
 
-\begin{frame}{Common errors}
-
-  \begin{itemize}
-    \item Aliens from another planet come and notice that people on ventilators have higher mortality than those not on ventilators
-    \item They conclude that ventilators are killing people
-    \item Are they right?  Or  they have it backwards -- maybe doctors are putting sick people on ventilators to help them
-    \item How can separate the two?  By understanding the behaviors that drove people into and out of programs first and combining that with statistical methodologies that take advantage of that
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{\#1: Correlation and causality are different concepts}
-
-  \begin{itemize}
-  	\item Differences between causality and correlation
-		\begin{itemize}
-	    \item Causal is about understanding the effect of one unit changing on another. ``If a person  puts a patient on a ventilator, will her covid symptoms improve?''
-	    \item Correlation, on the other hand, is about understanding relationships across many units. ``How do changes in ventilators relate to changes in covid symptoms across a population?''
-	    	\end{itemize}
-	\item Failure to understand the difference between causal inference and \emph{description} can lead to major errors in assessment and therefore policy recommendations
-  \end{itemize}  
-\end{frame}
-
-
-
-\begin{frame}{\#2: Coming first may not mean causality!}
-
-  \begin{itemize}
-    \item Every morning the rooster crows and then the sun rises
-    \item Did the rooster cause the sun to rise? Or did the sun cause the rooster to crow?
-    \item What if cat killed the rooster?  Would the sun never rise?
-    \item Simply assuming things happening one after another represents causal effects is an extension of the previous error
-  \end{itemize}
+\begin{itemize}
+\item Explosion in advances in causal inference recently awarded with several major awards: 
+	\begin{itemize}
+	\item Josh Angrist, David Card and Guido Imbens (2021 Nobel Prize in Economics)
+	\item Judea Pearl (2011 Turing Award in computer science)
+	\item James Robins, Miguel Hernán, Thomas Richardson, Andrea Rotnitzky, and Eric Tchetgen Tchetgen (2022 Rousseeuw Prize for Statistics)
+	\end{itemize}
+\item Advances in non-experimental methods and experimental methods are too numerous to name
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{\#3: Causality may mask correlations!}
 
-  \begin{figure}
-    \centering
-    \includegraphics[scale=0.04]{./lecture_includes/scottboat.jpg}
-  \end{figure}
+
+\begin{frame}{Examples of causal decisions}
+
+Causal inference helps us know whether things work and by how much
+
+ 
+\bigskip
+
+
+\begin{itemize}
+\item  What is the effect of a vaccine on a person’s health? 
+\item  How will a early reading curriculum impact youth literacy?  
+\item  By how much will a cash transfer to the poor impact overall well-being?
+\end{itemize}
+
 
 \end{frame}
+
+
+\begin{frame}{Counterfactuals and causal inference}
+
+ Ladder of causation: observe relationships, intervene, and counterfactual
+
+\bigskip
+
+\textcolor{red}{Fundamental problem of causal inference}: We don't have anyone's counterfactuals because \emph{by definition} they never happened
+
+\bigskip
+
+Causal inference \emph{estimate} counterfactuals to understand intervention's impact but as counterfactuals don't exist, estimation require \emph{assumptions}, data and appropriate methods
+
+
+\end{frame}
+
+
+
+%\begin{frame}{Discerning causal effects}
+
+%\begin{itemize}
+%\item Gains from causal inference help us not only know whether things work (as opposed to driven by spurious and uninformative relationships found in our data sources) but also the magnitude
+%\item Both are critical for designing policy when programs are very expensive and the goals are important
+%\item Statistical methods are required but they are only as good as the assumptions beneath them -- no approach is “more scientific” if assumptions are not credible
+
+%\end{itemize}
+
+%\end{frame}
+
+
+
+\begin{frame}{Correlations, Causal Effects, and Selection Bias}
+
+
+
+\begin{itemize}
+\item Imagine we find patients on ventilators have higher mortality than patients who aren't; two problems we face 
+	\begin{enumerate}
+	\item \textbf{Average causal effect}: Can we find the average effect of ventilators on mortality? If so how?
+	\item \textbf{Selection bias}: How much of the observed differences between people on and off vents is because these the ventilator group always would've had higher mortality?
+	\end{enumerate}
+\item Our goal: find situations where we can credibly delete the second term so all that is left is the first term when comparing program participants to non-participants
+
+\item Requires understanding the \emph{behavioral reason} people were selected, but some behavioral reasons for program participation make this a very difficult problem disentangle
+
+\end{itemize}
+
+\end{frame}
+
+
+%  \begin{itemize}
+%    \item Aliens from another planet come and notice that people on ventilators have higher mortality than those not on ventilators
+%    \item They conclude that ventilators are killing people
+%    \item Are they right?  Or  they have it backwards -- maybe doctors are putting sick people on ventilators to help them
+%    \item How can separate the two?  By understanding the behaviors that drove people into and out of programs first and combining that with statistical methodologies that take advantage of that
+%  \end{itemize}
+
+%\end{frame}
+
+%\begin{frame}{\#1: Correlation and causality are different concepts}
+
+%  \begin{itemize}
+%  	\item Differences between causality and correlation
+%		\begin{itemize}
+%	    \item Causal is about understanding the effect of one unit changing on another. ``If a person  puts a patient on a ventilator, will her covid symptoms improve?''
+%	    \item Correlation, on the other hand, is about understanding relationships across many units. ``How do changes in ventilators relate to changes in covid symptoms across a population?''
+%	    	\end{itemize}
+%	\item Failure to understand the difference between causal inference and \emph{description} can lead to major errors in assessment and therefore policy recommendations
+%  \end{itemize}  
+%\end{frame}
+
+
+
+%\begin{frame}{\#2: Coming first may not mean causality!}
+
+%  \begin{itemize}
+%    \item Every morning the rooster crows and then the sun rises
+%    \item Did the rooster cause the sun to rise? Or did the sun cause the rooster to crow?
+%    \item What if cat killed the rooster?  Would the sun never rise?
+%    \item Simply assuming things happening one after another represents causal effects is an extension of the previous error
+%  \end{itemize}
+
+%\end{frame}
+
+%\begin{frame}{\#3: Causality may mask correlations!}
+
+%  \begin{figure}
+%    \centering
+%    \includegraphics[scale=0.04]{./lecture_includes/scottboat.jpg}
+%  \end{figure}
+
+%\end{frame}
 
 \subsection{Treatment Assignment Mechanisms}
 
@@ -225,21 +259,6 @@ What is correlation?  When is it causal and when is it not?
 
 %\end{frame}
 
-\begin{frame}{Correlations, Causal Effects, and Selection Bias}
-
-\begin{itemize}
-\item The aliens' error was caused by being unable to separate \emph{selection} from \emph{causal effects}, 
-	\begin{enumerate}
-	\item \textbf{Average causal effect}: What is the average effect of ventilators on mortality?
-	\item \textbf{Selection bias}: How much of the observed differences between people on and off vents is simply because of baseline differences in mortality that would've been there even had they not been on vents in the first place
-	\end{enumerate}
-\item The first one is our goal in policy evaluation, but the second is the problem we seek to overcome with causal inference methods
-\item Discerning causal effects requires, not statistics, but deciphering the  \emph{behavioral reason} that individuals were exposed to some intervention like a poverty program, or what's called the ``treatment assignment''
-
-\end{itemize}
-
-\end{frame}
-
 
 % Rewrite this but without the equation.  Comparison = causal effect + selection bias
 
@@ -252,9 +271,10 @@ What is correlation?  When is it causal and when is it not?
 
 \begin{itemize}
 
-\item Treatment assignment \emph{mechanisms} refer to how and why a person participated into a program in the first place and the most common reason -- voluntary participation -- is a threat to causal inference
-\item Happens the better run the program is because humans naturally gravitate towards pleasure and away from pain (e.g., vents if COVID symptoms are severe)
-\item Sometimes the unobserved factors differ between program participants so much that all \emph{observed correlation} between program participants and non-participants is selection bias which leads to incorrect conclusions
+%\item Treatment assignment \emph{mechanisms} refer to how and why a person participated into a program in the first place and the most common reason -- voluntary participation -- is a threat to causal inference
+\item Ironically, the better run a program is, the more difficult it is to infer the effect 
+% \item because humans naturally gravitate towards pleasure and away from pain (e.g., vents if COVID symptoms are severe)
+\item Voluntary participation in well run programs can make it impossible because the selection bias can be extreme
 \item Overcoming this, researchers typically need something that put them into the program other than their own voluntary participation, but what?
 
 \end{itemize}
@@ -285,8 +305,8 @@ What is correlation?  When is it causal and when is it not?
 
 \begin{itemize}
 \item Randomized experiments are valuable for causal inference because program participation is \emph{not} based on voluntary participation, and therefore selection bias is minimized almost to nothing
-\item But for some questions, the \emph{controlled} randomization may not be possible due to feasibility, expense or ethical concerns
-\item Randomized controlled trials (RCT) use randomization to assign people to vents, but good luck randomizing extremely sick people to ventilators
+\item But for some questions, the \emph{controlled} randomization may not be possible 
+\item Randomized assignment rural regions to good and bad schools would definitively measure the impact of schools on female children, but this might be too expensive, infeasible or unethical to knowingly deprive some areas of crucial educational improvements
 \end{itemize}
 
 
@@ -301,15 +321,26 @@ What is correlation?  When is it causal and when is it not?
 \begin{itemize}
 \item But sometimes people don't choose to participate and aren't even randomized but are assigned to treatment based on a \emph{test}
 \item When their \emph{grade} on a test is used to put them in a program, we call the test a \emph{running variable} and the eligibility a \emph{cutoff}
-\item  Breisinger and coauthors used this method (also called \emph{regression discontinuity} to study the impact of Takaful and Karama on a variety of health and life outcomes
+\item  Impact study by IFPRI published in 2018 used this method (also called \emph{regression discontinuity} to study the impact of Takaful and Karama on a variety of health and life outcomes
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Methodology commentary}
+
+\begin{itemize}
+\item RDD is a design that can under certain assumptions identify the average effect of the program on well being for those people right at the cutoff
+\item Method has a variety of techniques but at their core, they compare program participants who just barely got in because of some score they received on a running variable to those who just barely missed the cutoff
+\item Not the ``most scientific'' -- all causal inference is equally scientific and valid so long as the assumptions hold; for RDD is a truly randomized experiment at the threshold
+
+\end{itemize}
+
+\end{frame}
 
 
 \section{Takaful and Karama Impact Evaluation}
 
 \subsection{Description of program and methodology}
+
 
 % Slide 4
 \begin{frame}{Proxy Means Test}
@@ -483,6 +514,19 @@ for 2012/13'' -- authors
 
 \end{frame}
 
+\begin{frame}{Credible Causal Inference}
+
+\begin{itemize}
+
+\item No method is more scientific than another
+\item All valid causal inference requires understanding behavioral reasons people were and were exposed to intervention
+\item Some reasons make it simple (randomization); some make it hard (voluntary participation)
+\item Requires deeply institutional knowledge to discern that reason, but if known, then it is potentially possible
+
+\end{itemize}
+
+\end{frame}
+
 % Mention that the first stage regression equation needs to interact the threshold with the score and examine both the linear and second order polynomials
 % Mention too that the second stage will need to have the same  controls as the first, and it doesn't appear that it does.  Authors seem to not control for the score in the second stage.  IV models use the same covariate controls in both stages,  Highly encourage the authors to use -ivregress 2sls- in Stata or equivalent in R. 
 
@@ -491,3 +535,27 @@ for 2012/13'' -- authors
 \end{document}
 
 
+
+% ---- Content ----
+
+% 20 min. no more than 20 slides (15 ideally). The goal is to keep the audience's attention 
+
+% 7 min of causal inference as a methodology
+% advances in this line of work --> more specific impact assessment
+% 10 min commenting on the study, the type of assessment that took place
+% "based on what I've seen, Causal Infernce in its newest version, it can give more room for answering questions about impact of programs".  Position causal inference within the impact evaluation methodology.  It can do "1 2 3 4 5" and then show examples.  First 10 minutes.  
+
+% goal: to formulate a program (expensive currently to Egyptian government).  We need to know the proper assessment.  Are the methodologies proper enough to justify how much money is being spent? 
+% my advantage is that I am an outsider; I'm watching it but talking about it from my own expertise.
+% Other panelists will speak about the study they undertook.  We want to know what they are doing -- everyone is involved in the assessment (JPAL, for instance).  Some of the panelists will be critical (e.g., an anthropologist may be critical).  I can use examples.  But use examples to illustrate the methodologies using benign topics that aren't offensive or polarizing.  
+% What can be done with quasi-experimental methodologies versus what I have seen being assessed.  I want to open doors.  They're going to put in a proposal for an assessment of the program. 
+
+% Can I discuss "treatment assignment mechanism" but without so much detail?  And can I drop the potential outcomes material and just assume the average treatment effect. 
+
+% Be critical of the study, say what I think what kinds of improvements can be done.  
+
+% I won't need to explain the program as that'll be described before my talk.  Go into an assessment of its impact. Cost benefit is important for normative questions.
+
+% Use as a thread the program so that I wrap people into this idea.  
+
+% Common errors for conclusions for not understanding.  I need entry points for grabbing people. 
