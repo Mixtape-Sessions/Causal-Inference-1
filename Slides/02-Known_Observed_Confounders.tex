@@ -1208,6 +1208,15 @@ Unconfoundedness justifies substituting units in treatment for control based on 
 
 
 
+\begin{frame}{Common support visual}
+
+  \begin{figure}
+    \includegraphics[scale=0.17]{./lecture_includes/matching_support.png}
+  \end{figure}
+  
+Common support is like having a bridge that allows you to move soldiers and equipment across a moat. 
+
+\end{frame}
 
 
 
@@ -1338,274 +1347,29 @@ Homework: Can you figure out how to identify and estimate the ATU?
 
 
 
-\section{Matching Estimators }
+\section{Estimators }
 
 
-\subsection{Stratification weighting}
+\subsection{Subclassification}
 
-
-\begin{frame}{History of stratification}
-
+\begin{frame}{Causal inference using covariates}
 \begin{itemize}
 
-	\item Adjusting for confounders was developed within statistics and epidemiology largely to study smoking's effect on lung cancer
-	\item Couldn't run RCTs to examine smoking's effect, so people relied on non-experimental data, but results were not plausible to critics for a variety of reasons
-	\item Stratification weighting was developed to adjust for the role that known and quantified confounders were playing through
-
+\item Multivariate regression goes back to Yule (19th century) and Fisher (20th century)
+\item Subclassification was introduced by Cochran (late 60s)
+\item Propensity score matching introduced early 80s (Rosenbaum and Rubin)
+\item Regression based decomposition methods by Kitagawa (1950s), Oaxaca and Blinder (early 70s), and Kline, Wooldridge and others (in 00s)
+\item Machine learning methods like double debiased ML by Chernozhukov, et al. (2018) and causal forests (Athey and Wager) 2018)
 \end{itemize}
 
 \end{frame}
 
 
-
-
-
-
-\begin{frame}[plain, shrink=20]
-	\begin{figure}
-	\includegraphics[scale=0.75]{./lecture_includes/cancer_fig1.pdf}
-	\end{figure}
-
-	\begin{figure}
-	\includegraphics[scale=0.75]{./lecture_includes/cancer_fig2.pdf}
-	\end{figure}
-
-\end{frame}	
-
-
-\begin{frame}[plain]
-	
-	\begin{figure}
-	\includegraphics[scale=0.5]{./lecture_includes/smoking_figure1.pdf}
-	\end{figure}
-
-	\begin{figure}
-	\includegraphics[scale=0.5]{./lecture_includes/smoking_figure2.pdf}
-	\end{figure}
-
-\end{frame}	
-	
-
-	
-
-
-\begin{frame}{Hypothesis and skepticism}
-
-Early 20th century scientists believed smoking caused lung cancer but others felt the evidence was not strong
-		\begin{enumerate}
-		\item Sample bias due to non-random selection of subjects (only those who died)
-		\item Complaints about functional forms using ``risk ratios'' and ``odds ratios''
-		\item Implausible magnitudes (``smell test'')
-		\item Killer critique: \emph{no experimental evidence} to incriminate smoking as a cause of lung cancer
-		\end{enumerate}
-\end{frame}
-
-\begin{frame}{Fisher's genome confounder theory}
-		\begin{itemize}
-		\item Ronald Fisher (recall from earlier) was a heavy smoker, died of cancer, and paid expert witness for the tobacco industry
-		\item Famous as statistician and as a geneticist and using logic, statistics and genetic evidence proposed a contrarian theory that there existed a confounding genome, $Z$, which introduced selection bias into contrasts of smokers and non-smokers 
-		\item Studies showed that cigarette smokers and non-smokers were different on observables -- more extraverted than non-smokers, differed in age, differed in income, differed in education, etc.
-		\end{itemize}
-\end{frame}
-
-\begin{frame}{Fisher's genome confounder theory in DAG form}
-	
-Smoking, $S$, is only \emph{correlated} with lung cancer, $C$ because of an unknown ant not quantified confounder $Z$:
-
-  \begin{center}
-    \begin{tikzpicture}
-    [node distance=1.5cm]
-
-    % nodes %
-    \node[text centered] (z) {$Z$};
-    \node[below right of = z, text centered] (c) {$C$};
-    \node[below left of = z, text centered] (s) {$S$};
-    
-    % edges %
-    \draw[->, line width= 0.5] (z) -- (c);
-    \draw[->, line width= 0.5] (z) -- (s);
-    % \draw[->, line width= 0.5] (s) -- (c);
-    
-    \end{tikzpicture}
-  \end{center}
-
-Legitimate criticism, but ultimately incorrect:
-
-\bigskip
-
-  \begin{quote}  
-    ``the [epidemiologists] turned out to be right, but only because bad logic does not necessarily lead to wrong conclusions.'' Robert Hooke (1983)
-  \end{quote}
-
-	
-\end{frame}
-
-\begin{frame}{Stratification weighting}
-
-\begin{itemize}
-\item Simple weighting techniques were eventually introduced to adjust for these observables
-\item Stratification weighting goes back at least to Cochran (1968)
-\item We will discuss it both using his original paper, and an application
-\item Goal is to adjust quantities for a known and quantified confounder through weights based on the confounder's distribution in different samples
-\end{itemize}
-
-\end{frame}
-
-
-
-
-\begin{frame}{Mortality rates by country and smoking group}
-	
-	\begin{table}\centering
-		\caption{Death rates per 1,000 person-years (Cochran 1968)}
-		\begin{center}
-		\begin{tabular}{lccc}
-		\hline \hline
-		\multicolumn{1}{l}{Smoking group}&
-		\multicolumn{1}{c}{Canada}&
-		\multicolumn{1}{c}{U.K.}&
-		\multicolumn{1}{c}{U.S.}\\
-		\hline
-		Non-smokers & 20.2 & 11.3 & 13.5\\
-		Cigarettes & 20.5 & 14.1 & 13.5 \\
-		Cigars/pipes & 35.5 & 20.7 & 17.4\\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-	
-\end{frame}
-
-\begin{frame}{Mortality rates by country and smoking group}
-
-\begin{itemize}
-\item Cigars in these data are particularly odd to me -- much higher mortality rates in all three countries than non-smokers, as well as cigarette smokers. 
-\item Another strange result -- cigarette smokers in Canada and US had same mortality rates as non-smokers
-\item Seems weird to us, but unclear what they would've thought given the science was unsettled
-\item Cochran tackles \emph{one} of the observable variables that he thinks predicts smoking and mortality -- age
-
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Non-smokers and smokers differ in age}
-	
-
-	\begin{table}\centering
-		\caption{Mean ages, years (Cochran 1968)}
-		\begin{center}
-		\begin{tabular}{lccc}
-		\hline \hline
-		\multicolumn{1}{l}{Smoking group}&
-		\multicolumn{1}{c}{Canada}&
-		\multicolumn{1}{c}{U.K.}&
-		\multicolumn{1}{c}{U.S.}\\
-		\hline
-		Non-smokers & 54.9 & 49.1 & 57.0\\
-		Cigarettes & 50.5 & 49.8 & 53.2 \\
-		Cigars/pipes & 65.9 & 55.7 & 59.7\\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-Maybe age is a confounder. It predicts smoking, but it also predicts mortality as cumulative risk of dying grows as we age
- 
-\end{frame}
-
-\begin{frame}{Imbalanced confounders and covariates}
-
-\begin{itemize}
-\item Balance is a phrase often heard in causal inference -- means treatment and group have different covariate/confounder means and/or distributions
-\item If confounders are \emph{imbalanced}, then their means differ in each group, and will introduce selection bias (if confounders, but not if covariates)
-\item Weighting, matching and regression that adjust for known and quantified confounders attempt to create balance on confounders and covariates so that their effects stop
-\end{itemize}
-
-\end{frame}
-
-
-
-
-\begin{frame}{Cochran's stratification weighting}
-
-  \begin{enumerate}
-		\item Stratify the smoking group into differing age groups or ``bins'' or ``strata'' (e.g., young and old)
-		\item Calculate mortality rates separately for young and old and treatment and control (four averages)
-		\item Construct ``probability weights'' as the proportion of each smoking group sample within a given age group
-		\item For treatment and control group, compute the weighted averages of the age groups mortality rates using the probability weights
-  \end{enumerate}
-  
-  \bigskip
-  
-This procedure will balance the observed covariate, age, between treatment and control
-
-\end{frame}
-
-
-\begin{frame}{Smoking and stratification weighting}
-	
-
-
-	\begin{table}\centering
-		\begin{center}
-		\begin{tabular}{lccc}
-		\hline \hline
-		\multicolumn{1}{l}{}&
-		\multicolumn{1}{c}{Death rates}&
-		\multicolumn{2}{c}{Number of}\\
-		\multicolumn{1}{l}{}&
-		\multicolumn{1}{c}{Pipe-smokers}&
-		\multicolumn{1}{c}{Pipe-smokers}&
-		\multicolumn{1}{c}{Non-smokers}\\
-		\hline
-		Age 20-50 & 15 & 11 & 29 \\
-		Age 50-70 & 35 & 13 & 9 \\
-		Age $+$70 & 50 & 16 & 2 \\
-		Total & & 40 & 40 \\		
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-	\begin{flalign*}
-    \only<1-2>{&\text{Question: Calculate average pipe smoker death rate w/out stratification?}&}\\
-    \only<2-2>{&15\cdot\left(\frac{11}{40}\right)+35\cdot\left(\frac{13}{40}\right)+50\cdot\left(\frac{16}{40}\right)=35.5} \\
-    \only<3-4>{&\text{Counterfactual question: What would the average mortality rate be for }} \\ 
-    \only<3-4>{&\text{pipe smokers if they had the same age distribution as the non-smokers?}}\\
-    \only<4-4>{&15\cdot\left(\frac{29}{40}\right)+35\cdot\left(\frac{9}{40}\right)+50\cdot\left(\frac{2}{40}\right)=21.2}
-	\end{flalign*}
-
-\end{frame}
-
-
-\begin{frame}[plain]
-
-	\begin{table}\centering
-	\caption{Adjusted death rates using 3 age groups (Cochran 1968)}
-		\begin{center}
-		\begin{tabular}{lccc}
-		\hline \hline
-		\multicolumn{1}{l}{Smoking group}&
-		\multicolumn{1}{c}{Canada}&
-		\multicolumn{1}{c}{U.K.}&
-		\multicolumn{1}{c}{U.S.}\\
-		\hline
-		Non-smokers & 20.2 & 11.3 & 13.5 \\
-		Cigarettes & 28.3 & 12.8  &  17.7 \\
-		Cigars/pipes & 21.2 & 12.0 & 14.2 \\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-
-\end{frame}
-
-\begin{frame}{Exercise using our earlier Titanic sinking example}
+\begin{frame}{Subclassification method}
 
 \begin{itemize}
 
+\item Wanting to show subclassification as an early effort to tackle covariates, but which ultimately cannot handle large features due to common support issues before moving into regression then DML
 \item Titanic sank on maiden voyage April 15, 1912 after hitting an iceberg in North Atlantic
 \item 2200 on board, but only 700 survived, despite 20 lifeboats with 60 capacity (1200 potential lives could've been saved)
 \item Women and children first was a maritime rule to ration lifeboats, but there were different cabins (1st class, 2nd class, etc.) on different levels with different proximity to boats
@@ -1652,13 +1416,10 @@ Backdoor criterion can be satisfied by blocking on $W$ and $C$.  These are our k
 \item \textbf{Aggregate differences across strata using weights}: Estimate the ATE by aggregating the difference in survival rates over the four strata with each strata-specific difference weighted by that strata's weight
 \end{enumerate}
 
-\bigskip
-
-Go to lab
 
 \end{frame}
 
-\begin{frame}{Table 1: Standard balance table}
+\begin{frame}{Table 1: Typical balance table}
 
 {\renewcommand{\arraystretch}{1.1}
 \tabcolsep=1.3\tabcolsep 		
@@ -1719,7 +1480,7 @@ Total	observations	& 325	&&	1,876	 && 2,201\\
 
 \end{frame}
 
-\begin{frame}{Table 3: Estimates of aggregate parameter}
+\begin{frame}{Table 3: Estimates of aggregate parameters}
 
 {\renewcommand{\arraystretch}{1.1}
 \tabcolsep=1.3\tabcolsep 		
@@ -1751,7 +1512,11 @@ Female child	& 0.387 &	0.02 &	0.00	&0.02	\\
 \label{tab:titanic-weights}
 \end{table}}
 
+
+
 \end{frame}
+
+
 
 \begin{frame}{Drop the one female child}
 
@@ -1766,7 +1531,7 @@ Female child	& 0.387 &	0.02 &	0.00	&0.02	\\
 
 \begin{frame}
 
-\begin{table}\tiny\index{rolling!3}
+\begin{table}\small\index{rolling!3}
 \caption{Counts and Titanic survival rates by strata and first class status.}
 \centering
 \begin{tabular}{lcc|cc|c}
@@ -1856,117 +1621,39 @@ Differences in survival rates, stratification weights, and estimated parameters.
 
 \end{frame}
 
-\begin{frame}{Review stratification weighting in light of this}
-
-\begin{itemize}
-
-\item Let's now look at the way in this works within stratification if we are missing some observations
-\item The reason that this happens is because the dimensions $K$ of the $X$ conditioning set is getting larger
-
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Weighting by Age ($K=2$)}
-	
-	\begin{table}\centering
-		\begin{center}
-		\begin{tabular}{lccccc}
-		\hline \hline
-		\multicolumn{1}{l}{}&
-		\multicolumn{2}{c}{Death Rate}&
-		\multicolumn{1}{c}{}&
-		\multicolumn{2}{c}{Number of}\\
-
-		\multicolumn{1}{l}{$X_k$}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}&
-		\multicolumn{1}{c}{Diff.}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}\\
-		\hline
-		Old & 28 & 24 & 4 & 3 & 10 \\
-		Young & 22 & 16 & 6 & 7 & 10 \\
-		Total & & & & 10 & 20 \\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-	
-
-	\begin{flalign*}
-		    \only<1-2>{&\text{Question: What is $\widehat{\delta_{ATE}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k}{N}\right)$?}&}\\
-		    \only<2-2>{&4\cdot\left(\frac{13}{30}\right)+6\cdot\left(\frac{17}{30}\right)=5.13} \\
-		    \only<3-4>{&\text{Question: What is $\widehat{\delta_{ATT}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k_T}{N_T}\right)$?}} \\ 
-		    \only<4-4>{&4\cdot\left(\frac{3}{10}\right)+6\cdot\left(\frac{7}{10}\right)=5.4} 
-	\end{flalign*}
-
-\end{frame}
-	
-		
- 
-
-\begin{frame}[shrink=20,plain]{Weighting by Age and Gender ($K=4$)}
-	
-	\begin{table}\centering
-		\begin{center}
-		\begin{tabular}{lccccc}
-		\hline \hline
-		\multicolumn{1}{l}{}&
-		\multicolumn{2}{c}{Death Rate}&
-		\multicolumn{1}{c}{}&
-		\multicolumn{2}{c}{Number of}\\
-
-		\multicolumn{1}{l}{$X_k$}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}&
-		\multicolumn{1}{c}{Diff.}&
-		\multicolumn{1}{c}{Smokers}&
-		\multicolumn{1}{c}{Non-smokers}\\
-		\hline
-		Old Males & 28 & 22 & 4 & 3 & 7 \\
-		Old Females &   & 24 &   &   & 3 \\
-		Young Males & 21 & 16 & 5 & 3 & 4 \\
-		Young Females & 23 & 17 & 6 & 4 & 6 \\
-		Total & & & & 10 & 20 \\
-		\hline
-		\end{tabular}
-		\end{center}
-	\end{table}
-	
-	
-
-	\begin{flalign*}
-		    \only<1-2>{&\text{Problem: What is $\widehat{\delta_{ATE}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k}{N}\right)$?}&}\\
-		    \only<2-2>{&\text{Not identified! What went wrong?}} \\
-		    \only<3-4>{&\text{Question: What is $\widehat{\delta_{ATT}}=\sum_{k=1}^K(\overline{Y}^{1,k} - \overline{Y}^{0,k})\cdot \left(\frac{N^k_T}{N_T}\right)$?}} \\ 
-		    \only<4-4>{&4\cdot\left(\frac{3}{10}\right)+5\cdot\left(\frac{3}{10}\right)+6\cdot\left(\frac{4}{10}\right)=5.1}
-	\end{flalign*}
-
-\end{frame}
-
 \begin{frame}{Curse of Dimensionality}
 	
 	\begin{itemize}
-	\item Stratification methods, including OLS, may become less feasible in finite samples as the number of covariates grows (e.g., $K=4$ was too many for this sample)
+	\item Stratification methods break down in finite samples because as increase the number of covariates, the "dimension" grows even faster -- dimensions and covariates aren't the same in other words
 	\item Assume we have $k$ covariates and we divide each into 3 coarse categories (e.g., age: young, middle age, old; income: low, medium, high, etc.)
 	\item The number of strata is $3^k$. For $k=10$, then it's $3^{10}=59,049$
-	\item The problem isn't just the number of covariates; it's the number of strata based on those covariates (you can hit the curse fast)
+	\item The curse of dimensionality is based on the slices of all interactions of the covariates, not just the covariates, and that explodes fast
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Curse of Dimensionality}
+\begin{frame}{Empty cells}
 	
 	\begin{itemize}
-	\item If sparseness occurs, it means many cells may contain either only treatment units or only control units but not both, and that violates our second assumption
-	\item We can always use ``finer'' classifications, but finer cells worsens the dimensional problem, so we don't gain  much from that.  ex: using $10$ variables and $5$ categories for each, we get $5^{10} = 9,765,625$.  
-	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS doesn't tell us it is just doing various extrapolations
-	\item Simple weighting methods is also a problem if the cells are ``too coarse''
+	\item When some slice is empty, it means there's no one in that cell -- so maybe you don't have any female children in first class, but you do have them in other cabins
+	\item When you have empty cells, you can't match within that dimension of the data, and so the "curse of dimensionality" is one of the reasons why the kitchen sink approach breaks down so fast
+	\item Matching methods really force us to see these curses; they're often hidden from OLS because OLS (as we'll see) overcomes the problem by just assuming a linearity (it doesn't match; it extrapolates)
 	\end{itemize}
 \end{frame}	
 
 
+
+\begin{frame}{No support visual}
+
+  \begin{figure}
+    \includegraphics[scale=0.17]{./lecture_includes/matching_nosupport.png}
+  \end{figure}
+
+No support is like \textcolor{red}{an incomplete bridge} which stops you from even being able to cross the moat even though the ability to build a bridge exists (i.e., unconfoundedness)
+
+
+\end{frame}
+
+
 \subsection{Exact and Inexact Matching}
 
 \begin{frame}{Exact matching}
@@ -3315,6 +3002,17 @@ Y_i^1 &=& Y_i^0 + \delta_{sp}
 \end{frame}
 
 
+\begin{frame}{Regression with correct functional form}
+
+  \begin{figure}
+    \includegraphics[scale=0.17]{./lecture_includes/regression_fnform.png}
+  \end{figure}
+  
+Imbens and Rubin are saying regression can identify an aggregate causal parameter under unconfoundedness because it assumes constant treatment effects and the correct functional form which is like an army without a bridge shooting arrows and using catapults to the target.  If the functional form is right, then they'll hit the target everytime.  
+
+\end{frame}
+
+
 
 
 \begin{frame}{Constant Treatment Effects and Linearity}
@@ -3589,6 +3287,15 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
 
 \end{frame}
 
+\begin{frame}{Misspecified functional form regression visual}
+
+  \begin{figure}
+    \includegraphics[scale=0.17]{./lecture_includes/regression_linearity.png}
+  \end{figure}
+  
+Using our medieval castle example, if you have the wrong functional form, then regression won't hit.
+
+\end{frame}
 
 
 \begin{frame}{Nonlinear DGP}
@@ -3639,6 +3346,8 @@ We will estimate two models: (1) once with simplified but incorrectly specified 
 \end{figure}
 
 \end{frame}
+
+
 
 
 
