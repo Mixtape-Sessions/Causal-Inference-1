@@ -75,13 +75,13 @@ twoway (histogram pscore if treat==1,  color(green)) ///
        (histogram pscore if treat==0,  ///
 	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
 
-  preserve
+preserve
   drop if pscore < 0.1 | pscore > 0.9
   reg re78 i.treat [aw=inv_ps_weight], r
   restore
 
 *-> 4(i). Propensity Score Matching
-  teffects psmatch (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, logit), atet gen(ps_cps) nn(1)
+teffects psmatch (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75, logit), atet gen(ps_cps) nn(1)
 
 *-> 4(ii). Abadie and Imbens nearest neighbor matching with bias adjustment
 teffects nnmatch (re78 age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75) (treat), atet nn(1) metric(maha) 

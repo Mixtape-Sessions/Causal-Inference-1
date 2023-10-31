@@ -42,6 +42,10 @@
 	gen earnings = treat*y1 + (1-treat)*y0
 
 
+	* Regression
+	
+reg earnings age gpa age_sq gpa_sq agegpa treat, robust	
+	
 	* Regression: Fully interacted regression model
 	
 	#delimit ;
@@ -121,3 +125,10 @@ teffects ra (earnings age gpa age_sq gpa_sq agegpa) (treat), atet
 
 su delta if treat==1
 su treat4
+
+* Nearest neighbor matching without and with bias adjustment
+
+teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), atet nn(1) metric(maha) 
+
+teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq agegpa)
+
