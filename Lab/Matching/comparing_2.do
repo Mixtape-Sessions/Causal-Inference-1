@@ -5,10 +5,10 @@
 	replace treat = 1 in 2501/5000
 	
 	* Poor pre-treatment fit
-	gen 	age = rnormal(20,2.5) 		if treat==1
-	replace age = rnormal(35,3) 		if treat==0
-	gen 	gpa = rnormal(2.8,0.75) 	if treat==0
-	replace gpa = rnormal(1.26,0.5) 	if treat==1
+	gen 	age = rnormal(33,2.5) 		if treat==1
+	replace age = rnormal(27,3) 		if treat==0
+	gen 	gpa = rnormal(2.2,0.75) 	if treat==0
+	replace gpa = rnormal(1.6,0.5) 		if treat==1
 
 	su age
 	replace age = age - `r(mean)'
@@ -29,7 +29,7 @@
 	gen gpa_agesq 	= gpa*age_sq
 	gen gpasq_agesq = age_sq*gpa_sq
 
-	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 5000*interaction + rnormal(0,5)
+	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0,5)
 	gen y1 = y0 + 2500 + 100 * age + 1000*gpa
 	gen delta = y1 - y0
 
