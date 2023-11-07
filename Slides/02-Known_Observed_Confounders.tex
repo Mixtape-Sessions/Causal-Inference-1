@@ -1653,7 +1653,8 @@ No support is like \textcolor{red}{an incomplete bridge} which stops you from ev
 
 \end{frame}
 
-
+
+
 \subsection{Exact and Inexact Matching}
 
 \begin{frame}{Exact matching}
@@ -3616,7 +3617,199 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 
 \end{frame}
 
+\begin{frame}\frametitle{Understanding the Standard OLS Model}
+\begin{itemize}
+  \item Reviewing the standard OLS model as referenced in Tymon Słoczyn's 2022 Restat paper.
+  \item The equation to consider:
+    \begin{equation}
+      y = \alpha + \tau d + X \beta + u,
+    \end{equation}
+  \item This model is what you might call the standard OLS model with controls.
+  \item Recall this is the model we found to have observed bias in earlier simulations due to the assumption of constant treatment effects (Imbens and Rubin 2015).
+\end{itemize}
+\end{frame}
 
+\begin{frame}
+\frametitle{Bias from Constant Treatment Effects}
+\begin{itemize}
+  \item The standard OLS model assumes treatment effects are homogeneous across observations.
+  \item But Tymon's paper addresses the interpretation of \(\tau\), the OLS estimand, when treatment effects are heterogeneous.
+  \item He demonstrates that \(\tau\) is a convex combination of two parameters: ATT and ATU.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Weights in Heterogeneous Treatment Effects}
+\begin{itemize}
+  \item The weight OLS places on the average effect for each group is inversely related to the group's size.
+  \item As the number of treated units increases, the weight on ATT decreases.
+  \item This suggests OLS estimates may be inappropriate when treatment effects vary across subjects.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{A Pragmatic View of Heterogeneous Treatment Effects}
+\begin{itemize}
+  \item Homogeneity assumptions are generally strong and may not hold when treatment effects vary significantly.
+  \item Tymon's paper provides a pragmatic perspective on the main result and derives corollaries suggesting diagnostic methods for when:
+    \begin{enumerate}
+      \item The treatment is binary.
+      \item OLS is used.
+      \item The researcher does not want to assume ATT = ATU.
+    \end{enumerate}
+    \item Remember you're an economist -- outside of the experiment, people typically \emph{choose} their treatments (i.e., crimes that yield some sentence)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Diagnostics for OLS with Heterogeneous Treatment Effects}
+\begin{itemize}
+  \item Diagnostics help detect when OLS weights deviate from what is needed for consistent estimation of ATE or ATT.
+  \item The diagnostics:
+    \begin{itemize}
+      \item Are bounded between 0 and 1 in absolute value.
+      \item Reflect the proportion of bias from the difference between ATU and ATT.
+    \end{itemize}
+  \item A diagnostic close to 0 implies OLS may be suitable, while a value far from 0 suggests the need for alternative methods.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Simple Diagnostics for ATT and ATE}
+\begin{itemize}
+  \item Special case diagnostics provide simple rules-of-thumb:
+    \begin{itemize}
+      \item For ATT estimation: Diagnostic is equal to the proportion of treated units, \( P(d = 1) \).
+      \item For ATE estimation: Diagnostic is \( 2 \times P(d = 1) - 1 \), or twice the deviation from 50%.
+    \end{itemize}
+  \item OLS approximates ATE well if the size of treated and untreated groups is similar.
+  \item For ATT, a small proportion of treated units is necessary.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Prevalence of OLS Bias in Evaluating Labor Market Programs}
+\begin{itemize}
+  \item OLS may frequently show substantial bias for ATE and ATT.
+  \item In studies like Card, Kluve, and Weber (2018), with a mean treatment rate of 17.7\%, biases are common:
+    \begin{itemize}
+      \item The expected bias in OLS for ATE is 64.6\% of the ATU-ATT difference.
+      \item For ATT, the expected OLS bias is 17.7\% of the ATU-ATT difference.
+    \end{itemize}
+  \item These findings indicate that biases in OLS estimates could often be significant.
+    \begin{itemize}
+      \item LaLonde's (1986) training program effects aligning with ATT.
+      \item Aizer et al.'s (2016) cash transfer effects resembling ATU.
+    \end{itemize}
+  \item Implementation of results is available in R and Stata through the \texttt{hettreatreg} packages.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Issues with OLS Weights Illustrated by the NSW Program}
+\begin{itemize}
+  \item NSW program provides a classic example of OLS weights problem.
+  \item LaLonde (1986) and Angrist and Pischke (2009) assessments using the Dehejia and Wahba (2002) subsample (see Stata code together)
+    \begin{itemize}
+      \item OLS close to experimental benchmark but driven by a small treated sample.
+      \item Economic disadvantage of treated vs. CPS comparison group suggests large ATT and ATU differences.
+    \end{itemize}
+  \item Treated sample's size (1.1\%) implies ATE and ATU closeness.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Replications of Lalonde data using Dehejia and Wahba sample with CPS control}
+
+\tiny
+\begin{tabular}{lccccc}
+\hline \hline
+ & \multicolumn{5}{c}{Dependent variable: Real earnings in 1978} \\
+ & (1) & (2) & (3) & (4) & (5) \\
+Controls: & No controls & Demographics & RE75 Only & Demo and RE75 & Demo, RE74 and RE75 \\
+\hline
+Treatment                &   -8497.516***&   -3436.795***&     -77.705   &     622.547   &     \textbf{793.587}   \\
+                    &   (581.916)   &   (612.056)   &   (596.215)   &   (609.582)   &   (618.609)   \\
+\hline \end{tabular}
+
+\bigskip
+
+Each column corresponds to a set of observable controls below:
+\begin{itemize}
+\item Demographics: Age, Age-squared, Years of schooling, Marriage dummy, High school dropout dummy, Black and Hispanic dummies
+\item Real earnings in 1975 (RE75)
+\item Real earnings in 1974 (RE74)
+\end{itemize}
+
+Our focus will be on the last estimate.  Question is what is this?
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Regression Adjustment Application and Results}
+\begin{itemize}
+  \item Estimate the regression adjustment method interacting treatment with all covariates to recover estimates of all parameters:
+    \begin{itemize}
+      \item \( \widehat{ATE} = -\$4,930 \)
+      \item \( \widehat{ATT} = \$796 \)
+      \item \( \widehat{ATU} = -\$4,996 \)
+    \end{itemize}
+  \item OLS estimate \( \$794 \) shows a weight on ATT nearly 100\%, reflecting the treated sample's size of 1.1\%
+  \item Illustrates "weight reversal" principle: OLS weights do not reflect expected proportions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{General Implications of the OLS Weight Anomaly}
+\begin{itemize}
+  \item The NSW example generalizes beyond this specific case.
+  \item OLS weights can misrepresent effects, influenced by treatment group proportion.
+  \item OLS estimand does not always align with intuitive weight distributions for ATT and ATU.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What is going on?}
+
+Theorem: Weighted Average Interpretation of OLS.  
+
+\bigskip
+
+Under some basic assumptions (see Tymon 2022) A1 and A2), then $$\tau = w_1 \times \tau_{APLE,1} + w_0 \times \tau_{APLE,0}$$
+ 
+\begin{align*}
+w_1 &= \frac{(1-\rho) \times V[p(X)|d=0]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]} \\
+\text{and} \quad w_0 &= 1 - \frac{\rho \times V[p(X)|d=1]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]}
+\end{align*}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Interpretation of OLS weighted average theorem}
+
+\begin{itemize}
+\item The OLS estimand, $\widehat{\tau}$, is a convex combination of estimated average partial linear effects for the treatment group (,1) and control (,0)
+\item The $\tau$ term is based on a three step procedure:
+	\begin{enumerate}
+	\item Calculate the propensity score, $p(X)$
+	\item Calculate the linear project of the outcome on the propensity score separately for treatment and control (i.e., RA)
+	\item Calculate a weighted average
+	\end{enumerate}
+\item The first weight, $w_1$, is decreasing $\frac{V[p(X )|d=1]}{V[p(X )|d=0]}$ and $\rho$ and the opposite for $w_0$ which means the more units in a group, the less weight it gets
+\item Angrist and Pischke (2009) that OLS gives more weight to treatment effects that are better estimated in finite samples
+\end{itemize}
+\end{frame}
 
 
 \section{Concluding remarks}
