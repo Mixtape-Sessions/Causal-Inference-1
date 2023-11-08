@@ -1,15 +1,26 @@
-    clear 
+	clear 
+	set seed 5150
     drop _all 
 	set obs 5000
 	gen 	treat = 0 
-	replace treat = 1 in 2501/5000
+	replace treat = 1 in 2501/5000 // equal proportions in treatment and control
 	
-	* Poor pre-treatment fit
+	* Poor pre-treatment fit (imbalance on covariates which will introduce matching bias)
 	gen 	age = rnormal(25,2.5) 		if treat==1
 	replace age = rnormal(30,3) 		if treat==0
 	gen 	gpa = rnormal(2.3,0.75) 	if treat==0
 	replace gpa = rnormal(1.76,0.5) 	if treat==1
 
+	* Visualize the imbalance
+	twoway (histogram age if treat==1,  color(green)) ///
+       (histogram age if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+
+	twoway (histogram gpa if treat==1,  color(blue)) ///
+       (histogram gpa if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+	   
+	* Re-center the covariates
 	su age
 	replace age = age - `r(mean)'
 
@@ -29,22 +40,23 @@
 	gen gpa_agesq 	= gpa*age_sq
 	gen gpasq_agesq = age_sq*gpa_sq
 
+	* Modeling potential outcomes as functions of X but differently depending on Y0 or Y1 -- "heterogeneity in the potential outcomes with respect to the covariates"
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0,5)
-	gen y1 = y0 + 2500 + 100 * age + 1000*gpa
+	gen y1 = y0 + 2500 + 100 * age + 1000 * gpa
 	gen delta = y1 - y0
 
-	su delta // ATE = 2500
-	su delta if treat==1 // ATT = 1980
+	su delta 				// ATE = 2500
+	su delta if treat==1 	// ATT = 1989
+	su delta if treat==0 	// ATU = 3011
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
 
 	gen earnings = treat*y1 + (1-treat)*y0
 
-
 	* Regression
 	
-reg earnings age gpa age_sq gpa_sq agegpa treat, robust	
+	reg earnings age gpa age_sq gpa_sq agegpa treat, robust	
 	
 	* Regression: Fully interacted regression model
 	

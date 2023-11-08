@@ -2,6 +2,7 @@
 
 \input{preamble.tex}
 \usepackage{breqn} % Breaks lines
+\usepackage[english]{babel} % Set the document language to English
 
 \usepackage{amsmath}
 \usepackage{mathtools}
@@ -3619,33 +3620,25 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 
 \begin{frame}\frametitle{Understanding the Standard OLS Model}
 \begin{itemize}
-  \item Reviewing the standard OLS model as referenced in Tymon Słoczyn's 2022 Restat paper.
-  \item The equation to consider:
+  \item Tymon S\l{}oczy\'{n}ski's 2022 Restat paper decomposes the following OLS model estimate of $\tau$ into weighted average of other parameters of interest
     \begin{equation}
       y = \alpha + \tau d + X \beta + u,
     \end{equation}
-  \item This model is what you might call the standard OLS model with controls.
   \item Recall this is the model we found to have observed bias in earlier simulations due to the assumption of constant treatment effects (Imbens and Rubin 2015).
+  \item But Tymon's paper addresses the interpretation of \(\tau\), the OLS estimand, when treatment effects are heterogeneous.
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Bias from Constant Treatment Effects}
-\begin{itemize}
-  \item The standard OLS model assumes treatment effects are homogeneous across observations.
-  \item But Tymon's paper addresses the interpretation of \(\tau\), the OLS estimand, when treatment effects are heterogeneous.
-  \item He demonstrates that \(\tau\) is a convex combination of two parameters: ATT and ATU.
-\end{itemize}
-\end{frame}
 
 
 
 \begin{frame}
 \frametitle{Weights in Heterogeneous Treatment Effects}
 \begin{itemize}
-  \item The weight OLS places on the average effect for each group is inversely related to the group's size.
-  \item As the number of treated units increases, the weight on ATT decreases.
-  \item This suggests OLS estimates may be inappropriate when treatment effects vary across subjects.
+  \item With heterogeneous treatment effects, $\widehat{\tau}$ is both biased and pulled towards the smallest group's aggregate causal parameter(i.e., ATT vs ATU)
+  \item In other words, the weight OLS places on the average effect for each group is inversely related to the group's size.
+  \item As the number of treated units increases (as a fraction of the population), the weight on ATT \emph{decreases}
+  \item This suggests OLS estimates based on this additive controls specification will be biased towards the smallest group's average treatment effect making it inappropriate when treatment effects vary across subjects
 \end{itemize}
 \end{frame}
 
@@ -3653,14 +3646,13 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \begin{frame}
 \frametitle{A Pragmatic View of Heterogeneous Treatment Effects}
 \begin{itemize}
-  \item Homogeneity assumptions are generally strong and may not hold when treatment effects vary significantly.
   \item Tymon's paper provides a pragmatic perspective on the main result and derives corollaries suggesting diagnostic methods for when:
     \begin{enumerate}
       \item The treatment is binary.
       \item OLS is used.
       \item The researcher does not want to assume ATT = ATU.
     \end{enumerate}
-    \item Remember you're an economist -- outside of the experiment, people typically \emph{choose} their treatments (i.e., crimes that yield some sentence)
+  \item Diagnostics help detect when OLS weights deviate from what is needed for consistent estimation of ATE or ATT.
 \end{itemize}
 \end{frame}
 
@@ -3668,7 +3660,6 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \begin{frame}
 \frametitle{Diagnostics for OLS with Heterogeneous Treatment Effects}
 \begin{itemize}
-  \item Diagnostics help detect when OLS weights deviate from what is needed for consistent estimation of ATE or ATT.
   \item The diagnostics:
     \begin{itemize}
       \item Are bounded between 0 and 1 in absolute value.
@@ -3685,7 +3676,7 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
   \item Special case diagnostics provide simple rules-of-thumb:
     \begin{itemize}
       \item For ATT estimation: Diagnostic is equal to the proportion of treated units, \( P(d = 1) \).
-      \item For ATE estimation: Diagnostic is \( 2 \times P(d = 1) - 1 \), or twice the deviation from 50%.
+      \item For ATE estimation: Diagnostic is \( 2 \times P(d = 1) - 1 \), or twice the deviation from 50\%.
     \end{itemize}
   \item OLS approximates ATE well if the size of treated and untreated groups is similar.
   \item For ATT, a small proportion of treated units is necessary.
@@ -3720,7 +3711,7 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
       \item OLS close to experimental benchmark but driven by a small treated sample.
       \item Economic disadvantage of treated vs. CPS comparison group suggests large ATT and ATU differences.
     \end{itemize}
-  \item Treated sample's size (1.1\%) implies ATE and ATU closeness.
+  \item Treated sample's size (1.1\%) implies that OLS will be skewed towards the ATT 
 \end{itemize}
 \end{frame}
 
@@ -3765,7 +3756,7 @@ Our focus will be on the last estimate.  Question is what is this?
       \item \( \widehat{ATU} = -\$4,996 \)
     \end{itemize}
   \item OLS estimate \( \$794 \) shows a weight on ATT nearly 100\%, reflecting the treated sample's size of 1.1\%
-  \item Illustrates "weight reversal" principle: OLS weights do not reflect expected proportions.
+  \item Illustrates "weight reversal''  principle: OLS weights do not reflect expected proportions.
 \end{itemize}
 \end{frame}
 
@@ -3779,37 +3770,308 @@ Our focus will be on the last estimate.  Question is what is this?
 \end{frame}
 
 
+
+
+
+\begin{frame}
+\frametitle{Main Result: Algebra of OLS and Descriptive Estimands}
+\begin{itemize}
+    \item Focuses on the algebra of OLS and descriptive estimands.
+    \item Potential outcomes and conditions for causal interpretation discussed in Section IIC.
+    \item Main result does not require causal interpretation assumptions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Linear projection}
+
+\begin{itemize}
+\item Linear projection is a concept from the theory of linear regression describing the expected value of the dependent variable as a linear function of independent variables 
+\item It does not necessarily incorporate randomness or an error term and so should be considered distinct from the ``data generating process'' which does
+\item It posits a relationship that says, "If we knew the true parameters, this is how we would expect Y to change, on average, with changes in X and D"
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Linear Projection}
+\begin{itemize}
+    \item Let \( L(\cdot | \cdot) \) denote the linear projection.
+    \item Interested in the interpretation of \( \tau \) in the linear projection of \( y \) on \( d \) and \( X \):
+    \[ L(y | 1, d, X) = \alpha + \tau d + X\beta \quad \text{(2)} \]
+    \item This projection is distinct from the structural conditional mean.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Probability of Treatment and Propensity Score}
+\begin{itemize}
+    \item The unconditional probability of treatment:
+    \[ \rho = P(d = 1) \quad \text{(3)} \]
+    \item Propensity score from the linear probability model:
+    \[ p(X) = L(d | 1, X) = \alpha_p + X\beta_p \quad \text{(4)} \]
+    \item \( p(X) \) is the best linear approximation to the true propensity score.
+    \item Equations (2) and (4) provide the specification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Flexibility of the Linear Projection}
+\begin{itemize}
+    \item Equation (2) can be seen as partially linear, including powers and cross-products of control variables.
+    \item The propensity score approximation can be made very accurate.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Linear Projections with Propensity Score}
+\begin{itemize}
+    \item Separate linear projections of \( y \) on \( p(X) \) for \( d = 1 \) and \( d = 0 \):
+    \[ L[y | 1, p(X), d = 1] = \alpha_1 + \gamma_1 \times p(X) \quad \text{(5)} \]
+    \[ L[y | 1, p(X), d = 0] = \alpha_0 + \gamma_0 \times p(X) \quad \text{(6)} \]
+    \item Definitions are based on the variability of the propensity score within treatment groups.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Assumptions for Linear Projections}
+\begin{itemize}
+    \item Assumption 1: Existence and uniqueness of linear projections in (2) and (4).
+    \item Assumption 2: Existence and uniqueness of linear projections in (5) and (6).
+    \item These assumptions guarantee the linear projections are well-defined and unique.
+    \item Both of these assumptions (fn. 3) are generally innocuous although the second one rules out a small number of interesting applications like regression adjustments in completely randomized experiments -- but in these cases OLS will estimate the ATE consistently (Imbens and Rubin 2015)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Defining Average Partial Linear Effects}
+\begin{itemize}
+    \item The average partial linear effect of \( d \):
+    \[ \tau_{\text{APLE}} = (\alpha_1 - \alpha_0) + (\gamma_1 - \gamma_0) \times E[p(X)] \quad \text{(7)} \]
+    \item The average partial linear effect of \( d \) on group \( j \) (where \( j = 0, 1 \)):
+    \[ \tau_{\text{APLE}, j} = (\alpha_1 - \alpha_0) + (\gamma_1 - \gamma_0) \times E[p(X) | d = j] \quad \text{(8)} \]
+    \item These estimands are well-defined under Assumptions 1 and 2.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Causal Interpretation and Theorem 1}
+\begin{itemize}
+    \item Causal interpretation requires additional assumptions beyond 1 and 2.
+    \item Theorem 1 is more general, relying only on Assumptions 1 and 2.
+    \item It applies to the algebraic properties of OLS estimators.
+\end{itemize}
+\end{frame}
+
+
 \begin{frame}
 \frametitle{What is going on?}
 
-Theorem: Weighted Average Interpretation of OLS.  
+Weighted Average Interpretation of OLS (Theorem 1).  Under assumptions (1) and (2), .  
 
-\bigskip
-
-Under some basic assumptions (see Tymon 2022) A1 and A2), then $$\tau = w_1 \times \tau_{APLE,1} + w_0 \times \tau_{APLE,0}$$
+$$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
+ 
+ where the weights are equal to:
  
 \begin{align*}
-w_1 &= \frac{(1-\rho) \times V[p(X)|d=0]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]} \\
-\text{and} \quad w_0 &= 1 - \frac{\rho \times V[p(X)|d=1]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]}
+\omega_1 &= \frac{(1-\rho) \times V[p(X)|d=0]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]} \\
+\text{and} \quad \omega_0 &= 1 - \frac{\rho \times V[p(X)|d=1]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]}
 \end{align*}
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Interpretation of OLS weighted average theorem}
 
+
+\begin{frame}
+\frametitle{Theorem 1: Interpretation of the OLS Estimand}
 \begin{itemize}
-\item The OLS estimand, $\widehat{\tau}$, is a convex combination of estimated average partial linear effects for the treatment group (,1) and control (,0)
-\item The $\tau$ term is based on a three step procedure:
-	\begin{enumerate}
-	\item Calculate the propensity score, $p(X)$
-	\item Calculate the linear project of the outcome on the propensity score separately for treatment and control (i.e., RA)
-	\item Calculate a weighted average
-	\end{enumerate}
-\item The first weight, $w_1$, is decreasing $\frac{V[p(X )|d=1]}{V[p(X )|d=0]}$ and $\rho$ and the opposite for $w_0$ which means the more units in a group, the less weight it gets
-\item Angrist and Pischke (2009) that OLS gives more weight to treatment effects that are better estimated in finite samples
+    \item The OLS estimand \( \tau \) is a convex combination of \( \tau_{\text{APLE},1} \) and \( \tau_{\text{APLE},0} \).
+    \item Reflects the weighted average outcome of a three-step procedure:
+    \begin{enumerate}
+        \item Obtain the propensity score \( p(X) \).
+        \item Calculate \( \tau_{\text{APLE},1} \) and \( \tau_{\text{APLE},0} \) for \( d = 1 \) and \( d = 0 \) via linear projections.
+        \item Compute the weighted average of \( \tau_{\text{APLE},1} \) and \( \tau_{\text{APLE},0} \).
+    \end{enumerate}
 \end{itemize}
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Weighting in the Estimation of \( \tau \)}
+\begin{itemize}
+    \item The weight on \( \tau_{\text{APLE},1} \), \( \omega_1 \), decreases with \( V[p(X) | d = 1] \) and the probability of treatment \( \rho \).
+    \item Conversely, the weight on \( \tau_{\text{APLE},0} \), \( \omega_0 \), increases with \( V[p(X) | d = 1] \) and \( \rho \).
+    \item The weighting scheme implies that larger groups receive less weight on their respective \( \tau_{\text{APLE},j} \).
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Assumptions for an Illustrative Example}
+    The following graph shows how the weight on \( \tau_{\text{APLE},1} \) decreases as the variance of the propensity score among the treated increases using the following simplifications for illustrative purposes:
+    \begin{itemize}
+        \item The variance among the non-treated \( V[p(X) | d = 0] \) is constant at 0.1.
+        \item The probability of treatment \( \rho \) is 0.5, meaning that half of the population is treated.
+        \item The variance among the treated \( V[p(X) | d = 1] \) varies from 0.1 to 0.9 for the purpose of the illustration.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Weight on \( \tau_{\text{APLE},1} \) with Varying Variance among Treated}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/tymon_variance_weight.png}
+        \caption{The relationship between the weight \( \omega_1 \) on \( \tau_{\text{APLE},1} \) and the variance of the propensity score among the treated \( V[p(X) | d = 1] \). As the variance among the treated increases, the weight on \( \tau_{\text{APLE},1} \) decreases.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Factors Causing the Variance of the Propensity Score to Rise}
+
+
+\textbf{Understanding Variance:}
+\begin{itemize}
+  \item The variance is not simply \( p(1-p) \) but the spread of the estimated propensity scores \( p(X) \) within the treatment group.
+  \item It reflects the degree to which the likelihood of treatment (given covariates) varies among those actually treated.
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Factors Causing the Variance of the Propensity Score to Rise}
+\textbf{The variance of the propensity score among the treated, \( V[p(X) | d = 1] \), can increase due to several factors:}
+
+\begin{itemize}
+  \item \alert{Heterogeneity in Covariates:} A diverse range of covariates within the treated group can lead to a wide array of propensity scores, increasing variance.
+  \item \alert{Model Specification:} The choice of model and its ability to accurately capture the relationship between covariates and treatment affects variance. Mis-specification can inflate variance.
+  \item \alert{Overlap with Control Group:} Significant overlap in propensity scores between treated and untreated groups can raise variance, reflecting less distinction based on covariates.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Intuition Behind the Weighting Scheme}
+\begin{itemize}
+    \item This counterintuitive result may be understood through the lens of finite sample properties.
+    \item OLS places more weight on treatment effects that are more precisely estimated.
+    \item Further intuition and alternative proof are provided in Online Appendix B2.
+    \item The framework aligns with the insights from Angrist (1998) and Angrist and Pischke (2009) regarding the weighting of treatment effects in OLS.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Causal Interpretation of OLS}
+  Theorem 1 ("Weighted Average Interpretation of OLS") is general due to its reliance solely on the existence and uniqueness of linear projections; however, for a causal interpretation of OLS, we must introduce:
+  \begin{itemize}
+    \item Potential outcomes \( y(1) \) and \( y(0) \) instead of realized outcomes
+    \item Defined causal parameters: ATE, ATT, and ATU
+    \item Introduce assumptions that will ensure a causal interpretation of \( \tau \)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Assumption 3 for Causal Interpretation}
+  \begin{block}{Unconfoundedness in Mean Potential Outcomes or "Ignorability in Means"}
+    \begin{enumerate}
+      \item \( E [y(1) | X, d] = E[y(1) | X] \)
+      \item \( E[y(0) | X, d] = E[y(0) | X] \)
+    \end{enumerate}
+  \end{block}
+  Assumptions 3 is our standard unconfoundedness assumption but limited to means (slightly weaker but it's all we need)
+\end{frame}
+
+\begin{frame}{Assumption 4 for Causal Interpretation}
+  \begin{block}{Linearity in Potential Outcomes}
+    Assumption 4 posits that the conditional expectations of potential outcomes are linear in the propensity score:
+    \begin{enumerate}
+      \item \( E[y(1) | X] = \alpha_1 + \gamma_1 \times p(X) \)
+      \item \( E[y(0) | X] = \alpha_0 + \gamma_0 \times p(X) \)
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Historical and Practical Context of Assumption 4}
+  While not a common assumption, it is not necessarily strong due to:
+  \begin{itemize}
+    \item The flexibility in the specification of \( X \), which can include nonlinear terms.
+    \item The automatic satisfaction of this assumption in saturated models.
+  \end{itemize}
+
+    The linearity assumption has historical roots and practical implications:
+    \begin{itemize}
+      \item Historically aligned with Rosenbaum and Rubin (1983).
+      \item Assumed linearity of \( E[d | X] \) in several notable econometric works.
+      \item It is restrictive but can be mitigated by model specification choices.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Corollary 1: Causal Interpretation of OLS}
+  Under assumptions the first two linear projection related assumptions and these two new causal assumptions, then
+  \[
+    \tau = \omega_1 \times \tau_{\text{ATT}} + \omega_0 \times \tau_{\text{ATU}}
+  \]
+  
+  In words, this states that under those four assumptions, the OLS weights from theorem 1 apply to the causal parameters we care about, the ATT and the ATU, and so therefore $\tau$ has a causal interpretation.  
+  
+  \bigskip
+  
+  But there's a catch: the greater the proportion of treated units, the smaller the OLS weight on the ATT, which is a problem given ATE = $\rho \times ATT + (1-\rho) ATU$
+\end{frame}
+
+\begin{frame}{Proving Corollary 1 with Assumptions 3 and 4}
+  \begin{itemize}
+    \item Assumption 3 (Unconfoundedness) allows us to estimate the ATE using realized outcomes, as the expected potential outcomes are equal to the observed outcomes conditional on covariates \( X \):
+    \[ E[y(1) - y(0) | X] = E[y | X, d = 1] - E[y | X, d = 0] \]
+    \item Assumption 4 specifies the functional form of the expected potential outcomes as linear in the propensity score:
+    \[ E[y(1) | X] = \alpha_1 + \gamma_1 \times p(X), \quad E[y(0) | X] = \alpha_0 + \gamma_0 \times p(X) \]
+    \item Together, they imply that the OLS estimand for the treated (\( \tau_{\text{ATT}} \)) and untreated (\( \tau_{\text{ATU}} \)) equates to the Average Partial Linear Effects (APLE):
+    \[ \tau_{\text{ATT}} = \tau_{\text{APLE},1}, \quad \tau_{\text{ATU}} = \tau_{\text{APLE},0} \]
+    \item This connects the causal treatment effects (ATT and ATU) directly to the estimated effects from the linear projections.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{OLS Weights and Causal Parameters}
+  \begin{itemize}
+  \item Note earlier I said "there's a catch" -- the OLS weights are inversely related to the size of the treatment group shares
+    \item The greater the proportion of treated units, the smaller the weight on \( \tau_{\text{ATT}} \) in the OLS estimand.
+    \item The OLS approach is optimal for predicting actual outcomes, not necessarily for causal inference which aims at predicting counterfactuals.
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Visualizing the problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/tymon_weights_crossing}
+        \caption{As more units are placed in treatment (blue line), the weight OLS places on the ATT.}
+    \end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}{Predicting Outcomes vs. Predicting Counterfactuals}
+  \begin{itemize}
+    \item OLS prioritizes weights based on the size of the group when predicting actual outcomes.
+    \item For causal inference (predicting counterfactuals), the emphasis should be on the coefficients predicting outcomes for the smaller group.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Adjustment for Predicting Counterfactuals}
+  \[
+    \tau_{\text{ATE}} = [E(y|d=1) - E(y|d=0)] - [(1 - \rho)\beta_1 + \rho\beta_0] \times [E(X | d = 1) - E(X | d = 0)]
+  \]
+  \begin{itemize}
+    \item OLS and ATE share structural similarities but differ in weight assignment.
+    \item In ATE, larger groups receive smaller weights on their specific coefficients, opposite to OLS weighting.
+  \end{itemize}
+\end{frame}
+
 
 
 \section{Concluding remarks}

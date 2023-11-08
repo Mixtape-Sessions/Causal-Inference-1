@@ -1,9 +1,9 @@
-******************************************************************
-** name: lalonde.do 
-** author: scott cunningham (baylor university)
-** 
-** description: Analysis of Lalonde (1986) using the Dehejia and Wahba (2002) subsample to illustrate problems with heterogenous treatment effects
-******************************************************************
+********************************************************************************
+* name: lalonde.do 
+* author: scott cunningham (baylor university)
+* 
+* description: Analysis of Lalonde (1986) using the Dehejia and Wahba (2002) subsample to illustrate problems with heterogenous treatment effects
+********************************************************************************
 capture log close 
 clear
 
