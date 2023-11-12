@@ -1,6 +1,6 @@
 	clear 
-	set seed 5150
     drop _all 
+	set seed 5150
 	set obs 5000
 	gen 	treat = 0 
 	replace treat = 1 in 2501/5000 // equal proportions in treatment and control
@@ -31,19 +31,21 @@
 	gen age_sq 		= age^2
 	gen gpa_sq 		= gpa^2
 	gen interaction	= gpa*age
+	gen e = rnormal(0,5)
 
 	* Modeling potential outcomes as functions of X but differently depending on Y0 or Y1 -- "heterogeneity in the potential outcomes with respect to the covariates"
-	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0,5)
+	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + e
 	gen y1 = y0 + 2500 + 100 * age + 1100 * gpa
 	gen delta = y1 - y0
 
 	su delta 				// ATE = 2500
-	su delta if treat==1 	// ATT = 1989
-	su delta if treat==0 	// ATU = 3011
+	su delta if treat==1 	// ATT = 1962
+	su delta if treat==0 	// ATU = 3037
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
 
+	* Switching equation creates a "realized outcome" based on treatment assignment
 	gen earnings = treat*y1 + (1-treat)*y0
 
 	* Regression
@@ -110,7 +112,7 @@
 	local mean_gpasq = `r(mean)'
 	gen mean_gpasq = `mean_gpasq'
 	
-	su agegpa if treat==1
+	su interaction if treat==1
 	local mean_agegpa = `r(mean)'
 	gen mean_agegpa = `mean_agegpa'
 
@@ -125,14 +127,14 @@ gen treat4 = 	treat_coef_var + /// 0
 
 * Or use RA in teffects
 
-teffects ra (earnings age gpa age_sq gpa_sq agegpa) (treat), atet
+teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet
 
 su delta if treat==1
 su treat4
 
 * Nearest neighbor matching without and with bias adjustment
 
-teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), atet nn(1) metric(maha) 
+teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) 
 
-teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq agegpa)
+teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction)
 
