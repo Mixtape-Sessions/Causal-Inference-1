@@ -2770,19 +2770,22 @@ How far away on the propensity score will you use is what makes some of the diff
 
 \begin{frame}{Interpreting OLS coefficients}
 
+\begin{itemize}
+\item Most common causal model is OLS with covariate controls 
+
 
 		\begin{align*}
 		Y_i = \beta_0 + \beta_1 X_i + u_i&\\
 		\end{align*}
 
-\begin{itemize}
-\item Most common causal model is OLS with covariate controls 
-\item OLS can do a lot of things, but one thing it does it find the best linear fit of the data
-\item Finding the best linear fit is not the same as finding the counterfactual, so to get OLS to serve that function is another task
+\item OLS is the best linear predictor (Angrist and Pischke 2009)
+\item But the best linear predictor of the \emph{realized} outcome is not the same as being the best linear predictor of the \emph{missing potential outcome}
 
 \end{itemize}
 
 \end{frame}
+
+
 
 \begin{frame}{OLS Simulated Code}
 
@@ -2819,8 +2822,7 @@ How far away on the propensity score will you use is what makes some of the diff
 \begin{itemize}
 \item Frisch-Waugh-Lovell also helps us interpret $\widehat{\beta}_1$ when there are covariates
  \item Use the FWL theorem to turn the multivariate regression coefficient into the simple bivariate one
-\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem''
-\item Filoso (2013) has an excellent proof
+\item Angrist and Pischke (2009) call FWL the ``regression anatomy theorem'' and Filoso (2013) has an excellent and original proof
 \end{itemize}
 
 \end{frame}
@@ -3007,7 +3009,7 @@ Y_i^1 &=& Y_i^0 + \delta_{sp}
 \begin{frame}{Regression with correct functional form}
 
   \begin{figure}
-    \includegraphics[scale=0.17]{./lecture_includes/regression_fnform.png}
+    \includegraphics[scale=0.14]{./lecture_includes/regression_fnform.png}
   \end{figure}
   
 Imbens and Rubin are saying regression can identify an aggregate causal parameter under unconfoundedness because it assumes constant treatment effects and the correct functional form which is like an army without a bridge shooting arrows and using catapults to the target.  If the functional form is right, then they'll hit the target everytime.  
