@@ -3685,91 +3685,6 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Prevalence of OLS Bias in Evaluating Labor Market Programs}
-\begin{itemize}
-  \item OLS may frequently show substantial bias for ATE and ATT.
-  \item In studies like Card, Kluve, and Weber (2018), with a mean treatment rate of 17.7\%, biases are common:
-    \begin{itemize}
-      \item The expected bias in OLS for ATE is 64.6\% of the ATU-ATT difference.
-      \item For ATT, the expected OLS bias is 17.7\% of the ATU-ATT difference.
-    \end{itemize}
-  \item These findings indicate that biases in OLS estimates could often be significant.
-    \begin{itemize}
-      \item LaLonde's (1986) training program effects aligning with ATT.
-      \item Aizer et al.'s (2016) cash transfer effects resembling ATU.
-    \end{itemize}
-  \item Implementation of results is available in R and Stata through the \texttt{hettreatreg} packages.
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Issues with OLS Weights Illustrated by the NSW Program}
-\begin{itemize}
-  \item NSW program provides a classic example of OLS weights problem.
-  \item LaLonde (1986) and Angrist and Pischke (2009) assessments using the Dehejia and Wahba (2002) subsample (see Stata code together)
-    \begin{itemize}
-      \item OLS close to experimental benchmark but driven by a small treated sample.
-      \item Economic disadvantage of treated vs. CPS comparison group suggests large ATT and ATU differences.
-    \end{itemize}
-  \item Treated sample's size (1.1\%) implies that OLS will be skewed towards the ATT 
-\end{itemize}
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Replications of Lalonde data using Dehejia and Wahba sample with CPS control}
-
-\tiny
-\begin{tabular}{lccccc}
-\hline \hline
- & \multicolumn{5}{c}{Dependent variable: Real earnings in 1978} \\
- & (1) & (2) & (3) & (4) & (5) \\
-Controls: & No controls & Demographics & RE75 Only & Demo and RE75 & Demo, RE74 and RE75 \\
-\hline
-Treatment                 &   -8497.516***&   -3436.795***&     -77.705   &     622.547   &     \textbf{793.587}   \\
-                    		&   (581.916)   &   (612.056)   &   (596.215)   &   (609.582)   &   (618.609)   \\
-\hline \end{tabular}
-
-\bigskip
-
-Each column corresponds to a set of observable controls below:
-\begin{itemize}
-\item Demographics: Age, Age-squared, Years of schooling, Marriage dummy, High school dropout dummy, Black and Hispanic dummies
-\item Real earnings in 1975 (RE75)
-\item Real earnings in 1974 (RE74)
-\end{itemize}
-
-Our focus will be on the last estimate.  Question is what is this?
-
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Regression Adjustment Application and Results}
-\begin{itemize}
-  \item Estimate the regression adjustment method interacting treatment with all covariates to recover estimates of all parameters:
-    \begin{itemize}
-      \item \( \widehat{ATE} = -\$4,930 \)
-      \item \( \widehat{ATT} = \$796 \)
-      \item \( \widehat{ATU} = -\$4,996 \)
-    \end{itemize}
-  \item OLS estimate \( \$794 \) shows a weight on ATT nearly 100\%, reflecting the treated sample's size of 1.1\%
-  \item Illustrates "weight reversal''  principle: OLS weights do not reflect expected proportions.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{General Implications of the OLS Weight Anomaly}
-\begin{itemize}
-  \item The NSW example generalizes beyond this specific case.
-  \item OLS weights can misrepresent effects, influenced by treatment group proportion.
-  \item OLS estimand does not always align with intuitive weight distributions for ATT and ATU.
-\end{itemize}
-\end{frame}
 
 
 
@@ -3877,7 +3792,7 @@ $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
  
 \begin{align*}
 \omega_1 &= \frac{(1-\rho) \times V[p(X)|d=0]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]} \\
-\text{and} \quad \omega_0 &= 1 - \frac{\rho \times V[p(X)|d=1]}{\rho \times V[p(X)|d=1] + (1-\rho) \times V[p(X)|d=0]}
+\text{and} \quad \omega_0 &= 1 - \omega_1
 \end{align*}
 
 \end{frame}
@@ -3951,7 +3866,11 @@ $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
 \end{frame}
 
 
+\begin{frame}{Stata exercises}
 
+We will now look at two simulations to help you understand both of these
+
+\end{frame}
 
 
 
@@ -4046,7 +3965,7 @@ $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
 
 
 
-\begin{frame}{Visualizing the problem}
+\begin{frame}{Visualizing the problem one way}
     \begin{figure}
         \centering
         \includegraphics[width=0.8\textwidth]{./lecture_includes/tymon_weights_crossing}
@@ -4054,6 +3973,13 @@ $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
     \end{figure}
 \end{frame}
 
+\begin{frame}{Visualizing the problem another way}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/ols_ate.png}
+        \caption{As more units are placed in treatment (top right), OLS is weighted \emph{towards} the ATU (\$3,037) and when few are in the treatment (bottom left), it is weighted towards the ATT (\$1,962) }
+    \end{figure}
+\end{frame}
 
 
 
@@ -4065,6 +3991,8 @@ $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
 \end{frame}
 
 \begin{frame}{Adjustment for Predicting Counterfactuals}
+
+\tiny
   \[
     \tau_{\text{ATE}} = [E(y|d=1) - E(y|d=0)] - [(1 - \rho)\beta_1 + \rho\beta_0] \times [E(X | d = 1) - E(X | d = 0)]
   \]
@@ -4073,6 +4001,160 @@ $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
     \item In ATE, larger groups receive smaller weights on their specific coefficients, opposite to OLS weighting.
   \end{itemize}
 \end{frame}
+
+
+\begin{frame}{Bias of coefficients}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/ols_bias1.png}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}{Bias of coefficients}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/ols_bias2.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Bias of coefficients}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/ols_bias3.png}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Prevalence of OLS Bias in Evaluating Labor Market Programs}
+\begin{itemize}
+  \item OLS may frequently show substantial bias for ATE and ATT in published studies
+  \item In studies like Card, Kluve, and Weber (2018), with a mean treatment rate of 17.7\%, biases are common:
+    \begin{itemize}
+      \item The expected bias in OLS for ATE is 64.6\% of the ATU-ATT difference.
+      \item For ATT, the expected OLS bias is 17.7\% of the ATU-ATT difference.
+    \end{itemize}
+  \item These findings indicate that biases in OLS estimates could often be significant.
+    \begin{itemize}
+      \item LaLonde's (1986) training program effects aligning with ATT.
+      \item Aizer et al.'s (2016) cash transfer effects resembling ATU.
+    \end{itemize}
+  \item Implementation of results is available in R and Stata through the \texttt{hettreatreg} packages.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Issues with OLS Weights Illustrated by the NSW Program}
+\begin{itemize}
+  \item NSW program provides a classic example of OLS weights problem.
+  \item LaLonde (1986) and Angrist and Pischke (2009) assessments using the Dehejia and Wahba (2002) subsample (see Stata code together)
+    \begin{itemize}
+      \item OLS close to experimental benchmark but driven by a small treated sample.
+      \item Economic disadvantage of treated vs. CPS comparison group suggests large ATT and ATU differences.
+    \end{itemize}
+  \item Treated sample's size (1.1\%) implies that OLS will be skewed towards the ATT 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Tymon's replication of Angrist and Pischke}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{./lecture_includes/tymon_lalonde_table1.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Stata simulation}
+
+Let's do this ourselves using lalonde.do in the labs/matching on github repo
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Replications of Lalonde data using Dehejia and Wahba sample with CPS control}
+
+\tiny
+\begin{tabular}{lccccc}
+\hline \hline
+ & \multicolumn{5}{c}{Dependent variable: Real earnings in 1978} \\
+ & (1) & (2) & (3) & (4) & (5) \\
+Controls: & No controls & Demographics & RE75 Only & Demo and RE75 & Demo, RE74 and RE75 \\
+\hline
+Treatment                 &   -8497.516***&   -3436.795***&     -77.705   &     622.547   &     \textbf{793.587}   \\
+                    		&   (581.916)   &   (612.056)   &   (596.215)   &   (609.582)   &   (618.609)   \\
+\hline \end{tabular}
+
+\bigskip
+
+Each column corresponds to a set of observable controls below:
+\begin{itemize}
+\item Demographics: Age, Age-squared, Years of schooling, Marriage dummy, High school dropout dummy, Black and Hispanic dummies
+\item Real earnings in 1975 (RE75)
+\item Real earnings in 1974 (RE74)
+\end{itemize}
+
+Our focus will be on the last estimate.  Question is what is this?
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Regression Adjustment Application and Results}
+\begin{itemize}
+  \item Estimate the regression adjustment method interacting treatment with all covariates to recover estimates of all parameters:
+    \begin{itemize}
+      \item \( \widehat{ATE} = -\$4,930 \)
+      \item \( \widehat{ATT} = \$796 \)
+      \item \( \widehat{ATU} = -\$4,996 \)
+    \end{itemize}
+  \item OLS estimate \( \$794 \) shows a weight on ATT nearly 100\%, reflecting the treated sample's size of 1.1\%
+  \item Illustrates "weight reversal''  principle: OLS weights do not reflect expected proportions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{General Implications of the OLS Weight Anomaly}
+\begin{itemize}
+  \item The NSW example generalizes beyond this specific case.
+  \item OLS weights can misrepresent effects, influenced by treatment group proportion.
+  \item OLS estimand does not always align with intuitive weight distributions for ATT and ATU.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Concluding remarks}
+
+\begin{itemize}
+
+\item Last years have shown a \emph{particular} OLS specification yields biased estimates of all causal parameters when there exists heterogeneity in the treatment effects
+	\begin{itemize}
+	\item Goodman-Bacon (2021) for instance showed this with the common twoway fixed effects specification and dynamic treatment effects
+	\end{itemize}
+\item Turns out it was not a diff-in-diff problem only -- it's an OLS problem more generally
+	\begin{itemize}
+	\item We saw it also in a paper by Goldsmith-Pinkham, Hull and Kolsar on contamination bias in linear models with multiple treatment effects and heterogeneity
+	\end{itemize}
+\item Here we see the perversity of the effects under unconfoundedness and heterogeneity which is the OLS coefficient counterinuititvely favors the smaller groups and therefore their causal parameters
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Concluding remarks}
+
+\begin{itemize}
+
+\item We mentioned work by Anna Aizer more likely is estimating coefficients that are more like the ATU than either the ATE or the  ATT because of how large the treatment group is
+\item This has implications for analysis in which the proportion of groups differ in size due to population differences or over-representation of one group over another (i.e., Asians in criminal justice)
+\item The smaller the group, the larger their influence on the OLS coefficient
+\item Lesson here is that regression adjustment as well as nearest neighbor matching with bias adjustment may need to be your core models, not the additive in covariates OLS specification we are accustomed to
+
+\end{itemize}
+
+\end{frame}
+
 
 
 
