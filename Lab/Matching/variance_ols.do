@@ -17,3 +17,4 @@ twoway (line weight1 var_pscore_1, lcolor(black) lwidth(medium) lpattern(solid))
 graph export ./tymon_variance_weight.png, as(png) name("Graph")
 
 
+

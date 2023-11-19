@@ -75,7 +75,7 @@ gsort prob_treat
 gen id=_n
 
 * Simple graph
-twoway (line w1 prob_treat), ytitle("OLS weight on APLE,1") xtitle("Share of units in treatment group") title("Weighted Average Interpretation of Sloczynsi OLS Theorem") subtitle("Treatment Group Size vs. APLE,1 Weights") note("5000 OLS regressions varying treatment share from 0.001 to 0.9994") legend(position(6))
+twoway (line w1 prob_treat), ytitle("OLS weight on ATT") xtitle("Share of units in treatment group") title("Weighted Average Interpretation of Sloczynsi OLS Theorem") subtitle("Treatment Group Size vs. ATT Weights") note("5000 OLS regressions varying treatment share from 0.001 to 0.9994") legend(position(6))
 
 #delimit cr
 
