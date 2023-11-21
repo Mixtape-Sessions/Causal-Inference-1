@@ -33,6 +33,10 @@ su delta if treat==1 // ATT = 1962
 local att = r(mean)
 scalar att = `att'
 gen att = `att'
+su delta if treat==0 // ATU = 3037
+local atu = r(mean)
+scalar atu = `atu'
+gen atu = `atu'
 
 * Generate observed outcome
 gen earnings = treat * y1 + (1 - treat) * y0
