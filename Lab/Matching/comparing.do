@@ -19,7 +19,7 @@
 	twoway (histogram gpa if treat==1,  color(blue)) ///
        (histogram gpa if treat==0,  ///
 	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
-	   
+	   	   
 	* Re-center the covariates
 	su age
 	replace age = age - `r(mean)'

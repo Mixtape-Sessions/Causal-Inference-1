@@ -2349,31 +2349,88 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 \subsection{Propensity scores}
 
 
+\begin{frame}{Curse of dimensionality, bias and heterogeneous treatment effects}
+	
+	\begin{itemize}
+	\item Recall the problem of many covariates for exact matching -- the curse of dimensionality makes matching on $K$ covariates implausible as the dimensions grow exponentially with $K$ 
+	\item This is problem because recall there are two assumptions needed to match
+		\begin{enumerate}
+		\item Unconfoundedness: this gives you the right to match
+		\item Common support: this gives you the ability to match
+		\end{enumerate}
+	\item Without both, then depending on the amount of hetergeneity in the treatment effects, matching will be biased
+	\end{itemize}
+
+\end{frame}
+
 \begin{frame}{Propensity score as dimension reduction}
 	
 	\begin{itemize}
-	\item Curse of dimensionality makes matching on $K$ covariates challenging as the dimensions grew with $K$ (and continuous covariates had no exact matches)
-	\item Rubin (1977) and Rosenbaum and Rubin (1983) developed the propensity score method to reduce $K$ covariates into a single scalar without loss of information
-	\item Insofar as treatment is random conditional on $K$ covariates, then it will also be random conditional on propensity score 
-	\item Variety of ways to incorporate the propensity score, but first we describe the propensity score as a dimension reduction method 
+
+	\item Rubin (1977) and Rosenbaum and Rubin (1983) developed the propensity score method
+	\item They show that if treatment is independent of potential outcomes conditional on $K$ covariates, then it will be independent of potential outcomes conditional on propensity score 
+	\item Main value of the propensity score is dimension reduction  to reduce $K$ covariates into a single scalar without loss of information
+	\item Variety of ways to incorporate the propensity score -- stratification, weighting and matching
 	\end{itemize}
 	
 \end{frame}
 
 
-\begin{frame}{What's the propensity score for?}
+\begin{frame}{Investigating overlap}
 
 \begin{itemize}
 
-\item Once you obtain the propensity score, you typically use it to carefully explore problems with common support with respect to your selection parameter of interest
+\item Once you obtain the propensity score, you can use it for estimation, but you can also use it for evaluating covariate balance
+\item It's an easy way to do it with histograms, and since the propensity score theorem holds for the dimensions of $X$, there's no loss of generality in investigating overlap that way versus one by one 
+\item Remember: you need common support, not on $X$ individual covariates alone, but within the $K$ dimensions, so investigating with the propensity score is easier to do
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Covariate 1  histograms}
+
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/age_histogram}
+  \end{figure}
+  
+\end{frame}
+
+\begin{frame}{Covariate 2  histograms}
+
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/gpa_histogram}
+  \end{figure}
+  
+\end{frame}
+
+\begin{frame}{Summarizing both with propensity score histogram}
+
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/pscore_histogram}
+  \end{figure}
+  
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{Navigating the vastness of estimation}
+
+\begin{itemize}
 \item Estimators abound and can be a little bewildering so to summarize them:
 	\begin{enumerate}
 	\item Match units from one group to another using the propensity score (with various rules for finding how close to be)
 	\item Weighting by the inverse propensity score
 	\end{enumerate}
-\item Variety of techniques to derive standard errors from parametric and bootstrapping
-\item Can even introduce ``doubly robust'' methods to deal with matching bias like we did with bias correction
-
+\item Variety of techniques to derive standard errors from parametric methods to bootstrapping
+\item Can even introduce ``doubly robust'' methods to deal with matching bias like we did with nearest neighbor bias correction
+\item But all these estimators assume unconfoundedness, so really it's all about addressing the lack of overlap; that's the only bias that exists when you have unconfoundedness remember
 \end{itemize}
 
 \end{frame}
@@ -2391,6 +2448,12 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 \end{frame}
 
 \begin{frame}{Propensity score theorem}
+
+``We are interested in estimating the average effect of a binary treatment on a scaler outcome.  If assignment to the treatment is exogenous or unconfounded, that is, independent of the potential outcomes given covariates, biases associated with simple treatment-control average comparisons can be removed by adjusted for differences in the covariates.  Rosenbaum and Rubin (1983) show that adjusting solely for differences between treated and control units in the propensity score removes all biases associated with differences in covariates.'' -- Kirano, Imbens and Ridder (2003, Econometrica)
+
+\end{frame}
+
+\begin{frame}{Propensity score theorem}
 	
 	\begin{block}{Propensity score theorem}
 	If $(Y^1,Y^0)\independent{D}|X$ (full unconfoundedness), then $(Y^1,Y^0)\independent{D} | \rho(X)$ where $\rho(X)=Pr(D=1|X)$, the propensity score
@@ -2398,7 +2461,8 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 	
 	\begin{itemize}
 	\item Conditioning on the propensity score is enough to have independence between $D$ and $(Y^1,Y^0)$ (Rosenbaum and Rubin 1983)
-	\item With full unconfoundedness, you can estimate the ATE (ATT recall needs weak unconfoundedness)
+	\item With full unconfoundedness, you can estimate the ATE, but you can estimate the ATT with weaker assumptions (independence with respect to $(Y^0)\independent{D} | \rho(X)$)
+	\item But remember -- propensity scores don't solve unconfoundedness; if you don't have it with respect to $K$ dimensions of $X$, you won't have it when you collapse it to the propensity score
 	\end{itemize}
 \end{frame}
 
@@ -2406,26 +2470,26 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 
 
 \begin{itemize}
-\item In an experiment, we know the true propensity score because we controlled it -- could be uniform, could be different by groups
-\item Outside an experiment, we don't know it
+\item Outside the randomized experiment, we don't know the ``true propensity score''
 	\begin{itemize}
 	\item We use DAGs or hunches to select covariates, careful not to include outcomes or colliders
-	\item But we may still not know the functional form
+	\item But we still won't know the functional form (i.e., logit, probit, polynomials, interactions)
 	\end{itemize}
 \item Often then people will use higher order terms and interactions to provide flexibility but it does technically have misspecification biases
-\item This is an area most likely where machine learning could greatly enhance the estimation
+\item This is an area most likely where machine learning could greatly enhance the estimation (take your pick)
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Estimating with the Propensity Score}
+\begin{frame}{Review the steps}
 
 \begin{itemize}
 
-\item All the propensity score will do is collapse or ``reduce'' the dimensions of X from $K$ to a single scalar, but then what?
-\item Weight or impute -- only things you can do
-\item We will start with weighting and then move into imputation after
-\item Inverse probability weighting to estimate the ATT
+\item First step is always to decide what population you're seeking to know the causal effect -- everyone (ATE), treated only (ATT), not treated (ATU); each has different assumptions
+\item Next estimate the propensity score
+\item Choose your estimation method: main ones are \emph{stratification}, \emph{weighting} or \emph{matching}
+\item Final step will be calculating the standard error 
+\item Let's review the steps now
 
 \end{itemize}
 
@@ -2433,33 +2497,144 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 
 
 
-\begin{frame}{Step 1: Estimate the propensity score}
+\begin{frame}{Step 1: Pick your parameter ATE vs ATT vs ATU}
+
+\begin{itemize}
+	\item With full unconfoundedness, you can estimate all three \emph{average} causal parameters, even the ATU
+	\item But that requires strong assumptions that within the dimensions of $X$, summarized by the propensity score into a single scalar, all remaining variation in the treatment is ``as good as random''
+	\item Something for you to think about -- which population are you really wanting to know the answer to?  Do you want to know the effect of discrimination on the discriminated group?  Then that's the ATT not the ATE
+	\item Do you want to imagine ``what if blacks and whites were both discriminated against?'' That's the ATE
+	\item The more you can focus on one particular causal parameter, the easier and more justified it gets as it weakens both assumptions
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Step 2: Estimate the propensity score}
 
 		\begin{itemize}
 		\item Estimate the conditional probability of treatment using probit or logit model (or ML) $$Pr(D_i=1|X_i) = F(\beta X_i)$$
+			\begin{itemize}
+			\item Don't use OLS because OLS overfits and places propensity scores outside of realism
+			\item OLS will give propensity scores outside the [0,1] bounds and probabilities cannot be negative or greater then one
+			\end{itemize}
 		\item Use the estimated coefficients to predict the propensity score for each unit $i$$$\widehat{\rho}_i(X_i) = \widehat{\beta} X_i$$
 		\item Note that each unit $i$ now has a predicted probability of treatment given the values of their covariates relative to everyone else's 
-		\item Frequentist probability -- you've basically just obtained the likelihood someone who ``looks like you'' would be treated (regardless of whether you were in fact treated)
 		\end{itemize}
 \end{frame}
 
 
-
-
-\begin{frame}{Step 2: Estimation of ATT with IPW}
+\begin{frame}{Step 2: Estimate the propensity score}
 
 \begin{itemize}
-	\item IPW uses the estimated propensity score to reweight the outcomes (e.g., Robins and Rotnitzky 1995, Imbens 2000, Hirano and Imbens 2001)
-	\item IPW is non-parametric -- you are just taking averages and multiplying by weights
-	\item There are also fewer implementation choices -- you aren't choosing how many neighbors to include, how far away a neighbor can be -- but you still have to closely examine common support
+\item Think of the propensity score as a frequentist concept of probability
+\item ``If I drew someone from the sample with these characteristics, then how many of those are in the treatment group divided by the total with those characteristics'' 
+\item Or for each dimension of $X$, a ratio of $\frac{N_T}{(N_T + N_C)}$
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Step 3a: Estimation  with matching}
+
+\begin{itemize}
+	
+	\item Most common method is to use matching
+	\item Matching finds a unit in the comparison group with a similar $\widehat{\rho}_i(X)$ to service as counterfactual for the unit
+	\item For the ATE, you'll need matches on both side; for the ATT, you'll need matches for the treatment group among controls
+	\item Lack of overlap creates issues for matching which we'll note later
+	
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Step 3a: Estimation with stratification}
+
+\begin{itemize}
+	
+	\item Rare to see this done anymore, though it was one of the methods that Dehejia and Wahba (2002) tried
+	\item Stratification is a kind of weighting method similar to Cochran's subclassification method where weights are group shares within certain ranges of the propensity score
+	\item Four steps to doing this; I'll review again later, but let me briefly do it now
+	
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Step 3a: Estimation with stratification}
+
+\begin{enumerate}
+	\item First, split the sample by ranges on the propensity score until you find covariate balance within each range
+	\item Next calculate weights for each region depend on the causal parameter you're seeking:
+		\begin{itemize}
+		\item ATE: number of units in that region divided by total units in sample ;
+		\item ATT: number of treated units in that region divided by the number of treated units in the sample
+		\item ATU: number of control units in that region divided by the number of control units in the sample
+		\end{itemize}
+	\item Calculate simple difference in mean outcomes (i.e., without controls) for each propensity score region (Step 1)
+	\item Then take weighted average using weights from step 2 and difference in means from step 3
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Step 3b: Early weighting methods}
+
+\begin{itemize} 
+\item Hahn (1998) studied IPW and calculated the semiparametric efficiency bounds, then proposed efficient estimators for the ATE and the ATT
+\item His estimators were efficient regardless of whether the propensity score was known 
+\item Nonparametrically estimated two conditional expectations, $E[YD|X=x]$ and $[Y(1-D)|X=x]$ as well as the propensity score, $\rho(X)$, and then imputed missing potential outcomes as $\widehat{Y_i^1=\frac{\widehat{E}[YD|X_i]}{\widehat{\rho}(X_i)}}$ and $\widehat{Y_i^0=\frac{\widehat{E}[Y(1-D)|X_i]}{\widehat{\rho}(X_i)}}$
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Step 3b: Early weighting methods}
+
+\begin{itemize} 
+\item Heckman, Ichimura, and Todd (1997, 1998) and Heckman, Ichimura, Smith,
+and Todd (1998) focus on the ATT
+\item Estimators based on local linear regressions of the outcome on treatment status and either covariates or the propensity score. 
+\item They conclude that in general there is no clear ranking of their estimators 
+\item Under some conditions the estimator based on adjustment for all covariates is superior to the estimator based on adjustment for the propensity score, \item Under other conditions the second estimator is to be preferred and lack of knowledge of the propensity score does not alter this conclusion
+\end{itemize}
+
+\end{frame}
+
+	
+
+\begin{frame}{Step 3b: IPW by Hirano, Imbens and Ridder}
+
+\begin{itemize} 
+\item Hirano, Imbens and Ridder (2003, Econometrica) considers estimation of the ATT
+\item Focus is on the efficient estimation and they show that while weighting on the inverse of the true propensity score is not an efficient estimator, paradoxically weighting each observation by the \emph{inverse} of a nonparametric estimator of the propensity score is
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Step 3b: Estimation with inverse probability weighting}
+
+\begin{itemize}
+	\item IPW uses the estimated propensity score to reweight the outcomes for which there are several historical methods for doing so
+	\item IPW is non-parametric -- you are just taking averages and multiplying by the inverse of the propensity score weights depending on which parameter you want to estimate
+	\item There are fewer implementation choices than in matching (i.e., no choice over distance, number of neighbors)
 	\item There are bias adjustment methods called double robust where you combine imputing counterfactuals with weighting by the propensity score
 \end{itemize}
 
 \end{frame}
 	
+
+
 	
 
-\begin{frame}{Step 2: Estimation of ATT with IPW}
+\begin{frame}{Step 3b: Estimation of ATT with IPW}
 	
 		\begin{block}{Estimating ATT with IPW}
 	Given $Y^0 \independent{D}|X$ and weak common support, then
@@ -2472,7 +2647,7 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 \end{frame}
 
 
-\begin{frame}{Step 3: Standard Errors}
+\begin{frame}{Step 4: Standard Errors}
 	
 		
 Standard errors can be constructed a few different ways:
@@ -2491,10 +2666,9 @@ Standard errors can be constructed a few different ways:
 
 \begin{itemize}
 
-\item Recall that the matching/weighting methods all require unconfoundedness \emph{and} common support, and whereas the first is not testable, the latter is
-\item Assessing whether there are units it both groups for whichever parameter you're focused on is simple with propensity score -- just create histograms of the propensity score distribution for treatment and control
+\item Assessing whether there are units it both groups for whichever parameter you're focused on is simple with propensity score as shown earlier using histograms of the propensity score for treated and control
 \item Crump, et al. (2009) suggest keeping propensity scores within the interval [0.1,0.9] (``trimming'') but any trimming will drop units and dropping units means moving away from the parameter
-\item ``Parameters first!''
+\item Let's look at a picture again just to remind ourselves
 
 \end{itemize}
 
@@ -2520,6 +2694,7 @@ Standard errors can be constructed a few different ways:
 \end{itemize}
 
 \end{frame}
+
 	
 
 
@@ -2578,17 +2753,194 @@ Notice that since treated units are missing counterfactuals, but so are controls
 \begin{frame}{Double robust estimators}
 
 \begin{itemize}
-\item Lots of papers began to try and address the model misspecification problem by combining propensity scores with other methods called ``double robust'' (Robins and Rotnizky 1995; Hirano and Imbens 2001)
-\item Basic idea in all of them was to control for covariates twice \emph{at the same time} without paying a price
+\item Question: Is it possible to combine the virtues of regression and propensity score?
+\item Answer: Double robust estimators
+\item DR address the model misspecification problem by combining propensity scores with other methods 
+\item Basic idea in all of them was to control for covariates twice \emph{at the same time} without paying for it (two for one)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Double robust estimators}
+
+\begin{itemize}
 \item We say that estimators combining regression with IPW are double robust so long as
-	\begin{itemize}
 	\item The regression for the outcome is properly specified, or
 	\item The propensity score is properly specified
-	\end{itemize}
 \item We give ourselves two chances to get it right (either/or not both/and) but if neither is properly specified, then you didn't really gain much
 \end{itemize}
 
 \end{frame}
+
+\begin{frame}{Doubly Robust Estimator}
+    Easy to verify: with true \( m_1(X) \) (an outcome regression or OR model) and \( \rho(X) \)
+\footnotesize
+
+    \[
+    ATE = \mathbb{E} \left[ \frac{DY}{\rho(X)} - \frac{D - \rho(X)}{\rho(X)}m_1(X) \right]
+    - \mathbb{E} \left[ \frac{(1 - D)Y}{1 - \rho(X)} + \frac{D - \rho(X)}{1 - \rho(X)}m_0(X) \right]
+    \]
+
+    \[
+    = \mathbb{E} \left[ m_1(X_i) + \frac{D_i\{Y_i - m_1(X_i)\}}{\rho(X_i)} \right]
+    - \mathbb{E} \left[ m_0(X_i) + \frac{(1 - D_i)\{Y_i - m_0(X_i)\}}{1 - \rho(X_i)} \right]
+    \]
+
+    \[
+    = \mu_1 - \mu_0 = \mathbb{E}[Y(1)] - \mathbb{E}[Y(0)]
+    \]
+\end{frame}
+
+\begin{frame}{Doubly Robust Estimator}
+    In the previous formula, replace the true PS \( \rho(X) \) and outcome
+    \( m_1(X) \) by the estimated ones from postulated models \( \hat{\rho}(X) \) and
+    \( \hat{m}_1(X) \), we obtain two augmented estimators:
+
+    \[
+    \widehat{\tau}_{dr} = \hat{\mu}_{1,dr} - \hat{\mu}_{0,dr}
+    \]
+
+\footnotesize
+    \[
+    = \frac{1}{N} \sum_{i=1}^{N} \left[ \frac{D_iY_i - D_i - \hat{\rho}(X_i)}{\hat{\rho}(X_i)} \hat{m}_1(X_i) \right]
+    - \frac{1}{N} \sum_{i=1}^{N} \left[ \frac{(1 - D_i)Y_i - D_i - \hat{\rho}(X_i)}{1 - \hat{\rho}(X_i)} \hat{m}_0(X_i) \right]
+    \]
+
+\end{frame}
+
+\begin{frame}{Double Robust Estimator}
+
+\begin{itemize}
+
+\item     The two estimators are mathematically equivalent, but have different
+    statistical implications:
+    	\begin{itemize}
+	\item  the first estimator augments an IPW estimator by outcome regression (OR); 
+	\item the second augments an OR estimator by IPW.
+	\end{itemize}
+\item The first estimator is usually referred to as the doubly-robust (DR) estimator
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Doubly Robust Estimator}
+    Now focus on the DR estimator
+
+    Notice that \( \hat{\mu}_{1,dr} \) and \( \hat{\mu}_{0,dr} \) have the same structure
+
+    \[
+    \hat{\mu}_{1,dr} = N^{-1} \sum_{i=1}^{N} \left[ \frac{D_iY_i}{\hat{\rho}_i} - \frac{(D_i - \hat{\rho\rho}_i)\hat{m}_1}{\hat{\rho}_i} \right]
+    \]
+
+    \[
+    \hat{\mu}_{0,dr} = N^{-1} \sum_{i=1}^{N} \left[ \frac{(1 - D_i)Y_i}{1 - \hat{\rho}_i} + \frac{(D_i - \hat{\rho}_i)\hat{m}_0}{1 - \hat{\rho}_i} \right]
+    \]
+
+    We will study the properties of \( \hat{\mu}_{1,dr} \) as an estimator for \( \mu_1 = \mathbb{E}\{Y(1)\} \); \( \hat{\mu}_{0,dr} \) is symmetric
+\end{frame}
+
+
+
+
+\begin{frame}{Doubly Robust Estimator}
+    What does \( \hat{\mu}_{1,dr} \) estimate? Simple algebra shows that \( \mu_{1, dr} \) converges to
+
+    \[
+    \mathbb{E}\left[ \frac{DY}{\rho(X)} - \frac{D - \rho(X)}{\rho(X)}m(X) \right]
+    \]
+
+    \[
+    = \mathbb{E}\{Y(1)\} + \mathbb{E}\left[ \frac{D - \rho(X)}{\rho(X)}\{Y(1) - m(X)\} \right]
+    \]
+
+
+\begin{itemize}
+\item     Thus, in order for \( \hat{\mu}_{1,dr} \) to estimate \( \mathbb{E}\{Y(1)\} \), the second term in (4) must be 0
+
+\item     Regression estimator augmented by weighted residuals
+
+\item     When does the second term $=$ 0?
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Doubly Robust Estimator}
+    When does \( R = \mathbb{E} \left[ \frac{D - \rho(X)}{\rho(X)} \{Y(1) - m_1(X)\} \right] = 0? \)
+
+    \begin{itemize}
+        \item \textbf{Scenario 1:} Postulated propensity score model \( \rho(X; \beta) \) is
+        incorrect, but postulated regression model \( m_1(X; \alpha) \) is correct
+
+        \[
+        R = \mathbb{E} \left[ \mathbb{E} \left[ \frac{D - \rho(X)}{\rho(X)} \{Y(1) - m_1(X)\} \middle| X \right] \right]
+        \]
+
+        \[
+        = \mathbb{E} \left[ \frac{\rho_{true}(X) - \rho(X)}{\rho(X)} \mathbb{E} \{Y(1) - m_1(X) \middle| X\} \right]
+        \]
+
+\item Easy to see that \( \mathbb{E} \{Y(1) - m_1(X) | X\} = \mathbb{E} \{Y(1) | X\} - m_1(X) = m_{1,true}(X) - m_1(X) = 0 \)
+
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Doubly Robust Estimator}
+    When does \( \mathbb{E} \left[ \frac{D - \rho(X)}{\rho(X)} \{Y(1) - m_1(X)\} \right] = 0? \)
+
+    \begin{itemize}
+        \item \textbf{Scenario 2:} Postulated propensity score model \( \rho(X; \beta) \) is correct,
+        but postulated regression model \( m_1(X; \alpha) \) is incorrect
+
+        \[
+        R = \mathbb{E} \left[ \mathbb{E} \left[ \frac{D - \rho(X)}{\rho(X)} \{Y(1) - m_1(X)\} \middle| X \right] \right]
+        \]
+
+        \[
+        = \mathbb{E} \left[ \frac{\hat{e}_{true}(X) - \rho(X)}{\rho(X)} \mathbb{E} \{Y(1) - m_1(X) \middle| X\} \right]
+        \]
+
+        \item Equals to zero because \( \hat{\rho}_{true}(X) - \rho(X) = 0 \)
+    \end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Doubly Robust Estimator}
+    \begin{itemize}
+        \item In both cases, the second term goes to 0 in large samples, and
+        thus \( \hat{\mu}_{1,dr} \) is consistent (asymptotically unbiased) for \( E(Y(1)) \).
+        \item Similarly, \( \hat{\mu}_{0,dr} \) is consistent for \( E(Y(0)) \), and hence \( \hat{\tau}_{dr} \)
+        is consistent for the ATE.
+        \item Obviously, if both models are correct, \( \hat{\tau}_{dr} \) is consistent for
+        estimating the ATE.
+    \end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Doubly Robust Estimator}
+    \textbf{Double Robustness:} \( \hat{\tau}_{dr} \) is a consistent estimator of the ATE if either
+    the propensity score model or the potential outcome model is, but not
+    necessarily both are, correctly specified
+
+    \begin{itemize}
+        \item DR is a large sample property
+        \item Offers protection against model mis-specification: gives you two
+        chances to get it right (and wrong)!
+        \item If \( \rho(X) \) and \( m_1(X) \) are modeled correctly, \( \hat{\tau}_{dr} \) will have smaller
+        variance than the IPW estimator (in large samples)
+        \item If the outcome model \( m_1(X) \) is correct, \( \hat{\tau}_{dr} \) has larger variance (in
+        large samples) than the direct regression estimator
+        \item ... but gives protection in the event it is not
+    \end{itemize}
+\end{frame}
+
+
+
 
 
 
@@ -4204,14 +4556,28 @@ Our focus will be on the last estimate.  Question is what is this?
 \end{frame}
 
 
-\begin{frame}{Extrapolation and functional forms}
+
+
+
+\begin{frame}{My opinions: Parameter first}
 
 \begin{itemize}
 
-\item If you do not have weak common support, then you can only estimate ATT using \emph{extrapolation} which is model dependent on functional forms
-\item If you have heterogenous treatment effects, then the standard models with additive covariates is misspecified even if those are the right variables -- you'll need regression adjustment for ``saturation''
-\item Same model contains ATT and ATE, so you need to decide which one you want
-\item Functional form extrapolation is powerful, as it can make inference far beyond the support of the data, but it's a bit of some dark magic too
+\item You have three average causal effects associated with three populations
+\item You will need up front to choose which one, and justify why that is the one you want
+\item The conditional ATEs like ATT or ATU have fewer assumptions
+\item ATT is often the one you want anyway (e.g., effect of discrimination on blacks not everyone)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{My opinions: Regression}
+
+\begin{itemize}
+\item Simple regression model $$Y_i = \alpha + \delta D_i + \beta X_i +\varepsilon_i$$
+\item It requires extremely strong assumptions like constant treatment effects and has weird weighting properties as we discussed
+\item Functional form must be right also (linearity)
+\item It is simply unnecessary to estimate this any longer
 \end{itemize}
 
 \end{frame}
@@ -4240,6 +4606,37 @@ Our focus will be on the last estimate.  Question is what is this?
 
 \end{frame}
 
+
+\begin{frame}{My opinions: Regression adjustment}
+
+\begin{itemize}
+\item If you want to estimate something with a regression, then assuming unconfoundedness and linearity you can using regression adjustment (RA)
+\item Recall: regression adjustment allows you to estimate both the ATE and the ATT but will require a saturated model
+\item You'll want to use software for this as it's too easy to make a mistake
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Nearest neighbor matching with bias adjustment}
+
+\begin{itemize}
+\item Consider Abadie and Imbens (2006; 2008; 2011) nearest neighbor and minimize the Mahanalohbis distance metric
+\item This only requires unconfoundedness and common support, not constant treatment effects and not parametric functional form like regressions 
+\item But most likely you will not have common support, so consider an outcome regression adjustment called bias adjustment
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Inverse probability weighting}
+
+\begin{itemize}
+\item If you use propensity scores, then consider using the IPW as it's got fewer ad hoc choices and does not require knowing the true propensity score (for efficiency)
+\item You may want to also use outcome regression or double robust to correct for any model misspecification (consistency)
+\item Always plot the propensity score histograms and assess overlap for the parameter you want
+\end{itemize}
+
+\end{frame}
 
 
 
