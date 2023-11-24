@@ -28,9 +28,9 @@
 	gen y1 = y0 + 2500 + 100 * age + 1000*gpa
 	gen delta = y1 - y0
 
-	su delta // ATE = 2500
-	su delta if treat==1 // ATT = 1980
-	su delta if treat==1 // ATT = 1979
+	su delta 			 // ATE = 2500
+	su delta if treat==1 // ATT = 1991
+	su delta if treat==0 // ATT = 3009
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
