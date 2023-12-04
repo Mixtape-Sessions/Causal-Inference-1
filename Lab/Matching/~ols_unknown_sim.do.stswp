@@ -3,57 +3,46 @@ cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
 * Set up the results file
 tempname handle
-postfile `handle' ate att atu ols prob_treat prob_control n tymons_ate tymons_att tymons_atu w1 w0  delta using results.dta, replace
+postfile `handle' ate att atu ols prob_treat prob_control n tymons_ate tymons_att tymons_atu w1 w0 delta using results.dta, replace
 
 * Loop through the iterations
-forvalues i = 1/5000 {
+forvalues i = 4/4996 {
     clear
-    drop _all 
-	set obs 5000
-	set seed 1501
+    set seed 5150
+    set obs 5000
+    gen treat = 0 
+    replace treat = 1 in `i'/5000
 
-	* Generating covariates
-	quietly gen 	age = rnormal(25,2.5) 		
-	quietly gen 	gpa = rnormal(2.3,0.75)
+    * Imbalanced covariates
+    gen 	age = rnormal(25, 2.5) 		if treat == 1
+    replace age = rnormal(30, 3) 		if treat == 0
+    gen 	gpa = rnormal(2.3, 0.75) 	if treat == 0
+    replace gpa = rnormal(1.76, 0.5) 	if treat == 1
 
-	* Recenter covariates
-	quietly su age
-    quietly replace age = (age - r(mean)) / 9.857341  // normalize age
+    * Re-center the covariates
+    su age, meanonly
+    replace age = age - r(mean)
 
-	quietly su gpa
-    quietly replace gpa = (gpa - r(mean)) / 2.661211  // normalize gpa
+    su gpa, meanonly
+    replace gpa = gpa - r(mean)
 
- 	* Generate quadratics and interaction
+    * Quadratics and interaction
     quietly gen age_sq = age^2
     quietly gen gpa_sq = gpa^2
-    quietly gen interaction = age*gpa
+    quietly gen interaction = gpa * age
 
-	
-	* Generate the potential outcomes
-    quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 2000*interaction + rnormal(0,5)
-    quietly gen y1 = y0 + 2500 + 100 * age + 1000*gpa
+    * Modeling potential outcomes
+    quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0, 5)
+    quietly gen y1 = y0 + 2500 + 100 * age + 1100 * gpa
     quietly gen treatment_effect = y1 - y0
 
-	
-	* Generate linear propensity score
-    quietly gen lin_comb = (0.1*age - 0.02*age_sq + 0.8*gpa - 0.08*gpa_sq) + `i'/5000
-	
-	
-    * Normalize the linear combination
-    quietly egen max_lin_comb = max(lin_comb)
-    quietly gen lin_pscore = lin_comb / max_lin_comb
-
-    * Adjust the treatment assignment
-    quietly gen treat = runiform(0,1) < lin_pscore
-
-	
     * Calculate ATE, ATT, and ATU
-    quietly su treatment_effect, meanonly
-    quietly local ate = r(mean)
-    quietly su treatment_effect if treat == 1, meanonly
-    quietly local att = r(mean)
-    quietly su treatment_effect if treat == 0, meanonly
-    quietly local atu = r(mean)
+    su treatment_effect, meanonly
+    local ate = r(mean)
+    su treatment_effect if treat == 1, meanonly
+    local att = r(mean)
+    su treatment_effect if treat == 0, meanonly
+    local atu = r(mean)
 
     * Generate earnings variable
     quietly gen earnings = treat * y1 + (1 - treat) * y0
@@ -71,12 +60,9 @@ forvalues i = 1/5000 {
 	local w0 `e(w0)'
 	local delta `e(delta)'
 	
-	
-
-	
 
     * Post the results to the results file
-    post `handle' (`ate') (`att') (`atu') (`ols') (`prob_treat') (`prob_control') (`n') (`tymons_ate') (`tymons_att') (`tymons_atu') (`w1') (`w0') (`delta')
+    post `handle' (`ate') (`att') (`atu') (`ols') (`prob_treat') (`prob_control') (`n') (`tymons_ate') (`tymons_att') (`tymons_atu') (`w1') (`w0') (`delta') 
 
 	}
 
@@ -85,8 +71,7 @@ postclose `handle'
 
 * Use the results
 use ./results.dta, clear
-save ./linear1.dta, replace
-
+save ./unknown.dta, replace
 
 gsort prob_treat
 gen id=_n
@@ -95,10 +80,10 @@ gen id=_n
 twoway (line w1 prob_treat), ytitle("OLS weight on APLE,1") ///
 		xtitle("Probability of Treatment") title("Weighted Average Interpretation of OLS Theorem") ///
 		subtitle("Treatment Group Size vs. APLE,1 Weights") ///
-		note("5000 simulations of the 1st linear propensity score to generate increasing group shares") ///
+		note("5000 simulations of the unknown propensity score to generate increasing group shares") ///
 		legend(position(6))
 		
-graph export "/Users/scunning/Desktop/linear_pscore_weights.png", as(png) name("Graph")	  replace 
+graph export "/Users/scunning/Desktop/unknown_pscore_weights.png", as(png) name("Graph")	  replace 
 		
 
 
@@ -109,7 +94,7 @@ twoway (scatter ols prob_treat, mcolor(blue)) (scatter att prob_treat, mcolor(re
        yline(2500, lpattern(dash) lcolor(black)) ///
        xline(0.5, lpattern(dash) lcolor(yello)) ///
 	   title(OLS ATT and ATU changed with group share) ///
-	   subtitle(Linear propensity score #1) ///
+	   subtitle(Unknown propensity score) ///
        xtitle("Probability of Treatment") ytitle("Parameter / Coefficient")
 
 	   
@@ -117,6 +102,7 @@ graph export "/Users/scunning/Desktop/linear_pscore_ols.png", as(png) name("Grap
 
 	   
 #delimit cr
+
 
 
 

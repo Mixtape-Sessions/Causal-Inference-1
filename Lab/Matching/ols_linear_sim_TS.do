@@ -1,4 +1,5 @@
 clear all
+cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
 * Set up the results file
 tempname handle
@@ -34,12 +35,17 @@ forvalues i = 1/5000 {
 	quietly gen treatment_effect = y1 - y0
 
 	
-	* Generate linear propensity score with varying intercept
-	gen pscore = 1 / (1 + exp(-(0.2*age - 0.03*age_sq + 2*gpa - 0.2*gpa_sq + `i'/1000 - 3)))
-
+	* Generate linear propensity score
+	quietly gen lin_pscore = 0.0005*age - 0.00025*age_sq + 0.05*gpa - 0.0005*gpa_sq + 0.15859548 + `i'*0.00014231
 	
-	* Treatment assignment based on the propensity score
-	gen treat = runiform(0,1) < pscore
+	
+	* Optional: Rescale to ensure scores are within 0 and 1
+	* quietly egen pscore_min = min(lin_pscore)
+	* quietly egen pscore_max = max(lin_pscore)
+	* quietly gen rescaled_pscore = (lin_pscore - pscore_min) / (pscore_max - pscore_min)
+
+	* Adjust the treatment assignment to create more imbalance
+	quietly gen treat = runiform(0,1) < lin_pscore
 
 	
     * Calculate ATE, ATT, and ATU
@@ -77,12 +83,19 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
+save ./linear_ts.dta, replace
 
 gsort prob_treat
 gen id=_n
 
 * Simple graph of omega 1 weight against the probability of treatment
-twoway (line w1 prob_treat), ytitle("OLS weight on APLE,1") xtitle("Probability of Treatment") title("Weighted Average Interpretation of OLS Theorem") subtitle("Treatment Group Size vs. APLE,1 Weights") note("5000 simulations of the propensity score to generate increasing group shares") legend(position(6))
+twoway (line w1 prob_treat), ytitle("OLS weight on APLE,1") ///
+		xtitle("Probability of Treatment") title("Weighted Average Interpretation of OLS Theorem") ///
+		subtitle("Treatment Group Size vs. APLE,1 Weights") ///
+		note("5000 simulations of the linear propensity score to generate increasing group shares") ///
+		legend(position(6))
+		
+graph export "/Users/scunning/Desktop/linearTW_pscore_weights.png", as(png) name("Graph")	  replace 
 
 
 * Shows the OLS coefficient moves towards the ATU as the share of units treated rises
@@ -90,8 +103,13 @@ twoway (scatter ols prob_treat, mcolor(blue)) (scatter att prob_treat, mcolor(re
        (scatter atu prob_treat, mcolor(green)), ///
        legend(label(1 "OLS") label(2 "ATT") label(3 "ATU")) ///
        yline(2500, lpattern(dash) lcolor(black)) ///
-       xline(0.5, lpattern(dash) lcolor(black)) ///
+       xline(0.5, lpattern(dash) lcolor(yello)) ///
+	   title(OLS ATT and ATU changed with group share) ///
+	   subtitle(Linear propensity score) ///
        xtitle("Probability of Treatment") ytitle("Parameter / Coefficient")
+
+	   
+graph export "/Users/scunning/Desktop/linearTW_pscore_ols.png", as(png) name("Graph")	   replace
 
 	   
 

@@ -1,4 +1,4 @@
-* Attempting to create a DGP with selection driven by a linear propensity score
+* Attempting to create a DGP with selection driven by a logistic propensity score
     clear 
 	ssc install hettreatreg, replace
 
@@ -29,7 +29,7 @@
 	gen delta = y1 - y0
 
 	
-	* Generate linear propensity score
+	* Generate logistic propensity score
 	gen pscore = 1 / (1 + exp(-(0.2*age - 0.03*age_sq + 2*gpa - 0.2*gpa_sq + 500/1000 - 3)))
 	
 	
