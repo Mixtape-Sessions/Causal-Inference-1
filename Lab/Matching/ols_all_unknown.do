@@ -1,7 +1,7 @@
 clear all
 cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
-* DGP from ols_linear_sim_TS
+* DGP from with imbalanced covariates (unknown propensity score)
 
 * Set up the results file
 tempname handle
@@ -14,39 +14,43 @@ forvalues i = 1/5000 {
 	set seed `i'
 	set obs 5000
 
-	* Generating covariates
-	quietly gen 	age = rnormal(25,2.5) 		
-	quietly gen 	gpa = rnormal(2.3,0.75)
+	gen treat = 0 
+    replace treat = 1 in 4000/5000
 
-	* Recenter covariates
-	quietly su age
-	quietly replace age = age - `r(mean)'
 
-	quietly su gpa
-	quietly replace gpa = gpa - `r(mean)'
+    * Imbalanced covariates
+    gen 	age = rnormal(25, 2.5) 		if treat == 1
+    replace age = rnormal(30, 3) 		if treat == 0
+    gen 	gpa = rnormal(2.3, 0.75) 	if treat == 0
+    replace gpa = rnormal(1.76, 0.5) 	if treat == 1
 
- 	* Generate quadratics and interaction
-	quietly gen 	age_sq = age^2
-	quietly gen 	gpa_sq = gpa^2
-	quietly gen 	interaction = age*gpa	
+    * Re-center the covariates
+    su age, meanonly
+    replace age = age - r(mean)
+
+    su gpa, meanonly
+    replace gpa = gpa - r(mean)
+
+    * Quadratics and interaction
+    quietly gen age_sq = age^2
+    quietly gen gpa_sq = gpa^2
+    quietly gen interaction = gpa * age
+
+    * Modeling potential outcomes
+    quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0, 5)
+    quietly gen y1 = y0 + 2500 + 100 * age + 1100 * gpa
+    quietly gen treatment_effect = y1 - y0
 
 	
-	* Generate the potential outcomes
-	quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 2000*interaction + rnormal(0,5)
-	quietly gen y1 = y0 + 2500 + 100 * age + 1000*gpa
-	quietly gen treatment_effect = y1 - y0
-
-	
-	* Generate linear propensity score
-	quietly gen lin_pscore = 0.0005*age - 0.00025*age_sq + 0.05*gpa - 0.0005*gpa_sq + 0.15859548 + 2500*0.00014231
-
-    * Adjust the treatment assignment
-    quietly gen treat = runiform(0,1) < lin_pscore
-	
-    * Calculate ATT
+    * Calculate ATE, ATT, and ATU
+    quietly su treatment_effect, meanonly
+    quietly local ate = r(mean)
     quietly su treatment_effect if treat == 1, meanonly
     quietly local att = r(mean)
+    quietly su treatment_effect if treat == 0, meanonly
+    quietly local atu = r(mean)
 
+	
     * Generate earnings variable
     quietly gen earnings = treat * y1 + (1 - treat) * y0
 	
@@ -109,6 +113,5 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
-save ./ols_all_TS.dta, replace
-
+save ./ols_all_unknown.dta, replace
 

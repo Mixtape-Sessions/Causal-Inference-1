@@ -1,7 +1,7 @@
 clear all
 cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
-* DGP from ols_linear_sim_TS
+* DGP from logistic propensity score
 
 * Set up the results file
 tempname handle
@@ -11,8 +11,8 @@ postfile `handle' att ols tymons_att ra nn nn_ba psmatch ipw_att using results.d
 forvalues i = 1/5000 {
     clear
     drop _all 
-	set seed `i'
 	set obs 5000
+	set seed 1501
 
 	* Generating covariates
 	quietly gen 	age = rnormal(25,2.5) 		
@@ -31,22 +31,27 @@ forvalues i = 1/5000 {
 	quietly gen 	interaction = age*gpa	
 
 	
-	* Generate the potential outcomes
+	* Generate the potential outcomes	
 	quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 2000*interaction + rnormal(0,5)
 	quietly gen y1 = y0 + 2500 + 100 * age + 1000*gpa
 	quietly gen treatment_effect = y1 - y0
 
 	
-	* Generate linear propensity score
-	quietly gen lin_pscore = 0.0005*age - 0.00025*age_sq + 0.05*gpa - 0.0005*gpa_sq + 0.15859548 + 2500*0.00014231
-
-    * Adjust the treatment assignment
-    quietly gen treat = runiform(0,1) < lin_pscore
+	* Generate logistic propensity score with varying intercept
+	gen true_pscore = 1 / (1 + exp(-(0.2*age - 0.03*age_sq + 2*gpa - 0.2*gpa_sq + `i'/1000 - 3)))
 	
-    * Calculate ATT
+	* Treatment assignment based on the propensity score
+	gen treat = runiform(0,1) < pscore
+
+    * Calculate ATE, ATT, and ATU
+    quietly su treatment_effect, meanonly
+    quietly local ate = r(mean)
     quietly su treatment_effect if treat == 1, meanonly
     quietly local att = r(mean)
+    quietly su treatment_effect if treat == 0, meanonly
+    quietly local atu = r(mean)
 
+	
     * Generate earnings variable
     quietly gen earnings = treat * y1 + (1 - treat) * y0
 	
@@ -109,6 +114,5 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
-save ./ols_all_TS.dta, replace
-
+save ./ols_all_logistic.dta, replace
 
