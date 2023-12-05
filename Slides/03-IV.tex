@@ -1858,7 +1858,10 @@ Score_{ibt} = \alpha + \pi Z_{btc} + X_{ibt} + \tau_t + \varepsilon_{ibt}\label{
 
 
 
-\begin{frame}{2SLS and one instrument}
+
+
+
+\begin{frame}{2SLS and one instrument}
 
 \begin{itemize}
 
@@ -1869,7 +1872,8 @@ Score_{ibt} = \alpha + \pi Z_{btc} + X_{ibt} + \tau_t + \varepsilon_{ibt}\label{
 
 \end{itemize}
 
-\end{frame}
+\end{frame}
+
 
 
 \begin{frame}{Continuous instrument}
@@ -2102,7 +2106,7 @@ What assumptions do we need?
     	\begin{itemize}
 	\item Heckman and Vytacil (2005, 2006, 2007, etc.) show that all policy relevant parameters (e.g., ATE, ATT, ATU) can be reconstructed using weighted averages over the MTE
    	\item Technically you can identify LATE with average monotonicity, but you need strict for MTE (new AER by Frandsen, Lefgren and Leslie forthcoming)
-    	\item Additive separability of treatment effects (i.e., unobserved plus observed heterogeneity)
+    	\item Additive separability of treatment effects (i.e., unobserved based on covariates plus observed heterogeneity)
     	\item Only required if not full support, and we don't have full support
 	\end{itemize}
 
@@ -2111,8 +2115,31 @@ What assumptions do we need?
 \begin{frame}{Marginal treatment effects}
 
 \begin{itemize}
+
+\item Rooted in the LATE revolution in the 1990s focused on identifying models with heterogenous treatment effects
+\item Imbens and Angrist are known for the LATE theorem and clarified interpretation of IV estimates
+\item Heckam and Vytlacil, Card and others proposed a control function approach as an alternative to linear IV which under stronger assumptions than IV would allow the estimation of the ATE (which IV could not do)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Marginal treatment effects}
+
+\begin{itemize}
+\item Marginal treatment effect (MTE) appears in the late 80s in the context of a switching regression model where "marginal gain" was the gain from treatment for people who were shifted into (or out of) treatment status by a marginal change in the cost of the treatment (which was the instrument)
+
+\item Heckman and Vytlacil in four articles from 1999 to 2007 define the MTE as the ``gain from treatment for individuals shifted into treatment or out of treatment by a marginal change in the \emph{propensity score} (i.e., the predicted probability of treatment which is a function of the instrument)
+\item They then develop nonparametric estimation methods and clarify the connection of the switching regime self selection model and of MTE with IV and LATE
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Marginal treatment effects}
+
+\begin{itemize}
+\item Since it's familiar to the audience, I'll focus on recidivism from the mental health paper I mentioned not suicide
 \item In our context, we could have explored the heterogeneity in treatment effects across inmates' underlying mental illness proxied by the propensity score
-\item Since it's familiar to the audience, I'll focus on recidivism not suicide
 \item Consider the following equations decomposing an inmate $i$'s potential recidivism into the conditional means of potential outcomes, $\mu^j(X_i)$, based on inmate characteristics $X_i$ as well as deviations from the mean $U_i^j$
 \end{itemize}
 
@@ -2134,7 +2161,7 @@ D_i^* = \mu^D(X_i,Z_i) - V_i
 
 \bigskip
 
-Assignment to the severe mental illness (low functioning) occurs when $D_i^*>0$ otherwise they go to traditional adjudication
+Assignment to the severe mental illness (low functioning) occurs when $D_i^*>0$ otherwise they are classified as high functioning
 
 \end{frame}
 
@@ -3795,10 +3822,13 @@ What assumptions do we need?
 	\item Heckman and Vytacil (2005, 2006, 2007, etc.) show that all policy relevant parameters (e.g., ATE, ATT, ATU) can be reconstructed using weighted averages over the MTE
    	\item Technically you can identify LATE with average monotonicity, but you need strict for MTE
     	\item Additive separability of treatment effects (i.e., unobserved plus observed heterogeneity)
+	\item Additive separability means that the treatment effect can be separated into two components: the observed heterogeneity (covariates) and the unobserved heterogeneity
     	\item Only required if not full support, and we don't have full support
 	\end{itemize}
 
 \end{frame}
+
+
 
 \begin{frame}{Marginal treatment effects}
 
