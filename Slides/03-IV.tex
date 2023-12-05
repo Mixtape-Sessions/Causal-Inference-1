@@ -2150,10 +2150,10 @@ Y_i^1 &=& \mu^1(X_i) + U_i^1
 
 \end{frame}
 
-\begin{frame}{Selection}
+\begin{frame}{Selection into treatment}
 
 
-Mental health assignment is based on an individual latent index threshold in which the net benefits of ``severe mental illness'' (obviously odd way of putting it) are exactly equal to
+Mental illness scores are assigned based on an individual latent index threshold in which the net benefits of ``severe mental illness'' (obviously odd way of putting it) are exactly equal to
 \bigskip
 \begin{eqnarray*}
 D_i^* = \mu^D(X_i,Z_i) - V_i
@@ -2161,9 +2161,24 @@ D_i^* = \mu^D(X_i,Z_i) - V_i
 
 \bigskip
 
-Assignment to the severe mental illness (low functioning) occurs when $D_i^*>0$ otherwise they are classified as high functioning
+Assignment to a severe mental illness score (low functioning) occurs when $D_i^*>0$ otherwise they are classified as high functioning
 
 \end{frame}
+
+\begin{frame}{Selection into treatment}
+
+Or to be simpler about it, this is our "selection into treatment" equation meaning a person's treatment status is either 0 or 1 depending on the right hand side being positive or negative:
+
+\begin{eqnarray*}
+D_i^* = \mu^D(X_i,Z_i) - V_i
+\end{eqnarray*}
+
+\bigskip
+
+$D_i=1$ if $D_i*\geq 0$,  otherwise $D_i=0$.  $V_i$ is an i.i.d. error term indicating unobserved heterogeneity in the propensity for treatment.  The error term $V_i$ enters the selection equation with a negative sign, it embodies unobserved characteristics that make individuals \emph{less} likely to receive treatment. As I said on the other page, people call it ``unobserved resistance to treatment'' or even ``distaste''.  
+
+\end{frame}
+
 
 \begin{frame}{Selection and expected gains}
 
@@ -2222,6 +2237,34 @@ Y_i &=& Y_i^0 + (Y_i^1 - Y_i^0)D_i
 \begin{eqnarray*}
 Y_i &=& \mu^0(X_i) + D_i(\mu^1(X_i) - \mu^0(X_i) + U_i^1 + U_i^0) + U_i^0
 \end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}{Assumptions}
+
+\begin{block}{\textbf{Assumption 1: Conditional Independence}}
+$(U^1,U^0,V) \perp\!\!\!\perp Z | X$
+
+\bigskip
+
+Implied by standard LATE assumptions (e.g., non-zero first stage, exclusion, SUTVA, monotonicity) are equivalent to some representation of a choice equation.  This is no more restrictive than the LATE model. And that could be enough, except that it requires full support of the propensity scores in both treated and untreated samples for all values of $X$ and in practice this rarely holds. So most proceed with a stronger assumption.
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Assumptions}
+
+\begin{block}{\textbf{Assumption 2: Separability}}
+$E[U^j|V,X] = E[U^j|V]$
+
+\bigskip
+
+It's a strong assumption.  First, the MTE is identified over the common support, unconditional on $X$.  Second, the MTEs are additively separable in $U^D$ and $X$. The intercept, but not the slope, is a function of $X$. 
+
+
+\end{block}
 
 \end{frame}
 
