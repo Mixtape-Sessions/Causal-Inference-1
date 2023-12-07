@@ -8,11 +8,11 @@ tempname handle
 postfile `handle' att ols tymons_att ra nn nn_ba psmatch ipw_att using results.dta, replace
 
 * Loop through the iterations
-forvalues i = 1/5000 {
+forvalues i = 1/500 {
     clear
     drop _all 
+	set seed `i'
 	set obs 5000
-	set seed 12042023
 
 	* Generating covariates
 	quietly gen 	age = rnormal(35,10.5) 		
@@ -36,7 +36,7 @@ forvalues i = 1/5000 {
 	quietly gen treatment_effect = y1 - y0
 	
 	* Generate logit propensity score
-	quietly gen lin_index = -0.13*age + -0.0004*age_sq + -0.6*gpa + -0.055*gpa_sq - 4.5 + `i'*0.00225
+	quietly gen lin_index = -0.13*age + -0.0004*age_sq + -0.6*gpa + -0.055*gpa_sq - 4.5 + 1450*0.00225
 	quietly gen true_pscore = exp(lin_index)/(1+exp(lin_index))
 	
 	* Generate treatment status
@@ -113,5 +113,21 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
-save ./ols_all_logit_TW.dta, replace
+save ./ols_all_logit_TS.dta, replace
+ 
+use ./ols_all_logit_TS.dta, clear
+
+gen ols_bias = att - ols
+gen tymon_bias = att - tymons_att
+gen ra_bias = att - ra
+gen nn_bias = att - nn
+gen nnba_bias = att - nn_ba
+gen psmatch_bias = att - psmatch 
+gen ipw_bias = att - ipw_att 
+
+save ./ols_all_logit_TS_mc.dta, replace
+
+
+
+
 

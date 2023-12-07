@@ -1,14 +1,14 @@
 clear all
 cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
-* DGP from ols_linear_sim_TS
+* DGP from ols_linear_sim_TS.  Linear propensity score. 
 
 * Set up the results file
 tempname handle
 postfile `handle' att ols tymons_att ra nn nn_ba psmatch ipw_att using results.dta, replace
 
 * Loop through the iterations
-forvalues i = 1/5000 {
+forvalues i = 1/500 {
     clear
     drop _all 
 	set seed `i'
@@ -38,7 +38,7 @@ forvalues i = 1/5000 {
 
 	
 	* Generate linear propensity score
-	quietly gen lin_pscore = 0.0005*age - 0.00025*age_sq + 0.05*gpa - 0.0005*gpa_sq + 0.15859548 + 2500*0.00014231
+	quietly gen lin_pscore = 0.0005*age - 0.00025*age_sq + 0.05*gpa - 0.0005*gpa_sq + 0.15859548 + 1000*0.00014231
 
     * Adjust the treatment assignment
     quietly gen treat = runiform(0,1) < lin_pscore
@@ -49,6 +49,7 @@ forvalues i = 1/5000 {
 
     * Generate earnings variable
     quietly gen earnings = treat * y1 + (1 - treat) * y0
+	
 
 	* Get the OLS coefficient and OLS theorem decomposition of the ATT 
 	quietly hettreatreg age gpa age_sq gpa_sq interaction, o(earnings) t(treat) vce(robust)
@@ -108,6 +109,21 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
-save ./ols_all_.dta, replace
+save ./ols_all_linear_TS.dta, replace
+
+
+use ./ols_all_linear_TS.dta, clear
+ 
+
+gen ols_bias = att - ols
+gen tymon_bias = att - tymons_att
+gen ra_bias = att - ra
+gen nn_bias = att - nn
+gen nnba_bias = att - nn_ba
+gen psmatch_bias = att - psmatch 
+gen ipw_bias = att - ipw_att 
+
+
+save ./ols_all_linear_TS_mc.dta, replace
 
 

@@ -8,11 +8,11 @@ tempname handle
 postfile `handle' att ols tymons_att ra nn nn_ba psmatch ipw_att using results.dta, replace
 
 * Loop through the iterations
-forvalues i = 1/5000 {
+forvalues i = 1/500 {
     clear
     drop _all 
+	set seed `i'
 	set obs 5000
-	set seed 1501
 
 	* Generating covariates
 	quietly gen 	age = rnormal(25,2.5) 		
@@ -38,7 +38,7 @@ forvalues i = 1/5000 {
 
 	
 	* Generate logistic propensity score with varying intercept
-	gen true_pscore = 1 / (1 + exp(-(0.2*age - 0.03*age_sq + 2*gpa - 0.2*gpa_sq + `i'/1000 - 3)))
+	gen true_pscore = 1 / (1 + exp(-(0.2*age - 0.03*age_sq + 2*gpa - 0.2*gpa_sq - 1)))
 	
 	* Treatment assignment based on the propensity score
 	gen treat = runiform(0,1) < true_pscore
@@ -116,3 +116,14 @@ postclose `handle'
 use results.dta, clear
 save ./ols_all_logistic.dta, replace
 
+use ./ols_all_logistic.dta, clear 
+
+gen ols_bias = att - ols
+gen tymon_bias = att - tymons_att
+gen ra_bias = att - ra
+gen nn_bias = att - nn
+gen nnba_bias = att - nn_ba
+gen psmatch_bias = att - psmatch 
+gen ipw_bias = att - ipw_att 
+
+save ./ols_all_logistic_mc.dta, replace

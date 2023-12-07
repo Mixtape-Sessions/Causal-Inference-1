@@ -1,14 +1,14 @@
 clear all
 cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
 
-* DGP from ols_linear_sim_TS
+* DGP from ols_linear_sim
 
 * Set up the results file
 tempname handle
 postfile `handle' att ols tymons_att ra nn nn_ba psmatch ipw_att using results.dta, replace
 
 * Loop through the iterations
-forvalues i = 1/5000 {
+forvalues i = 1/500 {
     clear
     drop _all 
 	set seed `i'
@@ -20,28 +20,34 @@ forvalues i = 1/5000 {
 
 	* Recenter covariates
 	quietly su age
-	quietly replace age = age - `r(mean)'
+    quietly replace age = (age - r(mean)) / 9.857341  // normalize age
 
 	quietly su gpa
-	quietly replace gpa = gpa - `r(mean)'
+    quietly replace gpa = (gpa - r(mean)) / 2.661211  // normalize gpa
 
  	* Generate quadratics and interaction
-	quietly gen 	age_sq = age^2
-	quietly gen 	gpa_sq = gpa^2
-	quietly gen 	interaction = age*gpa	
+    quietly gen age_sq = age^2
+    quietly gen gpa_sq = gpa^2
+    quietly gen interaction = age*gpa
 
 	
 	* Generate the potential outcomes
-	quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 2000*interaction + rnormal(0,5)
-	quietly gen y1 = y0 + 2500 + 100 * age + 1000*gpa
-	quietly gen treatment_effect = y1 - y0
+    quietly gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 2000*interaction + rnormal(0,5)
+    quietly gen y1 = y0 + 2500 + 100 * age + 1000*gpa
+    quietly gen treatment_effect = y1 - y0
 
 	
 	* Generate linear propensity score
-	quietly gen lin_pscore = 0.0005*age - 0.00025*age_sq + 0.05*gpa - 0.0005*gpa_sq + 0.15859548 + 2500*0.00014231
+    quietly gen lin_comb = (0.1*age - 0.02*age_sq + 0.8*gpa - 0.08*gpa_sq) + 1700/5000
+	
+	
+    * Normalize the linear combination
+    quietly egen max_lin_comb = max(lin_comb)
+    quietly gen lin_pscore = lin_comb / max_lin_comb
 
     * Adjust the treatment assignment
     quietly gen treat = runiform(0,1) < lin_pscore
+
 	
     * Calculate ATT
     quietly su treatment_effect if treat == 1, meanonly
@@ -49,7 +55,6 @@ forvalues i = 1/5000 {
 
     * Generate earnings variable
     quietly gen earnings = treat * y1 + (1 - treat) * y0
-	
 
 	* Get the OLS coefficient and OLS theorem decomposition of the ATT 
 	quietly hettreatreg age gpa age_sq gpa_sq interaction, o(earnings) t(treat) vce(robust)
@@ -109,6 +114,17 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
-save ./ols_all_TS.dta, replace
+save ./ols_all_linear.dta, replace 
 
 
+use ./ols_all_linear.dta, clear
+
+gen ols_bias = att - ols
+gen tymon_bias = att - tymons_att
+gen ra_bias = att - ra
+gen nn_bias = att - nn
+gen nnba_bias = att - nn_ba
+gen psmatch_bias = att - psmatch 
+gen ipw_bias = att - ipw_att 
+
+save ./ols_all_linear_mc.dta, replace

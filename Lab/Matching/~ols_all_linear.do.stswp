@@ -8,7 +8,7 @@ tempname handle
 postfile `handle' att ols tymons_att ra nn nn_ba psmatch ipw_att using results.dta, replace
 
 * Loop through the iterations
-forvalues i = 1/5000 {
+forvalues i = 1/500 {
     clear
     drop _all 
 	set seed `i'
@@ -38,7 +38,7 @@ forvalues i = 1/5000 {
 
 	
 	* Generate linear propensity score
-    quietly gen lin_comb = (0.1*age - 0.02*age_sq + 0.8*gpa - 0.08*gpa_sq) + `i'/5000
+    quietly gen lin_comb = (0.1*age - 0.02*age_sq + 0.8*gpa - 0.08*gpa_sq) + 1700/5000
 	
 	
     * Normalize the linear combination
@@ -114,6 +114,17 @@ postclose `handle'
 
 * Use the results
 use results.dta, clear
-save ./ols_all.dta, replace
+save ./ols_all_linear.dta, replace
 
 
+use ./ols_all_linear.dta, clear
+
+gen ols_bias = att - ols
+gen tymon_bias = att - tymons_att
+gen ra_bias = att - ra
+gen nn_bias = att - nn
+gen nnba_bias = att - nn_ba
+gen psmatch_bias = att - psmatch 
+gen ipw_bias = att - ipw_att 
+
+save ./ols_all_linear.dta, replace
