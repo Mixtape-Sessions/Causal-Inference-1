@@ -94,7 +94,7 @@ forvalues i = 1/500 {
 	
 	
 	* inverse propensity score weights (ATT)
-	quietly reg treat age age_sq gpa gpa_sq interaction
+	quietly reg treat age age_sq gpa gpa_sq 
 	quietly predict pscore
 	quietly gen inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
 	quietly reg earnings i.treat [aw=inv_ps_weight], r
