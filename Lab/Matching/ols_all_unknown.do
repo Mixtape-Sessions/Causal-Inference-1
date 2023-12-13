@@ -56,13 +56,13 @@ forvalues i = 1/500 {
 	
 
 	* Get the OLS coefficient and OLS theorem decomposition of the ATT 
-	quietly hettreatreg age gpa age_sq gpa_sq interaction, o(earnings) t(treat) vce(robust)
+	quietly hettreatreg age gpa age_sq gpa_sq , o(earnings) t(treat) vce(robust)
 	quietly local ols `e(ols1)'
 	quietly local tymons_att `e(att)'
 	
 	
 	* RA in teffects to estimate the ATT
-	quietly teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet
+	quietly teffects ra (earnings age gpa age_sq gpa_sq ) (treat), atet
 	quietly mat b=e(b)
 	quietly local ra = b[1,1]
 	quietly scalar ra=`ra'
@@ -70,7 +70,7 @@ forvalues i = 1/500 {
 
 
 	* Nearest neighbor, no bias adjustment	 
-	quietly teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) 
+	quietly teffects nnmatch (earnings age gpa age_sq gpa_sq ) (treat), atet nn(1) metric(maha) 
 	quietly mat b=e(b)
 	quietly local nn = b[1,1]
 	quietly scalar nn=`nn'
@@ -78,7 +78,7 @@ forvalues i = 1/500 {
 
 	
 	* Nearest neighbor, bias adjustment	 
-	quietly teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction)
+	quietly teffects nnmatch (earnings age gpa age_sq gpa_sq ) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq )
 	quietly mat b=e(b)
 	quietly local nn_ba = b[1,1]
 	quietly scalar nn_ba=`nn_ba'
@@ -86,7 +86,7 @@ forvalues i = 1/500 {
 	 
 	
 	* Propensity score matching in teffects to estimate the ATT
-	quietly teffects psmatch (earnings) (treat age gpa age_sq gpa_sq interaction), atet
+	quietly teffects psmatch (earnings) (treat age gpa age_sq gpa_sq ), atet
 	quietly mat b=e(b)
 	quietly local psmatch = b[1,1]
 	quietly scalar psmatch=`psmatch'
@@ -94,7 +94,7 @@ forvalues i = 1/500 {
 	
 	
 	* inverse propensity score weights (ATT)
-	quietly reg treat age age_sq gpa gpa_sq interaction
+	quietly reg treat age age_sq gpa gpa_sq 
 	quietly predict pscore
 	quietly gen inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
 	quietly reg earnings i.treat [aw=inv_ps_weight], r
@@ -125,9 +125,70 @@ gen nnba_bias = att - nn_ba
 gen psmatch_bias = att - psmatch 
 gen ipw_bias = att - ipw_att 
 
+su ols_bias
+local ols_bias `r(mean)'
+
+su tymon_bias
+local tymon_bias `r(mean)'
+
+su ra_bias
+local ra_bias `r(mean)'
+
+su nn_bias
+local nn_bias `r(mean)'
+
+su nnba_bias
+local nnba_bias `r(mean)'
+
+su psmatch_bias
+local psmatch_bias `r(mean)'
+
+su ipw_bias
+local ipw_bias `r(mean)'
+
+su att
+local att `r(mean)'
+
+
+* Format the macro to display only two decimal places
+local ols_bias_fmt: display %9.2f `ols_bias'
+local tymon_bias_fmt: display %9.2f `tymon_bias'
+local ra_bias_fmt: display %9.2f `ra_bias'
+local nn_bias_fmt: display %9.2f `nn_bias'
+local nnba_bias_fmt: display %9.2f `nnba_bias'
+local psmatch_bias_fmt: display %9.2f `psmatch_bias'
+local ipw_bias_fmt: display %9.2f `ipw_bias'
+local att_fmt: display %9.2f `att'
+
+* Use the formatted macro in your display and kdensity commands
+kdensity ols_bias, xtitle("Bias") title("Bias of OLS estimator") note("Bias is equal to `ols_bias_fmt' and ATT is $`att_fmt'")
+graph export "./figures/ols_bias.png", as(png) name("Graph") replace
+
+
+kdensity tymon_bias, xtitle("Bias") title("Bias of Tymon's ATT estimator") note("Bias is equal to `tymon_bias_fmt' and ATT is $`att_fmt'")
+graph export "./figures/tymon_bias.png", as(png) name("Graph") replace
+
+
+kdensity ra_bias, xtitle("Bias") title("Bias of Regression Adjustment ATT estimator") note("Bias is equal to `ra_bias_fmt' and ATT is $`att_fmt'")
+graph export "./figures/ra_bias.png", as(png) name("Graph") replace
+
+
+kdensity nn_bias, xtitle("Bias") title("Bias of nearest neighbor matching ATT estimator") subtitle(no bias adjustment) note("Bias is equal to `nn_bias_fmt', ATT is $`att_fmt' and estimator is the Mahanalobis distance minimization")
+graph export "./figures/nn_bias.png", as(png) name("Graph") replace
+
+
+kdensity nnba_bias, xtitle("Bias") title("Bias of nearest neighbor matching ATT estimator") subtitle(with bias adjustment) note("Bias is equal to `nnba_bias_fmt' and ATT is $`att_fmt'")
+graph export "./figures/nnba_bias.png", as(png) name("Graph") replace
+
+kdensity psmatch_bias, xtitle("Bias") title("Bias of Propensity Score Matching ATT estimator") note("Bias is equal to `psmatch_bias_fmt' and ATT is $`att_fmt'")
+graph export "./figures/psmatch_bias.png", as(png) name("Graph") replace
+
+
+kdensity ipw_bias, xtitle("Bias") title("Bias of Inverse Probability Weighting ATT estimator") note("Bias is equal to `ipw_bias_fmt' and ATT is $`att_fmt'")
+graph export "./figures/ipw_bias.png", as(png) name("Graph") replace
+
 save ./ols_all_unknown_mc.dta, replace
  
-use ./ols_all_unknown_mc.dta, replace
 
 
 
