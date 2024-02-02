@@ -1,5 +1,10 @@
 clear all
-cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
+
+* laptop
+* cd "/Users/scunning/Causal-Inference-1/Lab/Matching"
+
+* Work desktop
+cd "/Users/scott_cunningham/Documents/Causal-Inference-1/Lab/Matching"
 
 * DGP from ols_linear_sim
 

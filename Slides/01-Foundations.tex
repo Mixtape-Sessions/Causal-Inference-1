@@ -49,9 +49,8 @@
 % ---- Content ----
 
 
-\section{Introduction to course}
 
-\subsection{What is Mixtape Sessions?}
+\section{What is Mixtape Sessions?}
 
 
 \begin{frame}{Welcome!}
@@ -88,7 +87,7 @@
 
 \end{frame}
 
-\subsection{Managing your expectations}
+\section{Managing your expectations}
 
 \begin{frame}{Class goals}
 
@@ -148,7 +147,7 @@
 
 \end{frame}
 
-\subsection{Future Tracks}
+\section{Future Tracks}
 
 \begin{frame}{What's coming this fall?}
 
@@ -222,20 +221,11 @@
 
 
 
-
-
-\section{Potential outcomes}
-
-
-
-\subsection{Naive causal inference}
-
-
 \begin{frame}{What is Causality?}
 
 \begin{itemize}
 \item Causality is metaphysics (what is?); causal inference is epistemology (what is knowledge?) IOW, what makes a causal belief a ``warranted belief''?
-\item Causal inference has many mothers and fathers: Aristotle, Hume, Mill, Lewis
+\item Causality and causal inference have common sources (e.g., Aristotle, Hume, Mill, Lewis) but we will focus primarily on the experimental design tradition
 \item We use the potential outcomes framework of causal inference to build and discuss methods that estimate unbiased and meaningful \textbf{average} causal parameters as defined by that framework
 \end{itemize}
 
@@ -315,6 +305,10 @@
 \end{frame}
 
 
+
+
+
+
 \begin{frame}{Modeling is Not the First Step}
 
 Most of us simply estimate models and cross our fingers that that coefficient is causal, but is it? When is it?  Why is it? And which causal effect is it?  And when is it reasonable to believe it? 
@@ -326,18 +320,6 @@ We have to introduce concepts and notation first otherwise we will extend the co
 
 \end{frame}
 
-
-
-\begin{frame}{Three New Ideas}
-
-\begin{enumerate}
-\item \textbf{Counterfactual}: Philosophers come to it first and its central role in causal inference makes causality \emph{unknowable} that the project is nearly derailed
-\item \textbf{Treatment assignment mechanism}: Neyman and Fisher solve the counterfactual problem in statistics and lay the foundation of the modern randomized controlled trial (RCT) with their focus on the selection process
-\item \textbf{No One Causal Effect}: There is no such thing as ``the causal effect''; there's many and your first step is to pick a parameter (not as easy as it sounds)
-\end{enumerate}
-
-
-\end{frame}
 
 
 \begin{frame}{Definition and Identification Come First}
@@ -354,6 +336,18 @@ Most of us skip (1) and many skip (2) and go straight to (3) but hopefully today
 
 \end{frame}
 
+\section{Brief (and selected) history of causal inference}
+
+\begin{frame}{Three New Ideas}
+
+\begin{enumerate}
+\item \textbf{Counterfactual}: Philosophers come to it first and its central role in causal inference makes causality \emph{unknowable} that the project is nearly derailed
+\item \textbf{Treatment assignment mechanism}: Neyman and Fisher solve the counterfactual problem in statistics and lay the foundation of the modern randomized controlled trial (RCT) with their focus on the selection process
+\item \textbf{No One Causal Effect}: There is no such thing as ``the causal effect''; there's many and your first step is to pick a parameter (not as easy as it sounds)
+\end{enumerate}
+
+
+\end{frame}
 
 
 
@@ -402,7 +396,7 @@ Statisticians surprisingly resolve this tension in the early 20th century with t
 \begin{frame}{Jerzy Neyman's Notation}
 
 \begin{itemize}
-\item Jerzy Neyman's 1923 article describes a field experiment with differing plots of land (imagine hundreds of square gardens) and many different ``varieties'' of fertilizer that farmers could apply to the land
+\item Jerzy Neyman's 1923 masters thesis describes a field experiment with differing plots of land (imagine hundreds of square gardens) and many different ``varieties'' of fertilizer that farmers could apply to the land
 \item ``$U_{ik}$ is the yield of the $i$th variety on the $k$th plot...'' (Neyman 1923)
 \item He calls $U_{ik}$ ``potential yield'', as opposed to the realized yield because $i$ (the fertilizer type) described all possible fertilizers that could be assigned to each $k$ square garden
 \item Though only one fertilizer will be assigned to the land, many possible fertilizer assignments were possible beforehand, each with their own outcome
@@ -608,6 +602,7 @@ Aggregate parameters based on individual treatment effects are \emph{summaries} 
 \begin{frame}{Simple Comparisons}
 
 
+
   \begin{block}{Definition 7: Simple difference in mean outcomes (SDO)}
     A simple difference in mean outcomes (SDO) can be approximated by comparing the sample average outcome for the treatment group ($D=1$) with a comparison group ($D=0$)
     
@@ -759,14 +754,33 @@ Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \
 
 \end{frame}
 
+\begin{frame}{Labor by design}
+
+\begin{itemize}
+
+	\item Hull, Kolesar and Walters (2022) tells the economic history of causal inference which is rooted in the Princeton Industrial Relations Section in the 70s and 80s responding to an ``empirical crisis''
+	\item The core problem in causal inference is \emph{always} selection bias due to the fact that we cannot observe each units' counterfactual
+	\item Historically two ways that this selection bias was addressed: modeling it directly (Heckman, and others) and by design
+	\item Design is the experimental design rooted in Fisher and Neyman's work in the 20s, but the Section took it as a guiding principle even outside of the lab
+
+\end{itemize}
+
+\end{frame}
+
+
+
 
 \begin{frame}{Selection bias}
 
 \begin{itemize}
-\item Selection bias in the potential outcomes framework is  two mean potential outcomes differing for two groups,
-\item But one of them is fictional and the other isn't
-\item Source of the bias is the treatment assignment mechanism
-covariates
+\item Selection bias in surveys has to do with non-representative samples; that is not its meaning in causal inference
+\item Selection bias in causal inference is when the average potential outcome for treatment group and control group are different in a large sample
+\item Source of the bias is the treatment assignment \emph{mechanism}
+\item Examples of a treatment assignment mechanism: 
+	\begin{enumerate}
+	\item randomization (i.e., taking the medicine because a coin flip told you to take it) versus 
+	\item sorting on one or both potential outcome (i.e., taking the medicine because it'll help you) which I call the ``Perfect Doctor''
+	\end{enumerate}
 
 \end{itemize}
 
@@ -776,8 +790,13 @@ covariates
 
   \begin{itemize}
     \item Look very closely at the selection bias terms on their left and right hand sides $$\alert{E[Y^0|D=1]} \neq E[Y^0 |D=0]$$
-    \item Most likely, doctors ``selected'' units into and out of treatment based on $Y^0$
-    \item Selection bias is caused by a treatment assignment mechanism that selects units into treatment based on $Y^0$ (also called ``sorting'')
+	\item Interpretation
+		\begin{enumerate}
+	    \item When you say you chose something because you'd be unhappy if you didn't, that's selection on $Y^0$
+    \item When you say you chose something because you'd be happy if you did it, that's selection on $Y^1$
+    \item When you say you chose something because you'll be more happy if you do it than if you didn't do it, that's selection on $Y^1-Y^0$
+    	\end{enumerate}
+	\item All three of those create selection bias because all three assign treatments to units mechanically based on potential outcomes, which is always the source of selection bias
       \end{itemize}
 
 \end{frame}
@@ -787,14 +806,9 @@ covariates
 \begin{frame}{Humans cause selection bias, not statistical model}
 
 \begin{itemize}
-\item Sorting into treatment based on potential outcomes will always create selection bias 
-\item Following correlations between a PhD and happiness are not causal:
-	\begin{enumerate}
-	\item I chose to get a PhD because I thought I would be unhappy without one -- i.e., selection on $Y^0$ 
-	\item I chose to get a PhD because I thought it would be happy with one -- i.e., selection on $Y^1$ 
-	\item I chose to get a PhD because treatment effects were positive -- i.e., selection on treatment gains, $\delta = Y^1-Y^0$
-	\end{enumerate}
-\item More rational and efficient our decision making processes become, the more they are like selection on gains, the worse selection bias is
+\item Paradox: the better our programs get, the better that humans get at doing things, the more interventions are targeting units based on treatment gains, the less reliable correlations are
+\item Paradox: the less efficient our programs are, the more erratically human are at assigning interventions, the more reliable correlations are
+\item The former creates strong selection bias; the latter is more like a randomized experiment
 \end{itemize}
 
 \end{frame}
@@ -808,14 +822,19 @@ covariates
 \begin{itemize}
 \item Eliminating selection bias requires understanding the selection mechanism -- why did units end up treated but not others?
 \item Illustrate with Perfect Doctor exercise -- doctor knows each person's treatment effects, despite counterfactuals, and assigns treatment based on whether gains are positive or not
-\item Illustrate decomposition using numerical example \url{https://docs.google.com/spreadsheets/d/10DuQqGtH_Ewea7zQoLTFYHbnvqaTVDhn2GDzq3Oa6EQ/edit?usp=sharing}
+\item Illustrate decomposition using numerical example (pass out handout)
 \end{itemize}
 \end{frame}
 
 
+
+
+
+\section{Independence and Selection Bias}
+
 \begin{frame}{Summarizing the goals of causal inference}
 
-  Our goal in causal inference is to estimate aggregate causal parameters with data by exploiting what is known about the treatment assignment mechanism
+  Our goal in causal inference is to estimate aggregate causal parameters with data using treatment assignment mechanisms that plausibly eliminate selection bias
 
   \bigskip
 
@@ -827,9 +846,6 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 \end{frame}
 
-
-
-\subsection{Independence and Selection Bias}
 
 \begin{frame}{Independence}
 
@@ -886,6 +902,9 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 
 
+
+
+
 \begin{frame}[plain]
 
   \begin{block}{Identification with Randomization}
@@ -901,6 +920,16 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 
 \end{frame}
+
+\begin{frame}{What about partial independence?}
+
+  \begin{itemize}
+  \item What if selection into treatment is independent of $Y^0$ but not $Y^1$
+  \item On a piece of paper, write down the independence terms and substitute it into the decomposition
+  \item What is the nature of the bias?  What is eliminated?
+  \end{itemize}
+\end{frame}
+
 
 
 
@@ -964,7 +993,7 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 
 
-\subsection{Industry example of RCT: eBay advertising}
+\section{Industry example of RCT: eBay advertising}
 
 \begin{frame}
 
@@ -1190,205 +1219,6 @@ Use this finding of a nearly one-to-one substitution once paid search was droppe
 \end{frame}
 
 
-
-\subsection{Policy example of RCT: HIV status}
-
-\begin{frame}{Demand for Learning HIV Status}
-
-
-  \begin{itemize}
-    \item Rebecca Thornton implemented an RCT in rural Malawi for her job market paper at Harvard in mid-2000s
-    \item At the time, it was an article of faith that you could fight the HIV epidemic in Africa by encouraging people to get tested; but Thornton wanted to see if this was true
-    \item She randomly assigned cash incentives to people to incentivize learning their HIV status
-    \item Also examined whether learning changed sexual behavior.
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Experimental design}
-
-  \begin{itemize}
-    \item Respondents were offered a free door-to-door HIV test
-    \item Treatment is randomized vouchers worth between zero and three dollars
-    \item These vouchers were redeemable once they visited a nearby voluntary counseling and testing center (VCT)
-    \item Estimates her models using OLS with controls
-  \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Why Include Control Variables?}
-
-  To evaluate experimental data, one may want to add additional controls in the multivariate regression model.  So, instead of estimating the SDO, we might estimate:
-  \begin{eqnarray*}
-    Y_i = \alpha + \delta D_i + \gamma X_i + \eta_i
-  \end{eqnarray*}
-\end{frame}
-
-
-\begin{frame}{Why Control Variables?}
-  \begin{itemize}
-    \item There are 2 main reasons for including additional controls in the regression models:
-          \begin{enumerate}
-            \item Conditional random assignment.  Sometimes randomization is done \emph{conditional} on some observable (e.g., gender, school, districts)
-            \item Exogenous controls increase precision.  Although control variables $X_i$ are uncorrelated with $D_i$, they may have substantial explanatory power for $Y_i$. Including controls thus reduces variance in the residuals which lowers the standard errors of the regression estimates.
-          \end{enumerate}
-    \item Ongoing work by econometricians is investigating this more carefully, some of which we cover tomorrow
-  \end{itemize}
-\end{frame}
-
-
-
-\begin{frame}[plain]
-  \begin{table}[htbp]\centering
-    \scriptsize
-    \caption{Impact of Monetary Incentives and Distance on Learning HIV Results}
-    \label{tab:thornton_main}
-    \centering
-    \begin{threeparttable}
-      \begin{tabular}{l*{5}{c}}
-        \toprule
-        \multicolumn{1}{l}{\textbf{}}&
-        \multicolumn{1}{c}{\textbf{1}}&
-        \multicolumn{1}{c}{\textbf{2}}&
-        \multicolumn{1}{c}{\textbf{3}}&
-        \multicolumn{1}{c}{\textbf{4}}&
-        \multicolumn{1}{c}{\textbf{5}}\\
-        \midrule
-        Any incentive           & 0.431***  & 0.309*** & 0.219***    & 0.220***    & 0.219 ***
-        \\
-                                & (0.023)   & (0.026)  & (0.029)     & (0.029)     & (0.029)
-        \\
-        Amount of incentive     &           & 0.091*** & 0.274***    & 0.274***    & 0.273***
-        \\
-                                &           & (0.012)  & (0.036)     & (0.035)     & (0.036)
-        \\
-        Amount of incentive$^2$ &           &          & $-0.063$*** & $-0.063$*** & $-0.063$***
-        \\
-                                &           &          & (0.011)     & (0.011)     & (0.011)
-        \\
-        HIV                     & $-0.055$* & $-0.052$ & $-0.05$     & $-0.058$*   & $-0.055$*   \\
-                                & (0.031)   & (0.032)  & (0.032)     & (0.031)     & (0.031)
-        \\
-        Distance (km)           &           &          &             & $-0.076$*** &
-        \\
-                                &           &          &             & (0.027)     &             \\
-        Distance$^2$            &           &          &             & 0.010**     &
-        \\
-                                &           &          &             & (0.005)     &
-        \\\midrule
-        Controls                & Yes       & Yes      & Yes         & Yes         & Yes
-        \\
-        Sample size             & 2,812     & 2,812    & 2,812       & 2,812       & 2,812
-        \\
-        Average attendance      & 0.69      & 0.69     & 0.69        & 0.69        & 0.69
-        \\
-        \bottomrule
-      \end{tabular}
-    \end{threeparttable}
-  \end{table}
-
-\end{frame}
-
-\begin{frame}[plain]
-
-  \begin{figure}[htb]\centering
-    \includegraphics[scale=0.5]{./lecture_includes/FigA.jpg}
-    \caption{Visual representation of cash transfers on learning HIV test results.}
-    \label{fig:thorntonfig}
-  \end{figure}
-
-\end{frame}
-
-
-\begin{frame}{Results}
-
-  \begin{itemize}
-    \item Any incentive increases learning HIV status by 43 percentage points compared to the control (34\% of controls learned HIV status)
-    \item Next she looks at the effect that learning HIV status has on risky sexual behavior 
-    \item She had to do a lot of planning by creating two sources of randomization -- the voucher and the distance to clinics -- which required using instruments (we discuss it next week)
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}[plain]
-
-  \begin{figure}[htb]\centering
-    \includegraphics[scale=0.5]{./lecture_includes/FigC.jpg}
-    \caption{Visual representation of cash transfers on condom purchases for HIV positive individuals.}
-    \label{fig:thorntoncondomfig}
-  \end{figure}
-
-\end{frame}
-
-\begin{frame}[plain]
-
-  \begin{table}[htb]\centering
-    \scriptsize
-    \caption{Reactions to Learning HIV Results among Sexually Active at Baseline}
-    \label{tab:thornton_condoms}
-    \centering
-    \begin{threeparttable}
-      \begin{tabular}{l*{5}{c}}
-        \toprule
-        \multicolumn{1}{l}{\textbf{Dependent variables:}}&
-        \multicolumn{2}{c}{\textbf{Bought}}&
-        \multicolumn{2}{c}{\textbf{Number of}}\\
-        \multicolumn{1}{l}{}&
-        \multicolumn{2}{c}{\textbf{condoms}}&
-        \multicolumn{2}{c}{\textbf{condoms bought}}\\
-        \multicolumn{1}{l}{}&
-        \multicolumn{1}{c}{\textbf{OLS}}&
-        \multicolumn{1}{c}{\textbf{IV}}&
-        \multicolumn{1}{c}{\textbf{OLS}}&
-        \multicolumn{1}{c}{\textbf{IV}}\\
-        \midrule
-        Got results              & $-0.022$   & $-0.069$ & $-0.193$ & $-0.303$
-        \\
-                                 & (0.025)    & (0.062)  & (0.148)  & (0.285)
-        \\
-        Got results $\times$ HIV & 0.418***   & 0.248    & 1.778*** & 1.689**
-        \\
-                                 & (0.143)    & (0.169)  & (0.564)  & (0.784)  \\
-        HIV                      & $-0.175$** & $-0.073$ & $-0.873$ & $-0.831$
-        \\
-                                 & (0.085)    & (0.123)  & (0.275)  & (0.375)  \\\midrule
-        Controls                 & Yes        & Yes      & Yes      & Yes
-        \\
-        Sample size              & 1,008      & 1,008    & 1,008    & 1,008    \\
-        Mean                     & 0.26       & 0.26     & 0.95     & 0.95     \\
-        \bottomrule
-      \end{tabular}
-    \end{threeparttable}
-  \end{table}
-
-\end{frame}
-
-\begin{frame}{Results}
-
-  \begin{itemize}
-    \item For those who were HIV$+$ and got their test results, 42\% more likely to buy condoms (but shrinks and becomes insignificant at conventional levels with IV).
-    \item Number of condoms bought -- very small. HIV$+$ respondents who learned their status bought 2 more condoms
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Thoughts you want to keep in mind}
-
-  \begin{itemize}
-  \item Even when we don't run our own experiments, the experimental design is helpful for starting your project    \item Describe the way you would conduct the RCT by explaining the following:
-          \begin{itemize}
-          \item What is the research question? 
-         \item What aggregate causal parameter?
-          \item What experiment am I running? 
-          \item Who is my treatment and control group?
-          \item What regression will I run?
-          \end{itemize}
-    \item Try saying this: ``Describe the steps you would take to do this if you had all the money in the world''
-  \end{itemize}
-
-\end{frame}
-
 \begin{frame}{Going forward}
 
 \begin{itemize}
@@ -1399,7 +1229,6 @@ Use this finding of a nearly one-to-one substitution once paid search was droppe
 \end{itemize}
 
 \end{frame}
-
 
 
 
