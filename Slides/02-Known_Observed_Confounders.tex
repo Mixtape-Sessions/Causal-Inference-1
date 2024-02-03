@@ -96,37 +96,38 @@
 
 \end{frame}
 
+\begin{frame}{Design vs. Model}
+
+  \begin{itemize}
+    \item DAGs require prior theory of treatment assignment in the world, making it more structural than design oriented methods which exploit randomization or simple treatment assignment mechanisms 
+  	\item While DAGs are  compatible with design based approaches, they are less likely to follow the same estimation methodologies
+    \item DAGs are used in epidemiology a lot, and are also extremely common in industry and machine learning, including AI (e.g., causalens), 
+    \item My review of them will largely be used to service the design based approaches using covariate adjustment and instrumental variables
+  \end{itemize}
+
+\end{frame}
+
 
 \begin{frame}{Further reading}
 
   \begin{enumerate}
 
-    \item Pearl (2018) \underline{The Book of Why: The} \underline{New Science of Cause and Effect}, Basic Books (\emph{popular})
-    \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
+    \item Pearl and MacKenzie (2018) \underline{The Book of Why: The} \underline{New Science of Cause and Effect}, Basic Books (\emph{wildly popular})
     \item Pearl, Glymour and Jewell (2016) \underline{Causal Inference In Statistics: A Primer}, Wiley Books (\emph{accessible})
-    \item Pearl (2009) \underline{Causality: Models, Reasoning and Inference}, Cambridge, 2nd edition (\emph{difficult})
+    \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
+    \item Pearl (2009) \underline{Causality: Models, Reasoning and Inference}, Cambridge, 2nd edition (\emph{advanced})
   \end{enumerate}
 
 \end{frame}
 
-\begin{frame}{Design vs. Model}
-
-  \begin{itemize}
-    \item DAGs tend to be focused more on the theory of treatment assignment in the world
-    \item As such it's compatible with design-based approaches
-    \item DAGs have become extremely common in industry and machine learning, so consider my review very basic comparatively as I will use them mainly to illustrate ``good vs bad controls'' as well instrumental variables
-  \end{itemize}
-
-\end{frame}
 
 
 
 \begin{frame}{Causal model}
 
   \begin{itemize}
-    \item The causal model is sometimes called the structural model, but for us, I prefer the former as it's less alienating
-    \item It's the system of equations describing the relevant aspects of the world
-    \item It necessarily is filled with causal effects associated with some particular comparative statics
+    \item The DAG is a sense  ``structural'' because it describes (correctly) a system of equations that determines the treatment, the outcome, and all relevant routes between them
+        \item Also called the structural model, but should not be confused with ``structural econometrics'' (e.g., Rust, Wolpin)
     \item Consider the following diagram representing the returns to education with simplified confounders
   \end{itemize}
 
@@ -159,7 +160,7 @@
     \item $PE$ and $D$ are \textbf{descendants} of $B$
     \item There is a \textbf{direct (causal) path} from $D$ to $Y$
     \item There is a \textbf{mediated (causal) path} from $B$ to $Y$ through $D$
-    \item There are six \textbf{paths} from $PE$ to $Y$ but none are direct, but some of them are different in other ways
+    \item There are a lot of \textbf{paths} from $PE$ to $Y$ but none are direct, and some go ``downstream'' but others go ``upstream''
   \end{itemize}
 \end{frame}
 
@@ -173,6 +174,7 @@
 	\item DAGs are meant to represent ``contemporary agreement among experts'' -- if you aren't willing to present your DAG before a room of experts, it's likely you shouldn't use it at all
 	\item Your DAG should be a reasonable approximation of $D$ and $Y$ parents (confounders) and direct and indirect effects of $D$ on $Y$
 	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition, as well as conversations with domain experts
+	\item But these are still rife with uncertainty given we do not observe arrows -- we use mental models, and those can be wrong
 	\end{itemize}
 
 \end{frame}
@@ -197,7 +199,7 @@
 \begin{frame}{Confounding}
 
   \begin{itemize}
-    \item Confounding occurs when when the treatment and the outcomes have a common parent node as that creates spurious correlation between $D$ and $Y$
+          \item Confounders create differences in $D$ as well as differences in potential outcomes, and so therefore $X$ creates selection bias \\
 
           \begin{center}
             \begin{tikzpicture}
@@ -214,7 +216,7 @@
             \end{tikzpicture}
           \end{center}
 
-          \item Confounders are causing selection bias $E[Y^0|D=1, X] \neq E[Y^0|D=0, X]$ due to differences in $X$ which are shaping $Y^0$ differentially by treatment status
+          \item Our knowledge about this will enable us to obtain unbiased and consistent average treatment effects by adjusting for the distribution of $X$ in our samples
   \end{itemize}
 \end{frame}
 
@@ -456,7 +458,7 @@
 	\item Your conditioning variable opened up a previously closed backdoor path because on that path the variable was a \textbf{collider}
 	\end{enumerate}
 \item Colliders are ``bad controls'' which when you control for them, \emph{create} new previously non-existent spurious correlations (not commonly discussed, even in economics)
-\item This is the risk of blindly controlling for variables (``kitchen sink regressions'')
+\item This is the risk of blindly controlling for variables -- you may inadvertently include bad or irrelevant controls
 \end{itemize}
 
 \end{frame}
@@ -800,7 +802,7 @@ Talent and beauty can become correlated even though they are independent
 	\item Include covariates that are \emph{highly predictive} of the missing counterfactual (e.g., $Y^0$ for the ATT)
 	\item Avoid outcomes (even though that still won't address M-bias colliders)
 	\end{enumerate}
-\item While this approach may be less formalized, you are at least reasoning about the treatment assignment mechanism as opposed to just including whatever variables you have laying around (``kitchen sink regressions'')
+\item While this approach may be less formalized, you are at least reasoning about the treatment assignment mechanism as opposed to just including whatever variables you have laying around (avoid the ``kitchen sink regressions'')
 \end{itemize}
 
 \end{frame}
@@ -809,9 +811,8 @@ Talent and beauty can become correlated even though they are independent
 
 \begin{itemize}
 \item Covariates should not be affected by the treatment, so examining them as falsifications can help establish the credibility of unconfoundedness
-\item Falsification exercises are sometimes versions of this -- a gun control law shouldn't affect automobile theft or petty larceny or average age of the state
 \item Imbens and Rubin (2015) suggested using the lagged outcome (pre-treatment) as a way of checking, as those have similar confounder structures
-\item One study questioned a finding that obesity was contagious in social networks by estimating the same model on things that cannot be contagious like acne, headaches and height and found the same things (likely confounding existed)
+\item Falsificationss too: One study questioned a finding that obesity was contagious in social networks by estimating the same model on things that cannot be contagious like acne, headaches and height and found the same things (likely confounding existed)
 \end{itemize}
 
 \end{frame}
@@ -1265,7 +1266,7 @@ The second term implies we have people in treatment and control for every strata
 		E[Y^1-Y^0|X] &=& E[Y^1 - Y^0 | X,D=1] \\
 		&=&E[Y|X,D=1] - E[Y|X,D=0]
 		\end{eqnarray*}
-	\item Common support (Assumption 2) allows the match to take place as well as weight over the covariate distribution
+	\item Common support (the bridge metaphor) allows the match to take place as well as weight over the covariate distribution 
 		\begin{eqnarray*}
 		\delta_{ATE} &=&E[Y^1-Y^0] = E\bigg[ E[Y^1 - Y^0 \ \vert \ X] \bigg] \\
 		&=& \int E[Y^1 - Y^0 |X,D=1] dPr(X) \\
@@ -1287,7 +1288,7 @@ If we want the ATT, we can go with strictly weaker assumptions -- weak unconfoun
 
 \bigskip
 
-You can get a PhD because you care about your happiness with one $Y^1$; you just have to have acted independent of what you gave up $Y^0$
+One kind of selection: person  chooses the treatment based on what you gain, $Y^1$, but not what you lose, $Y^0$, and not net benefits, $\delta=Y^1-Y^0$
 
 \end{frame}
 
@@ -1311,7 +1312,7 @@ We don't need full common support because we don't need to find counterfactuals 
 
 Selection is weaker too, like I said -- they are not entirely irrational, but who knows if it helps you
 
-\end{frame}
+\end{frame}z
 
 
 
@@ -1326,7 +1327,7 @@ We match units in treatment and control because under weak unconfoundedness they
 
 \bigskip
 
-Homework: Can you figure out how to identify and estimate the ATU?
+What assumptions and method would you use to estimate the ATU?
 		
 \end{frame}
 
@@ -1643,13 +1644,13 @@ Differences in survival rates, stratification weights, and estimated parameters.
 
 
 
-\begin{frame}{No support visual}
+\begin{frame}{No overlap (common support violation)}
 
   \begin{figure}
     \includegraphics[scale=0.17]{./lecture_includes/matching_nosupport.png}
   \end{figure}
 
-No support is like \textcolor{red}{an incomplete bridge} which stops you from even being able to cross the moat even though the ability to build a bridge exists (i.e., unconfoundedness)
+No support is like \textcolor{red}{an incomplete bridge} which stops you from even being able to cross the moat even though the troops exist (i.e., unconfoundedness)
 
 
 \end{frame}
@@ -1877,18 +1878,6 @@ Even weak support is rare due to the curse of dimensionality
 	\end{itemize}
 \end{frame}	
 
-
-\begin{frame}{Propensity scores}
-
-\begin{itemize}
-\item Propensity scores were developed by Rosenbaum and Rubin (1983) as a way of reducing the dimension of the conditioning set of $X$
-\item But it still requires common support -- propensity scores don't solve the curse of dimensionality problem from the perspective of bias
-\item If you don't have exact matches in the dimensions of $X$ then you'll still be matching units with similar propensity scores but it won't overcome the bias
-\item There are methods that will adjust the propensity score estimation which I'll briefly mention at the end
-
-\end{itemize}
-
-\end{frame}
 
 
 
@@ -2481,28 +2470,13 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 
 \end{frame}
 
-\begin{frame}{Review the steps}
-
-\begin{itemize}
-
-\item First step is always to decide what population you're seeking to know the causal effect -- everyone (ATE), treated only (ATT), not treated (ATU); each has different assumptions
-\item Next estimate the propensity score
-\item Choose your estimation method: main ones are \emph{stratification}, \emph{weighting} or \emph{matching}
-\item Final step will be calculating the standard error 
-\item Let's review the steps now
-
-\end{itemize}
-
-\end{frame}
 
 
 
 \begin{frame}{Step 1: Pick your parameter ATE vs ATT vs ATU}
 
 \begin{itemize}
-	\item With full unconfoundedness, you can estimate all three \emph{average} causal parameters, even the ATU
-	\item But that requires strong assumptions that within the dimensions of $X$, summarized by the propensity score into a single scalar, all remaining variation in the treatment is ``as good as random''
-	\item Something for you to think about -- which population are you really wanting to know the answer to?  Do you want to know the effect of discrimination on the discriminated group?  Then that's the ATT not the ATE
+	\item Which population are you studying?  Only those who were discriminated against?  That's the ATT
 	\item Do you want to imagine ``what if blacks and whites were both discriminated against?'' That's the ATE
 	\item The more you can focus on one particular causal parameter, the easier and more justified it gets as it weakens both assumptions
 \end{itemize}
@@ -2514,14 +2488,19 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 
 		\begin{itemize}
 		\item Estimate the conditional probability of treatment using probit or logit model (or ML) $$Pr(D_i=1|X_i) = F(\beta X_i)$$
-			\begin{itemize}
-			\item Don't use OLS because OLS overfits and places propensity scores outside of realism
+			\item Note: don't use OLS because while it will get the mean right, it will not get correct values in the tails because of its linear projections
 			\item OLS will give propensity scores outside the [0,1] bounds and probabilities cannot be negative or greater then one
-			\end{itemize}
+		\end{itemize}
+\end{frame}
+
+\begin{frame}{Step 2: Estimate the propensity score}
+
+		\begin{itemize}
 		\item Use the estimated coefficients to predict the propensity score for each unit $i$$$\widehat{\rho}_i(X_i) = \widehat{\beta} X_i$$
 		\item Note that each unit $i$ now has a predicted probability of treatment given the values of their covariates relative to everyone else's 
 		\end{itemize}
 \end{frame}
+
 
 
 \begin{frame}{Step 2: Estimate the propensity score}
@@ -2582,16 +2561,6 @@ Y_j = \alpha + \beta X_j + \varepsilon_j \nonumber
 
 \end{frame}
 
-
-\begin{frame}{Step 3b: Early weighting methods}
-
-\begin{itemize} 
-\item Hahn (1998) studied IPW and calculated the semiparametric efficiency bounds, then proposed efficient estimators for the ATE and the ATT
-\item His estimators were efficient regardless of whether the propensity score was known 
-\item Nonparametrically estimated two conditional expectations, $E[YD|X=x]$ and $[Y(1-D)|X=x]$ as well as the propensity score, $\rho(X)$, and then imputed missing potential outcomes as $\widehat{Y_i^1=\frac{\widehat{E}[YD|X_i]}{\widehat{\rho}(X_i)}}$ and $\widehat{Y_i^0=\frac{\widehat{E}[Y(1-D)|X_i]}{\widehat{\rho}(X_i)}}$
-\end{itemize}
-
-\end{frame}
 
 
 
@@ -2689,7 +2658,7 @@ Standard errors can be constructed a few different ways:
 
 \item Assumptions are strongest for ATE:  full unconfoundedness and full support versus weak versions of both 
 
-\item You should only pursue the ATE if that is your preferred estimate, which also requires full unconfoundedness/support to be believable
+\item You should only focus on the ATE if you care about the entire population's treatment effects, but remember that requires more assumptions than if you just focused on the ATT
 
 \end{itemize}
 
@@ -2734,6 +2703,7 @@ Notice that since treated units are missing counterfactuals, but so are controls
 \item If the propensity score is very high for a control group in the ATT, the weight can explode
 \item Certain normalizations of the way the IPW is constructed to try and minimize those influences
 \item Stata's \texttt{teffects} or R's \texttt{ipw} both let you estimate parameters using IPW and get standard errors
+\item But you can do it manually using OLS and use  the propensity scores as analytical weights
 
 \end{itemize}
 
@@ -2768,6 +2738,7 @@ Notice that since treated units are missing counterfactuals, but so are controls
 	\item The regression for the outcome is properly specified, or
 	\item The propensity score is properly specified
 \item We give ourselves two chances to get it right (either/or not both/and) but if neither is properly specified, then you didn't really gain much
+\item Three strikes in baseball
 \end{itemize}
 
 \end{frame}
@@ -3115,6 +3086,271 @@ How far away on the propensity score will you use is what makes some of the diff
 
 
 
+		  
+
+\begin{frame}{Failure of econometric estimators (LaLonde 1986)}
+	
+	\begin{itemize}
+	\item Evaluation of the Job Trainings Program (NSW) has a rich history in causal inference
+	\item Bob LaLonde (passed away November 2015) was a Card and Ashenfelter student at Princeton whose job market paper evaluated, not NSW itself, but econometric methods one would use in something like NSW
+	\item Dehejia and Wahba (1999; 2002) used LaLonde's data with propensity score matching and found they could recover known effects
+	\item Critiques by Petra Todd, Jeff Smith and others followed which I'll summarize
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Summarizing LaLonde (1986)}
+
+		\begin{itemize}
+		\item Very clever study that combined experimental and non-experimental data to ascertain whether popular econometric methods could recover unbiased effects when those effects were already known 
+		\item Damning conclusion -- 1986 AER (it was LaLonde's JMP) found econometric methods failed to get the number right, and worse, failed to get the sign right
+		\item Was a critical paper in the emerging ``credibility crisis'' within labor and helped fuel the type of work we now broadly consider to be design based causal inference
+		\end{itemize}
+
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	LaLonde, Robert J. (1986). \myurlshort{http://business.baylor.edu/scott_cunningham/teaching/lalonde-1986.pdf}{``Evaluating the Econometric Evaluations of Training Programs with Experimental Data''}. \emph{American Economic Review}. 
+	\end{center}
+	
+\underline{LaLonde's study} was \textbf{not} an evaluation of the NSW program, as that had been done, but rather an evaluation of econometric models done by:
+		\begin{itemize}
+		\item replacing the experimental NSW control group with non-experimental control group drawn from two nationally representative survey datasets: Current Population Survey (CPS) and Panel Study of Income Dynamics (PSID)
+		\item estimating the average effect using non-experimental workers as controls for the NSW trainees 
+		\item comparing his non-experimental estimates to the experimental estimates of \$900
+		\end{itemize}
+\end{frame}
+
+\begin{frame}{LaLonde (1986)}
+
+\begin{itemize}
+
+	\item \underline{LaLonde's conclusion}: available econometric approaches were biased and inconsistent
+		\begin{itemize}
+		\item His estimates were way off and usually the wrong sign
+		\item Conclusion was influential in policy circles and led to greater push for more experimental evaluations
+		\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Description of NSW Job Trainings Program}
+	
+The National Supported Work Demonstration (NSW), operated by Manpower Demonstration Research Corp in the mid-1970s:
+	\begin{itemize}
+	\item was a temporary employment program designed to help disadvantaged workers lacking basic job skills move into the labor market by giving them work experience and counseling in a sheltered environment
+	\item was also unique in that it \textbf{randomly assigned} qualified applicants to training positions:
+		\begin{itemize}
+		\item \textbf{Treatment group}: received all the benefits of NSW program
+		\item \textbf{Control group}: left to fend for themselves
+		\end{itemize}
+	\item admitted AFDC females, ex-drug addicts, ex-criminal offenders, and high school dropouts of both sexes
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{NSW Program}
+	
+	\begin{itemize}
+	\item Treatment group members were:
+		\begin{itemize}
+		\item guaranteed a job for 9-18 months depending on the target group and site
+		\item divided into crews of 3-5 participants who worked together and met frequently with an NSW counselor to discuss grievances and performance
+		\item paid for their work
+		\end{itemize}
+	\item Control group members were randomized so the same
+	\item Note: the randomization balanced observables and unobservables across the two arms, thus enabling the estimation of an ATE for the people who self-selected into the program
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{NSW Program}
+
+\begin{itemize}
+	\item Other details about the NSW program:
+		\begin{itemize}
+		\item \underline{Wages}:  NSW offered the trainees lower wage rates than they would've received on a regular job, but allowed their earnings to increase for satisfactory performance and attendance
+		\item \underline{Post-treatment}: after their term expired, they were forced to find regular employment
+		\item \underline{Job types}:  varied within sites -- gas station attendant, working at a printer shop -- and males and females were frequently performing different kinds of work
+		\end{itemize}
+\end{itemize}
+
+\end{frame}
+	
+\begin{frame}{NSW Data}
+	
+	\begin{itemize}
+	\item \underline{NSW data collection}:
+		\begin{itemize}
+		\item MDRC collected earnings and demographic information from both treatment and control at baseline and every 9 months thereafter
+		\item Conducted up to 4 post-baseline interviews
+		\item Different sample sizes from study to study can be confusing, but has simple explanations
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+	
+
+\begin{frame}{NSW Data}
+
+\begin{itemize}
+	\item \underline{Estimation}:
+		\begin{itemize}
+		\item NSW was a randomized job trainings program; therefore estimating the average treatment effect is straightforward:
+			\begin{eqnarray*}
+			SDO = \frac{1}{N_t}\sum_{D_i=1}Y_i - \frac{1}{N_c}\sum_{D_i=0}Y_i \approx E[Y^1-Y^0] 
+			\end{eqnarray*}in large samples assuming treatment selection is independent of potential outcomes (randomization) -- i.e., $(Y^0,Y^1)\independent{D}$. 
+		\end{itemize}
+	\item \underline{NSW worked}: Treatment group participants' real earnings post-treatment (1978) was positive and economically meaningful -- $\approx$ \$900 (LaLonde 1986) to \$1,800 (Dehejia and Wahba 2002) depending on the sample used
+\end{itemize}
+
+\end{frame}
+	
+\imageframe{./lecture_includes/lalonde_table5a.png}
+
+
+\begin{frame}{Switching out the control group}
+
+\begin{itemize}
+\item Think of \$800 to \$900 as the ``ground truth'' since row 1 was using the RCT 
+\item LaLonde ``drops'' the experimental controls (which satisfied independence) and ``replaces'' it with six different draws from two nationally representative surveys (PSID and CPS)
+\item Now the dataset contains a negatively selected treatment group compared to a nationally representative control group
+\item Will selection on observable methods ``work''?
+\end{itemize}
+
+\end{frame}
+
+
+\imageframe{./lecture_includes/lalonde_table5b.png}
+
+\begin{frame}[plain,shrink=10]{Imbalanced covariates for experimental and non-experimental samples}
+
+    \begin{center}
+		\begin{table}
+		\begin{tabular}{lcccccc}
+		\hline \hline
+		\multicolumn{3}{c}{}&
+		\multicolumn{1}{c}{CPS}&
+		\multicolumn{1}{c}{NSW}\\
+		
+		\multicolumn{1}{c}{}&
+		\multicolumn{2}{c}{All} &
+		\multicolumn{1}{c}{Controls} &
+		\multicolumn{1}{c}{Trainees} \\
+
+		\multicolumn{3}{c}{}&
+		\multicolumn{1}{c}{$N_c=15,992$}&
+		\multicolumn{1}{c}{$N_t=297$}&
+		\multicolumn{1}{c}{}&
+		\multicolumn{1}{c}{}\\
+
+		\multicolumn{1}{l}{covariate}&
+		\multicolumn{1}{c}{mean}&
+		\multicolumn{1}{c}{(s.d.)}&
+		\multicolumn{1}{c}{mean}&
+		\multicolumn{1}{c}{mean}&
+		\multicolumn{1}{c}{t-stat}&
+		\multicolumn{1}{c}{diff}\\
+		\hline
+Black    & 0.09 & 0.28 & 0.07 & 0.80 & 47.04 & -0.73\\
+Hispanic & 0.07 & 0.26 & 0.07 & 0.94 & 1.47 & -0.02\\
+Age & 33.07 & 11.04 & 33.2 & 24.63 & 13.37  & 8.6\\
+Married & 0.70 & 0.46 & 0.71 & 0.17 & 20.54 & 0.54\\
+No degree & 0.30 & 0.46 & 0.30 & 0.73 & 16.27 & -0.43\\
+Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
+1975 Earnings   & 13.51 & 9.31 & 13.65 & 3.1 & 19.63 & 10.6\\
+1975 Unemp  & 0.11 & 0.32 & 0.11 & 0.37 & 14.29 & -0.26\\
+		\hline 
+		\end{tabular}
+		\end{table}
+    \end{center}
+
+\end{frame}
+
+
+\begin{frame}{Dehija and Wahba (1999)}
+	
+	\begin{itemize}
+	\item Dehejia and Wahba (DW) update LaLonde's original study using propensity score matching
+		\begin{enumerate}
+		\item Dehejia, Rajeev H. and Sadek Wahba (1999). 	``Causal Effects in Nonexperimental Studies: Reevaluating the Evaluation of Training Programs''. \underline{Journal of the American Statistical} \underline{Association}, vol. 94(448): 1053-1062 (\myurlshort{http://business.baylor.edu/scott_cunningham/teaching/dehejia-and-wahba-1999.pdf}{pdf})
+		\end{enumerate}
+	\item Can propensity score matching improve over the estimators that LaLonde examined?
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	
+\begin{figure}
+\includegraphics[scale=0.5]{./lecture_includes/dw_1.pdf}
+\end{figure}
+
+\end{frame}
+
+\imageframe{./lecture_includes/dw_2.pdf}
+
+\begin{frame}{Covariate imbalance}
+	
+
+	\begin{itemize}
+	\item Conditional on the propensity score, the covariates are independent of the treatment, suggesting that the distribution of covariate values should be the same for both treatment and control groups
+	\item This can be checked as we have data on all three once we've estimated the propensity score
+	\item DW note that the two samples have \emph{severe} imbalance on \emph{observables} -- a huge number of non-experimental controls have propensity scores almost exactly equal to 0
+	\item Their analysis will ``trim'' (which will ultimately have implications for interpretation)
+	\end{itemize}
+
+\end{frame}
+
+
+
+\imageframe{./lecture_includes/dw_3.pdf}
+\imageframe{./lecture_includes/dw_4.pdf}
+\imageframe{./lecture_includes/dw_5.pdf}
+\imageframe{./lecture_includes/dw_6.pdf}
+
+
+
+\clearpage
+\newpage
+
+\begin{frame}{Replies by econometricians to DW}
+
+\begin{itemize}
+\item Heckman, Smith and Todd concluded from their own work that in order for matching estimators to have low bias, you need the following:
+	\begin{enumerate}
+	\item A rich set of variables related to program participation and predictive of $Y^0$ labor market outcomes, 
+	\item Nonexperimental comparison group be drawn from the same local labor markets as the participants and 
+	\item Dependent variable (e.g., earnings) be measured in the same way for participants and nonparticipants
+	\end{enumerate}
+\item All three of these conditions fail to hold in DW (1999, 2002) according to Smith and Todd (2005)
+\item DW also note the importance of conditioning on pre-treatment lagged outcomes (e.g., real earnings in $t-1$, $t-2$, etc.) as well as \emph{trimming}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Smith and Todd, diff-in-diff, doubly robust}
+
+\begin{itemize}
+\item Difference-in-differences with propensity scores tended to work well in Smith and Todd (2005) though the effect sizes are much larger
+\item In my Causal Inference II workshop, we use Sant'anna And Zhao's double robust DiD and get nearly the exact same parameter estimate as the experimental finding
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Coding together}
+
+\begin{itemize}
+
+\item Let's spend some time together trying to replicate the Lalonde study ourselves
+\item I use replicate lightly -- our goal is syntax only
+\item It's in the Lalonde lab on githbub for this workshop
+
+\end{itemize}
+
+\end{frame}
+
+
 \subsection{Regressions}
 
 
@@ -3146,7 +3382,7 @@ How far away on the propensity score will you use is what makes some of the diff
 
 \end{frame}
 
-\begin{frame}{OLS Plot and Line}
+\begin{frame}{OLS Extrapolates Using Functional Form (e.g., Lines)}
 
 \begin{figure}[!t]\centering
 \includegraphics[scale=0.4]{./lecture_includes/ols_line}
@@ -3706,271 +3942,6 @@ Using our medieval castle example, if you have the wrong functional form, then r
 
 
 
-
-		  
-
-\begin{frame}{Failure of econometric estimators (LaLonde 1986)}
-	
-	\begin{itemize}
-	\item Evaluation of the Job Trainings Program (NSW) has a rich history in causal inference
-	\item Bob LaLonde (passed away November 2015) was a Card and Ashenfelter student at Princeton whose job market paper evaluated, not NSW itself, but econometric methods one would use in something like NSW
-	\item Dehejia and Wahba (1999; 2002) used LaLonde's data with propensity score matching and found they could recover known effects
-	\item Critiques by Petra Todd, Jeff Smith and others followed which I'll summarize
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Summarizing LaLonde (1986)}
-
-		\begin{itemize}
-		\item Very clever study that combined experimental and non-experimental data to ascertain whether popular econometric methods could recover unbiased effects when those effects were already known 
-		\item Damning conclusion -- 1986 AER (it was LaLonde's JMP) found econometric methods failed to get the number right, and worse, failed to get the sign right
-		\item Was a critical paper in the emerging ``credibility crisis'' within labor and helped fuel the type of work we now broadly consider to be design based causal inference
-		\end{itemize}
-
-\end{frame}
-
-\begin{frame}[plain]
-	\begin{center}
-	LaLonde, Robert J. (1986). \myurlshort{http://business.baylor.edu/scott_cunningham/teaching/lalonde-1986.pdf}{``Evaluating the Econometric Evaluations of Training Programs with Experimental Data''}. \emph{American Economic Review}. 
-	\end{center}
-	
-\underline{LaLonde's study} was \textbf{not} an evaluation of the NSW program, as that had been done, but rather an evaluation of econometric models done by:
-		\begin{itemize}
-		\item replacing the experimental NSW control group with non-experimental control group drawn from two nationally representative survey datasets: Current Population Survey (CPS) and Panel Study of Income Dynamics (PSID)
-		\item estimating the average effect using non-experimental workers as controls for the NSW trainees 
-		\item comparing his non-experimental estimates to the experimental estimates of \$900
-		\end{itemize}
-\end{frame}
-
-\begin{frame}{LaLonde (1986)}
-
-\begin{itemize}
-
-	\item \underline{LaLonde's conclusion}: available econometric approaches were biased and inconsistent
-		\begin{itemize}
-		\item His estimates were way off and usually the wrong sign
-		\item Conclusion was influential in policy circles and led to greater push for more experimental evaluations
-		\end{itemize}
-
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Description of NSW Job Trainings Program}
-	
-The National Supported Work Demonstration (NSW), operated by Manpower Demonstration Research Corp in the mid-1970s:
-	\begin{itemize}
-	\item was a temporary employment program designed to help disadvantaged workers lacking basic job skills move into the labor market by giving them work experience and counseling in a sheltered environment
-	\item was also unique in that it \textbf{randomly assigned} qualified applicants to training positions:
-		\begin{itemize}
-		\item \textbf{Treatment group}: received all the benefits of NSW program
-		\item \textbf{Control group}: left to fend for themselves
-		\end{itemize}
-	\item admitted AFDC females, ex-drug addicts, ex-criminal offenders, and high school dropouts of both sexes
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{NSW Program}
-	
-	\begin{itemize}
-	\item Treatment group members were:
-		\begin{itemize}
-		\item guaranteed a job for 9-18 months depending on the target group and site
-		\item divided into crews of 3-5 participants who worked together and met frequently with an NSW counselor to discuss grievances and performance
-		\item paid for their work
-		\end{itemize}
-	\item Control group members were randomized so the same
-	\item Note: the randomization balanced observables and unobservables across the two arms, thus enabling the estimation of an ATE for the people who self-selected into the program
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{NSW Program}
-
-\begin{itemize}
-	\item Other details about the NSW program:
-		\begin{itemize}
-		\item \underline{Wages}:  NSW offered the trainees lower wage rates than they would've received on a regular job, but allowed their earnings to increase for satisfactory performance and attendance
-		\item \underline{Post-treatment}: after their term expired, they were forced to find regular employment
-		\item \underline{Job types}:  varied within sites -- gas station attendant, working at a printer shop -- and males and females were frequently performing different kinds of work
-		\end{itemize}
-\end{itemize}
-
-\end{frame}
-	
-\begin{frame}{NSW Data}
-	
-	\begin{itemize}
-	\item \underline{NSW data collection}:
-		\begin{itemize}
-		\item MDRC collected earnings and demographic information from both treatment and control at baseline and every 9 months thereafter
-		\item Conducted up to 4 post-baseline interviews
-		\item Different sample sizes from study to study can be confusing, but has simple explanations
-		\end{itemize}
-	\end{itemize}
-\end{frame}
-	
-
-\begin{frame}{NSW Data}
-
-\begin{itemize}
-	\item \underline{Estimation}:
-		\begin{itemize}
-		\item NSW was a randomized job trainings program; therefore estimating the average treatment effect is straightforward:
-			\begin{eqnarray*}
-			SDO = \frac{1}{N_t}\sum_{D_i=1}Y_i - \frac{1}{N_c}\sum_{D_i=0}Y_i \approx E[Y^1-Y^0] 
-			\end{eqnarray*}in large samples assuming treatment selection is independent of potential outcomes (randomization) -- i.e., $(Y^0,Y^1)\independent{D}$. 
-		\end{itemize}
-	\item \underline{NSW worked}: Treatment group participants' real earnings post-treatment (1978) was positive and economically meaningful -- $\approx$ \$900 (LaLonde 1986) to \$1,800 (Dehejia and Wahba 2002) depending on the sample used
-\end{itemize}
-
-\end{frame}
-	
-\imageframe{./lecture_includes/lalonde_table5a.png}
-
-
-\begin{frame}{Switching out the control group}
-
-\begin{itemize}
-\item Think of \$800 to \$900 as the ``ground truth'' since row 1 was using the RCT 
-\item LaLonde ``drops'' the experimental controls (which satisfied independence) and ``replaces'' it with six different draws from two nationally representative surveys (PSID and CPS)
-\item Now the dataset contains a negatively selected treatment group compared to a nationally representative control group
-\item Will selection on observable methods ``work''?
-\end{itemize}
-
-\end{frame}
-
-
-\imageframe{./lecture_includes/lalonde_table5b.png}
-
-\begin{frame}[plain,shrink=10]{Imbalanced covariates for experimental and non-experimental samples}
-
-    \begin{center}
-		\begin{table}
-		\begin{tabular}{lcccccc}
-		\hline \hline
-		\multicolumn{3}{c}{}&
-		\multicolumn{1}{c}{CPS}&
-		\multicolumn{1}{c}{NSW}\\
-		
-		\multicolumn{1}{c}{}&
-		\multicolumn{2}{c}{All} &
-		\multicolumn{1}{c}{Controls} &
-		\multicolumn{1}{c}{Trainees} \\
-
-		\multicolumn{3}{c}{}&
-		\multicolumn{1}{c}{$N_c=15,992$}&
-		\multicolumn{1}{c}{$N_t=297$}&
-		\multicolumn{1}{c}{}&
-		\multicolumn{1}{c}{}\\
-
-		\multicolumn{1}{l}{covariate}&
-		\multicolumn{1}{c}{mean}&
-		\multicolumn{1}{c}{(s.d.)}&
-		\multicolumn{1}{c}{mean}&
-		\multicolumn{1}{c}{mean}&
-		\multicolumn{1}{c}{t-stat}&
-		\multicolumn{1}{c}{diff}\\
-		\hline
-Black    & 0.09 & 0.28 & 0.07 & 0.80 & 47.04 & -0.73\\
-Hispanic & 0.07 & 0.26 & 0.07 & 0.94 & 1.47 & -0.02\\
-Age & 33.07 & 11.04 & 33.2 & 24.63 & 13.37  & 8.6\\
-Married & 0.70 & 0.46 & 0.71 & 0.17 & 20.54 & 0.54\\
-No degree & 0.30 & 0.46 & 0.30 & 0.73 & 16.27 & -0.43\\
-Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
-1975 Earnings   & 13.51 & 9.31 & 13.65 & 3.1 & 19.63 & 10.6\\
-1975 Unemp  & 0.11 & 0.32 & 0.11 & 0.37 & 14.29 & -0.26\\
-		\hline 
-		\end{tabular}
-		\end{table}
-    \end{center}
-
-\end{frame}
-
-
-\begin{frame}{Dehija and Wahba (1999)}
-	
-	\begin{itemize}
-	\item Dehejia and Wahba (DW) update LaLonde's original study using propensity score matching
-		\begin{enumerate}
-		\item Dehejia, Rajeev H. and Sadek Wahba (1999). 	``Causal Effects in Nonexperimental Studies: Reevaluating the Evaluation of Training Programs''. \underline{Journal of the American Statistical} \underline{Association}, vol. 94(448): 1053-1062 (\myurlshort{http://business.baylor.edu/scott_cunningham/teaching/dehejia-and-wahba-1999.pdf}{pdf})
-		\end{enumerate}
-	\item Can propensity score matching improve over the estimators that LaLonde examined?
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[plain]
-	
-\begin{figure}
-\includegraphics[scale=0.5]{./lecture_includes/dw_1.pdf}
-\end{figure}
-
-\end{frame}
-
-\imageframe{./lecture_includes/dw_2.pdf}
-
-\begin{frame}{Covariate imbalance}
-	
-
-	\begin{itemize}
-	\item Conditional on the propensity score, the covariates are independent of the treatment, suggesting that the distribution of covariate values should be the same for both treatment and control groups
-	\item This can be checked as we have data on all three once we've estimated the propensity score
-	\item DW note that the two samples have \emph{severe} imbalance on \emph{observables} -- a huge number of non-experimental controls have propensity scores almost exactly equal to 0
-	\item Their analysis will ``trim'' (which will ultimately have implications for interpretation)
-	\end{itemize}
-
-\end{frame}
-
-
-
-\imageframe{./lecture_includes/dw_3.pdf}
-\imageframe{./lecture_includes/dw_4.pdf}
-\imageframe{./lecture_includes/dw_5.pdf}
-\imageframe{./lecture_includes/dw_6.pdf}
-
-
-
-\clearpage
-\newpage
-
-\begin{frame}{Replies by econometricians to DW}
-
-\begin{itemize}
-\item Heckman, Smith and Todd concluded from their own work that in order for matching estimators to have low bias, you need the following:
-	\begin{enumerate}
-	\item A rich set of variables related to program participation and predictive of $Y^0$ labor market outcomes, 
-	\item Nonexperimental comparison group be drawn from the same local labor markets as the participants and 
-	\item Dependent variable (e.g., earnings) be measured in the same way for participants and nonparticipants
-	\end{enumerate}
-\item All three of these conditions fail to hold in DW (1999, 2002) according to Smith and Todd (2005)
-\item DW also note the importance of conditioning on pre-treatment lagged outcomes (e.g., real earnings in $t-1$, $t-2$, etc.) as well as \emph{trimming}
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Smith and Todd, diff-in-diff, doubly robust}
-
-\begin{itemize}
-\item Difference-in-differences with propensity scores tended to work well in Smith and Todd (2005) though the effect sizes are much larger
-\item In my Causal Inference II workshop, we use Sant'anna And Zhao's double robust DiD and get nearly the exact same parameter estimate as the experimental finding
-
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Coding together}
-
-\begin{itemize}
-
-\item Let's spend some time together trying to replicate the Lalonde study ourselves
-\item I use replicate lightly -- our goal is syntax only
-\item It's in the Lalonde lab on githbub for this workshop
-
-\end{itemize}
-
-\end{frame}
-
 \begin{frame}\frametitle{Understanding the Standard OLS Model}
 \begin{itemize}
   \item Tymon S{\l}oczy\'nski's 2022 Restat paper decomposes the following OLS model estimate of $\tau$ into weighted average of other parameters of interest
@@ -4133,9 +4104,9 @@ Education & 12.0 & 2.86 & 12.03 & 10.38 & 9.85 & 1.65 \\
 
 
 \begin{frame}
-\frametitle{What is going on?}
+\frametitle{Weighted Average Interpretation of OLS (Theorem 1)}
 
-Weighted Average Interpretation of OLS (Theorem 1).  Under assumptions (1) and (2), .  
+Under assumptions (1) and (2)
 
 $$\tau = \omega_1 \times \tau_{APLE,1} + \omega_0 \times \tau_{APLE,0}$$
  

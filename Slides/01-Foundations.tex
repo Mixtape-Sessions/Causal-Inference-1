@@ -56,8 +56,8 @@
 \begin{frame}{Welcome!}
 
   \begin{itemize}
-	\item Scott Cunningham, professor of economics at Baylor University, author of \underline{Causal Inference: the Mixtape}
-	\item I run workshops on causal inference all over the world, but I am not an econometrician -- I'm a run of the mill applied microeconomist who studies severe mental illness who just happens to love learning and teaching
+	\item I'm Scott Cunningham, professor of economics at Baylor University, author of \underline{Causal Inference: the Mixtape}, organizer of the Mixtape Sessions platform with Kyle Butts (UC-Boulder PhD student)
+	\item I love economics, econometrics and particularly causal inference and run workshops on causal inference all over the world on causal inference
 	\item Workshops can be helpful ways to plug into one's methodological training, and online workshops are very helpful because of the recordings, the coding together, and bunch of bells and whistles (e.g., github repositories)
 	\item Causal inference is an old field but which has increasingly drawn people to it (Nobel Prize two years ago maybe helped) 
   \end{itemize}
@@ -66,28 +66,17 @@
 
 
 
-\begin{frame}{What is Mixtape Sessions?}
-
-  \begin{itemize}
-    \item Mixtape Sessions is my online platform started in November 2021 to ``democratize causal inference'' by helping connect people, from beginner to advanced, with material and teachers that for various reasons may not be accessible otherwise
-    \item I became obsessed with teaching and writing about causal inference because of a strong conviction that (a) it is important and (b) not everyone had the same chances to learn it
-    \item I wrote a 3-part sociological history of it on my substack that I encourage you to read so you can better understand the context for why I say that
-    \item I tend to emphasize intuition, mechanics, narrow calculations, meaning, assumptions, code including actually taking time to code, advocate for data visualization -- in other words the art and the science
-  \end{itemize}
-
-\end{frame}
 
 \begin{frame}{4-day Causal Inference Workshop}
 
   \begin{itemize}
     \item We workshop together for 4-days, 9am to 5pm CST with 15 min breaks on the hour and a 1-hour lunch break at noon CST
-    \item I mix exposition, discussion of papers, coding exercises and discussion as best as I can
+    \item I tend to emphasize intuition, mechanics, narrow calculations, meaning, assumptions, code including actually taking time to code, advocate for data visualization -- in other words the art and the science
     \item I'm me, and I teach how I teach, with passion, enthusiasm, deep joy, but I'm not an econometrician so sometimes I take the long way to get there when an econometrician would do it much faster
   \end{itemize}
 
 \end{frame}
 
-\section{Managing your expectations}
 
 \begin{frame}{Class goals}
 
@@ -137,79 +126,6 @@
 
 \end{frame}
 
-\begin{frame}{Today: Day 1}
-
-\begin{enumerate}
-\item Potential outcomes
-\item Randomization inference
-\item Directed acyclic graphs
-\end{enumerate}
-
-\end{frame}
-
-\section{Future Tracks}
-
-\begin{frame}{What's coming this fall?}
-
-\begin{itemize}
-\item Lots of great ``Mixtape Tracks'' -- shorter workshops taught by top professors at Brown, MIT, BYU and elsewhere
-\item Think of Mixtape Sessions as a bridge to more content and more people
-\end{itemize}
-
-\bigskip
-
-\url{https://www.mixtapesessions.io/sessions/}
-
-\end{frame}
-
-\begin{frame}{Three kinds of workshops}
-
-\begin{enumerate}
-\item \textbf{The Classics}: Causal 1, 2 and 3 (new) by me
-\item \textbf{The Singles}: Focusing more on specific content we covered
-\item \textbf{Deep cuts}: Advanced material
-\end{enumerate}
-
-\end{frame}
-
-\begin{frame}{The Classics}
-
-\begin{enumerate}
-\item Causal Inference 1: Foundational material, potential outcomes, unconfoundedness, instrumental variables, regression discontinuity
-\item Causal Inference 2: Difference-in-differences
-\item Causal Inference 3: Synthetic control
-\end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Singles}
-
-
-\begin{enumerate}
-\item Regression discontinuity design (Roci'o Titiunik, Princeton Political Science Dept)
-\item Synthetic Control and Clustering (Alberto Abadie, MIT Economics *)
-\item Doing Applied Research (Mark Anderson at Montana State and Dan Rees at UC3M)
-\item Machine Learning and Causal Inference (Brigham Frandsen, BYU)
-\item Experiments and Survey Design (Rebecca Thornton, Baylor)
-\item Instrumental Variables (Peter Hull, Brown)
-
-\end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Deep Cuts}
-
-\begin{enumerate}
-\item [7.] Advanced and Frontiers in DiD (Jon Roth, Brown; Brantly Callaway, UGA)
-\item [8.] Machine Learning and Heterogeneous Treatment Effects (Brigham Frandsen, BYU)
-\item [9.] Design (Peter Hull, Brown)
-\item [10.] Shift-Share (Peter Hull, Brown)
-\item [11.] Empirical Bayes (Chris Walters, Berkeley)
-\item [12.] BLP (Ariel Pakes, Harvard)
-
-\end{enumerate}
-
-\end{frame}
 
 
 
@@ -218,7 +134,7 @@
 
 
 
-
+\section{Foundational ideas}
 
 
 \begin{frame}{What is Causality?}
@@ -534,8 +450,8 @@ This is my reason from saying Mill's counterfactual framework derailed the quest
   \begin{block}{Definition 4: Average treatment effect (ATE)}
     The average treatment effect is the population average of all $i$ individual treatment effects
     \begin{eqnarray*}
-      E[\delta_i]&=&E[Y_i^1-Y_i^0]\\
-      &=&E[Y^1_i] - E[Y^0_i]
+      E[\delta]&=&E[Y^1-Y^0]\\
+      &=&E[Y^1] - E[Y^0]
     \end{eqnarray*}
   \end{block}
 
@@ -630,24 +546,41 @@ SDO is not a causal parameter because it's comparing $Y^1$ and $Y^0$ for differe
 
 \bigskip
 
-where $\pi$ is the share of units in the treatment group
+where $\pi$ is the share of units in the treatment group.  Now let's see how we get here.
+\end{frame}
+
+\begin{frame}{Two ways to rewrite the ATE}
+
+\begin{itemize}
+\item Before we get started, let's look closely at the definition of the ATE
+	\begin{itemize}
+	\item We can express the ATE as the weighted average of the ATT and the ATU, and \dots
+	\item We can express the ATE as the sum of four conditional means multiplied by corresponding weights (Law of iterated expectations)
+	\end{itemize}
+\item They are in fact the exact same formula once you write down the definition of the ATT and the ATU
+\item Let's do it together before we get started: \url{https://docs.google.com/spreadsheets/d/10DuQqGtH_Ewea7zQoLTFYHbnvqaTVDhn2GDzq3Oa6EQ/edit?usp=sharing}
+
+\end{itemize}
+
 \end{frame}
 
 
 \begin{frame}{Begin with ATE definition}
 
-  \begin{block}{Law of iterated expectations}
+  \begin{block}{Rewrite the definition of the ATE}
     \begin{eqnarray*}
       \text{ATE}&=&E[Y^1]-E[Y^0]  \\
-      &=& \{\pi E[Y^1 | D=1] + (1-\pi)E[Y^1 | D=0]\}  \\
+      &=& \pi ATT + (1-\pi) ATU \\
+      &=& \pi E[Y^1 | D=1] - \pi E[Y^0 | D=1]  \\
+      & & + (1-\pi) E[Y^1|D=0] - (1-\pi) E[Y^0 | D=0] \\
+      \text{ATE}&=& \{\pi E[Y^1 | D=1] + (1-\pi)E[Y^1 | D=0]\}  \\
       & & - \{\pi E[Y^0|D=1] + (1-\pi) E[Y^0 | D=0]\}
     \end{eqnarray*}
   \end{block}
 
 \bigskip
 
-ATE is sum of four conditional expectations (can also be rearranged as a weighted average of the ATT and the ATU)
-
+Let's make this easier to read by replacing the last row with letters
 
 \end{frame}
 
@@ -718,7 +651,7 @@ ATE is sum of four conditional expectations (can also be rearranged as a weighte
     \end{eqnarray*}
   \end{block}
   
-$\alert{\text{Purple terms}}$ are explicitly missing counterfactuals 
+$\alert{\text{Purple terms}}$ are based on missing counterfactuals and therefore cannot be calculated. This is an \emph{identity}
   
 \end{frame}
 
@@ -734,7 +667,7 @@ $\alert{\text{Purple terms}}$ are explicitly missing counterfactuals
   
   \bigskip
   
-  Note: this is a \emph{rewritten} formula for the definition of the ATE and so it is an identity and thus \emph{always} true.  Also, we started with $\pi$ but in the end we weight by $1-\pi$.
+Although we started with $\pi$ (the share of units in treatment), note we have weighted the heterogeneity bias term by $1-\pi$ (the share of units in control)
 \end{frame}
 
 
@@ -742,7 +675,7 @@ $\alert{\text{Purple terms}}$ are explicitly missing counterfactuals
 
   \begin{block}{Estimate SDO with sample averages}
     \begin{eqnarray*}
-      \underbrace{E_N[Y_i | D_i=1] - E_N[Y_i | D_i=0]}_{ \mathclap{\text{Estimate of SDO}}}&=& \underbrace{E[Y^1] - E[Y^0]}_{ \mathclap{\text{Average Treatment Effect}}} \\
+      \underbrace{E_N[Y | D=1] - E_N[Y | D=0]}_{ \mathclap{\text{Estimate of SDO}}}&=& \underbrace{E[Y^1] - E[Y^0]}_{ \mathclap{\text{Average Treatment Effect}}} \\
       &&+ \underbrace{\alert{E[Y^0|D=1]} - E[Y^0 | D=0]}_{ \mathclap{\text{Selection bias}}}  \\
       && + \underbrace{(1-\pi)(ATT - ATU)}_{ \mathclap{\text{Heterogenous treatment effect bias}}}
     \end{eqnarray*}
@@ -754,14 +687,41 @@ Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \
 
 \end{frame}
 
-\begin{frame}{Labor by design}
+\begin{frame}{Illustrating selection bias with spreadsheets}
+\begin{itemize}
+\item Eliminating selection bias requires understanding the selection mechanism -- why did units end up treated but not others?
+\item Perfect Doctor exercise: assume a doctor sees patients, knows each person's treatment effects, despite counterfactuals, and assigns treatment based on whether gains are positive or not
+\item Illustrate decomposition together using numerical example: \url{https://docs.google.com/spreadsheets/d/10DuQqGtH_Ewea7zQoLTFYHbnvqaTVDhn2GDzq3Oa6EQ/edit?usp=sharing}
+\end{itemize}
+\end{frame}
+
+
+\section{Independence and Selection Bias}
+
+
+\begin{frame}{The ``Section''}
 
 \begin{itemize}
 
-	\item Hull, Kolesar and Walters (2022) tells the economic history of causal inference which is rooted in the Princeton Industrial Relations Section in the 70s and 80s responding to an ``empirical crisis''
-	\item The core problem in causal inference is \emph{always} selection bias due to the fact that we cannot observe each units' counterfactual
-	\item Historically two ways that this selection bias was addressed: modeling it directly (Heckman, and others) and by design
-	\item Design is the experimental design rooted in Fisher and Neyman's work in the 20s, but the Section took it as a guiding principle even outside of the lab
+	\item Hull, Kolesar and Walters (2022) tell the economic history of causal inference rooted in the Princeton Industrial Relations Section in the 70s and 80s responding to an ``empirical crisis'' in labor
+	\item Key players are Orley Ashenfelter (head of the Section), David Card (his student and 2021 Nobel Laureate), Bob LaLonde (both men's student), Josh Angrist (both men's student and 2021 Nobel Laureate), and numerous others (e.g., Janet Currie, John DiNardo, Steven Pischke, and many more)
+	\item We tend to associate with them the credibility revolution, but more recently it's also called a design based approach to causal inference
+
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Design vs model based approaches to selection bias}
+
+\begin{itemize}
+
+\item Historically two ways that this selection bias was addressed: modeling it directly (Heckman, and others) and by design
+	\begin{enumerate}
+	\item Design-based methods.  Think of the randomized experiment.  As we will see randomization will force selection bias to zero
+	\item Model-based methods.  Model the selection bias and then remove it mechanically
+	\end{enumerate}
+\item Both have been highly influential, but constitute different approaches, and our workshop largely focuses on the former not the latter
 
 \end{itemize}
 
@@ -770,45 +730,60 @@ Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \
 
 
 
-\begin{frame}{Selection bias}
+
+\begin{frame}{Selection bias and Design}
 
 \begin{itemize}
-\item Selection bias in surveys has to do with non-representative samples; that is not its meaning in causal inference
-\item Selection bias in causal inference is when the average potential outcome for treatment group and control group are different in a large sample
-\item Source of the bias is the treatment assignment \emph{mechanism}
-\item Examples of a treatment assignment mechanism: 
+\item Selection bias in causal inference is when one or both mean potential outcome differ by treatment status
+\item Source of the bias is caused by the why people get treated, or what's called the ``treatment assignment \emph{mechanism}''
+\item Design is the experimental design rooted in Fisher and Neyman's work in the 20s, but the Section took it as a guiding principle even outside of the lab
+
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Treatment assignment mechanisms}
+
+\begin{itemize}
+\item Two extreme examples of a treatment assignment mechanism: 
 	\begin{enumerate}
 	\item randomization (i.e., taking the medicine because a coin flip told you to take it) versus 
-	\item sorting on one or both potential outcome (i.e., taking the medicine because it'll help you) which I call the ``Perfect Doctor''
+	\item sorting on one or both potential outcome (i.e., taking the medicine because it'll help you) which I call the ``Perfect Doctor'' but which Heckman and others call a ``Roy model''
 	\end{enumerate}
+\item Bias comes from how treatment is assigned and that mechanism dictates the direction we have to take
 
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Bias \#1: Selection bias}
+
+\begin{frame}{Three forms of selection bias}
 
   \begin{itemize}
-    \item Look very closely at the selection bias terms on their left and right hand sides $$\alert{E[Y^0|D=1]} \neq E[Y^0 |D=0]$$
-	\item Interpretation
+    \item In causal inference, selection bias is caused by different mean potential outcomes by treatment status, of which there are three possibilities:
 		\begin{enumerate}
-	    \item When you say you chose something because you'd be unhappy if you didn't, that's selection on $Y^0$
-    \item When you say you chose something because you'd be happy if you did it, that's selection on $Y^1$
-    \item When you say you chose something because you'll be more happy if you do it than if you didn't do it, that's selection on $Y^1-Y^0$
+   \item Selection on $Y^0$: You chose the treatment because of what will happen if you didn't
+    \item Selection on $Y^1$: You chose the treatment because of what will happen if you do
+    \item Selection on gains, $\delta$: You chose the treatment because the net benefits were positive
     	\end{enumerate}
-	\item All three of those create selection bias because all three assign treatments to units mechanically based on potential outcomes, which is always the source of selection bias
+	\item All three cause biased estimates of the ATE, though the degree to which it fully distorts the estimates depends on those different reasons for sorting into treatment
       \end{itemize}
 
 \end{frame}
 
 
 
-\begin{frame}{Humans cause selection bias, not statistical model}
+\begin{frame}{Humans cause selection bias, not models}
 
 \begin{itemize}
-\item Paradox: the better our programs get, the better that humans get at doing things, the more interventions are targeting units based on treatment gains, the less reliable correlations are
-\item Paradox: the less efficient our programs are, the more erratically human are at assigning interventions, the more reliable correlations are
-\item The former creates strong selection bias; the latter is more like a randomized experiment
+\item An unusual paradox in causal inference is that our successful programs are the hardest to study:
+	\begin{itemize}
+	\item The better our programs are, the better humans get at assigning treatments to people, the more interventions target people correctly based on treatment gains, the worse the selection bias is
+	\item But the less efficient our programs, the more erratic the assignment mechanism is, the more mistakes there are in targeting people with their best options, the less the selection bias is
+	\end{itemize}
+\item The reason for the ``natural experiment'' drive in causal inference was based on what we could deduce about selection bias from designs, which was more like the latter
+\item But solely depending on the latter would be limiting if our aim was to study our most successful programs (e.g., food stamps or STAMP)
 \end{itemize}
 
 \end{frame}
@@ -818,19 +793,12 @@ Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \
 
 
 
-\begin{frame}{Illustrating selection bias with spreadsheets}
-\begin{itemize}
-\item Eliminating selection bias requires understanding the selection mechanism -- why did units end up treated but not others?
-\item Illustrate with Perfect Doctor exercise -- doctor knows each person's treatment effects, despite counterfactuals, and assigns treatment based on whether gains are positive or not
-\item Illustrate decomposition using numerical example (pass out handout)
-\end{itemize}
-\end{frame}
 
 
 
 
 
-\section{Independence and Selection Bias}
+
 
 \begin{frame}{Summarizing the goals of causal inference}
 
@@ -907,7 +875,7 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 \begin{frame}[plain]
 
-  \begin{block}{Identification with Randomization}
+  \begin{block}{Identification with Full Independence}
     \begin{eqnarray*}
       \underbrace{E_N[Y_i | D_i=1] - E_N[Y_i | D_i=0]}_{ \mathclap{\text{Estimate of SDO}}}&=& \underbrace{E[Y^1] - E[Y^0]}_{ \mathclap{\text{Average Treatment Effect}}} \\
     &&+ \underbrace{0}_{ \mathclap{\text{Selection bias}}}  \\
@@ -924,9 +892,10 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 \begin{frame}{What about partial independence?}
 
   \begin{itemize}
-  \item What if selection into treatment is independent of $Y^0$ but not $Y^1$
-  \item On a piece of paper, write down the independence terms and substitute it into the decomposition
-  \item What is the nature of the bias?  What is eliminated?
+  \item For homework, write down the independence terms and substitute it into the decomposition if selection into treatment is independent of $Y^0$ but not $Y^1$
+  \item What if it is independent of $Y^0$ but not $Y^1$?
+  \item Can you describe formally the bias caused by partial independence?  What terms are eliminated?  What terms remain?
+  \item We will review it tomorrow
   \end{itemize}
 \end{frame}
 
@@ -937,8 +906,9 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 \begin{itemize}
 \item While treatment effects are defined at individual level, aggregate parameters combine units
-\item This therefore means that for the aggregate parameters to be stable, there cannot be ``interference'' between one unit's treatment choice and another unit's potential outcome
-\item Creates challenges for definitions and estimation that are probably huge headaches, even in the RCT
+\item This therefore means that for the aggregate parameters to be stable, one unit's treatment choice cannot ``interfere'' with another unit's potential outcomes
+\item Placing limits on those possibilities creates challenges for definitions and estimation that are probably huge headaches, even in the RCT
+\item Violations are an active area of scholarship and important for social networks, peer effects and various platforms (e.g., Twitter)
 \end{itemize}
 
 \end{frame}
