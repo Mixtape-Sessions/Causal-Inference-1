@@ -50,7 +50,7 @@
 % ---- Content ----
 
 
-\section{Directed Acyclic Graphs}
+\section{Selecting Covariates Using Directed Acyclic Graphs}
 
 \begin{frame}{Graphs}
 
@@ -114,8 +114,8 @@
 
     \item Pearl and MacKenzie (2018) \underline{The Book of Why: The} \underline{New Science of Cause and Effect}, Basic Books (\emph{wildly popular})
     \item Pearl, Glymour and Jewell (2016) \underline{Causal Inference In Statistics: A Primer}, Wiley Books (\emph{accessible})
-    \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
     \item Pearl (2009) \underline{Causality: Models, Reasoning and Inference}, Cambridge, 2nd edition (\emph{advanced})
+    \item Morgan and Winship (2014) \underline{Counterfactuals and Causal Inference: Methods and Principles} \underline{for Social Research}, Cambridge University Press, 2nd edition (\emph{excellent})
   \end{enumerate}
 
 \end{frame}
@@ -168,16 +168,47 @@
 
 
 
-\begin{frame}{Where do DAGs come from?}
+\begin{frame}{DAGs are harder than they seem}
 
 	\begin{itemize}
-	\item DAGs are meant to represent ``contemporary agreement among experts'' -- if you aren't willing to present your DAG before a room of experts, it's likely you shouldn't use it at all
-	\item Your DAG should be a reasonable approximation of $D$ and $Y$ parents (confounders) and direct and indirect effects of $D$ on $Y$
-	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition, as well as conversations with domain experts
-	\item But these are still rife with uncertainty given we do not observe arrows -- we use mental models, and those can be wrong
+	\item DAGs are meant to represent the truth about \emph{your data} -- what determines the treatment in \emph{your dataset} may be different from what determines in someone else's even if the topic is the same
+	\item But you also need to be able to justify the choices 
+	\item DAGs have a complicated connection to the design methodologies which typically focus on randomization, not prior knowledge about the system of equations, and yet many design methods do in fact require prior statements that likely can only be stated with some willingness to commit
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Creating your DAG}
+
+	\begin{itemize}
+	\item So, your goal is to, in good faith, create a DAG that is a reasonable and honest approximation of $D$ and $Y$ parents (confounders) as well as direct and indirect effects of $D$ on $Y$
+	\item Where there is uncertainty, you have to acknowledge that in the DAG, and where there are convictions, you acknowledge that too
+	\item We get ideas for DAGs from theory, models, observation, experience, prior studies, intuition, as well as conversations with domain experts, but keep in mind -- these are not natural experiments; they are not exploiting randomized treatment assignment.  
 	\end{itemize}
 
 \end{frame}
+
+\begin{frame}{Beware of Lazy DAGs}
+
+	\begin{itemize}
+	\item Lazy DAG building is \emph{extremely common} as the theory of DAGs and the practice of using DAGs is not the same thing
+	\item You are engaging in \emph{modeling the outcome} and if you are wrong, then the estimation is wrong
+	\item Part of what led to these design approaches was because that modeling of the outcome had been unsuccessful in empirical labor
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Concluding caveats}
+
+	\begin{itemize}
+	\item This is not to turn you off but to impress upon you that this is a very different enterprise which is why I mainly use it for selecting covariates and justifying instruments
+	\item But that said, it is an \emph{extremely} important area of causal inference
+	\item We will now turn to using DAGs for picking covariates using as ``controls''
+	\end{itemize}
+
+\end{frame}
+
+
+
 
 % 	\item The DAG is a reasonable approximation of all common parents of $D$ and $Y$ (confounders) and direct relationships between $D and $Y$
 
@@ -188,9 +219,7 @@
 
   \begin{itemize}
 
-    \item DAGs help us understand the source of problems in our observational (non-experimental) data that make inferring causality hard
-    \item But it also can help us see a way out in some situations
-    \item We will focus today on the unconfoundedness research design, which is best described in causal graphs with the concept of the \textbf{backdoor criterion}
+    \item We will focus today on the unconfoundedness research design, which in my opinion is best described in causal graphs with the concept of the \textbf{backdoor criterion}
     \item As we will see, the DAG helps you solve the problem of choosing covariates for a model to resolve selection bias, but to do so requires confidence in your DAG
   \end{itemize}
 
