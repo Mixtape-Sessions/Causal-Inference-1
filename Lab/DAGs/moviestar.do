@@ -17,7 +17,7 @@ egen c85=pctile(score), p(85)
 gen star=(score>=c85) 
 label variable star "Movie star" 
 
-* Conditioning on the top 15\% 
+* Conditioning on the top 85\% 
 twoway (scatter beauty talent, mcolor(black) msize(small) msymbol(smx)), ytitle(Beauty) xtitle(Talent) subtitle(Aspiring actors and actresses) by(star, total)
 
 * Regressions
