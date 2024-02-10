@@ -35,6 +35,7 @@
 
 	gen earnings = treat*y1 + (1-treat)*y0
 	
+	** Regression methods (incorrect and regression adjustment)
 	* Incorrect regression specification
 	reg earnings treat age gpa age_sq gpa_sq agegpa, robust
 	
@@ -44,6 +45,8 @@
 	* Regression adjustment model 2
 	teffects ra (earnings age gpa age_sq gpa_sq agegpa) (treat), ate
 
+	
+	** Nearest neighbor (mahanalobis distance minimization) matching (ATE, ATT)
 	* Matching model 1	 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), ate nn(1) metric(maha) 
 
@@ -53,5 +56,5 @@
 	* Matching model 3	 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), atet nn(1) metric(maha) 
 
-* Matching model 4	 
+	* Matching model 4	 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq agegpa) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq agegpa)
