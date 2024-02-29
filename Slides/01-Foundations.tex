@@ -1177,6 +1177,201 @@ Use this finding of a nearly one-to-one substitution once paid search was droppe
 
 \end{frame}
 
+\section{Tennessee's small class size RCT: STAR}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Example 1: Krueger (1999)}
+	\end{center}
+	
+	\begin{itemize}
+	\item Krueger (1999) econometrically re-analyzes a randomized experiment to determine the causal effect of class size on student achievement
+	\item The project is the Tennessee Student/Teacher Achievement Ratio (STAR) experiment from the 1980s
+	\item 11,600 students and their teachers were \emph{randomly} assigned to one of the following three groups:
+		\begin{enumerate}
+		\item Small class of 13-17 students
+		\item Regular class of 22-25 students
+		\item Regular class of 22-25 students with a full-time teacher's aide
+		\end{enumerate}
+	\item After the assignment, the design called for students to remain in the same class type for four years
+	\item Randomization occurred within schools
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain,shrink=20]
+	\begin{center}
+	\textbf{Regression analysis of experiments}
+	\end{center}
+	
+	\begin{itemize}
+	\item With randomization one could simply calculate SDO (simple difference in mean outcomes) for the treatment and control group and know that SDO$=$ATE because of independence
+	\item Nonetheless, it is often useful to analyze experimental data with regression analysis (see MW section 3.2.2; MHE ch. 2)
+	\item Assume that treatment effects are constant -- i.e., $Y^1_i - Y^0_i=\delta$  $\forall i$
+	\item Substitute into a rearranged switching equation (Definition 2):
+		\begin{eqnarray*}
+		Y_i &=& D_iY_i^1 + (1-D_i)Y^0_i \\
+		Y_i &=& Y^0_i + (Y^1_i-Y^0_i)D_i \\
+		Y_i &=& Y^0_i + \delta D_i  \\
+		Y_i &=&E[Y^0_i] + \delta D_i+ Y_i^0 - E[Y_i^0] \\
+		Y_i &=& \alpha + \delta D_i + \eta_i
+		\end{eqnarray*}where $\eta_i$ is the random part of $Y_i^0$
+	\item This is a regression equation that could be used to estimate the causal effect of $D$ on $Y$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Regression analysis of experiments (cont.)}
+	\end{center}
+	
+	\begin{itemize}
+	\item The conditional expectation, $E[Y_i|D_i]$, with treatment status switched on and off gives:
+		\begin{eqnarray*}
+		E[Y_i | D_i=1] &=& \alpha + \delta + E[\eta_i | D_i=1] \\
+		E[Y_i | D_i=0] &=& \alpha + E[\eta_i | D_i=0]
+		\end{eqnarray*}
+	\item Subtracting the latter from the former, we get:
+		\begin{eqnarray*}
+		 \underbrace{E[Y_i | D_i=1]  - E[Y_i | D_i=0]}_{ \mathclap{\text{SDO}}} &=& \underbrace{\delta}_{ \mathclap{\text{Treatment Effect}}}\\
+		 &&+  \underbrace{E[\eta_i | D_i=1] - E[\eta_i | D_i=0]}_{ \mathclap{\text{Selection bias}}}
+		\end{eqnarray*}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+
+\begin{itemize}
+	\item We can estimate $SDO$ using least squares but there's other options as well
+	\item In the STAR experiment, $D_i$, equalled one if the student was enrolled in a small class and had been \emph{randomly} assigned
+	\item Recall that randomization implies that treatment is independent of potential outcomes, and therefore the selection bias vanishes
+\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Why Include Control Variables?}
+	\end{center}
+	
+	\begin{itemize}
+	\item To evaluate experimental data, one may want to add additional controls in the multivariate regression model.  So, instead of estimating the prior equation, we might estimate:
+		\begin{eqnarray*}
+		Y_i = \alpha + \delta D_i + X_i'\gamma + \eta_i
+		\end{eqnarray*}
+	\item There are 2 main reasons for including additional controls in the regression models:
+		\begin{enumerate}
+		\item Conditional random assignment.  Sometimes randomization is done \emph{conditional} on some observable.  (here that's the school).  We'll discuss ``conditional independence assumption'' when we cover matching.
+		\item Additional controls increase precision.  Although control variables $X_i$ are uncorrelated with $D_i$, they may have substantial explanatory power for $Y_i$. Including controls thus reduces variance in the residuals which lowers the standard errors of the regression estimates.
+		\end{enumerate}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Regression in Krueger (1999)}
+	\end{center}
+	
+Krueger estimates the following econometric model$$Y_{ics} = \beta_0 + \beta_1 SMALL_{cs} + \beta_2 \text{REG/A}_{cs} + \alpha_s + \varepsilon_{ics}$$\begin{itemize}\item $i$ indexes a student, $c$ indexes a class, and $s$ indexes a school
+		\item $Y_{ics}$ is the student's percentile score
+		\item $SMALL_{cs}$ is a dummy equalling 1 if she is assigned to a small class.
+		\item $REG/A_{cs}$ is a dummy equalling 1 if she was assigned to a regular class with an aide
+		\item $\alpha$ is a ``school fixed effect'' which is a vector of school-specific dummy variables.  He conditions on school fixed effects because randomized classroom assignment occurred \emph{within} schools. 
+		\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Regression results Kindergarten}
+	\end{center}
+	
+	\begin{figure}
+	\includegraphics{./lecture_includes/krueger1999_table5a.pdf}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Regression results 1st grade}
+	\end{center}
+	
+	\begin{figure}
+	\includegraphics{./lecture_includes/krueger1999_table5b.pdf}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Problem 1: Attrition}
+	\end{center}
+	
+A common problem in randomized experiments on humans is \emph{attrition} -- i.e., people leaving the experiment
+	\begin{itemize}		
+	\item If attrition is random, then attrition affects the treatment and control groups in the same way and our estimates remain unbiased
+	\item But in this application, attrition is probably non-random: especially good students from large classes may have enrolled in private schools creating a selection bias problem
+	\item Krueger addresses this concern by imputing the test scores (from their earlier test scores) for all children who leave the sample and then re-estimates the model including students with imputed test scores.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain, shrink=20]
+	\begin{center}
+	\textbf{Problem 1: Attrition}
+	\end{center}
+	
+	\begin{figure}
+	\includegraphics{./lecture_includes/krueger1999_table6.pdf}
+	\end{figure}
+	
+	\begin{itemize}
+	\item Non-random attrition hardly biases the results.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Problem 2: Switch Classrooms after Random Assignment}
+	\end{center}
+
+``It is virtually impossible to prevent some students from switching between class types over time.'' (Krueger 1999, p. 506)
+	\begin{figure}
+	\includegraphics[scale=0.6]{./lecture_includes/krueger1999_table4.pdf}
+	\end{figure}
+
+	\begin{itemize}
+	\item Interpreting Krueger's``transition matrix'' (above) 
+		\begin{itemize}
+		\item If students remained in their same class type over time, all the off-diagonal elements would be zero
+		\item Interpretation: Of the 1,482 first graders assigned to small classrooms, 1,435 remained in small classes; 23 and 24 switched into regular and regular with aide classes in the second grade
+		\end{itemize}
+	\item If students with stronger expected academic potential were more likely to move into the small classes, then these transitions would bias a simple comparison of outcomes across class types.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Problem 2: Switch Classrooms after Random Assignment}
+	\end{center}
+
+	\begin{itemize}
+	\item Subjects moved between treatment and control groups.  How to address this?
+	\item A common solution to this problem is to use initial classroom assignment (i.e., small or regular classes) as an \emph{instrument} for actual assignment.  We will discuss instrumental variables later, so I will hold off on that now.
+	\item Krueger reports regression results where instead of the student's actual status as the treatment variable, he regresses performance against their \emph{randomly assigned class size}.  This is called the ``reduced form'' model, and we learn more about this when we cover IV.
+	\item In Kindergarten, OLS and reduced form are the same because students remained in their initial class for at least one year.
+	\item From grade 1 onwards, OLS and reduced form results differ.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+	\begin{center}
+	\textbf{Problem 2: Switch Classrooms after Random Assignment}
+	\end{center}
+	
+	\begin{figure}
+	\includegraphics[scale=0.4]{./lecture_includes/krueger1999_table5c.pdf}
+	\end{figure}
+\end{frame}
+
+
+
 
 \begin{frame}{Comments}
 
