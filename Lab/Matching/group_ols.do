@@ -1,5 +1,6 @@
     clear 
     drop _all 
+	set seed 1500
 	set obs 5000
 	gen 	treat = 0 
 	replace treat = 1 in 2500/5000
@@ -29,13 +30,17 @@
 	gen delta = y1 - y0
 
 	su delta 			 // ATE = 2500
-	su delta if treat==1 // ATT = 1991
-	su delta if treat==0 // ATT = 3009
+	su delta if treat==1 // ATT = 1963
+	su delta if treat==0 // ATU = 3038
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
 
 	gen earnings = treat*y1 + (1-treat)*y0
+	
+	* Misspecified standard regression model
+	reg earnings treat age gpa age_sq gpa_sq interaction, robust
+
 
 
 	* Regression: Fully interacted regression model
