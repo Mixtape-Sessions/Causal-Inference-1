@@ -17,6 +17,16 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	replace age = rnormal(30,3) 		if treat==0
 	gen 	gpa = rnormal(2.3,0.75) 	if treat==0
 	replace gpa = rnormal(1.76,0.5) 	if treat==1
+	
+	twoway (histogram age if treat==1,  color(green)) ///
+       (histogram age if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+	   
+	twoway (histogram age if treat==1,  color(blue)) ///
+       (histogram age if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+	   
+
 
 	su age
 	replace age = age - `r(mean)'

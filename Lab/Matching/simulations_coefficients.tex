@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{array}
+
+\title{Statistical Analysis of Treatment Effects}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    This document presents the results of a statistical analysis exploring the treatment effects using various estimation models.
+\end{abstract}
+
+\section{Introduction}
+Your introduction text here.
+
+\section{Results}
+\begin{table}[h]
+\centering
+\caption{Estimates of treatment effects for ATT of 2673 using 7 models}
+\label{my-label}
+\begin{tabular}{|l|r|r|r|r|r|r|r|}
+\hline
+Model         & OLS        & Tymon's ATT & RA         & NN         & NN w/ BA   & PSmatch    & IPW        \\ \hline
+Coefficient   & 2601.273   & 2672.662    & 2673.150   & 2676.090   & 2673.154   & 2675.016   & 2657.696   \\ 
+Std. Dev.     & (7.581)    & (5.121)     & (5.061)    & (5.386)    & (5.072)    & (7.403)    & (60.111)   \\ \hline
+\end{tabular}
+\footnotesize{Note: ATT was 2673 on average; OLS is the coefficient on the treatment dummy with covariates; Tymon's ATT is from Słoczyński 2022 OLS theorem; RA is regression adjustment; NN is nearest neighbor Mahanalobis minimization matching; NN w/BA is NN with bias adjustment; PSMATCH is propensity score matching; IPW is inverse probability weighting.}
+\end{table}
+
+\section{Discussion}
+Your discussion text here.
+
+\end{document}

@@ -1746,6 +1746,668 @@ This is the ``long'' causal model. But note, from the prior DAG, we cannot contr
 \end{frame}
 
 
+\begin{frame}{Examples from our paper}
+
+\begin{itemize}
+\item Just accepted at JHR, ``Adverse Impacts of Mental Health Needs Assessment on Jail Outcomes: Evidence from Transition Age Youth and Adults'' with Cunningham, Seward, Clay and Vigliotti (randomized)
+
+\item We investigated the effect of mental health needs scores on suicidality in jail and recidivism and explored possible mechanisms like length of stay
+
+\item We also used a leniency design coming from randomized clinicians who scored on score of 0 to 3 the severity of their daily functioning
+
+\item Rather than review the paper, I want to highlight the main exhibits of a leniency paper today
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Write down your structural equation}
+
+First equation states your research question, not your instrumental variable strategy.  Let's consider a model in which an inmate $i$ at booking $b$ remains in jail longer, attempts suicide or recidivates based on interventions given in response to their mental health needs score, $Score_{ibt}$. 
+\begin{equation}
+    Y_{ibt} = \beta_0 + \beta_1 Score_{ibt} + \beta_2 X_{ibt} + \tau_t + \epsilon_{ibt},
+    \label{eq:ols}
+\end{equation}where $Y_{ibt}$ is the outcome of interest for individual $i$ in booking $b$ in month-year $t$: (1) length of stay, (2) suicide attempt, or (3) recidivism within a year of release.  The matrix $X_{ibt}$ contains baseline inmate and booking characteristics, $\tau_t$ is a vector of month-year dummies and $\varepsilon_{ibt}$ is an error term.  
+
+\end{frame}
+
+\begin{frame}{Present your instrument equation}
+
+To isolate the effect of clinician scoring on the mental health needs score of inmate $i$ at booking $b$ in time $t$, we first estimate a linear model that includes a vector of month-of-year fixed effects. These fixed effects account for any county-wide trends that might affect mental health needs scores:
+\begin{equation}
+    \label{eq:residual}
+    Score_{ibt} = \gamma_1 + \gamma_2 \tau_t + \varepsilon_{ibt} 
+\end{equation}where $\varepsilon$ is an idiosyncratic error.  
+\end{frame}
+
+\begin{frame}{Present your instrument equation}
+
+We then residualize the inmate's mental health needs score using the fitted coefficients from previous equation
+\begin{equation}
+    \label{eq:residual2}
+    Score^{*}_{ibt} = Score_{ibt} - \widehat{\gamma_1} - \widehat{\gamma_2} \tau_{t}
+\end{equation}
+This residualized score isolates the part of the inmate's mental health needs score that is due to the clinician's scoring, independent of the month-of-year fixed effects. 
+
+\end{frame}
+
+
+\begin{frame}{Residualized leave-one-out mean IV}
+
+We construct a measure of residualized clinician $c$ propensity to assign a high score $Z_{btc}$ as:
+
+\begin{equation}
+    \label{eq:instrument}
+    Z_{btc} = \bigg(\frac{1}{n_{tc}-n_{itc}}\bigg) \bigg( \sum_{k=0}^{n_{it}} (Score^{*}_{ikt}) - \sum_{b=0}^{n_{itc}} (Score^{*}_{ibt}) \bigg),
+\end{equation} where $n_{ct}$ is the number of cases seen by clinician $c$ in month-year $t$ and $n_{it}$ is the number of bookings of inmate $i$ seen by clinician $c$ in month-year $t$.
+
+\bigskip
+
+$Score^{*}_{ikt}$ is the residualized mental health needs score given by the clinician at time $t$, and $Score^{*}_{ibt}$ is the residualized score by inmates $i$.   In other words, we remove the residualized mental health needs score assignment of all of an inmate’s bookings seen by clinician $c$ in each month.
+
+\end{frame}
+
+\begin{frame}{Present the first stage equation}
+
+We explore this positive association between the residualized leave-one-out-mean clinician scores and an inmate's own score by estimating the following linear probability model:
+\begin{equation}
+Score_{ibt} = \alpha + \pi Z_{btc} + X_{ibt} + \tau_t + \varepsilon_{ibt}\label{eq:firststage}
+\end{equation}where $Score_{ibt}$ is the binary treatment variable (``classification score'') indicating whether an inmate received a mental health needs score of ``Moderate'' or ``Severe,'' and $Z_{btc}$ is a vector of the residualized leave-one-out-mean clinician score, $X_{ibt}$ is an array of pre-booking inmate characteristics, including race, sex, age at booking, whether they had a prior offense in the last year, the number of offenses per booking, $\tau_t$ are month-of-year fixed effects, and $\varepsilon_{ibt}$ is the inmate specific error term. Standard errors are two-way clustered by clinician and inmate.   
+
+\end{frame}
+
+\begin{frame}{First Stage Figures}
+	\begin{figure}
+             \centering
+             \includegraphics[scale=0.25]{./lecture_includes/jhr_ivfig1}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{First Stage Tests}
+	\begin{figure}
+             \centering
+             \includegraphics[scale=0.3]{./lecture_includes/jhr_ivfig2}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{First Stage Tests}
+	\begin{figure}
+             \centering
+             \includegraphics[scale=0.3]{./lecture_includes/jhr_ivfig3}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Balance Tests Showing Independence}
+	\begin{figure}
+             \centering
+             \includegraphics[scale=0.2]{./lecture_includes/jhr_ivfig4}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Average monotonicity tests}
+	\begin{figure}
+             \centering
+             \includegraphics[scale=0.3]{./lecture_includes/jhr_ivfig5}
+	\end{figure}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\begin{frame}{2SLS and one instrument}
+
+\begin{itemize}
+
+\item When we have one endogenous variable and one instrument, we say the equation is ``just identified'' and if we have more instruments than endogenous variables we say it is ``overidentified''
+\item 2SLS is best when just identified as weak instruments can be better controlled (and tests for it exist like reporting Anderson-Rubin CI as well as reporting appropriately robust F statistics like we saw)
+\item Single instrument is also helped with visualization and balance tests which I think shouldn't be downplayed
+\item But it has problems too which we will now explore
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Continuous instrument}
+
+\begin{itemize}
+\item LATE theorem (Imbens and Angrist 1994) references a binary treatment and binary instrument technically making tests for weak instruments easier with broad agreement 
+\item But with a continuous instrument, things change in the leniency design -- for one, the LATE interpretation gets a little more challenging, and the monontonicity assumption more complicated
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Weak instruments}
+
+\begin{itemize}
+\item But it may even be that the just identified model is a bait and switch in the first place
+\item Peter Hull and others, for one, have noted that the residualized leave-one-out mean used as the instrument is a collapsing of judge fixed effects into a single scalar as a quasi-propensity score (recall it's dimension reducing)
+\item So really, the correct specification is judge fixed effects potentially, not the residualized leave-one-out-mean, and 2SLS has severe bias with multiple instruments
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Criticism of 2SLS: Over identification and bias}
+
+\begin{itemize}
+\item Even though the 2SLS model is just identified with residualized leave-one-out-mean, our instrument is actually multi-dimensional in the number of judges and with weak instruments, this creates finite sample bias for 2SLS due to \emph{many instruments}; see Sun's \texttt{manyweakiv} at \url{https://github.com/lsun20/manyweakiv}
+
+
+\item To help pin this down, consider that the propensity score theorem which states the propensity score is a scalar based on dimension reduction in X (Rosenbaum and Rubin 1983)
+
+\item This isn't really a just identified model so we should explore alternative models that are more appropriate for our data and design: we consider three
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Many instruments}
+
+\begin{itemize}
+
+\item High-dimensional instruments can arise when there is inherently large number of potentially relevant instruments or when it’s unclear how these instruments should be specified (e.g. dummy variables, interaction effects).
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Alternative to 2SLS: LIML}
+
+\begin{itemize}
+\item Two branches of IV: minimum distance IV (very old; limited information maximum likelihood) and ``two step'' procedures (Wald, 2SLS, JIVE, etc.)
+\item If LATEs vary, then two step IV estimators like 2SLS estimate a convex combination of them
+\item Minimum distances estimators like LIML may be outside the convex hull of the LATEs and may not be interpretable as causal
+\item This calls into the question the use of LIML when there are large number of instruments, so not advised
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Alternative to 2SLS: JIVE}
+
+\begin{itemize}
+\item One popular alternative to the 2SLS model in these applications has been the jackknife IV estimator (JIVE) (Angrist, Imbens and Krueger 1999)
+
+\item JIVE removes bias using leave-out first stage fits for each observation 
+
+\item That is the fitted value for observation $i$ is $Z_i\widehat{\pi}_{i}$ where $\widehat{\pi}_i$ is an estimate that throws out observation $i$
+
+\item The other appeal is that it can handle large number of instruments, but ironically \emph{not} large number of covariates
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Many control variables}
+
+\begin{itemize}
+
+\item The primary interest in an econometric analysis often lies in one or a few regressors, for which we want to estimate the causal effect on an outcome variable. 
+\item However, to allow for a causal interpretation we need to control for confounding factors. 
+\item Lasso-type techniques can be employed to appropriately select controls and thus improve the robustness of causal inference.
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Alternative to 2SLS: JIVE}
+
+\begin{itemize}
+
+
+\item Kolesar (2013) notes that in a finite sample, JIVE will be noisy and this estimation error will be correlated with the outcome since it depends on the treatment status of a particular person (unit of observation for me is an inmate).  
+
+\item This will cause JIVE to be biased when the number of covariates is large as is the case in our context -- in my recent paper, for instance, I had 14 covariates and 84 time fixed effects. 
+
+\item We face therefore a tradeoff between a set of time fixed effects that ensure conditional randomization and the biases created by large numbers of covariates for our JIVE estimator.  
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Alternative to 2SLS: UJIVE}
+
+\begin{itemize}
+\item Researchers therefore often accompany just identified 2SLS with another model that is robust for both large number of covariates and large number of instruments.  
+
+\item First alternative is to estimate LATEs using the UJIVE estimator (Kolesar 2013)
+
+\item UJIVE estimates are robust to a large set of \emph{covariates} and \emph{instruments} by excluding inmate $i$ from estimation, thus guaranteeing that the prediction error be uncorrelated with the outcome (Kolesar 2013)
+
+\item This means that UJIVE estimates are consistent for a convex combination of LATEs even when we have a large number of covariates. 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Alternative to 2SLS: UJIVE}
+
+\begin{itemize}
+
+\item You can implement this using Kolesar's matlab code \url{https://github.com/kolesarm/ivreg/blob/master/ivreg.m}, but it's giving us problems here so I can't report the results
+
+\item You can also use Stata's \texttt{manyiv} and we will review that together, 
+
+\item R: Kolesar's github does not yet have this updated for R \url{https://github.com/kolesarm/ivreg/tree/master}, see the ivreg.pdf
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Alternatives: LASSO}
+
+\begin{itemize}
+\item But there are also two machine learning selection IV models: 
+    \begin{itemize}
+    \item the post-double-selection model and 
+    \item the post-lasso-orthogonalization method described by Chernozhukov (2015) which we loosely term our LASSO and post-LASSO models, respectively.  
+    \end{itemize}
+\item We use the Stata command \texttt{lassopack} for its implementation 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Why pdslasso?}
+
+\begin{itemize}
+\item \texttt{pdslasso} and \texttt{ivlasso} are routines for estimating structural parameters in linear models with many controls and/or many instruments. 
+\item The routines use methods for estimating sparse high-dimensional models, specifically the LASSO and the square-root-LASSO (Belloni et al. 2011, 2014).
+\item Purpose of \texttt{pdslasso}  is to improve causal inference when the aim is to assess the effect of one or a few (possibly endogenous) regressors on the outcome variable. 
+\item \texttt{pdslasso}  allows to select control variables and/or instruments.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{LASSOPACK}
+
+
+\begin{itemize}
+\item These estimators can be used to select controls (pdslasso) or instruments
+(ivlasso) from a large set of variables (possibly numbering more than the
+number of observations), in a setting where the researcher is interested in
+estimating the causal impact of one or more (possibly endogenous) causal
+variables of interest.
+\item Two approaches are implemented in pdslasso and ivlasso: (1) The "post-
+double-selection" (PDS) methodology of Belloni et al. (2012, 2013, 2014,
+2015, 2016). (2) The "post-regularization" (CHS) methodology of
+Chernozhukov, Hansen and Spindler (2015). For instrumental variable
+estimation, ivlasso implements weak-identification-robust hypothesis tests
+and confidence sets using the Chernozhukov et al. (2013) sup-score test.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Results}
+	\begin{figure}
+             \centering
+             \includegraphics[scale=0.3]{./lecture_includes/jhr_ivfig6}
+	\end{figure}
+\end{frame}
+
+
+
+\subsection{Marginal Treatment Effects}
+
+\begin{frame}{Marginal treatment effects and judge IV}
+
+\begin{itemize}
+
+\item Increasingly common to see people go from estimating LATE effects with judges to MTE and then even to ATT, ATE and ATU
+\item Literature goes back to early 2000s by Ed Vycatil and Jim Heckman in a series of papers
+\item Works only with a continuous instrument, which you have with the residualized leave-one-out mean
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Marginal Treatment Effects}
+       \begin{columns}
+          \column{0.38\linewidth}
+             \centering
+             \includegraphics[height=5.25cm, width=4.5cm]{./lecture_includes/labour_mte.png}
+           \column{0.65\linewidth}
+		\begin{itemize}
+	\item Cornelissen, et al. (2016) is a phenomenal review of this literature
+	\item I've found this literature really fascinating
+	\item If there is heterogeneity in unobservables
+	\item To get a distribution of treatment effects
+	\item Calculate aggregate parameters like the ATE
+		\end{itemize}
+         \end{columns} 
+    \end{frame}
+
+
+
+
+
+\begin{frame}{Marginal treatment effects}
+
+What assumptions do we need? 
+    	\begin{itemize}
+	\item Heckman and Vytacil (2005, 2006, 2007, etc.) show that all policy relevant parameters (e.g., ATE, ATT, ATU) can be reconstructed using weighted averages over the MTE
+   	\item Technically you can identify LATE with average monotonicity, but you need strict for MTE (new AER by Frandsen, Lefgren and Leslie forthcoming)
+    	\item Additive separability of treatment effects (i.e., unobserved based on covariates plus observed heterogeneity)
+    	\item Only required if not full support, and we don't have full support
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Marginal treatment effects}
+
+\begin{itemize}
+
+\item Rooted in the LATE revolution in the 1990s focused on identifying models with heterogenous treatment effects
+\item Imbens and Angrist are known for the LATE theorem and clarified interpretation of IV estimates
+\item Heckam and Vytlacil, Card and others proposed a control function approach as an alternative to linear IV which under stronger assumptions than IV would allow the estimation of the ATE (which IV could not do)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Marginal treatment effects}
+
+\begin{itemize}
+\item Marginal treatment effect (MTE) appears in the late 80s in the context of a switching regression model where "marginal gain" was the gain from treatment for people who were shifted into (or out of) treatment status by a marginal change in the cost of the treatment (which was the instrument)
+
+\item Heckman and Vytlacil in four articles from 1999 to 2007 define the MTE as the ``gain from treatment for individuals shifted into treatment or out of treatment by a marginal change in the \emph{propensity score} (i.e., the predicted probability of treatment which is a function of the instrument)
+\item They then develop nonparametric estimation methods and clarify the connection of the switching regime self selection model and of MTE with IV and LATE
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Marginal treatment effects}
+
+\begin{itemize}
+\item Since it's familiar to the audience, I'll focus on recidivism from the mental health paper I mentioned not suicide
+\item In our context, we could have explored the heterogeneity in treatment effects across inmates' underlying mental illness proxied by the propensity score
+\item Consider the following equations decomposing an inmate $i$'s potential recidivism into the conditional means of potential outcomes, $\mu^j(X_i)$, based on inmate characteristics $X_i$ as well as deviations from the mean $U_i^j$
+\end{itemize}
+
+\begin{eqnarray*}
+Y_i^0 &=& \mu^0(X_i) + U_i^0 \\
+Y_i^1 &=& \mu^1(X_i) + U_i^1 
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}{Selection into treatment}
+
+
+Mental illness scores are assigned based on an individual latent index threshold in which the net benefits of ``severe mental illness'' (obviously odd way of putting it) are exactly equal to
+\bigskip
+\begin{eqnarray*}
+D_i^* = \mu^D(X_i,Z_i) - V_i
+\end{eqnarray*}where $X_i$ and $Z_i$ are the inmate's observed determinants of treatment choice, but $Z_i$ is the instruments, and $V_i$ the unobserved characteristics that makes treatment choice less like (``unobserved resistance to treatment'')
+
+\bigskip
+
+Assignment to a severe mental illness score (low functioning) occurs when $D_i^*>0$ otherwise they are classified as high functioning
+
+\end{frame}
+
+\begin{frame}{Selection into treatment}
+
+Or to be simpler about it, this is our "selection into treatment" equation meaning a person's treatment status is either 0 or 1 depending on the right hand side being positive or negative:
+
+\begin{eqnarray*}
+D_i^* = \mu^D(X_i,Z_i) - V_i
+\end{eqnarray*}
+
+\bigskip
+
+$D_i=1$ if $D_i*\geq 0$,  otherwise $D_i=0$.  $V_i$ is an i.i.d. error term indicating unobserved heterogeneity in the propensity for treatment.  The error term $V_i$ enters the selection equation with a negative sign, it embodies unobserved characteristics that make individuals \emph{less} likely to receive treatment. As I said on the other page, people call it ``unobserved resistance to treatment'' or even ``distaste''.  
+
+\end{frame}
+
+
+\begin{frame}{Selection and expected gains}
+
+\begin{itemize}
+\item Very common for people in this literature to use language about ``selection based on gains'' as in choosing the treatment bc they expect to gain from it
+\item In our context, we don't think you can take that literally because their moderate to severe mental illness is doing the choosing
+\item We treat ``choice'' and ``moderate to severe mental illness'' are treated as synonyms, but that's just in our context
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Selection}
+
+\begin{itemize}
+\item The directions on our variables can be a little hard to interpret because for us higher values of $\mu_D(X,Z)$ basically cause them to get a severe mental illness score, but they correspond to worse symptoms
+\item When the therapist believes the inmate's functioning is above her own reservation threshold for that inmate, $V_i$, the evaluator assigns a high score which assigns him to a high severe mental illness score
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Selection}
+
+\begin{itemize}
+\item Indifference condition is $\mu_D(X,Z)=V$, and thus when $D^*>0$, $\mu_D(X,Z)>V$, and the therapist assigns him to a severe mental illness score
+\item We then apply the cdf of $V$ to this inequality to get $F_V(\mu^D(X_i,Z_i)) \geq F_V(V_i)$ which bounds both sides b/w 0 and 1
+\item The left side is the propensity score (i.e., the conditional probability of treatment) which is $p_i(X_i,Z_i)$ and the right is the quantiles of the distribution of the unobserved resistance to treatment, $U_i^D$
+\item Rewrite the selection equation  as $p_i(X_i,Z_i) \geq U_i^D$ which means an inmate $i$ selects into treatment when their propensity score is greater than their unwillingness to participate due to their slightly higher functioning
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Some sources of confusion I had}
+
+\begin{itemize}
+\item So it may help if you replace the phrase ``high propensity score / low resistance to treatment'' with ``moderate to severe mental illness'' (high scores)
+\item If I have schizophrenia with extreme displays of psychosis, then I am \textbf{less} resistance to treatment because the treatment is a high score, and I will almost certainly get a high score (high propensity score)
+\item If I come in with depression but am functional, my score is lower and so I both have a lower propensity score \emph{and} therefore have a \emph{higher} resistance to treatment
+\item Note the subtle language: ``propensity score'' and ``resistance to treatment'' are reversed -- people with less resistance have higher propensity scores because their illness is so severe
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Switching equation}
+
+Write down the choice of either potential outcome according to which treatment was chosen using a switching equation
+
+\begin{eqnarray*}
+Y_i &=& D_iY_i^1 + (1-D_i)Y_i^0 \\
+Y_i &=& Y_i^0 + (Y_i^1 - Y_i^0)D_i
+\end{eqnarray*}which is a regression equation.  If we substitute our earlier potential outcomes into this we get:
+
+\begin{eqnarray*}
+Y_i &=& \mu^0(X_i) + D_i(\mu^1(X_i) - \mu^0(X_i) + U_i^1 - U_i^0) + U_i^0
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}{Assumptions}
+
+\begin{block}{\textbf{Assumption 1: Conditional Independence}}
+$(U^1,U^0,V) \perp\!\!\!\perp Z | X$
+
+\bigskip
+
+Implied by standard LATE assumptions (e.g., non-zero first stage, exclusion, SUTVA, monotonicity) are equivalent to some representation of a choice equation.  This is no more restrictive than the LATE model. And that could be enough, except that it requires full support of the propensity scores in both treated and untreated samples for all values of $X$ and in practice this rarely holds. So most proceed with a stronger assumption.
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Assumptions}
+
+\begin{block}{\textbf{Assumption 2: Separability}}
+$E[U^j|V,X] = E[U^j|V]$
+
+\bigskip
+
+It's a strong assumption.  First, the MTE is identified over the common support, unconditional on $X$.  Second, the MTEs are additively separable in $U^D$ and $X$. The intercept, but not the slope, is a function of $X$. 
+
+
+\end{block}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Steps}
+
+\begin{enumerate}
+\item Estimate the propensity score using logit (here issues of common support arise as we want it across all cells of Z)
+\item Model recidivism as a function of covariates and propensity score with second degree polynomials
+\item Calculate the derivative of $\widehat{recidivism}$ with respect to the propensity score and plot it as a curve
+\end{enumerate}
+
+\bigskip
+
+Since we don't have full support, we rescaled the weights so that they integrate to one over the trimmed sample so that we can calculate different weighted averages of the MTEs
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Calculating aggregates}
+
+\begin{itemize}
+\item ATE is the equally weighted average over the entire MTE curve, ATT as a weighted average over the left group of ``low resistance, high propensity score'', and ATU as the weighted average of the right group of (``high resistance, low propensity'')
+\item Downward slope means selection on unobserved returns to receiving a mental illness score (i.e., ATT$>$ATE$>$ATU)
+\item Upward slope means the reverse (i.e., ATU$>$ATE$>$ATT)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Common support}
+
+    \includegraphics[width=\textwidth]{./lecture_includes/common_support_recid.png}
+
+\end{frame}
+
+\begin{frame}{MTE and aggregate parameters for recidivism}
+
+    \includegraphics[width=\textwidth]{./lecture_includes/mte_recid__2.png}
+
+\end{frame}
+\subsection{Covariates}
+
+\begin{frame}{IV with covariates}
+
+\begin{itemize}
+\item What if you think you need to control for covariates?  Can't you just control for it in your 2SLS specification? But how?
+\item Blandhol, et al. (2022) as well as Stoczynski (2021) bring up some issues with typical 2SLS specifications with covariates
+\item This is a decently sized literature going back at least to Abadie (2003), Frolich (2007), as well as to a degree Imbens and Angrist (1995)
+\item The punchline is that controlling for covariates can be somewhat hazardous when using 2SLS
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Saturated regression models}
+
+\begin{itemize}
+\item Remember Angrist and Krueger's QoB instrument specification where they interacted Z with region of birth and year of birth?  This was almost entirely a saturated model (they didn't interact Z with age I don't think)
+\item Saturated models are the full set of interactions on all discrete covariates as well as each one independently 
+\end{itemize}
+
+\bigskip
+
+\begin{quote}
+``Saturated regression models are regression models with discrete explanatory variables, where the model includes a separate parameter for all possible values taken on by the explanatory variables.'' (Angrist and Pischke 2009, p. 48-49)
+\end{quote}
+
+\end{frame}
+
+
+\begin{frame}{Identification with covariates and 2SLS}
+
+\begin{itemize}
+\item We have to modify independence and exclusion (which isn't all that surprising), but we also have to introduce new types of first stage and common support assumptions
+\item Assume conditional independence since we're controlling for X, exclusion conditional on X, positive correlation with covariates and treatment
+\item Common support assumptions: there are units with $Z=1$ across distribution of X and units in both treatment and control across X 
+\item The last two parts of that requires that there is variation in the instrument as well as a distinct number of compliers and defiers at every value of covariates
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{2SLS estimand with covariates}
+
+If you assume this and monotonicity, then Sloczyn'ski (2021),  Angrist and Imbens (1995) and Kolesar 2013) shows that a saturated 2SLS model identifies a convex combination of conditional LATEs with weights equal to the conditional variance of the first stage
+\begin{eqnarray*}
+\delta_{2SLS} = \frac{E[\sigma^2(X) \cdot \tau(X) ]}{E[\sigma^2(X)]}
+\end{eqnarray*}where $\sigma^2$ is $E \bigg [ (E[D|X,Z] - E[D|X] )^2 | X \bigg ]$ and $\tau(x)$ is the conditional LATE.  Notice the variances weighting the conditional LATEs
+
+\end{frame}
+
+
+
+\begin{frame}{Covariates in 2SLS models}
+
+\begin{itemize}
+\item So the Angrist and Imbens (1995) approach to interacting the instrument with all possible dummies combining covariates in a saturated 2SLS model is not only sufficient to recover weighted combination of LATEs -- it's also necessary
+\item But though Angrist and Imbens (1995) did it this way, it's very rare to see covariates controlled for in a nonparametric way like this because overidentification with 2SLS raises issues with weak instruments
+\end{itemize}
+
+\begin{quote}
+`` Bound, Jaeger and Baker (1995) write, "[our results] indicate that the common practice of adding interaction terms as excluded instruments may exacerbate the [weak instruments] problem.''
+\end{quote}
+\begin{itemize}
+\item Another possibility is to run first stages for every value of X combination (these get huge quickly) and weight them so as to avoid curse of dimensionality issues
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Saturate and weight}
+
+\begin{itemize}
+\item Only one that isn't is the saturate and weight method which requires interacting dummies for values of continuous $X_k$ with all $X_{k'}$ which in a finite sample runs into curse of dimensionality
+\item Some cells won't have any variation in $Z$ conditional on $X$
+\item They show it's necessary and sufficient for estimate to be weighted average over all individual LATEs, otherwise negative weights enter
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Covariates going forward}
+
+\begin{itemize}
+\item When all covariates are discrete, then the Angrist and Imbens (1995) saturated method recovers convex combination of conditional LATEs
+\item 2SLS will in general reflect treatment effects for compliers and always/never takers, and some of the treatment effects for the always/never-takers will necessarily be negatively weighted
+\item Sloczyn'ski (2021) introduces a new procedure called ``reordered IV'' but it doesn't guarantee that the resulting estimand will be similar to the unconditional LATE
+\item There are a variety of alternatives to 2SLS like Abadie (2003), which uses a propensity score (for Z) to construct ``kappa weights'' 
+\end{itemize}
+
+\end{frame}
+
+	
+
+
+
+
 \begin{frame}{Concluding remarks}
 
 	\begin{itemize}
@@ -3203,10 +3865,13 @@ What assumptions do we need?
 	\item Heckman and Vytacil (2005, 2006, 2007, etc.) show that all policy relevant parameters (e.g., ATE, ATT, ATU) can be reconstructed using weighted averages over the MTE
    	\item Technically you can identify LATE with average monotonicity, but you need strict for MTE
     	\item Additive separability of treatment effects (i.e., unobserved plus observed heterogeneity)
+	\item Additive separability means that the treatment effect can be separated into two components: the observed heterogeneity (covariates) and the unobserved heterogeneity
     	\item Only required if not full support, and we don't have full support
 	\end{itemize}
 
 \end{frame}
+
+
 
 \begin{frame}{Marginal treatment effects}
 

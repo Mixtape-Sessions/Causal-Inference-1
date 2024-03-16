@@ -27,7 +27,7 @@ reg earnings treat age gpa, robust
 
 * FWL auxilary regression
 reg treat age gpa, robust
-predict treat_hat
+predict treat_hat // propensity score but estimated with OLS so propensity scores will be (some) outside of the interval of 0 and 1
 gen treat_tilde = treat - treat_hat
 reg earnings treat_tilde, robust
 
