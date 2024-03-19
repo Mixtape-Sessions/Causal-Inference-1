@@ -1,4 +1,11 @@
-* Selection on y0 
+********************************************************************************
+* name: selection_examples.do
+* author: scott cunningham (baylor)
+* description: illustrating three forms of selection 
+* last updated: tuesday march 19, 2024
+********************************************************************************
+
+* Selection on y0: independence of y1 with respect to d, y1 _||_ d
 clear
 set obs 1000000
 
@@ -46,7 +53,7 @@ su sdo ate att atu // when treatment is independent of y1, SDO = ATU
 reg y d // sdo is the coefficient on treatment
 
 
-* selection on y1: y0 _||_ d
+* selection on y1: independnece of y0 with respect to d, y0 _||_ d
 clear
 set obs 1000000
 
@@ -92,11 +99,11 @@ egen y_0 = min(temp_0)
 gen sdo = y_1-y_0
 
 su sdo ate att atu
-reg y d // sdo is coeffic
+reg y d // sdo is coefficient on treatment
 
 
 
-* selection on delta = y1-y0
+* selection on delta = y1-y0, no independence (selection on treatment gains)
 clear
 set obs 1000000
 
@@ -109,6 +116,12 @@ gen delta = y1-y0
 
 gen 	d=0
 replace d=1 if delta>=50
+
+* Create the aggregate conditional causal effects
+egen ate = mean(delta)
+egen att = mean(delta) if d==1
+egen atu = mean(delta) if d==0
+su ate-atu
 
 * Check for independence with respect to y0
 summarize y0 if d==0
@@ -126,5 +139,15 @@ summarize delta if d==1
 * switching equation
 gen y=d*y1 + (1-d)*y0
 
+egen temp_1 = mean(y) if d==1
+egen temp_0 = mean(y) if d==0
+
+egen y_1 = min(temp_1)
+egen y_0 = min(temp_0)
+
+gen sdo = y_1-y_0
+
+su sdo ate att atu
+reg y d // sdo is coefficient on treatment
 
 

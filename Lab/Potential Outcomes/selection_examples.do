@@ -1,4 +1,11 @@
-* Selection on y0 
+********************************************************************************
+* name: selection_examples.do
+* author: scott cunningham (baylor)
+* description: illustrating three forms of selection 
+* last updated: tuesday march 19, 2024
+********************************************************************************
+
+* Selection on y0: independence of y1 with respect to d, y1 _||_ d
 clear
 set obs 1000000
 
@@ -46,7 +53,7 @@ su sdo ate att atu // when treatment is independent of y1, SDO = ATU
 reg y d // sdo is the coefficient on treatment
 
 
-* selection on y1: y0 _||_ d
+* selection on y1: independnece of y0 with respect to d, y0 _||_ d
 clear
 set obs 1000000
 
@@ -96,7 +103,7 @@ reg y d // sdo is coefficient on treatment
 
 
 
-* selection on delta = y1-y0
+* selection on delta = y1-y0, no independence (selection on treatment gains)
 clear
 set obs 1000000
 
