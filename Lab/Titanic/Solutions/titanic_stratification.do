@@ -1,4 +1,5 @@
 * Stratification weighted estimates of the average causal effect of first class on surviving the Titanic sinking
+
 clear
 capture log close
 use https://github.com/scunning1975/mixtape/raw/master/titanic.dta, clear
