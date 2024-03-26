@@ -800,6 +800,7 @@ Talent and beauty can become correlated even though they are independent
 
 
 
+\subsection{What if you don't know the DAG?}
 
 \begin{frame}{Contrast this with ordinary practices}
 
@@ -841,322 +842,49 @@ Talent and beauty can become correlated even though they are independent
 \begin{itemize}
 \item Covariates should not be affected by the treatment, so examining them as falsifications can help establish the credibility of unconfoundedness
 \item Imbens and Rubin (2015) suggested using the lagged outcome (pre-treatment) as a way of checking, as those have similar confounder structures
-\item Falsificationss too: One study questioned a finding that obesity was contagious in social networks by estimating the same model on things that cannot be contagious like acne, headaches and height and found the same things (likely confounding existed)
+\item Falsifications too: One study questioned a finding that obesity was contagious in social networks by estimating the same model on things that cannot be contagious like acne, headaches and height and found the same things (likely confounding existed)
 \end{itemize}
 
 \end{frame}
+
+
 
 
 
 
 \section{Unconfoundedness and Ignorable Treatment Assignment}
 
-\subsection{Motivating estimation with an example}
 
+\subsection{Aggregate target parameters}
 
 \begin{frame}{Shifting gears}
 
 \begin{itemize}
 \item Having reviewed the fundamentals of DAGs, we will now move into the practical realm
-\item You have a non-experimental study.  You need to control for variables, but which ones?
-\item Let's work through an example together: the sinking of the Titanic
+\item You have a non-experimental study.  
+\item You have drawn your DAG or you have convinced yourself of your controls
+\item We now discuss parameters, assumptions and estimation
 \end{itemize}
 
 \end{frame}
 
 
 
-
-\begin{frame}{Titanic example and a simple DAG}
+\begin{frame}{Step 1: Pick the causal parameter of interest}
 
 \begin{itemize}
-
-\item What if we wanted to know the causal effect of being seated in first class (D) on survival (Y) in the sinking of the Titanic cruiser in the early 20th century?  
-\item Domain knowledge: as the Titanic sank, the captain called for women (W) and children (D) to go first
-
-\end{itemize}
-
-\end{frame}
-
-
-
-
-\begin{frame}{Titanic DAG}
-
-\begin{figure}
-\begin{center}
-\caption{Titanic sinking as a DAG}
-\begin{tikzpicture}[node distance=2cm]
-% nodes %
-\node[text centered] (d) {$D$};
-\node[below left of = d, text centered] (c) {$C$};
-\node[above left of = d, text centered] (w) {$W$};
-\node[right of = d, text centered] (y) {$Y$};
-% edges %
-\draw[->, line width= 1] (d) -- (y);
-\draw[->, line width= 1] (c) -- (d);
-\draw[->, line width= 1] (w) -- (d);
-\draw[->, line width= 1] (c) -- (y);
-\draw[->, line width= 1] (w) -- (y);
-\end{tikzpicture}
-\label{fig:backdoor_dag}
-\end{center}
-\end{figure}
-
-\bigskip
-
-Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor paths'' 
-
-\end{frame}
-
-
-
-\begin{frame}{Simple DAG}
-
-\begin{figure}
-\begin{center}
-\caption{A simple DAG illustrating selection on observables.}
-\begin{tikzpicture}[node distance=2cm]
-% nodes %
-\node[text centered] (d) {$D$};
-\node[below left of = d, text centered] (c) {$C$};
-\node[above left of = d, text centered] (w) {$W$};
-\node[right of = d, text centered] (y) {$Y$};
-% edges %
-\draw[->, line width= 1] (d) -- (y);
-\draw[->, line width= 1] (c) -- (d);
-\draw[->, line width= 1] (w) -- (d);
-\draw[->, line width= 1] (c) -- (y);
-\draw[->, line width= 1] (w) -- (y);
-\end{tikzpicture}
-\end{center}
-\end{figure}
-
-\bigskip
-
-\begin{enumerate}
-\item[1. ] $D\rightarrow Y$, the direct edge representing a causal effect with associated causal parameter like the ATE, ATT, etc. 
-\end{enumerate}
-\end{frame}
-
-
-
-\begin{frame}{Simple DAG}
-
-\begin{figure}
-\begin{center}
-\caption{The same simple DAG illustrating selection on observables only with the direct edge from $D$ to $Y$ deleted and backdoor $W$ blocked.}
-\begin{tikzpicture}[node distance=2cm]
-% nodes %
-\node[text centered] (d) {$D$};
-\node[below left of = d, text centered] (c) {$C$};
-\node[above left of = d, text centered] (w) {$\mybox{W}$};
-\node[right of = d, text centered] (y) {$Y$};
-% edges %
-\draw[->, line width= 1] (d) -- (y);
-\draw[->, line width= 1] (c) -- (d);
-\draw[->, line width= 1] (c) -- (y);
-\end{tikzpicture}
-\end{center}
-\end{figure}
-
-\bigskip
-
-\begin{enumerate}
-\item[2. ] $D\leftarrow \mybox{W} \rightarrow Y$ is a backdoor from $D$ to $Y$ through $W$. \textcolor{purple}{Block it}
-\end{enumerate}
-\end{frame}
-
-
-
-\begin{frame}{Remaining variation after blocking}
-
-\begin{figure}
-\begin{center}
-\caption{Visualization of Backdoor Criterion}
-\begin{tikzpicture}[node distance=2cm]
-% nodes %
-\node[text centered] (d) {$D$};
-\node[below left of = d, text centered] (c) {$\mybox{C}$};
-\node[above left of = d, text centered] (w) {$\mybox{W}$};
-\node[right of = d, text centered] (y) {$Y$};
-% edges %
-\draw[->, line width= 1] (d) -- (y);
-\end{tikzpicture}
-\end{center}
-\end{figure}
-
-\bigskip
-
-\begin{enumerate}
-\item[2. ] $D\leftarrow \mybox{W} \rightarrow Y$ is a backdoor from $D$ to $Y$ through $W$. \textcolor{purple}{Block it}
-\item[3. ] $D\leftarrow \mybox{C} \rightarrow Y$ is a backdoor from $D$ to $Y$ through $C$. \textcolor{purple}{Block it}
-\end{enumerate}
-\end{frame}
-
-
-\begin{frame}{Definition of Known and Quantified Confounders}
-	
-	
-	\begin{block}{Definition of a Known and Quantified Confounder}
-	Variable $C$ is a \emph{known} and \emph{quantified} \emph{confounders} if the researcher believes it causes units to select into treatment ($C \rightarrow D$) and also independently determine outcome $Y$, or $C \rightarrow Y$. Confounders are always known, which requires prior knowledge. And to be quantified, they must be correctly measured in your dataset.
-	\end{block}
-	
-	
-\end{frame}
-
-\begin{frame}{Known and Quantified Confounder}
-
+\item Which population are you interested in?  
 	\begin{itemize}
-	\item Confounders may or may not be observed, but they must be known if they are confounders as confounders create backdoor paths from $D$ to $Y$
-	\item Visually, solid lines means they are ``quantified'' (i.e., in the data), whereas dashed lines mean they are either not defined correctly or not in the dataset (``unobserved'')
-	\item Backdoor criterion is appropriate only for known and quantified confounders -- if either known or quantified is missing, this material today is not to be used
+	\item Everyone: ATE
+	\item Just the treated units: ATT
+	\item The control units only: ATU
 	\end{itemize}
-
-\end{frame}
-
-\begin{frame}{DAG tells us what we need to condition on}
-
-\begin{itemize}
-
-\item If we ``block'' on $C$ and $W$, then the \emph{only} explanation of why $D$ and $Y$ are then correlated is causal
-\item Depending on the model we estimate, and explicit assumptions made about potential outcomes, then we are able to identify an aggregate causal parameter
-\item Let us now call $C$ and $W$ ``known and quantified confounders'' because the model said these were necessary, they were observed (no dashed line) and they were confounders
-\item Let's add two more variables -- one we discussed already, but one we haven't
+\item Interestingly, controlling for covariates can identify any of those (unlike IV which only identifies the LATE, diff-in-diff and synth which only identify the ATT)
+\item But the assumptions and specifications required to do so differ, so you have to start step 1 and decide which population and therefore which causal parameter you are targeting
 
 \end{itemize}
 
 \end{frame}
-
-
-
-\begin{frame}{Modification of the original DAG}
-
-\begin{figure}
-\begin{center}
-\caption{A DAG illustrating confounders ($W$ and $C$) versus colliders ($B$) versus exogenous covariates $(X)$.}
-\begin{tikzpicture}[node distance=2cm]
-% nodes %
-\node[text centered] (d) {$D$};
-\node[below left of = d, text centered] (c) {$\mybox{C}$};
-\node[above left of = d, text centered] (w) {$\mybox{W}$};
-\node[above of = y, text centered] (x) {$X$};
-\node[below of = y, text centered] (b) {$B$};
-\node[right of = d, text centered] (y) {$Y$};
-% edges %
-\draw[->, line width= 1] (d) -- (y);
-\draw[->, line width= 1] (d) -- (b);
-\draw[->, line width= 1] (y) -- (b);
-\draw[->, line width= 1] (x) -- (y);
-\end{tikzpicture}
-\label{fig:backdoor_dag}
-\end{center}
-\end{figure}
-
-\begin{enumerate}
-\item[4. ] Conditional on $C$ and $W$, the collider path $D \rightarrow B \leftarrow Y$ is closed by the collider $B$
-\item[5. ] And $X$ never appears on any of our backdoor paths, so it is irrelevant, but it may be useful to include anyway
-\end{enumerate}
-
-
-\end{frame}
-
-
-
-
-\begin{frame}{Covariate}
-	
-	
-	\begin{block}{Definition of a Covariate}
-	Variable $X$ is a covariate if it causes $Y$ but does not cause the treatment status $D$.
-	\end{block}
-	
-	\begin{itemize}
-	\item Think of it as explaining the outcome, but not correlated with the treatment variable (therefore it's in the error term of a regression model)
-	\item Including $X$ in a model can increase precision of estimates of $D$ on $Y$ simply by reducing residual variance, but should have no effect on point estimates
-	\item For us today, I am going to try to distinguish between ``confounders'' which are needed to estimate causal effects and ``covariates'' which help with precision 
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{Modification of the original DAG}
-
-\begin{figure}
-\begin{center}
-\caption{A DAG illustrating confounders ($W$ and $C$) versus colliders ($B$) versus exogenous covariates $(X)$.}
-\begin{tikzpicture}[node distance=2cm]
-% nodes %
-\node[text centered] (d) {$D$};
-\node[below left of = d, text centered] (c) {$\mybox{C}$};
-\node[above left of = d, text centered] (w) {$\mybox{W}$};
-\node[above of = y, text centered] (x) {$X$};
-\node[below of = y, text centered] (b) {$B$};
-\node[right of = d, text centered] (y) {$Y$};
-% edges %
-\draw[->, line width= 1] (d) -- (y);
-\draw[->, line width= 1] (d) -- (b);
-\draw[->, line width= 1] (y) -- (b);
-\draw[->, line width= 1] (x) -- (y);
-\end{tikzpicture}
-\label{fig:backdoor_dag}
-\end{center}
-\end{figure}
-
-\begin{enumerate}
-\item[5. ] You cannot get from $D$ to $Y$ via $B$ so it is a collider, but if you control for it, that path opens up and introduces selection bias (``bad controls'')
-\end{enumerate}
-
-
-\end{frame}
-
-\begin{frame}{Two useful readings}
-
-\begin{enumerate}
-\item Cunningham (2023), ``Which variables do I need to control for?'' Substack post, \url{https://causalinf.substack.com/p/which-variables-do-i-need-to-control}
-\item Cinelli, Forney, and Pearl (2022), ``A Crash Course in Good and Bad Controls'', forthcoming in \emph{Journal Sociological Methods and Research} (previously technical report R-493), available in our readings directory
-\end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}{}
-
-  \begin{figure}
-    \includegraphics[scale=0.25]{./lecture_includes/scott_controls}
-  \end{figure}
-
-\end{frame}
-
-
-\begin{frame}{}
-
-  \begin{figure}
-    \includegraphics[scale=0.25]{./lecture_includes/crash_course}
-  \end{figure}
-
-\end{frame}
-
-
-
-
-
-\subsection{Aggregate target parameters}
-
-
-\begin{frame}{Defining the target parameter comes first}
-
-\begin{itemize}
-\item So you want to estimate causal effects using ``controls'' -- remember our steps, though -- step 1 is to define the parameter (e.g., $ATE$, $ATT$, $ATU$)
-\item Covariate adjustment strategies like regression or matching can identify these, but they aren't the same in non-experimental data if there's heterogenous treatment effects (i.e., $\delta_i$ differs for different $i$ people)
-\item So it is imperative up front you decide which aggregate causal parameter you're going to be trying to estimate as each one has different assumptions and different methodologies (as well as interpretations)
-
-\end{itemize}
-
-\end{frame}
-
-
-
-\subsection{Assumptions}
 
 
 \begin{frame}{Aggregate causal parameters have missing potential outcomes}
@@ -1172,6 +900,10 @@ Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor pat
 
 
 \end{frame}
+
+\subsection{Assumptions}
+
+
 
 
 \begin{frame}{Assumptions}
@@ -4649,6 +4381,277 @@ Our focus will be on the last estimate.  Question is what is this?
 
 \footnotesize
 $X$ is pre-treatment, but if you conditioned on it, then $D\leftarrow U1 \rightarrow \mbox{X} \leftarrow U2 \rightarrow Y$ and $X$ is a collider. Colliders take strange forms, so the conditioning set \emph{must} be thoughtfully chosen based on being a strong predictor of $Y^0$, preferably based on expert knowledge and not a kitchen sink of all available regressors
+
+\end{frame}
+
+
+
+\begin{frame}{Titanic example and a simple DAG}
+
+\begin{itemize}
+
+\item What if we wanted to know the causal effect of being seated in first class (D) on survival (Y) in the sinking of the Titanic cruiser in the early 20th century?  
+\item Domain knowledge: as the Titanic sank, the captain called for women (W) and children (D) to go first
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Titanic DAG}
+
+\begin{figure}
+\begin{center}
+\caption{Titanic sinking as a DAG}
+\begin{tikzpicture}[node distance=2cm]
+% nodes %
+\node[text centered] (d) {$D$};
+\node[below left of = d, text centered] (c) {$C$};
+\node[above left of = d, text centered] (w) {$W$};
+\node[right of = d, text centered] (y) {$Y$};
+% edges %
+\draw[->, line width= 1] (d) -- (y);
+\draw[->, line width= 1] (c) -- (d);
+\draw[->, line width= 1] (w) -- (d);
+\draw[->, line width= 1] (c) -- (y);
+\draw[->, line width= 1] (w) -- (y);
+\end{tikzpicture}
+\label{fig:backdoor_dag}
+\end{center}
+\end{figure}
+
+\bigskip
+
+Write down all paths, both direct from $D$ to $Y$ and indirect or ``backdoor paths'' 
+
+\end{frame}
+
+
+
+\begin{frame}{Simple DAG}
+
+\begin{figure}
+\begin{center}
+\caption{A simple DAG illustrating selection on observables.}
+\begin{tikzpicture}[node distance=2cm]
+% nodes %
+\node[text centered] (d) {$D$};
+\node[below left of = d, text centered] (c) {$C$};
+\node[above left of = d, text centered] (w) {$W$};
+\node[right of = d, text centered] (y) {$Y$};
+% edges %
+\draw[->, line width= 1] (d) -- (y);
+\draw[->, line width= 1] (c) -- (d);
+\draw[->, line width= 1] (w) -- (d);
+\draw[->, line width= 1] (c) -- (y);
+\draw[->, line width= 1] (w) -- (y);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\bigskip
+
+\begin{enumerate}
+\item[1. ] $D\rightarrow Y$, the direct edge representing a causal effect with associated causal parameter like the ATE, ATT, etc. 
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{Simple DAG}
+
+\begin{figure}
+\begin{center}
+\caption{The same simple DAG illustrating selection on observables only with the direct edge from $D$ to $Y$ deleted and backdoor $W$ blocked.}
+\begin{tikzpicture}[node distance=2cm]
+% nodes %
+\node[text centered] (d) {$D$};
+\node[below left of = d, text centered] (c) {$C$};
+\node[above left of = d, text centered] (w) {$\mybox{W}$};
+\node[right of = d, text centered] (y) {$Y$};
+% edges %
+\draw[->, line width= 1] (d) -- (y);
+\draw[->, line width= 1] (c) -- (d);
+\draw[->, line width= 1] (c) -- (y);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\bigskip
+
+\begin{enumerate}
+\item[2. ] $D\leftarrow \mybox{W} \rightarrow Y$ is a backdoor from $D$ to $Y$ through $W$. \textcolor{purple}{Block it}
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{Remaining variation after blocking}
+
+\begin{figure}
+\begin{center}
+\caption{Visualization of Backdoor Criterion}
+\begin{tikzpicture}[node distance=2cm]
+% nodes %
+\node[text centered] (d) {$D$};
+\node[below left of = d, text centered] (c) {$\mybox{C}$};
+\node[above left of = d, text centered] (w) {$\mybox{W}$};
+\node[right of = d, text centered] (y) {$Y$};
+% edges %
+\draw[->, line width= 1] (d) -- (y);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\bigskip
+
+\begin{enumerate}
+\item[2. ] $D\leftarrow \mybox{W} \rightarrow Y$ is a backdoor from $D$ to $Y$ through $W$. \textcolor{purple}{Block it}
+\item[3. ] $D\leftarrow \mybox{C} \rightarrow Y$ is a backdoor from $D$ to $Y$ through $C$. \textcolor{purple}{Block it}
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Definition of Known and Quantified Confounders}
+	
+	
+	\begin{block}{Definition of a Known and Quantified Confounder}
+	Variable $C$ is a \emph{known} and \emph{quantified} \emph{confounders} if the researcher believes it causes units to select into treatment ($C \rightarrow D$) and also independently determine outcome $Y$, or $C \rightarrow Y$. Confounders are always known, which requires prior knowledge. And to be quantified, they must be correctly measured in your dataset.
+	\end{block}
+	
+	
+\end{frame}
+
+\begin{frame}{Known and Quantified Confounder}
+
+	\begin{itemize}
+	\item Confounders may or may not be observed, but they must be known if they are confounders as confounders create backdoor paths from $D$ to $Y$
+	\item Visually, solid lines means they are ``quantified'' (i.e., in the data), whereas dashed lines mean they are either not defined correctly or not in the dataset (``unobserved'')
+	\item Backdoor criterion is appropriate only for known and quantified confounders -- if either known or quantified is missing, this material today is not to be used
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{DAG tells us what we need to condition on}
+
+\begin{itemize}
+
+\item If we ``block'' on $C$ and $W$, then the \emph{only} explanation of why $D$ and $Y$ are then correlated is causal
+\item Depending on the model we estimate, and explicit assumptions made about potential outcomes, then we are able to identify an aggregate causal parameter
+\item Let us now call $C$ and $W$ ``known and quantified confounders'' because the model said these were necessary, they were observed (no dashed line) and they were confounders
+\item Let's add two more variables -- one we discussed already, but one we haven't
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Modification of the original DAG}
+
+\begin{figure}
+\begin{center}
+\caption{A DAG illustrating confounders ($W$ and $C$) versus colliders ($B$) versus exogenous covariates $(X)$.}
+\begin{tikzpicture}[node distance=2cm]
+% nodes %
+\node[text centered] (d) {$D$};
+\node[below left of = d, text centered] (c) {$\mybox{C}$};
+\node[above left of = d, text centered] (w) {$\mybox{W}$};
+\node[above of = y, text centered] (x) {$X$};
+\node[below of = y, text centered] (b) {$B$};
+\node[right of = d, text centered] (y) {$Y$};
+% edges %
+\draw[->, line width= 1] (d) -- (y);
+\draw[->, line width= 1] (d) -- (b);
+\draw[->, line width= 1] (y) -- (b);
+\draw[->, line width= 1] (x) -- (y);
+\end{tikzpicture}
+\label{fig:backdoor_dag}
+\end{center}
+\end{figure}
+
+\begin{enumerate}
+\item[4. ] Conditional on $C$ and $W$, the collider path $D \rightarrow B \leftarrow Y$ is closed by the collider $B$
+\item[5. ] And $X$ never appears on any of our backdoor paths, so it is irrelevant, but it may be useful to include anyway
+\end{enumerate}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Covariate}
+	
+	
+	\begin{block}{Definition of a Covariate}
+	Variable $X$ is a covariate if it causes $Y$ but does not cause the treatment status $D$.
+	\end{block}
+	
+	\begin{itemize}
+	\item Think of it as explaining the outcome, but not correlated with the treatment variable (therefore it's in the error term of a regression model)
+	\item Including $X$ in a model can increase precision of estimates of $D$ on $Y$ simply by reducing residual variance, but should have no effect on point estimates
+	\item For us today, I am going to try to distinguish between ``confounders'' which are needed to estimate causal effects and ``covariates'' which help with precision 
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}{Modification of the original DAG}
+
+\begin{figure}
+\begin{center}
+\caption{A DAG illustrating confounders ($W$ and $C$) versus colliders ($B$) versus exogenous covariates $(X)$.}
+\begin{tikzpicture}[node distance=2cm]
+% nodes %
+\node[text centered] (d) {$D$};
+\node[below left of = d, text centered] (c) {$\mybox{C}$};
+\node[above left of = d, text centered] (w) {$\mybox{W}$};
+\node[above of = y, text centered] (x) {$X$};
+\node[below of = y, text centered] (b) {$B$};
+\node[right of = d, text centered] (y) {$Y$};
+% edges %
+\draw[->, line width= 1] (d) -- (y);
+\draw[->, line width= 1] (d) -- (b);
+\draw[->, line width= 1] (y) -- (b);
+\draw[->, line width= 1] (x) -- (y);
+\end{tikzpicture}
+\label{fig:backdoor_dag}
+\end{center}
+\end{figure}
+
+\begin{enumerate}
+\item[5. ] You cannot get from $D$ to $Y$ via $B$ so it is a collider, but if you control for it, that path opens up and introduces selection bias (``bad controls'')
+\end{enumerate}
+
+
+\end{frame}
+
+\begin{frame}{Two useful readings}
+
+\begin{enumerate}
+\item Cunningham (2023), ``Which variables do I need to control for?'' Substack post, \url{https://causalinf.substack.com/p/which-variables-do-i-need-to-control}
+\item Cinelli, Forney, and Pearl (2022), ``A Crash Course in Good and Bad Controls'', forthcoming in \emph{Journal Sociological Methods and Research} (previously technical report R-493), available in our readings directory
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{}
+
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/scott_controls}
+  \end{figure}
+
+\end{frame}
+
+
+\begin{frame}{}
+
+  \begin{figure}
+    \includegraphics[scale=0.25]{./lecture_includes/crash_course}
+  \end{figure}
 
 \end{frame}
 
