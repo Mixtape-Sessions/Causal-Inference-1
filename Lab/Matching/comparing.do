@@ -48,11 +48,20 @@
 	gen att = `att'
 
 	* Switching equation creates a "realized outcome" based on treatment assignment
+	
 	gen earnings = treat*y1 + (1-treat)*y0
 
-	* Regression
+	* Regression assuming constant treatment effects
 	
 	reg earnings age gpa age_sq gpa_sq interaction treat, robust	
+	
+	* Nearest neighbor matching without and with bias adjustment
+
+	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) 
+
+	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction)
+
+
 	
 	* Regression: Fully interacted regression model
 	
@@ -134,9 +143,4 @@ teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet
 su delta if treat==1
 su treat4
 
-* Nearest neighbor matching without and with bias adjustment
-
-teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) 
-
-teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction)
 
