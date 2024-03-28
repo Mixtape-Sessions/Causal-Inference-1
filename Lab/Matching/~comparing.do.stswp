@@ -1,4 +1,4 @@
-* Simulated dataset with imbalance in age and gpa, both of which are confounders
+* Simulated dataset with imbalance in age and gpa, both of which are co
 
 	clear 
     drop _all 
