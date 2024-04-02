@@ -158,6 +158,7 @@ reg y d // sdo is coefficient on treatment
 
 
 
+<<<<<<< HEAD
 
 
 * randomized experiment: no selection
@@ -169,11 +170,25 @@ set obs 1000000
 gen 	d=0
 replace d=1 in 1/500000
 
+=======
+* Randomization
+clear
+set obs 1000000
+
+>>>>>>> fe9a869de6559da7756e41a068eea057843e6ad5
 gen id = _n
 gen y0 = 100 + rnormal(0,20)
 gen y1 = 150 + rnormal(0,15)
 gen delta = y1-y0
 
+<<<<<<< HEAD
+=======
+gen random=rnormal(0,1)
+su random
+gen d = 0
+replace d =1 if random>=`r(mean)'
+
+>>>>>>> fe9a869de6559da7756e41a068eea057843e6ad5
 * Create the aggregate conditional causal effects
 egen ate = mean(delta)
 egen att = mean(delta) if d==1
@@ -208,3 +223,7 @@ su sdo ate att atu
 reg y d // sdo is coefficient on treatment
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fe9a869de6559da7756e41a068eea057843e6ad5
