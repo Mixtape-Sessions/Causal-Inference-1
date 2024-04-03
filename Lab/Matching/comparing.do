@@ -51,19 +51,21 @@
 	
 	gen earnings = treat*y1 + (1-treat)*y0
 
-	* Regression assuming constant treatment effects
+	* 1) Standard regression assuming constant treatment effects
 	
 	reg earnings age gpa age_sq gpa_sq interaction treat, robust	
 	
-	* Nearest neighbor matching without and with bias adjustment
+	* 2) Nearest neighbor matching without 
 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) 
+
+	* 3) Nearest neighbor matching with bias adjustment/correction
 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction)
 
 
-	
-	* Regression: Fully interacted regression model
+	* 4) Introduction to regression adjustment (the long way, then the short way)
+	* First estimate the fully interacted regression model (ideally saturated)
 	
 	#delimit ;
 	regress earnings 	i.treat##c.age 
@@ -77,7 +79,7 @@
 	scalar ate2 = `ate2'
 	gen ate2=`ate2'
 
-	* Obtain the coefficients
+	* Second obtain the coefficients
 	local treat_coef 		= _b[1.treat] // 0
 	local age_treat_coef 	= _b[1.treat#c.age] // 1
 	local agesq_treat_coef 	= _b[1.treat#c.age_sq] // 2
@@ -86,7 +88,7 @@
 	local age_gpa_coef 		= _b[1.treat#c.age#c.gpa] // 5
 	
 
-	* Save the coefficients as scalars and generate variables
+	* Third save the coefficients as scalars and generate variables
 	scalar 	treat_coef = `treat_coef'
 	gen 	treat_coef_var = `treat_coef' // 0
 
@@ -106,7 +108,7 @@
 	gen 	age_gpa_coef_var = `age_gpa_coef' // 5
 		
 	
-	* Calculate the mean of the covariates
+	* Fourth, calculate the mean of the covariates in the treatment sample only
 	su 	age if treat==1
 	local mean_age = `r(mean)'
 	gen mean_age = `mean_age'
@@ -128,7 +130,7 @@
 	gen mean_agegpa = `mean_agegpa'
 
 	
-* Calculate the ATT
+* Fifth, calculate the ATT by taking a sum of the products
 gen treat4 = 	treat_coef_var + /// 0
                 age_treat_coef_var * mean_age + /// 1
                 agesq_treat_coeff_var * mean_agesq + /// 2
@@ -136,7 +138,7 @@ gen treat4 = 	treat_coef_var + /// 0
                 gpasq_treat_coef_var * mean_gpasq + /// 4
                 age_gpa_coef_var * mean_agegpa  
 
-* Or use RA in teffects
+* Or you take the short way and use -teffects ra- 
 
 teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet
 
