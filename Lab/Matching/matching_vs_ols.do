@@ -150,7 +150,7 @@ gen treat4 = 	treat_coef_var + /// 1
 sum delta if treat==1
 sum treat4 // regression adjustment "the long way"
 
-	* Regression adjustment "the medium way"
+	* Regression adjustment "the medium way" (Oaxaca-Blinder method)
 	
 	regress earnings age age_sq gpa gpa_sq c.age##c.gpa if treat == 0
 	predict y0_hat, xb
