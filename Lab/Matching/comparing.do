@@ -47,7 +47,7 @@
 
 	* Modeling potential outcomes as functions of X but differently depending on Y0 or Y1 -- "heterogeneity in the potential outcomes with respect to the covariates"
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + e
-	gen y1 = y0 + 2500 + 100 * age + 1100 * gpa
+	gen y1 = y0 + 2500 + 100 * age + 1100 * gpa // heterogeneous treatment effects with respect to age and gpa
 	gen delta = y1 - y0
 
 	su delta 				// ATE = 2500
