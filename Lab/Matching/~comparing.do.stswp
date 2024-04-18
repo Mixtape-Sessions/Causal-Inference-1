@@ -155,6 +155,7 @@ teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet  // unbia
 su delta if treat==1
 su treat4
 
+**# Bookmark #1
 	* 5) Inverse probability weighting
 
 	teffects ipw (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // biased
@@ -165,7 +166,7 @@ su treat4
 	
 	* 7) Propensity score matching
 	
-	teffects psmatch (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // biased
+	teffects psmatch (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // unbiased
 
 	
 	

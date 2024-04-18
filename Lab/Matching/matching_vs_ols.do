@@ -44,7 +44,7 @@
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + rnormal(0,5)
 	label variable y0 "Earnings if you do not get a masters"
 	
-	gen y1 = y0 + 2500 + 100 * age + 5000 * gpa
+	gen y1 = y0 + 2500 + 100 * age + 4000 * gpa
 	label variable y1 "Earnings if you get a masters"
 
 	* Individual treatment effects
@@ -53,15 +53,16 @@
 
 	* Aggregate causal parameters
 	su delta // ATE = 2500
-	su delta if treat==1 // ATT = 1633.46
+	su delta if treat==1 // ATT = 1936.37
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
 
+	* Use the switching equation to assign y1 or y0 to a unit based on their treatment status
 	gen earnings = treat*y1 + (1-treat)*y0
 
 	* Nearest neighbor matching without bias adjustment
-	teffects nnmatch (earnings age age_sq gpa gpa_sq interaction) (treat), atet nn(1) metric(euclidean)
+	teffects nnmatch (earnings age age_sq gpa gpa_sq interaction) (treat), atet nn(1) metric(euclidean) gen(match)
 	
 	* Nearest neighbor matching with bias adjustment
 	teffects nnmatch (earnings age age_sq gpa gpa_sq interaction) (treat), atet nn(1) metric(euclidean) biasadj(age age_sq gpa gpa_sq interaction)
@@ -150,7 +151,7 @@ gen treat4 = 	treat_coef_var + /// 1
 sum delta if treat==1
 sum treat4 // regression adjustment "the long way"
 
-	* Regression adjustment "the medium way" (Oaxaca-Blinder method)
+	* Regression adjustment "the medium way" (Kitagawa-Oaxaca-Blinder method)
 	
 	regress earnings age age_sq gpa gpa_sq c.age##c.gpa if treat == 0
 	predict y0_hat, xb
