@@ -1,4 +1,17 @@
-* Selection on y0 
+********************************************************************************
+* name: selection_examples.do
+* author: scott cunningham (baylor)
+* description: illustrating three forms of selection plus an RCT 
+* last updated: tuesday march 21, 2024
+********************************************************************************
+
+* y0: happiness if you don't go to college
+* y1: happiness if you go to college
+* y1-y0: causal effect of going to college on happiness
+* d: college dummy variable
+* each row is a person
+
+* Selection on y0: independence of y1 with respect to d, y1 _||_ d
 clear
 set obs 1000000
 
@@ -43,9 +56,10 @@ egen y_0 = min(temp_0)
 gen sdo = y_1-y_0
 
 su sdo ate att atu // when treatment is independent of y1, SDO = ATU
+reg y d // sdo is the coefficient on treatment
 
 
-* selection on y1: y0 _||_ d
+* selection on y1: independnece of y0 with respect to d, y0 _||_ d
 clear
 set obs 1000000
 
@@ -91,11 +105,11 @@ egen y_0 = min(temp_0)
 gen sdo = y_1-y_0
 
 su sdo ate att atu
+reg y d // sdo is coefficient on treatment
 
 
 
-
-* selection on delta = y1-y0
+* selection on delta = y1-y0, no independence (selection on treatment gains)
 clear
 set obs 1000000
 
@@ -108,6 +122,12 @@ gen delta = y1-y0
 
 gen 	d=0
 replace d=1 if delta>=50
+
+* Create the aggregate conditional causal effects
+egen ate = mean(delta)
+egen att = mean(delta) if d==1
+egen atu = mean(delta) if d==0
+su ate-atu
 
 * Check for independence with respect to y0
 summarize y0 if d==0
@@ -125,5 +145,85 @@ summarize delta if d==1
 * switching equation
 gen y=d*y1 + (1-d)*y0
 
+egen temp_1 = mean(y) if d==1
+egen temp_0 = mean(y) if d==0
+
+egen y_1 = min(temp_1)
+egen y_0 = min(temp_0)
+
+gen sdo = y_1-y_0
+
+su sdo ate att atu
+reg y d // sdo is coefficient on treatment
 
 
+
+<<<<<<< HEAD
+
+
+* randomized experiment: no selection
+clear
+set obs 1000000
+
+* no selection: (Y0,Y1) _||_ D "independence of treatment"
+
+gen 	d=0
+replace d=1 in 1/500000
+
+=======
+* Randomization
+clear
+set obs 1000000
+
+>>>>>>> fe9a869de6559da7756e41a068eea057843e6ad5
+gen id = _n
+gen y0 = 100 + rnormal(0,20)
+gen y1 = 150 + rnormal(0,15)
+gen delta = y1-y0
+
+<<<<<<< HEAD
+=======
+gen random=rnormal(0,1)
+su random
+gen d = 0
+replace d =1 if random>=`r(mean)'
+
+>>>>>>> fe9a869de6559da7756e41a068eea057843e6ad5
+* Create the aggregate conditional causal effects
+egen ate = mean(delta)
+egen att = mean(delta) if d==1
+egen atu = mean(delta) if d==0
+su ate-atu
+
+* Check for independence with respect to y0
+summarize y0 if d==0
+summarize y0 if d==1 
+
+* check for independence with respect to y1
+
+summarize y1 if d==0
+summarize y1 if d==1
+
+* check for independence with respect to treatment effects
+summarize delta if d==0
+summarize delta if d==1
+
+* switching equation
+gen y=d*y1 + (1-d)*y0
+
+egen temp_1 = mean(y) if d==1
+egen temp_0 = mean(y) if d==0
+
+egen y_1 = min(temp_1)
+egen y_0 = min(temp_0)
+
+gen sdo = y_1-y_0
+
+su sdo ate att atu
+reg y d // sdo is coefficient on treatment
+
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> fe9a869de6559da7756e41a068eea057843e6ad5

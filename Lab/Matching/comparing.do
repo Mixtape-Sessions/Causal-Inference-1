@@ -1,3 +1,5 @@
+* Simulated dataset with imbalance in age and gpa, both of which are confounders
+
 	clear 
     drop _all 
 	set seed 5150
@@ -19,7 +21,17 @@
 	twoway (histogram gpa if treat==1,  color(blue)) ///
        (histogram gpa if treat==0,  ///
 	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
-	   	   
+
+	* Estimate the propensity score
+	logit treat age gpa
+	predict pscore
+	label variable pscore "Propensity score"
+	
+	twoway (histogram pscore if treat==1,  color(red)) ///
+       (histogram pscore if treat==0,  ///
+	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
+  
+	   
 	* Re-center the covariates
 	su age
 	replace age = age - `r(mean)'
@@ -35,7 +47,7 @@
 
 	* Modeling potential outcomes as functions of X but differently depending on Y0 or Y1 -- "heterogeneity in the potential outcomes with respect to the covariates"
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + e
-	gen y1 = y0 + 2500 + 100 * age + 1100 * gpa
+	gen y1 = y0 + 2500 + 100 * age + 1100 * gpa // heterogeneous treatment effects with respect to age and gpa
 	gen delta = y1 - y0
 
 	su delta 				// ATE = 2500
@@ -46,13 +58,24 @@
 	gen att = `att'
 
 	* Switching equation creates a "realized outcome" based on treatment assignment
+	
 	gen earnings = treat*y1 + (1-treat)*y0
 
-	* Regression
+	* 1) Standard regression assuming constant treatment effects
 	
-	reg earnings age gpa age_sq gpa_sq interaction treat, robust	
+	reg earnings age gpa age_sq gpa_sq interaction treat, robust	// biased
 	
-	* Regression: Fully interacted regression model
+	* 2) Nearest neighbor matching without 
+
+	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha)  // biased
+
+	* 3) Nearest neighbor matching with bias adjustment/correction
+
+	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction) // unbiased
+
+
+	* 4) Introduction to regression adjustment (the long way, then the short way)
+	* First estimate the fully interacted regression model (ideally saturated)
 	
 	#delimit ;
 	regress earnings 	i.treat##c.age 
@@ -66,7 +89,7 @@
 	scalar ate2 = `ate2'
 	gen ate2=`ate2'
 
-	* Obtain the coefficients
+	* Second obtain the coefficients
 	local treat_coef 		= _b[1.treat] // 0
 	local age_treat_coef 	= _b[1.treat#c.age] // 1
 	local agesq_treat_coef 	= _b[1.treat#c.age_sq] // 2
@@ -75,7 +98,7 @@
 	local age_gpa_coef 		= _b[1.treat#c.age#c.gpa] // 5
 	
 
-	* Save the coefficients as scalars and generate variables
+	* Third save the coefficients as scalars and generate variables
 	scalar 	treat_coef = `treat_coef'
 	gen 	treat_coef_var = `treat_coef' // 0
 
@@ -95,7 +118,7 @@
 	gen 	age_gpa_coef_var = `age_gpa_coef' // 5
 		
 	
-	* Calculate the mean of the covariates
+	* Fourth, calculate the mean of the covariates in the treatment sample only
 	su 	age if treat==1
 	local mean_age = `r(mean)'
 	gen mean_age = `mean_age'
@@ -117,7 +140,7 @@
 	gen mean_agegpa = `mean_agegpa'
 
 	
-* Calculate the ATT
+* Fifth, calculate the ATT by taking a sum of the products
 gen treat4 = 	treat_coef_var + /// 0
                 age_treat_coef_var * mean_age + /// 1
                 agesq_treat_coeff_var * mean_agesq + /// 2
@@ -125,16 +148,31 @@ gen treat4 = 	treat_coef_var + /// 0
                 gpasq_treat_coef_var * mean_gpasq + /// 4
                 age_gpa_coef_var * mean_agegpa  
 
-* Or use RA in teffects
+* Or you take the short way and use -teffects ra- 
 
-teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet
+teffects ra (earnings age gpa age_sq gpa_sq interaction) (treat), atet  // unbiased
 
 su delta if treat==1
 su treat4
 
-* Nearest neighbor matching without and with bias adjustment
+	* 5) Inverse probability weighting
 
-teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) 
+	teffects ipw (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // biased
 
-teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction)
+	* 6) Inverse probability weighting with an outcome regression model for double robust
+	
+	teffects ipwra (earnings age gpa age_sq gpa_sq interaction) (treat age gpa age_sq gpa_sq interaction, logit), atet // unbiased
+	
+	* 7) Propensity score matching
+	
+	teffects psmatch (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // biased
 
+	
+	
+	* Summarize, standard OLS with heterogenous treatment effects was biased
+	
+	* Nearest neighbor and propensity score weighting was biased
+	
+	* Regression adjustment was unbiased
+	
+	* Nearest neighbor and propensity score weighting with bias adjustment was unbiased
