@@ -12,24 +12,28 @@
 * each row is a person
 
 * Selection on y0: independence of y1 with respect to d, y1 _||_ d
-clear
+clear all
+set seed 1
 set obs 1000000
 
 gen id = _n
 gen y0 = 100 + rnormal(0,20)
 gen y1 = 150 + rnormal(0,15)
 gen delta = y1-y0
+su delta
 
 * selection based on y0: y1 _||_ D
 
 gen 	d=0
-replace d=1 if y0>=100
+replace d=1 if y0<=100
 
 * Create the aggregate conditional causal effects
 egen ate = mean(delta)
 egen att = mean(delta) if d==1
 egen atu = mean(delta) if d==0
-su ate-atu
+su ate // ATE is 49.97953
+su att // ATT is 33.97148
+su atu // ATU is 65.94704
 
 * Check for independence with respect to y0
 summarize y0 if d==0
