@@ -17,7 +17,7 @@ net install lpdensity, from(https://sites.google.com/site/nppackages/lpdensity/s
 
 * Replicating Table 1 of Lee, Moretti and Butler (2004) -- local linear regression (0.48 to 0.52 on the voteshare)
 reg score lagdemocrat    if lagdemvoteshare>.48 & lagdemvoteshare<.52, cluster(id)
-reg score democrat       if lagdemvoteshare>.48 & lagdemvoteshare<.52, cluster(id)
+reg lagscore lagdemocrat       if lagdemvoteshare>.48 & lagdemvoteshare<.52, cluster(id)
 reg democrat lagdemocrat if lagdemvoteshare>.48 & lagdemvoteshare<.52, cluster(id)
 
 * Use all the data -- global linear regression
@@ -54,7 +54,7 @@ xi: reg democrat lagdemocrat##c.(demvoteshare_c demvoteshare_sq) if lagdemvotesh
 ssc install cmogram
 cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) 
 cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) lfit
-cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) qfitci
+cmogram score lagdemvoteshare, cut(0.5) scatter line(0.5) qfit
 
 
 * Note kernel-weighted local regression is a smoothing method.
@@ -66,7 +66,7 @@ color(red) xline(0.5,lstyle(dot)) legend(off) xtitle("Democratic vote share") yt
 * Local polynomial point estimators with bias correction
 rdrobust score lagdemvoteshare, masspoints(off) p(1) c(0.5)
 rdrobust score lagdemvoteshare, kernel(uniform) masspoints(off) p(2) c(0.5)
-rdrobust score lagdemvoteshare, kernel(triangular) masspoints(off) p(2) c(0.5)
+rdrobust score lagdemvoteshare, kernel(triangular) masspoints(off) p(1) c(0.5) bwselect(msetwo)
 rdrobust score lagdemvoteshare, kernel(epanechnikov) masspoints(off) p(2) c(0.5)
 rdrobust score lagdemvoteshare, masspoints(off) p(2) c(0.5)
 rdrobust score lagdemvoteshare, masspoints(off) p(3) c(0.5)
@@ -76,7 +76,7 @@ rdrobust score lagdemvoteshare, masspoints(off) p(5) c(0.5)
 * Data-driven RDD plots
 rdplot score lagdemvoteshare, p(0) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))
 rdplot score lagdemvoteshare, p(1) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))
-rdplot score lagdemvoteshare, p(2) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))
+rdplot score lagdemvoteshare, p(2) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare)) bwselect(msetwo)
 rdplot score lagdemvoteshare, p(3) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))
 rdplot score lagdemvoteshare, p(4) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))
 rdplot score lagdemvoteshare, p(5) masspoints(off) c(0.5) graph_options(title(RD Plot for ADA Score and Voteshare))

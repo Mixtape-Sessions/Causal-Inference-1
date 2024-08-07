@@ -1,4 +1,4 @@
-* Simulated dataset with imbalance in age and gpa, both of which are confounders
+* comparing.do. Simulated dataset with imbalance in age and gpa, both of which are confounders
 
 	clear 
     drop _all 
