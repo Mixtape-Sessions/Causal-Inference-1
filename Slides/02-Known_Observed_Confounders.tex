@@ -3537,22 +3537,22 @@ Notice that the setup before, $X_i$ had a different effect on $Y^0$ than it did 
 Take conditional expectations of the \emph{potential} outcomes:
 
 \begin{eqnarray*}
-E[Y^0_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X_i | D_i = 1, X_i] \\
-E[Y^1_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X_i | D_i = 1, X_i]  \\
+E[Y^0_i | D_i=0, X_i] &=& \alpha + \beta_{01} E[X_i | D_i = 0, X_i] \\
+E[Y^1_i | D_i=1, X_i] &=& \alpha + \beta_{01} E[X_i | D_i = 0, X_i]  \\
 && + \delta + \beta_{11} E[X_i | D_i=1,X_i]
 \end{eqnarray*}
 
 \bigskip
 
-Average treatment effect is: 
+Average treatment effect is:  $E[Y_i^1 | D_i, X^1_i] - E[Y^0_i | D_i, X_i] $
 
 \bigskip
 
 \footnotesize
 
 \begin{eqnarray*}
-E[Y_i^1 | D_i, X^1_i] - E[Y^0_i | D_i, X_i] &=& \bigg (  \alpha + \beta_{01} E[X_i] + \delta + \beta_{11} E[X_i \times D_i | D_i=1,X_i] \bigg ) \\
-&& -  \bigg (\alpha + \beta_{01} E[X_i] \bigg ) \\
+&=& \bigg (  \alpha + \beta_{01} E[X_i | D_i=0, X_i] + \delta + \beta_{11} E[X_i \times D_i | D_i=1,X_i] \bigg ) \\
+&& -  \bigg (\alpha + \beta_{01} E[X_i  | D_i=0, X_i] \bigg ) \\
 &=& \delta + \beta_{11}  E[X_i \times D_i | D_i=1] 
 \end{eqnarray*}OLS model accounting for heterogeneity must be ``fully saturated''.
 

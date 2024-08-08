@@ -60,6 +60,8 @@ regress lwage educ, robust // 0.05.  How do I interpret this number? The way you
 
 * The actual twostage least squares model requires some additional steps that are too complicated to do manually to get the correct standard error. If you are using IV, you shouldn't use this two step manual method. It's good to do it because in my experience, the more you code manually, the less intimidated you are by the methods. You need to use a statistical package in STata, R or python. In Stata, that package is called -ivregress- (there's also ivreg2, ivreg28, etc.). 
 
+ivregress 2sls lwage (educ=nearc4), first robust
+
 ivregress 2sls lwage age black (educ=nearc4), first robust
 
 ivreg2 lwage (educ = nearc4) exper black south married smsa, first robust
