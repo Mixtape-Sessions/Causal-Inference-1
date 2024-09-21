@@ -55,9 +55,9 @@
 \begin{frame}{Welcome!}
 
   \begin{itemize}
-	\item I'm Scott Cunningham, Ben H. Williams professor of economics at Baylor University, author of \underline{Causal Inference: the Mixtape}, run-of-the-mill applied microeconomist
-	\item I love economics, econometrics and particularly causal inference and run workshops on causal inference all over the world on causal inference
-	\item I work on a variety of eclectic topics -- sex work, methamphetamine drug policy, abortion policy, and more recently, detecting and treating self harm in prisons and mails
+	\item I'm Scott Cunningham, Ben H. Williams professor of economics at Baylor University, author of \underline{Causal Inference: the Mixtape}
+	\item I enjoy learning about economics, econometrics and particularly causal inference and run workshops on causal inference in order to help people make the material more accessible
+	\item I work on a variety of eclectic topics -- sex work, methamphetamine drug policy, abortion policy, and more recently, detecting and treating self harm in prisons and jails
 	\item Causal inference is an old field but which has increasingly drawn people to it (Nobel Prize two years ago maybe helped) 
   \end{itemize}
 
@@ -66,13 +66,15 @@
 
 
 
-\begin{frame}{Econometrics II (Part 2)}
+\begin{frame}{Expectations}
 
   \begin{itemize}
-    \item This is the second half of Econometrics II (first half taught by Yonghong An) and I am going to mainly cover core parts of the "design" tradition in causal inference
-    \item Hope to cover potential outcomes, randomization, unconfoundedness, instrumental variables and difference-in-differences (will have to not cover RDD)
-    \item I tend to emphasize intuition, mechanics, narrow calculations, meaning, assumptions, code including actually taking time to code, advocate for data visualization -- in other words the art and the science
-    \item I'm me, and I teach how I teach, with passion, enthusiasm, deep joy, but I'm not an econometrician so sometimes I take the long way to get there when an econometrician would do it much faster
+    \item This workshop will cover potential outcomes, randomization, unconfoundedness, instrumental variables and regression discontinuity design
+    	\begin{itemize}
+	\item Causal Inference 2 will cover diff-in-diff
+	\item Causal Inference 3 will cover synthetic control
+	\end{itemize}
+    \item My teaching style is to try and not leave any one behind so I emphasize a lot of basics, applications, simple things repeatedly and then extend it in more advanced material
   \end{itemize}
 
 \end{frame}
@@ -84,6 +86,7 @@
 \begin{frame}{Class goals}
 
   \begin{enumerate}
+    \item \textbf{Curiosity}: You will be intrigued and interested enough in this material that you want to learn more of it by the end
     \item \textbf{Confidence}: You will feel like you have a good understanding of causal inference so that by the end it doesn't feel all that mysterious or intimidating
     \item \textbf{Comprehension}: You will have learned a lot both conceptually and in the specifics, particularly with regards to issues around identification and estimation
     \item \textbf{Competency}: You will have more knowledge of programming syntax in Stata and R (and python!) so that later you can apply this in your own work
@@ -112,10 +115,23 @@
     \item We will communicate with one another regularly in the Discord channel and I will always be monitoring it
     \item Encourage you to talk to each other there, help one another, network with one another, coauthor with one another!
     \item I will be distributing things to you, like code and slides, via a github repo at my platform Mixtape Sessions
-    \item Each lecture will be recorded and then uploaded, most likely to Canvas, but TBD
+    \item Each lecture will be recorded and then uploaded to Vimeo, and we will be experimenting with various AI tools as well
   \end{itemize}
 
 \end{frame}
+
+
+\begin{frame}{What is Causal Inference?}
+
+\begin{itemize}
+\item Causality as a subject when studied by philosophers is divided between metaphysics (a theory of what is) and epistemology (what is knowledge)
+\item Causal inference will cover both of these -- how will we define causal effects?  What rules will we use to make a deduction that a causal \emph{belief} (inference) is warranted?
+\item It's a rich field, like a mighty river, with many rivers and streams that feed into it and I will try my best to point to them along the way
+\item But the majority of this comes from when two approaches formed a new paradigm which is largely what modern causal inference means
+\end{itemize}
+
+\end{frame}
+
 
 
 
@@ -123,15 +139,6 @@
 \section{Foundational ideas}
 
 
-\begin{frame}{What is Causality?}
-
-\begin{itemize}
-\item Causality is metaphysics (what is?); causal inference is epistemology (what is knowledge?) IOW, what makes a causal belief a ``warranted belief''?
-\item Causality and causal inference have common sources (e.g., Aristotle, Hume, Mill, Lewis) but we will focus primarily on the experimental design tradition
-\item We use the potential outcomes framework of causal inference to build and discuss methods that estimate unbiased and meaningful \textbf{average} causal parameters as defined by that framework
-\end{itemize}
-
-\end{frame}
 
 
 \begin{frame}{Causal Inference vs Prediction}
@@ -238,22 +245,13 @@ Most of us skip (1) and many skip (2) and go straight to (3) but hopefully today
 
 \end{frame}
 
-\section{Brief (and selected) history of causal inference}
+\section{Potential Outcomes}
 
-\begin{frame}{Three New Ideas}
-
-\begin{enumerate}
-\item \textbf{Counterfactual}: Philosophers come to it first and its central role in causal inference makes causality \emph{unknowable} that the project is nearly derailed
-\item \textbf{Treatment assignment mechanism}: Neyman and Fisher solve the counterfactual problem in statistics and lay the foundation of the modern randomized controlled trial (RCT) with their focus on the selection process
-\item \textbf{No One Causal Effect}: There is no such thing as ``the causal effect''; there's many and your first step is to pick a parameter (not as easy as it sounds)
-\end{enumerate}
-
-
-\end{frame}
+\subsection{History of potential outcomes}
 
 
 
-\begin{frame}{Modern Philosophers Introduce Counterfactual Comparisons}
+\begin{frame}{Counterfactuals by Philosophers}
 
 \begin{quote}
     ``If a person eats of a particular dish, and dies in consequence, that is, would not have died if he had not eaten it, people would be apt to say that eating of that dish was the source of his death.'' -- John Stuart Mill (19th century moral philosopher and economist)
@@ -268,25 +266,9 @@ Most of us skip (1) and many skip (2) and go straight to (3) but hopefully today
 \end{frame}
 
   
-\begin{frame}{Counterfactuals Almost Derailed Causal Inference}
 
 
-
-Mill's counterfactuals were immensely valuable for the clarity of the definition as well as its intuitive validity of causality, but it came at a huge price 
-
-\bigskip
-
-If I have to know what would have happened had I not eaten the dish, but I did eat the dish, then isn't it actually impossible to know the causal effect of eating the dish?
-
-\bigskip
-
-Statisticians surprisingly resolve this tension in the early 20th century with the introduction of notation and the principles of treatment assignment
-
-
-\end{frame}
-
-
-\begin{frame}{Statistical origins}
+\begin{frame}{Statisticians}
 
 \begin{quote}
 ``Yet, although the seeds of the idea that [causal effects are comparisons of potential outcomes] can be traced back at least to the 18th century [most likely he means David Hume], the formal notation for potential outcomes was not introduced until 1923 by Neyman.'' -- Don Rubin (1990)
@@ -329,19 +311,173 @@ Statisticians surprisingly resolve this tension in the early 20th century with t
 
 \end{frame}
 
+\begin{frame}
+
+\subsection{Experimental Design Fuses with Quasi-Experimental Design}
+
+\begin{center}
+\textbf{Two rivers into causal inference}
+\end{center}
+
+\begin{tikzpicture}[scale=0.7, every node/.style={scale=0.7}]
+% Orley Ashenfelter Stream
+\node at (-5,6) {\textbf{Orley Ashenfelter}};
+\draw[->, thick] (-5,5.5) -- (-5,5.2);
+\node at (-5,5) {Princeton Industrial Relations Section};
+\draw[->, thick] (-5,4.5) -- (-5,4.2);
+\node at (-5,4) {Quasi-Experimental Design};
+\draw[->, thick] (-5,3.5) -- (-5,3.2);
+\node at (-5,3) {David Card};
+\draw[->, thick] (-5,2.5) -- (-5,2.2);
+\node at (-5,2) {Alan Krueger};
+\draw[->, thick] (-5,1.5) -- (-5,1.2);
+
+% Don Rubin Stream
+\node at (5,6) {\textbf{Don Rubin}};
+\draw[->, thick] (5,5.5) -- (5,5.2);
+\node at (5,5) {Harvard Statistics};
+\draw[->, thick] (5,4.5) -- (5,4.2);
+\node at (5,4) {Experimental Design};
+\draw[->, thick] (5,3.5) -- (5,3.2);
+\node at (5,3) {Potential Outcomes};
+\draw[->, thick] (5,2.5) -- (5,2.2);
+\node at (5,2) {Treatment Effects};
+\draw[->, thick] (5,1.5) -- (5,1.2);
+
+% Arrow from Orley Ashenfelter and Don Rubin streams to bottom rectangle
+\draw[->, thick] (-5,1) -- (0,-0.8);
+\draw[->, thick] (5,1) -- (0,-0.8);
+
+% Bottom Rectangle
+\node[draw, minimum width=8cm, minimum height=2cm, anchor=north] at (0,-0.8) {
+    \begin{tabular}{c}
+        Josh Angrist \\
+        (Princeton)
+    \end{tabular}
+    \hspace{2cm}
+    \begin{tabular}{c}
+        Guido Imbens \\
+        (Brown)
+    \end{tabular}
+};
+\node[anchor=north] at (0,-2.8) {\textbf{Harvard Economics}};
+
+\end{tikzpicture}
+
+\end{frame}
+
+
+\begin{frame}{Background I: Harvard Stats and Potential Outcomes}
+  \begin{itemize}
+    \item Don Rubin, former chair of Harvard stats, is the main source of potential outcomes, building on Jerzy Neyman's 1923 work.
+    \item Rubin's influential 1970s papers advocated for causal inference using contrasts of $Y(1)$ and $Y(0)$.
+    \item Neyman's notation, initially in Polish, was translated into English in 1990, likely due to Rubin.
+    \item Rubin expanded Neyman's ideas from experiments to observational studies, leading to developments like propensity score methods.
+    \item Economics was slow to adopt these methods initially.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Background II: Princeton Industrial Relations Section}
+  \begin{itemize}
+    \item Late 1970s and early 1980s: little "credibility" in empirical labor studies.
+    \item Princeton Industrial Relations Section: older than the economics dept, rigorous, non-partisan focus on US "manpower", highly empirical.
+    \item Key faculty are Orley Ashenfelter, David Card, Alan Krueger.
+    \item Key students include Bob Lalonde, Josh Angrist, Steve Pischke, John Dinardo, Janet Currie, Anne Case, and many more.
+    \item Listen to David Card: \url{https://youtu.be/1soLdywFb_Q?si=BCVqYeRz6jYiwHTQ&t=1580}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Background II: Princeton Industrial Relations Section}
+Example of Princeton Paradigm Emerging
+  \begin{itemize}
+    \item Lalonde (1986) was a groundbreaking study, recently reviewed by Guido Imbens and Yiqing Xu (2024)
+    \item Lalonde, a student of Card and Orley, analyzed an RCT on a job training program, finding an average treatment effect of +\$800.
+    \item He then replaced the experimental control group with survey data, reran econometric methods, and couldn't replicate the results.
+    \item Orley and Card emphasized randomization in their 1985 Restat article, advocating for its exploitation in studies.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{IV is Especially Bad}
+\begin{itemize}
+
+\item Instrumental variables are like finding a four leaf clover -- you should take it as a good omen
+\item It must satisfy several stringent conditions so it's hard to do well
+\item But in the old days, people used counterfeit instruments due to low standards which contributed to the empirical crisis
+\item Listen to Orley Ashenfelter: \url{https://www.youtube.com/watch?v=GG627T4GbqU}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{H. Gregg Lewis on IV}
+
+  \begin{quote}
+    "After reviewing virtually every study since 1963, Lewis reached the awkward conclusion that simple OLS of union wage effects were more useful and reliable than those based on IV or endogenous selection approaches. The problem, in his view, was that researchers used arbitrary and unsupported assumptions to identify their models with little or no concern for the validity of their assumptions or the implications of their findings." -- Card (2022)
+  \end{quote}
+
+\end{frame}
+
+\begin{frame}{Angrist goes to Harvard}
+
+\begin{itemize}
+
+\item Josh Angrist writes a paper evaluating the effect of military service on career earnings using IV
+\item Josh is Card and Orley's student (and Card and Josh win the Nobel prize in 2021 with Imbens)
+\item But his instrument is decidedly different -- he uses "actually randomized" instruments.  He uses the draft lottery
+\item Finds military services \emph{causes} reductions in career earnings, goes on the Restud tour, gets a job at Harvard
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Imbens goes to Harvard}
+
+\begin{itemize}
+
+\item Guido Imbens (wins the Nobel with Card and Angrist) is a Dutch econometrics student in a masters program in the UK who follows a professor to Brown for his PhD
+\item Very interesting personality -- unusually open minded, non-dogmatic, very intellectually curious
+\item \url{https://youtu.be/cm8V65AS5iU?si=FiqecXsH0wjIk9Qc&t=540}
+\item He goes to Harvard and overlaps with Angrist for one year
+\item Much of what we cover ends up being both parts of this tradition forming a paradigm as well as introducing econometric tools
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \begin{frame}{Progress is made and progress is not made}
 
 \begin{itemize}
 
-\item Econometrics traditionally modeled causality in terms of realized outcomes until recently (with some exceptions)
+\item Part of the fusion between Princeton and Cambridge that I noted was to recast outcomes as potential outcomes, a technical term
 \item We need to make a distinction between now the idea of data (``realized outcomes'') and these hypothetical concepts represented by Neyman's notation (``potential outcomes'')
-\item Listen to Guido Imbens describe the transition towards modeling causality in terms of ``realized outcomes''
+\item Let's introduce potential outcomes and assume an intervention from the pandemic -- 
+	\begin{itemize}
+	\item Patient is either placed on a ventilator or not ("treatment" is the ventilator)
+	\item What effect will it have on their health (e.g., mortality)? 
+	\item What is an "effect" and how will we define it?
+	\end{itemize}
 
 \end{itemize}
 
-\bigskip
-
-\url{https://www.youtube.com/watch?v=drGkRy53bB4}
 
 \end{frame}
 
@@ -358,23 +494,38 @@ Potential outcomes: $$Y_{i,t}^j =\begin{cases} 1 \text{ health if placed on vent
 \end{frame}
 
 
-\begin{frame}{Realized vs potential outcomes}
+\begin{frame}{Potential outcomes}
 
   \begin{itemize}
-    \item Potential outcome $Y^1$ refers to the ``a priori fixed but unknown'' outcomes associated with different possible treatment assignments
-    \item Realized outcome $Y$ refers to the ``posterior and known'' outcome associated with a specific treatment assignment
-    \item Potential outcomes become realized outcomes through treatment assignment generated by an assignment mechanism like randomization or rationality
+  \item Prior to being placed on the ventilator, there are multiple possibilities that could happen
+		\begin{itemize}
+		\item They could be placed on the ventilator, call it $Y^1$, and something could happen, or
+		\item They could not be placed on the ventilator, call it $Y^0$, and something could happen
+		\end{itemize}
+\item There are only two things that could happen because the treatment only has two sides to it -- you either are on it or you aren't
+\item Neyman, on the other hand, had an urn consisting of balls representing a large number of treatments (fertilizer types) and so had many potential outcomes
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Potential outcomes vs realized outcomes}
+	\begin{itemize}
+	\item Experimentalists thought of potential outcomes as "real" in that either of those beforehand could happen -- Rubin "a priori fixed by unknown"
+	\item But once the decision to put the patient on the ventilator happens, it eliminates one of them, and that's the difference between potential outcomes and realized outcomes
+	\item Potential outcomes are more or less describing what would happen under different treatments, but realized outcomes are describing what did in fact happen for a given treatment
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Models vs Treatment Assignment}
+\begin{frame}{Treatment Assignment Mechanism }
 
 \begin{itemize}
-    \item Treatment assignment \emph{mechanism} drives the entire effort to identify causal effects as some make it easy and some make it potentially \emph{impossible}
-	\item Put another way, the same model can be unbiased and biased depending on the treatment assignment and be utterly detectable otherwise
-	\item Means modeling does not come first -- it comes last
-	\end{itemize}
+\item The second part of causal inference in the design tradition has to do with the reason that a person gets on a ventilator
+\item Did a doctor choose to do it?  Did the patient choose to do it?  Did an algorithm choose to do it?
+\item But it's more than that -- \emph{why} was the choice made, not \emph{who} made it
+\item For instance, a doctor might always make it, but it matters if she flipped a coin vs read the chart and made the "best decision"
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Important definitions}
@@ -399,7 +550,7 @@ Potential outcomes: $$Y_{i,t}^j =\begin{cases} 1 \text{ health if placed on vent
       \end{eqnarray*}
     \end{block}
     
-    Not the same as treatment assignment mechanism.  Treatment assignment mechanism describes how $D$ was assigned, not whether it was assigned.
+    Not the same as treatment assignment mechanism.  Treatment assignment mechanism describes why one patient but not another was put on the ventilator
 
 \end{frame}
 
@@ -419,7 +570,7 @@ This is my reason from saying Mill's counterfactual framework derailed the quest
 
 
     
-      \begin{itemize}
+    \begin{itemize}
     \item Fundamental problem of causal inference is deep and impossible to overcome -- not even with more data (you will always with more data be missing one of the potential outcomes)
     \item Causal inference is a missing data problem 
     \item All of causal inference involves imputing missing counterfactuals and not all imputations are equal
@@ -685,26 +836,16 @@ Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \
 \section{Independence and Selection Bias}
 
 
-\begin{frame}{The ``Section''}
-
-\begin{itemize}
-
-	\item Hull, Kolesar and Walters (2022) tell the economic history of causal inference rooted in the Princeton Industrial Relations Section in the 70s and 80s responding to an ``empirical crisis'' in labor
-	\item Key players are Orley Ashenfelter (head of the Section), David Card (his student and 2021 Nobel Laureate), Bob LaLonde (both men's student), Josh Angrist (both men's student and 2021 Nobel Laureate), and numerous others (e.g., Janet Currie, John DiNardo, Steven Pischke, and many more)
-	\item We tend to associate with them the credibility revolution, but more recently it's also called a design based approach to causal inference
 
 
-\end{itemize}
-
-\end{frame}
 
 \begin{frame}{Design vs model based approaches to selection bias}
 
 \begin{itemize}
 
-\item Historically two ways that this selection bias was addressed: modeling it directly (Heckman, and others) and by design
+\item Historically two ways that this selection bias was addressed: modeling it directly (Heckman, and others) and by design (Rubin, Princeton)
 	\begin{enumerate}
-	\item Design-based methods.  Think of the randomized experiment.  As we will see randomization will force selection bias to zero
+	\item Design-based methods.  Experimental design and randomization
 	\item Model-based methods.  Model the selection bias and then remove it mechanically
 	\end{enumerate}
 \item Both have been highly influential, but constitute different approaches, and our workshop largely focuses on the former not the latter
@@ -722,7 +863,7 @@ Using the switching equation and sample averages, we can calculate $E_N[Y|D=1] \
 \begin{itemize}
 \item Selection bias in causal inference is when one or both mean potential outcome differ by treatment status
 \item Source of the bias is caused by the why people get treated, or what's called the ``treatment assignment \emph{mechanism}''
-\item Design is the experimental design rooted in Fisher and Neyman's work in the 20s, but the Section took it as a guiding principle even outside of the lab
+\item But as we will see, if the treatment was assigned randomly (exogeneity), the implications differ than if they were assigned "optimally" (endogeneity)
 
 
 \end{itemize}
@@ -909,12 +1050,12 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
             \item \textbf{TV}: \emph{\textbf{t}reatment-value} (``treatment effect'', ``causal effect'')
             \item \textbf{A}: \emph{\textbf{a}ssumption}
           \end{enumerate}
-    \item Largely about interference when aggregating but also poorly defined treatments and scale
+    \item Means that a potential outcome has nothing to do with others' treatment assignment -- only one's own, and only today
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{SUTVA: No spillovers to other units}
+\begin{frame}{No spillovers to other units}
 
   \begin{itemize}
     \item What if we impose a treatment at one neighborhood but not a contiguous one?
@@ -925,7 +1066,7 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
 
 
 
-\begin{frame}{SUTVA: No Hidden Variation in Treatment}
+\begin{frame}{No Hidden Variation in Treatment}
 
   \begin{itemize}
     \item SUTVA requires each unit receive the same treatment dosage; this is what it means by ``stable'' (i.e., notice that the super scripts contain either 0 or 1, not 0.55, 0.27)
@@ -935,7 +1076,7 @@ Depending on the treatment assignment mechanism, certain procedures are allowed 
   \end{itemize}
 \end{frame}
 
-\begin{frame}{SUTVA: Scale can affect stability of treatment effects}
+\begin{frame}{Scale can affect stability of treatment effects}
 
   Easier to imagine this with a different example.
   \begin{itemize}
