@@ -6,7 +6,7 @@ capture log close
 set seed 1500
 set obs 10000
 
-gen y0 = rnormal(5,2) // y0 will have a mean of 5 and std dev. of 2
+gen y0 = rnormal(3,3) // y0 will have a mean of 5 and std dev. of 2
 
 gen y1 = rnormal(3,3) // y1 will have a mean of 3 and a std dev of 3
 

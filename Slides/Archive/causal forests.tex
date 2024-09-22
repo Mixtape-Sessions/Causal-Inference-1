@@ -1,0 +1,1478 @@
+\documentclass{beamer}
+
+\input{preamble.tex}
+\usepackage{breqn} % Breaks lines
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\usepackage{pdfpages} % \includepdf
+
+\usepackage{listings} % R code
+\usepackage{verbatim} % verbatim
+
+% Video stuff
+\usepackage{media9}
+
+% packages for bibs and cites
+\usepackage{natbib}
+\usepackage{har2nat}
+\newcommand{\possessivecite}[1]{\citeauthor{#1}'s \citeyearpar{#1}}
+\usepackage{breakcites}
+\usepackage{alltt}
+
+% tikz
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{calc, positioning, decorations.pathreplacing, arrows.meta, intersections}
+\pgfdeclarelayer{bg}
+\pgfdeclarelayer{back}
+\pgfdeclarelayer{fg}
+\pgfsetlayers{bg,main,fg,back}
+\usetikzlibrary{shapes,arrows}
+
+% Setup math operators
+\DeclareMathOperator{\E}{E} \DeclareMathOperator{\tr}{tr} \DeclareMathOperator{\se}{se} \DeclareMathOperator{\I}{I} \DeclareMathOperator{\sign}{sign} \DeclareMathOperator{\supp}{supp} \DeclareMathOperator{\plim}{plim}
+\DeclareMathOperator*{\dlim}{\mathnormal{d}\mkern2mu-lim}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+   \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand*\colvec[1]{\begin{pmatrix}#1\end{pmatrix}}
+
+\newcommand{\myurlshort}[2]{\href{#1}{\textcolor{gray}{\textsf{#2}}}}
+
+
+\begin{document}
+
+\imageframe{./lecture_includes/mixtape_ci_cover.png}
+
+
+% ---- Content ----
+
+\section{Background Material for Causal Forests}
+
+\subsection{A Brief History of Trees}
+
+\begin{frame}
+\frametitle{Key Challenges in Causal Inference}
+\begin{itemize}
+    \item Confounding: Hidden biases that can skew results.
+    \item Selection bias: Non-random assignment to treatment.
+    \item Measurement error: Inaccuracies in data collection.
+\end{itemize}
+
+\bigskip
+
+If we can address the problem using covariates, then we may be in a situation to use causal forests (but not all problems fit this scenario)
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Causal Forests: Bridging Machine Learning \& Causal Inference}
+
+Causal forests are \dots
+
+\begin{itemize}
+    \item A powerful tool for estimating heterogeneous treatment effects using tree-based methods.
+    \item Combining the strengths of random forests with the principles of causal inference to uncover nuanced relationships.
+    \item Addressing challenges in observational data: leveraging the unconfoundedness assumption and advanced modeling techniques.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Athey and Wager: Pioneering Work on Causal Forests}
+\begin{itemize}
+    \item Susan Athey \& Stefan Wager's foundational work: "Estimation and Inference of Heterogeneous Treatment Effects using Random Forests" in 2019 JASA
+    \item Addressed challenges in traditional methods: Bias-variance trade-off and overfitting.
+    \item Introduced causal trees as building blocks for causal forests, leveraging bootstrapping and honest splitting.
+    \item We'll take a leisurely walk through it so no one feels left behind
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Origins of Decision Trees: The 1960s}
+\begin{itemize}
+    \item The foundational concepts of decision trees emerged in the 1960s.
+    \item Initially explored in cognitive psychology to model human decision processes.
+    \item Used in medical decision-making to aid doctors in diagnosing diseases based on a hierarchical structure of symptoms and outcomes.
+    \item These early trees were simplistic and manually constructed, but they paved the way for algorithmic tree-building methods in the subsequent decades.
+    \item The concept gained traction as it offered a visual and interpretable way to make decisions based on multiple criteria.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Early Beginnings}
+\begin{itemize}
+    \item Ross Quinlan's ID3 in the 1980s: pioneering tree algorithm.
+    \item ID3 uses an information-theoretic approach: It selects the attribute that provides the best split (maximizing information gain) at each node, building the tree iteratively.
+    \item Real-world example: Diagnosing medical conditions. ID3 could be applied to a dataset where symptoms are attributes and diseases are classes. The tree would guide medical professionals by asking about the most informative symptoms first, helping narrow down potential diagnoses.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Classification and Regression Trees (CART)}
+\begin{itemize}
+    \item Introduced by Breiman et al. in 1986.
+    \item CART allows for the creation of binary trees for both classification (categorizing data into classes) and regression (predicting numerical values).
+    \item Uses a "greedy" approach: At each step, it selects the best split based on a specific criterion (like Gini impurity for classification or mean squared error for regression) without concern for future decisions.
+    \item Real-world example: Predicting housing prices. Using a dataset with features like house size, location, and age, CART can be used in regression mode to predict the price of a house based on these attributes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ensemble Methods and Random Forests}
+\begin{itemize}
+    \item Leo Breiman introduced Random Forests in 2001.
+    \item Random Forests are an ensemble method: They combine predictions from multiple decision trees to produce a more robust and accurate result.
+    \item The method introduces randomness in two ways: By bootstrapping samples for training each tree and by selecting a random subset of features at each split.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ensemble Methods and Random Forests Example}
+\begin{itemize}
+    \item Real-world example: Credit scoring.
+    \item  Banks use Random Forests to predict the likelihood of a loan applicant defaulting.
+    \item The model takes into account various factors like income, employment history, and credit score, aggregating insights from multiple trees to assess risk.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Boosting and Gradient Boosted Trees}
+\begin{itemize}
+    \item Boosting introduced by Schapire in 1990; later refined by Freund; is an ensemble technique that focuses on reducing bias by giving more weight to misclassified instances in subsequent models.
+    \item Gradient Boosted Trees introduced by Friedman in the late 1990s and early 2000s builds trees sequentially, where each tree tries to correct the errors made by the previous ones and uses gradient descent to minimize the loss function.
+    \item Both methods aim to improve prediction accuracy by combining weak learners (models slightly better than random guessing) to form a strong learner (a model with high predictive accuracy).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Boosting and Gradient Boosted Trees Example}
+\begin{itemize}
+    \item Real-world example: Customer churn prediction. 
+    \item Telecom companies use Gradient Boosted Trees to predict which customers are likely to terminate their services.
+    \item By analyzing data like call patterns, customer complaints, and billing information, the model identifies high-risk customers, helping companies take proactive retention measures.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Modern Use and Software Development}
+\begin{itemize}
+    \item Trees are staples in machine learning toolkits.
+    \item Libraries: scikit-learn (Python), rpart and randomForest (R).
+    \item Popular for interpretability and visualization.
+\end{itemize}
+\end{frame}
+
+\subsection{Fundamental Machine Learning Concepts}
+
+\begin{frame}
+\frametitle{Decision Trees}
+\begin{itemize}
+    \item Flowchart-like structure used for making decisions.
+    \item Decisions made by asking a series of questions.
+    \item Comprises nodes (questions), branches (answers), and leaves (decisions/outcomes).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Random Forests}
+\begin{itemize}
+    \item An ensemble of decision trees.
+    \item Uses bootstrapped samples to build individual trees.
+    \item Aggregates predictions: majority vote or averaging.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Leaves in Trees}
+\begin{itemize}
+    \item Leaves are the terminal nodes of trees.
+    \item In causal forests, leaves estimate treatment effects.
+    \item Allows capturing heterogeneous effects across data segments.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization}
+\begin{itemize}
+    \item A technique to prevent overfitting.
+    \item In trees: limit depth, minimum samples in a leaf, randomness in feature selection.
+    \item Ensures the model generalizes well to new data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Benefits of Ensemble Methods}
+\begin{itemize}
+    \item Strength in numbers: multiple trees reduce variance.
+    \item Can capture complex, non-linear relationships.
+    \item Improved accuracy and robustness.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Decision Trees in Causal Inference}
+\begin{itemize}
+	\item Which brings us to now -- causal inference
+    \item Transition to causal inference frameworks in the 2000s.
+    \item Scholars like Susan Athey, Stefan Wager and Guido Imbens developed Causal Trees and Forests.
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Origins of Causal Forests}
+\begin{itemize}
+    \item Birthed from the intersection of causal inference and machine learning.
+    \item Preceded by methods like propensity score matching, regression discontinuity, and instrumental variables.
+    \item These methods did not explore or identify the HTEs though making them primarily used to summarize treatment effects at the highest level (e.g., ATE, ATE, LATE)
+    \item This led to a need for more flexible, non-parametric methods to estimate heterogeneous treatment effects, particularly when tech firms began more intense targeting (e.g., recommendation systems)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Overfitting in Propensity Score Estimation}
+\begin{itemize}
+    \item Estimating propensity scores often involves logistic regression with many covariates.
+    \item Overfitting can arise with a large set of covariates relative to sample size or with high-degree interactions.
+    \item Overfitted models yield scores too close to 0 or 1, complicating matching.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Nearest Neighbor Matching \& Common Support}
+\begin{itemize}
+    \item Common support ensures overlap in propensity score distributions.
+    \item Yet, nearest neighbor matching might pair units not very close in propensity scores.
+    \item Especially problematic when untreated units greatly outnumber treated ones.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Quality of Matches}
+\begin{itemize}
+    \item Common support as measured by propensity scores doesn't guarantee high-quality matches.
+    \item This is because common support should be a concept we are thinking of as holding, not in the propensity score, but in the actual stratification of the data using the dimensions of the covariates
+    \item Units with similar propensity scores might differ on key covariates given the curse of dimensionality kicks in very quickly as we increase covariates with high dimensions.
+    \item Matching without replacement can lead to lower-quality subsequent matches.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sensitivity to Specification}
+\begin{itemize}
+	\item Recall that we are \emph{estimating} the propensity score; we don't know the truth even if we know the covariates to use for estimation
+    \item Match quality and causal estimates can be sensitive to propensity score model specification.
+    \item Minor model changes can lead to different matched samples and different matched samples means we have variation in treatment effect estimation that is due to these matching irregularities
+    \item Highlights the importance of robustness checks.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Challenges of High-Dimensional Covariate Spaces}
+\begin{itemize}
+    \item Modern datasets often have a vast number of covariates, making the "curse of dimensionality" a prominent concern.
+    \item Even with a few covariates, the curse can arise, but it's especially pronounced in high-dimensional settings.
+    \item While the assumption of unconfoundedness requires controlling for all confounders, in practice, ensuring this in high dimensions is challenging.
+    \item The "kitchen sink" approach, adding numerous covariates to control for confounding, can introduce its own problems.
+    \item Causal forests offer a flexible way to address these challenges, capturing complex relationships without the need for overly restrictive linear specifications.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Heterogeneous Treatment Effects}
+\begin{itemize}
+\item Which brings us to causal forests -- they moved beyond the aggregate causal parameters into more nuanced ones based HTEs while still contending with the problems of high dimensional data
+
+    \item In high-dimensional settings, treatment effects can vary across many dimensions.
+    \item Causal forests enabled new insights into how treatment effects manifest in different segments of the data, but as it was data driven, it was less prone to arbitrary groupings by researchers
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Adaptively Identifying Key Differences}
+\begin{itemize}
+    \item Imagine sorting people based on their features, like age or political views.
+    \item Some groups show very different responses to the same treatment.
+    \item Causal forests help pinpoint and focus on these groups, revealing where the treatment works best (or worst).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization}
+\begin{itemize}
+    \item Random forests introduce randomness via bootstrapping and random subsets of predictors.
+    \item This randomness acts as a form of regularization.
+    \item Helps prevent overfitting in high-dimensional settings.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Key Assumptions for Causal Inference}
+\begin{itemize}
+\item \textbf{Unconfoundedness}: Given observed covariates, treatment assignment is independent of potential outcomes.
+\item Meaning: After accounting for observed characteristics, there's no systematic difference between treatment and control groups affecting the outcome.
+\item \textbf{Common Support}: For every combination of covariates, there's a positive chance of being in either treatment or control.
+\item Meaning: We always have data to compare treated and untreated outcomes for individuals with similar characteristics.
+\end{itemize}
+\end{frame}
+
+
+
+\subsection{Parameters}
+
+
+\begin{frame}
+\frametitle{Parameters, data requirements and assumptions}
+\begin{itemize}
+	\item \textbf{Parameters}: What are the research questions and parameters to have in mind for this method?
+	\item \textbf{Data requirement}: What kinds of datasets should you be thinking of as particularly useful?
+	\item \textbf{Assumptions}: What are the underlying causal assumptions?
+
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Motivating the Importance of HTEs}
+\begin{itemize}
+    \item Heterogeneous Treatment Effects (HTEs) are the parameters and play a pivotal role in targeting interventions effectively.
+    \item Applications:
+    \begin{itemize}
+        \item Medicine: Identifying individuals most benefited by specific treatments.
+        \item Marketing: Retaining subscribers likely to respond positively to specific campaigns.
+        \item Political Messaging: Targeting potential voters or donors effectively.
+    \end{itemize}
+    \item Common thread: Aiming to cause a desired behavior or attitude change. Who should be the target?
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lift vs. Individual Treatment Effect}
+\begin{itemize}
+    \item \textbf{Lift}: An intuitive measure representing the difference between expected outcomes in treatment and control groups. Commonly used in practical applications to gauge the effect of an intervention.
+    \item \textbf{Individual Treatment Effect (ITE)}: A more formal term in causal inference representing the effect of treatment on an individual.
+    \item It is very common to see these terms used interchangeably because Lift is a industry term (particularly common at Amazon), but ITE is causal inference jargon within academia
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Defining Lift and Its Importance}
+\begin{itemize}
+    \item Lift is the difference between the expected outcome in the treatment and the control (I call it the simple difference in mean outcomes in my book)
+    	\begin{itemize}
+    \item If outcome is dichotomous: Lift = Probability (desired behavior in treatment) - Probability (desired behavior in control).
+    \item If outcome is continuous: Lift = Mean outcome in treatment - Mean outcome in control.
+    \end{itemize}
+    \item Example: If 55\% in treatment voted and 50\% in control did, lift = 5 percentage points.
+    \item Example: For donations, if treatment average is \$10.00 and control is \$7.50, lift = \$2.50.
+    \item It's a calculation; it isn't causal until we make assumptions about treatment assignment mechanism (i.e., randomization, parallel trends)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What to do with these HTEs}
+\begin{itemize}
+    \item \textbf{Model Training}: Use historical or experimental data to train a model estimating HTEs based on individual characteristics.
+    \item \textbf{Prediction}: Apply the trained model to new individuals (outside the original dataset) to predict their expected treatment effects.
+    \item \textbf{Intervention Selection}: Identify individuals who are predicted to benefit the most from the intervention.
+    \item \textbf{Maximize Effectiveness}: Strategically deliver the intervention to those individuals to maximize overall impact.
+    \item \textbf{Continuous Learning}: As more data becomes available, refine and retrain the model to enhance prediction accuracy and intervention effectiveness.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Finding Heterogeneous Treatment Effects}
+While many strategies don't prioritize causal effects, certain models are designed to optimize for them. \bigskip
+
+To comprehend these, a dive into theoretical foundations is essential. 
+
+\bigskip
+
+Let's do a quick review at a high level now
+\end{frame}
+
+\begin{frame}
+\frametitle{Objective of HTEs}
+
+Recall that we do not require in causal inference that treatment effects be constant across people; they can be \emph{heterogenous} meaning different responses to the same intervention are possible (and likely)
+\bigskip
+
+
+Our aim with causal forests is to measure the individual causal effect, represented as: $$\delta_i = Y^1_i - Y^0_i$$. \bigskip
+
+
+This is framed, in other words, within the Rubin causal model, which posits a strict definition of causality which is one of its strengths -- clarify of parameter definitions
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The Challenge in Causal Inference}
+
+This task is \textbf{impossible} though by the same Rubin causal model
+
+\bigskip
+
+We cannot simultaneously observe an individual's outcomes in both the treatment and control conditions due to a ``switching equation'' that moves from potential outcomes to realized outcomes$$Y_i = D_iY^1_i + (1-D_i)Y^0_i$$
+
+\bigskip 
+
+This is what Holland (1986) means by “the fundamental problem of causal inference" -- history creates counterfactuals making individual causal effects inacessible
+\end{frame}
+
+\begin{frame}
+\frametitle{Approaching the Challenge}
+
+So what can we do?
+
+\bigskip
+
+A common solution involves comparing outcomes between two large, similar groups—one exposed to an intervention or treatment, the other a control.
+
+\bigskip 
+
+This helps determine the average treatment effect (ATE), $$E[Y^1|D=1] - E[Y^0|D=0]$$
+
+Under some situations this can be estimated with data (i.e., randomization) and others it cannot be
+\end{frame}
+
+\begin{frame}
+\frametitle{Estimating Individual Treatment Effects}
+
+Under assumptions we define later, we will assume there is some randomization in the data and we have found it
+
+\bigskip
+
+To pinpoint effects for specific individuals, algorithms identify 'similar others' in the dataset. 
+
+\bigskip 
+
+Their outcomes serve as proxies, helping estimate potential outcomes for individual targets. 
+
+\bigskip 
+
+Big idea: this is about estimating "strata specific" or "partitioned" ATEs which are called the conditional ATE or CATE (more later)
+\end{frame}
+
+\begin{frame}
+\frametitle{Understanding "Similar Others"}
+
+\begin{itemize}
+    \item "Similar others" refers to units (or individuals) in the dataset with comparable values on observed characteristics.
+    
+    \bigskip
+    
+    \item Think of it as a concept akin to the nearest neighbor in methods like k-nearest neighbors (k-NN).
+    
+    \bigskip
+    
+    \item Based on some distance metric (often Euclidean), we identify observations close to the target observation in the covariate space.
+    
+    \bigskip
+    
+    \item In the context of HTEs, these units serve as proxies to help infer potential outcomes for a particular individual under a different treatment condition.
+    
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why HTEs Over CATEs and Vice Versa?}
+\begin{itemize}
+    \item \textbf{HTEs (Heterogeneous Treatment Effects)}:
+    \begin{itemize}
+        \item \textit{Tailored Interventions}: Identify specific subgroups that benefit the most or least from an intervention.
+        \item \textit{Resource Allocation}: Direct resources more efficiently by targeting those with the highest expected lift.
+        \item \textit{Uncover Mechanisms}: Understand the underlying factors that drive different responses to treatment.
+    \end{itemize}
+    \bigskip
+    \item \textbf{CATEs (Conditional Average Treatment Effects)}:
+    \begin{itemize}
+        \item \textit{Broad Overview}: Get a general sense of the treatment's effectiveness within predefined strata.
+        \item \textit{Easier Interpretation}: Less complex than HTEs, making them more accessible for broader audiences.
+        \item \textit{Stability}: Pre-defined strata can lead to more stable and consistent estimates, especially with smaller sample sizes.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Conditional Average Treatment Effect (CATE)}
+\begin{itemize}
+    \item Definition: \( \tau(x) = \mathbb{E}[Y^1 - Y^0 | X = x] \)
+    \item Represents the difference in potential outcomes for treated vs. untreated units, conditioned on covariate values \(x\).
+    \item Allows us to capture heterogeneous treatment effects across different subgroups.
+	\item But causal forests move beyond this CATE concept into a different kind of HTE concept
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Understanding Heterogeneous Treatment Effects}
+\begin{itemize}
+    \item So the essence of identifying HTEs is about comparing "like with like" but in the context of "like in the treatment" with "like in the control"
+    \item HTE method stratifies or groups data based on combinations of covariates (e.g., race, gender, political affiliation) or what you may hear described as "dimension"
+    \item Within each stratum, the method calculates the difference in outcomes between the treatment and control groups -- so not the average overall, but the average within some strata
+    \item This difference provides an estimate of the average treatment effect (ATE) specific to that subgroup
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Simple Breakdown of Stratified ATE}
+\begin{enumerate}
+    \item \textbf{Stratification}: Partition data based on combinations of covariates. Each represents a unique combination like raceXgenderXpolitical.
+    \item \textbf{Calculate Outcomes}: Within each stratum, compute the average outcome for treatment and control groups.
+    \item \textbf{Compute ATE}: Subtract control group average from treatment group average for each stratum.
+    \item \textbf{Generalization}: Uncover patterns, understand which covariates influence the treatment effect most.
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{From Stratified ATE to Causal Forests}
+\begin{itemize}
+    \item Causal forests are an evolution of the stratified ATE concept. Instead of pre-defined strata, they search for the best splits in data to identify HTEs.
+    \bigskip
+    \item While stratified ATE focuses on average effects within fixed covariate combinations, causal forests dynamically determine where the treatment effect varies the most.
+    \bigskip
+    \item The forest "learns" from the data which covariate splits are most relevant in predicting heterogeneous effects.
+    \bigskip
+    \item The result? A more nuanced understanding of where and how the treatment effect differs across subgroups.
+\end{itemize}
+\end{frame}
+
+
+\subsection{Data}
+
+\begin{frame}
+\frametitle{Data requirements}
+\begin{itemize}
+	\item Before diving into the causal assumptions, let's look at the data requirements
+	\item What are the types of data you should have in your mind for this method?
+	\item We'll review
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{1. Sample Size}
+\begin{itemize}
+    \item Larger datasets are preferable for robust HTE estimates.
+    \item While causal forests can work with smaller datasets, precision might be compromised with many covariates.
+    \item More data provides better granularity and helps in identifying meaningful heterogeneous effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{2. Number \& Type of Covariates}
+\begin{itemize}
+    \item Can handle a large number of both discrete and continuous covariates.
+    \item Continuous covariates are split based on observed distribution and outcome relationship.
+    \item As dimensionality increases, more data is required for meaningful splits.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{3. Handling Missing Data}
+\begin{itemize}
+    \item Handle missing data before input: consider imputation or other methods.
+    \item Ensure missingness doesn't introduce bias into treatment effect estimates.
+    \item Some implementations can handle missing data but best to address beforehand.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{4. Balance of Treatment \& Control}
+\begin{itemize}
+    \item Aim for a good balance between treatment and control groups.
+    \item Extreme imbalances can affect the precision and robustness of estimates.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{5. Common Support}
+\begin{itemize}
+    \item Ensure sufficient representation in both treatment and control for all subgroups.
+    \item Sparse cells (specific covariate combinations) can pose challenges for accurate estimates.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{6. Variability \& Granularity in Covariates}
+\begin{itemize}
+    \item Causal forests require variability in covariates for meaningful splits.
+    \item Consider the granularity: age as continuous vs. binned can influence tree structures.
+\end{itemize}
+\end{frame}
+
+\subsection{Unconfoundedness and common support assumptions}
+
+\begin{frame}
+\frametitle{Assumption of Unconfoundedness}
+\begin{itemize}
+    \item Unconfoundedness: Treatment is independent of potential outcomes (i.e., as good as random) for units with identical covariate values or ``strata''.$$(Y^1, Y^0) \perp\!\!\!\perp D \mid X$$
+
+    \item Causal forests are in the ``branch'' of causal inference that assumes unconfoundedness (like DML, propensity scores, regression and matching)
+    \item But their strength is in their adaptability to large dimensions which makes them powerful tools under this assumption.
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Common Support in High Dimensions}
+\begin{itemize}
+	\item After unconfoundedness, we need ``common support'' -- non-empty cells for the entire stratification of the data based on the covariates in treatment and control
+	\item Unconfoundedness says we are allowed to use covariates for causal inference, but common supports says it's actually possible to do it because we have units in treatment and control for all dimensions of X
+    \item In high-dimensional settings, ensuring common support becomes challenging though (slide after next for more)
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Example: Breakdown of Common Support}
+\begin{itemize}
+    \item Consider two binary covariates, sex (male/female) and age (adult/child).
+    \item Even if sex and age individually have overlap, the joint distribution (e.g., sex=0, age=1) might lack overlap.
+    \item With more covariates, gaps in joint distribution become more probable: the "curse of dimensionality."
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Table 1: Stratified sample with common support}
+
+{\renewcommand{\arraystretch}{1.1}
+\tabcolsep=1.3\tabcolsep 		
+\begin{table}\small\index{rolling!3}
+\caption{Counts and Titanic survival rates by strata and first class status.}
+\centering
+\begin{tabular}{lcc|cc|c}
+\toprule
+\multicolumn{1}{c}{\textbf{}}&
+\multicolumn{2}{c}{\textbf{First class}}&
+\multicolumn{2}{c}{\textbf{All other classes}}&
+\multicolumn{1}{c}{\textbf{}}\\
+\multicolumn{1}{l}{Strata}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Total}\\
+\midrule
+Male adult		& 175	& 0.326	& 1,492	& 0.188	& 1,667 \\
+Female adult	& 144	& 0.972	& 281	& 0.626	& 425 \\
+Male child		& 5		& 1		& 59		& 0.407 	& 64\\
+Female child	& 1		& 1		& 44		& 0.613 	& 45\\
+\midrule
+Total	observations	& 325	&&	1,876	 && 2,201\\
+\bottomrule
+\end{tabular}
+\label{tab:titanic-counts}
+\end{table}}
+
+\end{frame}
+
+\begin{frame}{Table 2: Stratified sample without common support}
+
+{\renewcommand{\arraystretch}{1.1}
+\tabcolsep=1.3\tabcolsep 		
+\begin{table}\small\index{rolling!3}
+\caption{Counts and Titanic survival rates by strata and first class status.}
+\centering
+\begin{tabular}{lcc|cc|c}
+\toprule
+\multicolumn{1}{c}{\textbf{}}&
+\multicolumn{2}{c}{\textbf{First class}}&
+\multicolumn{2}{c}{\textbf{All other classes}}&
+\multicolumn{1}{c}{\textbf{}}\\
+\multicolumn{1}{l}{Strata}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Obs}&
+\multicolumn{1}{c}{Mean}&
+\multicolumn{1}{c}{Total}\\
+\midrule
+Male adult		& 175	& 0.326	& 1,492	& 0.188	& 1,667 \\
+Female adult	& 144	& 0.972	& 281	& 0.626	& 425 \\
+Male child		& 5		& 1		& 59		& 0.407 	& 64\\
+Female child	& 0		& n/a		& 44		& 0.613 	& 44\\
+\midrule
+Total	observations	& 324	&&	1,876	 && 2,200\\
+\bottomrule
+\end{tabular}
+\label{tab:titanic-counts}
+\end{table}}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{A Word of Caution}
+\begin{itemize}
+    \item As we delve into causal forests, be mindful of the term "partition" and its usage.
+    \item It aligns closely with "stratification," but remember the adaptive, data-driven nature of partitioning in this context.
+    \item Terminology can sometimes be a barrier, but understanding the underlying concepts bridges the gap.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Strata vs. Partition}
+\begin{itemize}
+    \item Historically, in many statistical contexts, we use "strata" and "stratification" to refer to dividing data into subsets based on certain criteria.
+    \item In the literature on causal forests and decision trees, the term "partition" is more commonly used.
+    \item This terminology traces back to the computer science and machine learning origins of decision trees, where data is "partitioned" into subsets during the tree-building process.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why the Difference?}
+\begin{itemize}
+    \item "Stratification" often implies a deliberate, predefined division of data based on known, important criteria.
+    \item "Partitioning" in trees is more dynamic and adaptive, with divisions made based on data-driven decisions to optimize a specific objective.
+    \item While they conceptually overlap, the terms have different historical and contextual connotations.
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Traditional Stratified Analysis vs. Causal Forests}
+\begin{itemize}
+\item \textbf{Stratified Analysis:} Divides data into strata based on covariates and estimates ATE within each stratum. 
+\item \textbf{Causal Forests:} Builds decision trees to specifically search for subgroups with differing treatment effects, focusing on heterogeneity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Searching for HTEs: What does it mean?}
+\begin{itemize}
+\item Not just looking for places where the treatment has an effect.
+\item Specifically looking for places where the treatment effect differs from one subgroup to another.
+\item This is the essence of \textbf{heterogeneous} treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{How does Causal Forest Achieve This?}
+\begin{itemize}
+\item During tree-building, the split criteria isn't just about predicting the outcome (like in traditional regression trees).
+\item It's about finding splits that maximize the difference in treatment effects between the resulting subgroups.
+\item In other words, the tree is built to find heterogeneity in treatment effects, not just to predict the outcome.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Optimizing Over Differences in HTEs}
+\begin{itemize}
+\item Consider two potential splits: 
+  \begin{itemize}
+  \item Split A: ATE in subgroup 1 is 5\%, and ATE in subgroup 2 is 6\%.
+  \item Split B: ATE in subgroup 1 is 2\%, and ATE in subgroup 2 is 9\%.
+  \end{itemize}
+\item While the ATEs in Split A are closer to each other, Split B has a larger difference, indicating greater heterogeneity.
+\item Causal forests would favor Split B as it reveals a more pronounced difference in treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Benefits of Searching for HTEs}
+\begin{itemize}
+\item Allows for more targeted interventions by identifying specific groups that benefit most.
+\item Provides richer insights into the mechanisms of treatment effects.
+\item Offers a nuanced understanding compared to a one-size-fits-all ATE approach.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Strata-Specific ATEs}
+\begin{itemize}
+    \item Black men aged 45yo Democrat: ATE = 45
+    \item Black women aged 45yo Republican: ATE = 45
+    \item White men 40yo Democrat: ATE = 10
+    \item White women aged 40yo Republican: ATE = 45
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Traditional Approach vs. Causal Forests}
+\begin{itemize}
+    \item Traditional approach: Focus on strata-specific ATEs, leading to separate treatment effects for each distinct group.
+    \item Causal forests: Prioritize finding splits in the data that maximize the difference in treatment effects between subgroups.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Causal Forests Optimization}
+\begin{itemize}
+    \item It doesn't merely compute the average treatment effects for predetermined strata.
+    \item Instead, it searches for partitions in the data where the treatment effect is most heterogeneous.
+    \item The goal is to identify where the treatment effect differs the most, not just the average effect within known subgroups.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Outcome of Causal Forests on the Example}
+\begin{itemize}
+    \item Causal forests might recognize two dominant patterns:
+    \begin{itemize}
+        \item ATE of 45 for the majority of the groups.
+        \item ATE of 10 for White men 40yo Democrat.
+    \end{itemize}
+    \item Instead of treating each stratum separately, causal forests might group Black men aged 45yo Democrat, Black women aged 45yo Republican, and White women aged 40yo Republican together due to similar ATEs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Estimation Process}
+\begin{itemize}
+    \item Within each leaf, treatment effects are estimated by comparing outcomes of treated and control units.
+    \item This difference in means provides the localized average treatment effect for units in that leaf.
+    \item These localized estimates are then aggregated across the forest to provide an overall estimate.
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+
+\section{Estimation}
+
+\subsection{Causal forest algorithm}
+
+\begin{frame}{Data}
+
+For causal forests to perform well, you typically need a large number of observations (large N) because the method benefits from having a lot of data to find nuanced treatment effects. However, having a variety of covariates can also be beneficial as it allows the algorithm to find more refined subgroups of interest.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Causal Forests: Estimating HTEs}
+\begin{itemize}
+\item Causal forests find natural splits to estimate HTEs, not strata-specific ATEs.
+\item Focuses on regions where treatment effects vary the most.
+\item Still needs overlap (common support) within splits to make valid comparisons.
+\item Without overlap in a region, causal inferences are unreliable.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Importance of Common Support in Causal Forests}
+\begin{itemize}
+\item Causal forests adaptively partition data based on treatment effect variability.
+\item Within each partition, valid comparisons require data from both treatment and control groups.
+\item Absence of common support in a region means no reliable causal inference for that region.
+\item In summary: Causal forests are adaptive but still rely on foundational causal inference assumptions for validity.
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Causal Forests: Addressing the Challenge}
+\begin{itemize}
+    \item Causal forests partition the covariate space, estimating effects within partitions.
+    \item Allows for local treatment effect estimation where there's overlap.
+    \item Highlights regions where common support might be violated.
+    \item Before going into the algorithm, let me review a high level idea
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization in Causal Forests}
+\begin{itemize}
+\item First, regularization, one of the things I usually associate with machine learning predictive analytic techniques
+\item Regularization is crucial to prevent overfitting in machine learning.
+\item In tree-based methods, regularization isn't a direct term but is achieved through various techniques.
+\item In causal forests, regularization is accomplished a particular way, but first I want to just say it's purpose and lead us into that
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regularization Techniques}
+\begin{itemize}
+\item \textbf{Tree Pruning}: Simplify the model by removing some leaves after a tree is fully grown (more later).
+\item \textbf{Minimum Leaf Size}: Prevent overly granular splits by setting a minimum number of observations in a leaf (more later!)
+\item \textbf{Maximum Depth}: Limit how deep a tree can grow. (more later!!)
+\item \textbf{Bagging}: Average predictions over multiple trees. (more later!!!)
+\item \textbf{Random Feature Selection}: At each split, only consider a random subset of features. (more later !!!!)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Honesty as Regularization}
+\begin{itemize}
+\item In causal forests, the "honesty" principle acts as a form of regularization
+\item Data is split into tree-building and outcome estimation sets which is going to be how avoidijng overfitting are accomplished.
+\item This separation ensures the model doesn't overfit when estimating treatment effects.
+\item So keep this in mind as we dive now into the algorithm
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{The Causal Forest Algorithm}
+\begin{itemize}
+    \item Combines multiple causal trees to estimate heterogeneous treatment effects.
+    \item Each tree is built using a bootstrapped sample, introducing variability and reducing overfitting.
+    \item Random subsets of covariates ("feature bagging") are chosen at each split, preventing domination by a few strong predictors.
+    \item Treatment effects are aggregated across trees, stabilizing estimates and improving accuracy.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{1. Objective Function for Splits}
+\begin{itemize}
+\item Causal trees prioritize identifying differences in treatment effects over just reducing variance.
+\item Splits are made by maximizing the differences in estimated treatment effects between subgroups.
+\item Unlike traditional regression trees, which focus on outcome prediction, causal trees home in on treatment effect heterogeneity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{2. Minimizing Noise and Overfitting}
+\begin{itemize}
+\item In finite samples, random variability is inevitable.
+\item "Honesty" in tree-building ensures we don't overfit to the noise. 
+\item Data is split into tree-building and treatment effect estimation sets.
+\item This separation helps to ensure observed differences are genuine, not just artifacts of the data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Honesty in Causal Forests}
+\begin{itemize}
+\item Traditional decision trees use the same data to decide on splits and estimate outcomes.
+\item This can lead to "noise fitting" or "overfitting" where the model learns not just the underlying patterns but also the random noise present in the data.
+\item "Honesty" was introduced to separate the tree-building process from outcome estimation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Avoiding Noise Fitting}
+\begin{itemize}
+\item By splitting the data into two sets, one for building the tree and the other for estimating treatment effects, the method avoids being overly influenced by noise.
+\item The term "honesty" implies that the method provides a more genuine or unbiased estimate of the treatment effect.
+\item It's a safeguard against the tree being too optimistic in its predictions or identifying spurious patterns.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Origins and Implications}
+\begin{itemize}
+\item The term "honesty" in this context originates from the work of Athey and Imbens, among others, emphasizing the need for unbiasedness in causal effect estimation.
+\item It's a departure from traditional machine learning which often optimizes for prediction accuracy at the risk of overfitting.
+\item In causal inference, overfitting can lead to biased treatment effect estimates, hence the emphasis on honesty to ensure robustness and reliability.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: Overfitting in Medical Data}
+\begin{itemize}
+\item \textbf{Scenario}: Researchers are analyzing medical data to predict which patients are most likely to develop a specific illness based on a variety of health metrics (e.g., blood pressure, cholesterol, etc.).
+\item \textbf{Traditional Tree}: Using a regular decision tree, the model identifies a very specific subgroup of patients: those with blood pressure in a narrow range (121-123 mm Hg), cholesterol level of precisely 205 mg/dL, and who had exactly 3 doctor visits last year.
+\item \textbf{Outcome}: This subgroup, although specific, shows a very high rate of illness in the training data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pitfalls of Overfitting}
+\begin{itemize}
+\item \textbf{Issue}: This subgroup might just be a random cluster in the training data -- maybe by sheer chance, a few patients with those exact metrics got sick, but it doesn't reflect a broader, generalizable trend.
+\item \textbf{Result}: When the model is tested on new data, the predictions for this subgroup are highly inaccurate due to the model being too tailored to the noise of the training data.
+\item \textbf{Honest Approach}: By separating tree-building from outcome estimation, an honest tree wouldn't be swayed by such random clusters and would be more robust to the inherent randomness in any dataset.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Honesty is a Guard Against Overfitting}
+\begin{itemize}
+\item \textbf{Conventional Issue}: Decision trees often capture noise by tailoring the subgroups too closely to the training data's outcomes.
+\item \textbf{Overfitting Manifestation}: A subgroup in the training data might not reflect a broader, generalizable trend. This can lead to poor predictions on new data.
+\item \textbf{Honest Approach}:
+\begin{itemize}
+\item Use one sample to determine tree structure based on covariates.
+\item Use a separate, unbiased sample to estimate outcomes for the defined subgroups.
+\end{itemize}
+\item \textbf{Benefit}: This separation ensures the model doesn't overfit to the idiosyncrasies of a single dataset, resulting in more robust and reliable predictions.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{3. Pruning and Minimum Leaf Size}
+\begin{itemize}
+\item To prevent over-segmentation, trees can be pruned. Less informative branches can be trimmed.
+\item Setting a minimum leaf size ensures each terminal node has a sufficiently large sample.
+\item This reduces the influence of random noise on estimated treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Understanding Over-Segmentation}
+\begin{itemize}
+\item \textbf{Definition}: Over-segmentation occurs when data is divided into excessive, often tiny, subgroups that don't capture meaningful patterns but rather capture noise.
+\item \textbf{Simple Example}: Imagine a classroom where students are grouped by height to predict their test scores. Over-segmentation would mean creating groups for every centimeter increase in height, even when such minute differences don't meaningfully correlate with scores.
+\item \textbf{In Context of First Sample}: When building the tree with the first sample, there's a risk of over-segmentation as the model tries to find the "best" splits. This is why pruning and setting minimum leaf sizes are crucial.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Over-Segmentation and Common Support}
+\begin{itemize}
+\item Over-segmentation can lead to tiny subgroups with limited data, producing unreliable estimates.
+\item It can also result in subgroups without both treatment and control observations, violating the common support assumption.
+\item Pruning and setting minimum leaf sizes address these issues, ensuring more reliable and robust treatment effect estimates.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{4. Multiple Trees \& Bagging}
+\begin{itemize}
+\item A random forest averages results over many trees.
+\item Each tree is built on a bootstrapped sample and uses a random subset of predictors.
+\item By averaging over many trees, random forests reduce variance and provide a more robust estimate of treatment effects.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What is Bagging?}
+\begin{itemize}
+\item "Bagging" stands for Bootstrap AGGregatING.
+\item It involves taking multiple random samples (with replacement) from the dataset and building a separate decision tree for each sample.
+\item For instance, if our dataset has 1000 rows, we might create 10 bootstrapped samples. Each sample might contain duplicates of some rows and might omit some others.
+\item Each of these samples will be used to build a separate tree.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why Bagging?}
+\begin{itemize}
+\item Trees built on different samples will show variability.
+\item A single decision tree can be sensitive to small changes in data (high variance).
+\item By averaging predictions over multiple trees, bagging reduces this variance.
+\item Think of it as consulting multiple experts and then averaging their opinions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Random Subsets of Predictors}
+\begin{itemize}
+\item In addition to bootstrapped samples, each tree in a random forest considers only a random subset of predictors at each split.
+\item If we have 10 predictors, a single tree might only look at 3 or 4 of them for deciding a split.
+\item This introduces further variability among trees and ensures that the forest doesn't overly rely on any one predictor.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combining Predictions: Understanding Averaging}
+\begin{itemize}
+\item After building many trees, the random forest aggregates their predictions.
+\item For estimating treatment effects, this means averaging the predicted values.
+\item Averaging helps in reducing the noise and provides a more stable and consistent estimate.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Concrete Example: Advertising Campaign Impact on Sales}
+\begin{itemize}
+\item Imagine a company launching a large advertising campaign. 
+\item The "treatment" is the exposure to the campaign. The outcome is the increase in sales.
+\item Different consumers might respond differently based on their previous purchase history, demographics, etc.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Concrete Example: Advertising Campaign Impact on Sales}
+\begin{itemize}
+\item We bootstrap our consumer data to create diverse samples. One bootstrapped sample might end up with more young consumers, while another might have more elderly consumers due to sampling with replacement.
+\item Each tree in our causal forest focuses on different attributes. One tree might split based on age groups, another on previous purchase frequency.
+\item By averaging the predictions from all trees, the company can better identify which consumers are most likely to increase their purchases after being exposed to the campaign, estimating the HTEs.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Implication}
+\begin{itemize}
+\item The decision on meaningful HTEs is a mix of:
+\begin{itemize}
+\item Statistical criteria of the tree algorithm.
+\item Variability in the data.
+\item Regularization techniques applied.
+\end{itemize}
+\item While slight differences are everywhere, causal forests identify systematic differences, not just noise.
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}
+\frametitle{What Makes it Honest?}
+\begin{itemize}
+	\item So let's return to the honesty principle from earliers
+    \item Overfitting is a concern: How to ensure we're not identifying random quirks as significant treatment effects?
+    \item Solution: Split training data into two subsamples: a splitting subsample and an estimating subsample.
+    \item Build the causal tree using the splitting sample.
+    \item Apply the tree to the estimating sample, and determine treatment effects within each leaf.
+    \item Future cases use these estimates when the model is applied.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Added Benefits of Honest Causal Trees}
+\begin{itemize}
+    \item Athey and colleagues demonstrate that treatment effect estimates from honest causal trees are asymptotically normal.
+    \item Asymptotically normal: As sample size grows indefinitely, treatment effect estimate follows a normal distribution.
+    \item Key implications:
+    \begin{itemize}
+        \item Enables calculation of variance and 95\% confidence intervals.
+        \item Recognizes inherent uncertainty in predictions.
+        \item Potential to target anyone with an expected treatment effect statistically significantly above zero.
+    \end{itemize}
+    \item Practical value: Appreciating the uncertainty and making informed decisions in interventions.
+\end{itemize}
+\end{frame}
+
+
+\subsection{Understanding Honesty in Causal Forests}
+
+\begin{frame}
+\frametitle{1. Data Splitting}
+
+\begin{itemize}
+    \item So let's review now: the data is divided into two distinct parts:
+    \begin{itemize}
+        \item \textbf{Splitting Sample}: Used to structure the tree.
+        \item \textbf{Estimation Sample}: Used to compute treatment effects.
+    \end{itemize}
+    \item This split ensures a clear distinction between the model's structure and its performance evaluation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{2. Tree Building with the Splitting Sample}
+\begin{itemize}
+    \item The tree's structure (i.e., where to make splits based on covariates) is decided using the splitting sample.
+    \item At this stage, the algorithm is \textbf{not} evaluating treatment effects.
+    \item It's focusing on defining the "framework" based on covariates and potential treatment interactions.
+    \item \textbf{Framework Explained}: The "framework" refers to the foundational structure of the tree which sets up the subgroups based on covariates without yet assigning or evaluating treatment effects to these groups.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{3. Treatment Effect Estimation with the Estimation Sample}
+\begin{itemize}
+	\item So we have the framework setting up subgroups based on covariates, but what? 
+    \item We apply this pre-constructed tree to the estimation sample -- a kind of ``moving over" from the training data to the estimation sample.
+    \item As each data point lands in a leaf node, the treatment effect within that leaf is computed.
+    \item This is done by calculating the difference in outcomes (e.g., means, medians) between the treated and control groups within the leaf.
+    \item Recall what unconfoundedness means -- randomization \emph{within} covariate strata, and leaves \emph{are} covariate strata
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{4. The Intuition Behind Honesty}
+\begin{itemize}
+    \item The splitting sample sets the "stage" or "framework."
+    \item The estimation sample acts as the "actors" that play out within that framework.
+    \item By separating these roles, the model's structure isn't biased by the treatment effects it later evaluates.
+    \item This approach guards against overfitting and provides a more genuine estimate of treatment effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Implication of Honesty}
+\begin{itemize}
+    \item Achieves a more "honest" treatment effect estimate.
+    \item Mitigates the risk of the model being overly optimistic about its own performance.
+    \item The tree structure is determined without "peeking" at treatment effect outcomes, minimizing the likelihood of identifying false patterns.
+    \item Let's walk through a numerical example together to see if we understand
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What the Algorithm IS Doing}
+\begin{itemize}
+    \item At each node, it evaluates potential split points for every variable, not necessarily every unique value.
+    \item For continuous variables like GPA, it might consider natural breakpoints or where there are significant changes in the treatment effect.
+    \item The split criterion, e.g., maximizing the difference in treatment effects, determines the "best" split.
+    \item Once the best split is chosen, data divides accordingly, creating two child nodes.
+    \item The process continues recursively, now evaluating potential splits at the child nodes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Bagging in the Context}
+\begin{itemize}
+    \item Bagging involves creating multiple datasets by sampling with replacement from the original dataset.
+    \item A separate tree is built for each of these bootstrapped datasets.
+    \item Final prediction (or estimated treatment effect) is an average of outputs from all these trees.
+    \item By leveraging the diversity in these bootstrapped samples, bagging reduces the variance in predictions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What the Algorithm is NOT Doing}
+\begin{itemize}
+    \item It does \textbf{not} make a split, then backtrack and try another split at the same node.
+    \item It does \textbf{not} randomly choose a split without evaluating its quality.
+    \item It does \textbf{not} use the same data for both determining the best split and estimating the treatment effect, thanks to the "honesty" principle.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summarizing the Process}
+\begin{itemize}
+    \item The algorithm's objective is to find splits that best segregate data based on the difference in treatment effects.
+    \item This involves thorough evaluations at each node, ensuring the best possible decision at every step.
+    \item While it might sound computationally intensive, modern computing power and algorithmic optimizations make this feasible. However, the process can take time, especially with large datasets or numerous variables.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{4. Treatment Effect Estimation with the Estimation Sample}
+\begin{itemize}
+    \item Apply the tree structure to the estimation sample.
+    \item For each individual in a leaf, compute the difference in wages between those who underwent the job training and those who didn't.
+    \item This difference provides the treatment effect for individuals in that specific leaf.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{5. Intuitive Takeaway}
+\begin{itemize}
+    \item The tree structure was decided without knowing the exact treatment effect in the estimation sample.
+    \item By keeping the structure and effect estimation separate, we minimize the risk of "chasing" random patterns in the data.
+    \item This ensures a robust and "honest" estimate of treatment effects.
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Variable Importance}
+\begin{itemize}
+    \item Causal forests can rank variables by their importance in determining heterogeneous treatment effects.
+    \item Variables that frequently lead to splits have a higher importance score.
+    \item Provides insights into which covariates play crucial roles in treatment effect heterogeneity.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Hyperparameters and Their Importance}
+\begin{itemize}
+    \item Like other machine learning methods, causal forests have hyperparameters that can be tuned.
+    \item Examples include the number of trees, depth of trees, and minimum samples in a leaf.
+    \item Proper tuning is essential to ensure model performance and prevent overfitting.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Role of Cross-Validation}
+\begin{itemize}
+    \item To validate the performance of causal forests, out-of-sample validation is crucial.
+    \item Cross-validation involves partitioning the data into subsets, training on some and validating on others.
+    \item Helps in hyperparameter tuning and assessing the robustness of treatment effect estimates.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Software Tools and Practical Implementation}
+\begin{itemize}
+    \item Multiple software packages are available for causal forests, including in R and Python.
+    \item 'grf' in R is a popular choice for causal forests.
+    \item Proper data preprocessing, feature engineering, and post-estimation diagnostics are crucial for successful implementation.
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Practical Applications of Causal Forests}
+\begin{itemize}
+    \item Healthcare: Estimating the effects of treatments or interventions on patient outcomes.
+    \item Economics: Understanding the impact of policy changes or financial strategies.
+    \item Marketing: Evaluating the effectiveness of advertising campaigns on different demographics.
+    \item Social Sciences: Studying the influence of educational programs or societal interventions.
+    \item These applications underscore the versatility and utility of causal forests in real-world decision-making.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Strengths and Weaknesses of Causal Forests}
+\begin{itemize}
+    \item **Advantages**:
+        \begin{itemize}
+            \item Captures complex, non-linear relationships.
+            \item Robust to high-dimensional covariate spaces.
+            \item Offers insights into heterogeneous treatment effects.
+        \end{itemize}
+    \item **Limitations**:
+        \begin{itemize}
+            \item Requires a good deal of computational resources.
+            \item Assumption of unconfoundedness needs to hold (imo this is most likely being blurred by practitioners; would they use propensity scores?  Probably not)
+            \item Might not perform well with very sparse data.
+        \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Extensions and Innovations}
+\begin{itemize}
+    \item **Generalized Random Forests**: Expands causal forests to other statistical tasks, like quantile regression.
+    \item **Adaptive Causal Trees**: Dynamic algorithms that adjust to evolving data streams.
+    \item **Instrumental Variable Forests**: Incorporates instrumental variables to handle unobserved confounding.
+    \item Continuous developments ensure that causal forest methods remain at the forefront of causal inference techniques.
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+\subsection{Final comments}
+
+\begin{frame}
+\frametitle{Data Preparation for CRF}
+\begin{itemize}
+    \item Understand the dataset: Ensure you have both treatment and control groups. 
+    	\begin{itemize} 
+	\item \emph{``What's on the LHS? The RHS?} - JohnDinardo"
+	\end{itemize}
+    \item Pre-process the data: Clean and handle missing values.
+    \item Split the data: Create training and test datasets to evaluate the model's performance.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Data Preparation}
+\begin{itemize}
+    \item Ensure both treatment and control groups are present.
+    \item Clean and handle missing values.
+    \item Split the dataset for training and testing to evaluate model performance.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: The Bagging Procedure}
+\begin{itemize}
+    \item Bootstrap the data (Bagging) to create multiple bootstrapped samples drawn (with replacement) from the dataset.
+    \item A tree is constructed for each sample, capturing diverse data characteristics.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Tree Construction}
+\begin{itemize}
+    \item Trees segregate data based on covariates to maximize differences in treatment effects 
+    \item But not in the same dataset; two datasets -- a type of "training dataset" and a type of "estimation dataset" (as opposed to a prediction dataset)
+    \item "Honesty" principle ensures separate samples for tree structure and treatment effect estimation.
+    \item Iteratively evaluates potential split points for every variable.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Treatment Effect Estimation}
+\begin{itemize}
+    \item Applied on the estimation sample using the pre-constructed tree.
+    \item Treatment effects computed within leaf nodes by calculating differences in outcomes between treated and control groups.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF Review: Hyperparameters and Evaluation}
+\begin{itemize}
+    \item Number of trees (iterations) can be tuned for optimal performance.
+    \item Model evaluation done using test dataset to assess predictive and causal inference accuracy.
+    \item Iterative process: hyperparameter tuning and cross-validation for optimal results.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Interpreting CRF Results}
+\begin{itemize}
+    \item Assess variable importance: Understand which features most influence causal effects.
+    \item Uncover nuanced insights: Recognize patterns that traditional methods might miss.
+    \item Visualize results: Use plots and graphs to represent causal relationships.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Limitations and Challenges}
+\begin{itemize}
+    \item Overfitting: Ensure the model doesn't overly adapt to the training data.
+    \item Hyperparameter tuning: Crucial for model performance and accurate causal inference.
+    \item Model generalizability: Ensure findings can be applied to other, similar datasets.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Concluding Thoughts on CRF}
+\begin{itemize}
+    \item Versatility of CRF: Applicable in various fields and research domains.
+    \item Encourage exploration: Challenge researchers to explore and apply CRF in their work.
+    \item Continuous learning: As with all models, stay updated with advancements and improvements in CRF methodology.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Conclusion and Key Points}
+\begin{itemize}
+    \item Causal forests elegantly combine machine learning with causal inference.
+    \item They address challenges of high dimensionality and heterogeneous effects.
+    \item A powerful tool, but like all methods, they have their strengths and limitations.
+    \item With continuous research, the potential and applications of causal forests are ever-expanding.
+\end{itemize}
+\end{frame}
+
+
+
+\end{document}
