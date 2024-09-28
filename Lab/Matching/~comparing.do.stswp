@@ -30,7 +30,6 @@
 	twoway (histogram pscore if treat==1,  color(red)) ///
        (histogram pscore if treat==0,  ///
 	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
-  
 	   
 	* Re-center the covariates
 	su age
@@ -178,7 +177,6 @@ gen delta_atu = (treat_coef_var - `p_treated' * treat4) / (1 - `p_treated')
 su delta if treat==0 // ATU = $3037.5
 su delta_atu 		 // ATU = $3036.5
 
-
 ** Other methods using propensity scores with and without bias adjustment. 
 
 * 5) Inverse probability weighting
@@ -187,8 +185,8 @@ teffects ipw (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet /
 
 * 6) Inverse probability weighting with an outcome regression model for double robust
 	
-	teffects ipwra (earnings age gpa age_sq gpa_sq interaction) (treat age gpa age_sq gpa_sq interaction, logit), atet // unbiased
+teffects ipwra (earnings age gpa age_sq gpa_sq interaction) (treat age gpa age_sq gpa_sq interaction, logit), atet // unbiased
 	
-	* 7) Propensity score matching
+* 7) Propensity score matching
 	
-	teffects psmatch (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // biased
+teffects psmatch (earnings) (treat age gpa age_sq gpa_sq interaction, logit), atet // biased

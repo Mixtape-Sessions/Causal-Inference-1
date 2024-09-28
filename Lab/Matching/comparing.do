@@ -30,7 +30,6 @@
 	twoway (histogram pscore if treat==1,  color(red)) ///
        (histogram pscore if treat==0,  ///
 	   fcolor(none) lcolor(black)), legend(order(1 "Treated" 2 "Not treated" ))
-  
 	   
 	* Re-center the covariates
 	su age
@@ -169,7 +168,7 @@ su te_hat if treat==1 // ATT = $1962.592
 * And if you want the ATU, you just need to know that the ATE is a weighted average of the ATT and the ATU where the weights are the share of units treated.  That is: ATE = pATT + (1-p)ATU where p is share of units treated.  Then you just solve for ATU.  ATU = (ATE - pATT)/(1-p).  I'll do that here. 
 
 * Calculate the proportion of treated units
-quietly sum treat
+sum treat
 local p_treated = `r(mean)'
 
 * Calculate the ATU
