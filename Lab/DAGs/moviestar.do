@@ -1,8 +1,8 @@
 clear all 
-set seed 3444 
+set seed 3555 
 
-* 2500 independent draws from standard normal distribution 
-set obs 2500 
+* 5000 independent draws from standard normal distribution 
+set obs 5000 
 generate beauty=rnormal()  // indepedent identical draw from standard normal distribution
 generate talent=rnormal()  // indepedent identical draw from standard normal distribution
 
