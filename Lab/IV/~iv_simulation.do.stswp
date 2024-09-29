@@ -90,7 +90,7 @@ regress earnings1 college, robust // Estimated return to college is biased upwar
 
 ivregress 2sls earnings1 (college=iv), first robust // Estimated return to college is $1,009 which is what we found earlier
 
-* We want to test the strengthe of the first stage using the appropriate F statistic and calculating the Andeson-Rubin confidence intervals
+* We want to test the strengthe of the first stage using the appropriate F statistic and calculating the Ande
 
 weakivtest // Montiel-Pflueger effective F statistic
 twostepweakiv 2sls earnings1 (college = iv), robust
