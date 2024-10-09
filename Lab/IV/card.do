@@ -50,7 +50,7 @@ regress lwage educ, robust // 0.05.
 * 3. Test for weak first stage and calculate robust confidence intervals (AR CI)
 ivregress 2sls lwage (educ=nearc4), first robust
 
-weakivtest // Montiel-Pflueger effective F statistic
-twostepweakiv 2sls lwage (educ = nearc4), robust
+weakivtest // Olea-Pflueger effective F statistic
+twostepweakiv 2sls lwage (educ = nearc4), robust // Anderson-Rubin confidence intervals
 
 
