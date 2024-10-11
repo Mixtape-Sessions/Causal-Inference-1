@@ -34,6 +34,7 @@ gen wald_iv = cov_yz/cov_sz // notice that in the wald estimator, you are dividi
 
 * 1st stage: regress schooling onto the instrument
 
+**# Bookmark #1
 regress educ  nearc4, robust
 predict shat
 
