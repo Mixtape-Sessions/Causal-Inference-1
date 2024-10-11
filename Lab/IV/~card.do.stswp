@@ -34,7 +34,6 @@ gen wald_iv = cov_yz/cov_sz // notice that in the wald estimator, you are dividi
 
 * 1st stage: regress schooling onto the instrument
 
-**# Bookmark #1
 regress educ  nearc4, robust
 predict shat
 
@@ -52,6 +51,6 @@ regress lwage educ, robust // 0.05.
 ivregress 2sls lwage (educ=nearc4), first robust
 
 weakivtest // Olea-Pflueger effective F statistic
-twostepweakiv 2sls lwage (educ = nearc4), robust // Anderson-Rubin confidence intervals
+twostepweakiv 2sls lwage (educ = nearc4), robust // A
 
 
