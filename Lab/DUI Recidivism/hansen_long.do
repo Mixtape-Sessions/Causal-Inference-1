@@ -16,7 +16,7 @@ capture log close
 use https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi, clear
 
 * Checking for manipulation in the running variable first by plotting a histogram
-hist bac1, discrete width(0.001) color(gs13%60) scheme(sj) xline(0.08)
+hist bac1, discrete width(0.001) color(gs10%90) scheme(sj) xline(0.08) title("BAC Histogram")
 
 rddensity bac1, c(0.08) plot
 
