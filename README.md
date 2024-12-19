@@ -8,21 +8,17 @@ Causal Inference Part I kickstarts a new 4-day series on design-based causal inf
 
 ## Schedule
 
-### Potential Outcomes
-
-#### About
+### Day 1
            
 The modern theory of causality is based on a seemingly simple idea called the "counterfactual".  The counterfactual is an unusual features of the arsenal of modern statistics because it is more or less storytelling about alternative worlds that may or may not exist, but could have existed had one single decision gone a different way.  Out of this idea grew what a model, complete with its own language, on top of which the field of causal inference is based, and the purpose of this lecture is to learn that language.  The language is called potential outcomes and it forms the basis for many causal objects we tend to be interested in, such as the average treatment effect. I also cover randomization, selection bias and randomization inference.
 
-
 #### Slides
-           
-<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations.pdf">Foundations of causality</a>
-<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations-DAG.pdf">DAGs</a>
 
+[Foundation of Causality](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations.pdf) and [DAGs](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations-DAG.pdf)
+         
 #### Code
            
-[Doctor PO](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Doctor-PO)
+["Perfect Doctor" PO](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Doctor-PO)
 
 [Replication of Thornton (2008)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Thornton)
 
@@ -30,9 +26,9 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 #### Readings
 
-Mixtape chapter 3: <a href="https://mixtape.scunning.com/potential-outcomes.html">Directed Acyclical Graphs</a>
+Mixtape chapter 3: [Directed Acyclical Graphs](https://mixtape.scunning.com/potential-outcomes.html)
 
-Mixtape chapter 4: <a href="https://mixtape.scunning.com/potential-outcomes.html">Potential Outcomes Causal Model</a>
+Mixtape chapter 4: [Potential Outcomes Causal Model](https://mixtape.scunning.com/potential-outcomes.html)
 
 
 
@@ -40,23 +36,21 @@ Mixtape chapter 4: <a href="https://mixtape.scunning.com/potential-outcomes.html
 
 ### Known and Quantified Confounder Methods
 
-#### About
-
 In observational studies, researchers typically are not able to assume that a treatment is randomly assigned as in an experiment. However, this randomization becomes more plausible in some cases after conditioning on a set of covariates. For example, it is not likely that attending college is random since individuals will sort to college based on a bunch of personal characteristics and social setting. However, comparing two individuals who have much of the same characteristics and come from similar backgrounds, it becomes more likely that whether these two individuals attend college differ. This is often called *selection on observables* and this section covers how to try to "match" two individuals based on their characteristics when you believe this assumption.
 
 #### Slides
 
-<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/02-Known_Observed_Confounders.pdf">Known Observed Confounders</a>
+[Known Observed Confounders](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/02-Known_Observed_Confounders.pdf)
 
 #### Code
 
-[Titanic exercise using stratification weighting] (see lab section under Titanic)
+[Titanic exercise using stratification weighting](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Titanic)
 
-[Replication of Lalonde (1986) and Dehejia and Wahba (2002)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Thornton)
+[Replication of Lalonde (1986) and Dehejia and Wahba (2002)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Lalonde)
 
 #### Readings
 
-Mixtape chapter 5: <a href="https://mixtape.scunning.com/matching-and-subclassification.html">Matching and Subclassification</a>
+Mixtape chapter 5: [Matching and Subclassification](https://mixtape.scunning.com/matching-and-subclassification.html)
 
 
 
@@ -65,14 +59,11 @@ Mixtape chapter 5: <a href="https://mixtape.scunning.com/matching-and-subclassif
 
 ### Instrumental Variables
 
-#### About
-
 In settings where we are not willing to assume *selection on observables*, researchers often turn to an instrumental variables (IV) strategy to estimate a causal effect. In short, IVs are a sort of "external shock" to the equilibrium we're thinking about. This chapter shows how to leverage these "external shocks" to identify causal effects. 
-
 
 #### Slides
 
-<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/03-IV.pdf">Instrumental Variables</a>
+[Instrumental Variables](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/03-IV.pdf)
 
 #### Code
 
@@ -80,18 +71,17 @@ In settings where we are not willing to assume *selection on observables*, resea
 
 #### Readings
 
-Mixtape chapter 7: <a href="https://mixtape.scunning.com/instrumental-variables.html">Instrumental Variables</a>
+Mixtape chapter 7: [Instrumental Variables](https://mixtape.scunning.com/instrumental-variables.html)
 
 
 
 ### Regression Discontinuity Design
 
-#### About
 One of the most desired quasi-experimental designs -- desired because it is viewed as highly credible despite being based on observational data -- is the regression discontinuity design.  Here I will discuss the sharp RDD in great detail, going through identification, estimation, specification tests and tips, as well as a replication.
 
 #### Slides
 
-<a href="https://github.com/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/04-RDD.pdf">Regression Discontinuity Designs</a>
+[Regression Discontinuity Designs](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/04-RDD.pdf)
 
 
 #### Code
@@ -103,7 +93,7 @@ One of the most desired quasi-experimental designs -- desired because it is view
 
 #### Readings
 
-Mixtape chapter 6: <a href="https://mixtape.scunning.com/regression-discontinuity.html">Regression discontinuity</a>
+Mixtape chapter 6: [Regression discontinuity](https://mixtape.scunning.com/regression-discontinuity.html)
 
 
 

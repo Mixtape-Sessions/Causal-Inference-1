@@ -11,7 +11,7 @@ capture log close
 * net install rdrobust, from(https://raw.githubusercontent.com/rdpackages/rdrobust/master/stata) replace
 * net install rddensity, from(https://raw.githubusercontent.com/rdpackages/rddensity/master/stata) replace
 * net install lpdensity, from(https://sites.google.com/site/nppackages/lpdensity/stata) replace
-* ssc install cmogram
+* ssc install cmogram ssc install cmogram
 
 use https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi, clear
 
@@ -28,6 +28,8 @@ replace dui = 1 if bac1>=0.08 & bac1~=.
 ren bac1 bac1_orig
 gen bac1=bac1_orig-0.08
 
+* Checking for manipulation in the running variable first by plotting a histogram
+hist bac1_orig, discrete width(0.001) color(gs13%60) scheme(sj) xline(0.08)
 hist bac1, discrete width(0.001) color(gs13%60) scheme(sj) xline(0.0)
 hist bac1_orig, discrete width(0.001) color(gs13%60) scheme(sj) xline(0.08)
 
