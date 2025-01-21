@@ -46,15 +46,24 @@
 
 	* Modeling potential outcomes as functions of X but differently depending on Y0 or Y1 -- "heterogeneity in the potential outcomes with respect to the covariates"
 	gen y0 = 15000 + 10.25*age + -10.5*age_sq + 1000*gpa + -10.5*gpa_sq + 500*interaction + e
+	label variable y0 "Earnings without a college degree"
+	
 	gen y1 = y0 + 2500 + 100 * age + 1100 * gpa // heterogeneous treatment effects with respect to age and gpa
+	label variable y1 "Earnings with a college degree"
+	
 	gen delta = y1 - y0
 
 	su delta 				// ATE = 2500
+	
 	su delta if treat==1 	// ATT = 1962
-	su delta if treat==0 	// ATU = 3037
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'
+
+	su delta if treat==0 	// ATU = 3037
+	local atu = r(mean)
+	scalar atu = `atu'
+	gen atu = `atu'
 
 	* Switching equation creates a "realized outcome" based on treatment assignment
 	
@@ -71,7 +80,6 @@
 	* 3) Nearest neighbor matching with bias adjustment/correction
 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha) biasadj(age age_sq gpa gpa_sq interaction) // unbiased
-
 
 	* 4) Introduction to regression adjustment (the long way, then the short way)
 	* First estimate the fully interacted regression model (ideally saturated)

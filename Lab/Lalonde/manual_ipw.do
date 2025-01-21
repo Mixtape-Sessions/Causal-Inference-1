@@ -29,13 +29,14 @@ gen interaction2 = u74*hisp
 logit treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75 interaction1 
 predict pscore
 
-* Checking mean propensity scores for treatment and control groups
-su pscore if treat==1, detail
-su pscore if treat==0, detail
-
 * Now look at the propensity score distribution for treatment and control groups
-histogram pscore, by(treat) binrescale
-
+twoway (histogram pscore if treat==1, color(green) lcolor(black)) ///
+       (histogram pscore if treat==0, fcolor(none) lcolor(black)), ///
+       legend(order(1 "NSW Sample" 2 "CPS Sample") size(small)) ///
+       title("Distribution of Propensity Score") ///
+       note("Dehejia and Wahba sub-sample.") ///
+       xtitle("Propensity Score")
+	
 * Manual with non-normalized weights using all the data
 gen d1=treat/pscore
 gen d0=(1-treat)/(1-pscore)
@@ -80,7 +81,13 @@ su ht norm
 * ATT under non-normalized weights is $2,006
 * ATT under normalized weights is $1,806
 
-teffects ipw (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75 interaction1, logit), ate
+* ATT (IPW weights)
+gen inv_ps_weight = treat + (1-treat) * pscore/(1-pscore)
+
+reg re78 i.treat [aw=inv_ps_weight], r
+
+
+teffects ipw (re78) (treat age agesq agecube educ edusq marr nodegree black hisp re74 re75 u74 u75 interaction1, logit), atet
 
 * ATT $1,610.58 but convergence not achieved
 

@@ -942,7 +942,7 @@ More instruments increase precision, but drive down $F$, therefore we know the p
 \begin{frame}{IV advice: Weak instruments}
 
 	\begin{itemize}
-	\item Excellent review by Keane and Neal (2021) ``A Practical Guide to Weak Instruments''  as well as Andrews, Stock and Sun (2018)
+	\item Excellent review by Keane and Neal (2022) ``A Practical Guide to Weak Instruments''  as well as Andrews, Stock and Sun (2019)
 	\item Stock, Wright and Yogo (2002) found that $F$ statistics on the excludability of the instrument from the first stage greater than 10 performed well in Monte Carlos with homoskedasticity, but 2SLS is has poor properties here
 		\begin{itemize}
 		\item Under powered
@@ -956,7 +956,7 @@ More instruments increase precision, but drive down $F$, therefore we know the p
 \begin{frame}{IV advice: Weak instruments}
 
 \begin{quote}
-``In the leading case with a single endogenous regressor, we recommend that researchers judge instrument strength based on the effective F-statistic of Montiel Olea and Pflueger (2013).  If there is a single instrument, we recommend reporting identification robust Anderson-Rubin confidence intervals. These are effective regardless of the strength of the instruments, and so should be reported regardless of the value of the first stage F.  Finally, if there are multiple instruments, the literature has not yet converged on a single procedure, but we recommend choosing from among the several available robust procedures that are efficient when the instruments are strong.'' -- Andrews, Stock and Sun (2018)
+``In the leading case with a single endogenous regressor, we recommend that researchers judge instrument strength based on the effective F-statistic of Montiel Olea and Pflueger (2013).  If there is a single instrument, we recommend reporting identification robust Anderson-Rubin confidence intervals. These are effective regardless of the strength of the instruments, and so should be reported regardless of the value of the first stage F.  Finally, if there are multiple instruments, the literature has not yet converged on a single procedure, but we recommend choosing from among the several available robust procedures that are efficient when the instruments are strong.'' -- Andrews, Stock and Sun (2019)
 \end{quote}
 
 \end{frame}
@@ -965,7 +965,7 @@ More instruments increase precision, but drive down $F$, therefore we know the p
 \begin{frame}{IV advice: Weak instruments}
 
 \begin{itemize}
-	\item Anderson-Rubin greatly alleviate this problem and should be used even with very strong instruments provided the first-stage $F$ is well above 10 (Lee, et al. 2020 say 104.7)
+	\item Anderson-Rubin greatly alleviate this problem and should be used even with very strong instruments provided the first-stage $F$ is well above 10 (Lee, et al. 2022 say 104.7)
 	\item Higher thresholds are recommended, and even then robust tests are suggested unless $F$ is in the thousands
 	\item Keane and Neal (2021) write, ``to avoid over-rejecting the null when $\beta_{2SLS}$ is shifted in the direction of the OLS bias, one should rely on the Anderson-Rubin test rather than the $t$-test even when the first-stage $F$-statistic is in the thousands.'' 
 \end{itemize}

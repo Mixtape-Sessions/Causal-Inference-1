@@ -189,7 +189,7 @@ case the LATE \> ATE which is why the coefficient grows larger.
 
 Though, not covered in the course, it is possible to describe the
 compliers (see [Peter Hull’s
-Slides](https://github.com/Mixtape-Sessions/Instrumental-Variables/raw/main/Slides/03-HeterogeneousFX.pdf)).
+Slides](https://nbviewer.org/github/Mixtape-Sessions/Instrumental-Variables/raw/main/Slides/03-HeterogeneousFX.pdf)).
 For example, we can see that the compliers tend to have a larger
 proportion of single mothers. These individuals might benefit more from
 attending college than the general population, i.e. the LATE \> ATE

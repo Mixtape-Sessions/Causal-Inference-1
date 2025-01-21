@@ -31,7 +31,8 @@ replace college = 1 if index>=`r(p75)'
 gen 	earnings1 = 7450 + 1000*college + 500*ability + rnormal(0,1)
 
 * OLS
-reg earnings1 college
+reg earnings1 college ability // MHE call this the "long regression" (bc it has all the variables)
+reg earnings1 college		  // "the short regression"
 
 * Wald IV 1. Wald IV can be vieweed as the ratio of two regression coefficients (reduced form divided by first stage)
 reg earnings1 iv
@@ -92,7 +93,7 @@ ivregress 2sls earnings1 (college=iv), first robust // Estimated return to colle
 
 * We want to test the strengthe of the first stage using the appropriate F statistic and calculating the Andeson-Rubin confidence intervals
 
-weakivtest // Montiel-Pflueger effective F statistic
+weakivtest // Montiel Olea and Pflueger effective F statistic
 twostepweakiv 2sls earnings1 (college = iv), robust
 
 capture log close
