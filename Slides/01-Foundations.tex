@@ -86,7 +86,6 @@
 \begin{frame}{Class goals}
 
   \begin{enumerate}
-    \item \textbf{Curiosity}: You will be intrigued and interested enough in this material that you want to learn more of it by the end
     \item \textbf{Confidence}: You will feel like you have a good understanding of causal inference so that by the end it doesn't feel all that mysterious or intimidating
     \item \textbf{Comprehension}: You will have learned a lot both conceptually and in the specifics, particularly with regards to issues around identification and estimation
     \item \textbf{Competency}: You will have more knowledge of programming syntax in Stata and R (and python!) so that later you can apply this in your own work
@@ -127,8 +126,99 @@
 \item Causality as a subject when studied by philosophers is divided between metaphysics (a theory of what is) and epistemology (what is knowledge)
 \item Causal inference will cover both of these -- how will we define causal effects?  What rules will we use to make a deduction that a causal \emph{belief} (inference) is warranted?
 \item It's a rich field, like a mighty river, with many rivers and streams that feed into it and I will try my best to point to them along the way
-\item But the majority of this comes from when two approaches formed a new paradigm which is largely what modern causal inference means
+\item But the majority of this comes from when two approaches of a larger body of work that I think created a distinct approach that might help explain why this material is new but not entirely new
 \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+\textbf{Three Tributaries of Causal Inference}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7, every node/.style={scale=0.7}]
+% Much More Stuff Stream
+\node at (-6,6) {\textbf{Much, Much More}};
+\draw[->, thick, decorate, decoration={snake, amplitude=0.5mm, segment length=2mm}] (-6,5.5) -- (-6,4);
+
+% Princeton Stream
+\node at (0,6) {\textbf{Princeton}};
+\draw[->, thick, decorate, decoration={snake, amplitude=0.5mm, segment length=2mm}] (0,5.5) -- (0,4);
+
+% Harvard Stream
+\node at (6,6) {\textbf{Harvard}};
+\draw[->, thick, decorate, decoration={snake, amplitude=0.5mm, segment length=2mm}] (6,5.5) -- (6,4);
+
+% The Mixtape Box
+\draw[dashed, thick, rounded corners] (-1,5) rectangle (7,6.5);
+\node[align=center] at (3,6.8) {\textbf{The Mixtape}};
+
+% Causal Inference Box
+\node[rectangle, draw, thick, rounded corners, inner sep=10pt, minimum size=1.5cm, fill=red!10] 
+    (causal) at (0,2) {\textbf{Causal Inference}};
+
+% Arrows to Causal Inference
+\draw[->, thick, decorate, decoration={snake, amplitude=0.5mm, segment length=2mm}] (-6,4) -- (causal.north west);
+\draw[->, thick, decorate, decoration={snake, amplitude=0.5mm, segment length=2mm}] (0,4) -- (causal.north);
+\draw[->, thick, decorate, decoration={snake, amplitude=0.5mm, segment length=2mm}] (6,4) -- (causal.north east);
+
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+\textbf{Two rivers into causal inference}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7, every node/.style={scale=0.7}]
+% Orley Ashenfelter Stream
+\node at (-5,6) {\textbf{Orley Ashenfelter}};
+\draw[->, thick] (-5,5.5) -- (-5,5.2);
+\node at (-5,5) {Princeton Industrial Relations Section};
+\draw[->, thick] (-5,4.5) -- (-5,4.2);
+\node at (-5,4) {Quasi-Experimental Design};
+\draw[->, thick] (-5,3.5) -- (-5,3.2);
+\node at (-5,3) {\textbf{David Card}};
+\draw[->, thick] (-5,2.5) -- (-5,2.2);
+\node at (-5,2) {Difference-in-differences};
+\draw[->, thick] (-5,1.5) -- (-5,1.2);
+
+% Don Rubin Stream
+\node at (5,6) {\textbf{Don Rubin}};
+\draw[->, thick] (5,5.5) -- (5,5.2);
+\node at (5,5) {Harvard Statistics};
+\draw[->, thick] (5,4.5) -- (5,4.2);
+\node at (5,4) {Experimental Design};
+\draw[->, thick] (5,3.5) -- (5,3.2);
+\node at (5,3) {Potential Outcomes};
+\draw[->, thick] (5,2.5) -- (5,2.2);
+\node at (5,2) {Propensity Score};
+\draw[->, thick] (5,1.5) -- (5,1.2);
+
+% Arrow from Orley Ashenfelter and Don Rubin streams to Angrist and Imbens
+\draw[->, thick] (-5,1) -- (0,-0.8);
+\draw[->, thick] (5,1) -- (0,-0.8);
+
+% Angrist and Imbens node with evenly spaced arrows below them (spacing of 0.5 units)
+\node at (0,-1.2) {\textbf{Joshua Angrist} \quad \textbf{Guido Imbens}};
+\draw[->, thick] (0,-1.5) -- (0,-1.8); % Arrow from Angrist/Imbens to Harvard Economics
+\node at (0,-2.0) {Harvard Economics};
+\draw[->, thick] (0,-2.3) -- (0,-2.6); % Arrow from Harvard Economics to Instrumental Variables
+\node at (0,-2.8) {Instrumental Variables};
+\draw[->, thick] (0,-3.1) -- (0,-3.4); % Arrow from Instrumental Variables to Abadie
+\node at (0,-3.6) {\textbf{Alberto Abadie}};
+\draw[->, thick] (0,-3.9) -- (0,-4.2); % Arrow from Abadie to Synthetic Control
+\node at (0,-4.4) {Synthetic Control};
+
+\end{tikzpicture}
+\end{center}
+
 
 \end{frame}
 
@@ -214,20 +304,43 @@
 \end{frame}
 
 
+\begin{frame}{Design Stage Flaws}
 
+\begin{itemize}
+\item Several studies over the last few years have been documenting a few kinds of problems with empirical work:
+	\begin{enumerate}
+	\item Malfeasance: Data fabrication
+	\item P-hacking bias: Slicing the data up until you find effects
+	\item No design stage
+	\end{enumerate}
+\item We need to figure out what it means to design your studies and how insert that into the projects
+\item Think of your study like this: if you asked 100 people to do the study, would they all make the same decisions you made?  Why? 
+
+\end{itemize}
+
+\end{frame}
 
 
 
 \begin{frame}{Modeling is Not the First Step}
 
-Most of us simply estimate models and cross our fingers that that coefficient is causal, but is it? When is it?  Why is it? And which causal effect is it?  And when is it reasonable to believe it? 
-
-\bigskip
-
-We have to introduce concepts and notation first otherwise we will extend the correlation fallacy
-
+\begin{itemize}
+\item One of the things I will be trying to impress upon you is the idea of the "target parameter" expressed, not as a research question only, but as \emph{averaged} treatment effects over a specific \emph{population}
+\item Another is the idea of treatment assignment \emph{mechanisms} -- how and why units are and are not chosen into the treatment versus control status matters for everything
+\item I tend to also emphasize shoe leather and slowing down with a long "design stage" that precedes the stage of estimating with data (i.e., coding) and comes after collecting the data
+\end{itemize}
 
 \end{frame}
+
+\begin{frame}{Design Stage in Causal Inference}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{./lecture_includes/design_stage.png}
+\end{figure}
+
+\end{frame}
+
 
 
 
