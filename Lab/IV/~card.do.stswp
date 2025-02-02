@@ -41,7 +41,7 @@ predict shat
 regress lwage  shat, robust
 summarize wald_iv
 
-* ratio of RF coeff on Z and FS coeff on Z
+* ratio of RF coeff on Z and FS coff o
 regress lwage nearc4, robust // reduced form
 regress educ nearc4, robust // first stage
 
