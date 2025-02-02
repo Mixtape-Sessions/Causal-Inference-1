@@ -53,9 +53,11 @@ feols(
 
 
 # 3. Estimate RD of DUI on Recidivism
-rdrobust(
+est  <- rdrobust(
   y = df$recidivism, x = df$bac1, c = 0
 )
+summary(est)
+
 rdplot(
   y = df$recidivism, x = df$bac1, c = 0
 )
