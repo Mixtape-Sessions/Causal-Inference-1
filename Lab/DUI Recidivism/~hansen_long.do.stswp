@@ -53,7 +53,6 @@ cmogram white bac1_orig if bac1_orig>=0.03 & bac1_orig<=0.13, scatter cut(0.08) 
 cmogram recid bac1_orig if bac1_orig>=0.03 & bac1_orig<=0.13, scatter cut(0.08) line(0.08) lfit histopts(bin(30))
 cmogram recid bac1_orig if bac1_orig>=0.03 & bac1_orig<=0.13, scatter cut(0.08) line(0.08) qfit histopts(bin(30))
 
-rdplot recid bac1_orig if bac1_orig>=0.03 & bac1_orig<=0.13, p(0) c(0.08) kernel(triangular) bwselect(msetwo)
 rdplot recid bac1_orig if bac1_orig>=0.03 & bac1_orig<=0.13, p(1) c(0.08) kernel(triangular) bwselect(msetwo)
 rdplot recid bac1_orig if bac1_orig>=0.03 & bac1_orig<=0.13, p(2) c(0.08) kernel(triangular) bwselect(msetwo)
 

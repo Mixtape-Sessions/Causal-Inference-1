@@ -21,9 +21,6 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 	su gpa
 	replace gpa = gpa - `r(mean)'
 
-	su age, detail
-	replace age = age - `r(mean)'
-
 	gen gpa_age = age*gpa
 	
 	su age, detail
@@ -45,12 +42,12 @@ syntax [, obs(integer 1) mu(real 0) sigma(real 1) ]
 
 	gen delta = y1-y0
 	
-	su delta // ATE = approximately 15
+	su delta // ATE = approximately 22
 	local ate = r(mean)
 	scalar ate = `ate'
 	gen ate = `ate'
 
-	su delta if treat==1 // ATT = approximately 272
+	su delta if treat==1 // ATT = approximately 273
 	local att = r(mean)
 	scalar att = `att'
 	gen att = `att'

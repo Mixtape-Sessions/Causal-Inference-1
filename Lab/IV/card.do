@@ -34,13 +34,14 @@ gen wald_iv = cov_yz/cov_sz // notice that in the wald estimator, you are dividi
 
 * 1st stage: regress schooling onto the instrument
 
-**# Bookmark #1
+** two stage least squares
 regress educ  nearc4, robust
 predict shat
 
 regress lwage  shat, robust
 summarize wald_iv
 
+* ratio of RF coeff on Z and FS coeff on Z
 regress lwage nearc4, robust // reduced form
 regress educ nearc4, robust // first stage
 
