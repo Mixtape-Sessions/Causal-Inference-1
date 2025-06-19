@@ -122,7 +122,7 @@ twoway (kdensity ra_ate, lpattern(solid) lwidth(medthick)) ///
        (kdensity canonical_ols, lpattern(longdash_dot) lwidth(medthick)), ///
        title("Distribution of Coefficient Estimates") ///
        subtitle("RA vs Canonical OLS") ///
-       note(`"True ATT is vertical dashed line equalling $2500, RA is centered at $2500 and Canonical OLS is centered"' `"at $2380."') ///
+       note(`"True ATT is vertical dashed line equalling $2500,"' `"RA is centered at $2500 and Canonical OLS is centered at $2380."')
        xtitle("Estimate") ytitle("Density") ///
        legend(order(1 "RA Estimate" 2 "Canonical OLS")) ///
        xline(`mean_ate = r(mean)', lcolor(black) lpattern(dash) )
