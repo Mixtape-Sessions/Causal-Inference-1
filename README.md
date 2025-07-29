@@ -14,7 +14,7 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 #### Slides
 
-[Foundation of Causality](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations.pdf) and [DAGs](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations-DAG.pdf)
+[Foundation of Causality](https://nbviewer.org/github/Mixtape-Sessions/Causal-Inference-1/blob/main/Slides/01-Foundations.pdf)
          
 #### Code
            
