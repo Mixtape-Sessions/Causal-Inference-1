@@ -109,28 +109,51 @@ forval trial = 1/`n_trials' {
 * Load results and create plot
 use "simulation_results.dta", clear
 set scheme cleanplots
-
 * Calculate mean ATT
 sum att, meanonly
 local mean_att = r(mean)
-
 * Calculate mean ATE
 sum ate, meanonly
 local mean_ate = r(mean)
 
-twoway (kdensity ra_ate, lpattern(solid) lwidth(medthick)) ///
-       (kdensity canonical_ols, lpattern(longdash_dot) lwidth(medthick)), ///
+twoway (kdensity ra_ate, lcolor(black) lpattern(solid) lwidth(medthick)) ///
+       (kdensity canonical_ols, lcolor(gs8) lpattern(longdash_dot) lwidth(medthick)), ///
        title("Distribution of Coefficient Estimates") ///
        subtitle("RA vs Canonical OLS") ///
-       note(`"True ATT is vertical dashed line equalling $2500, RA is centered at $2500 and Canonical OLS is centered"' `"at $2380."') ///
+       note(`"True ATE is vertical dashed line equalling $2500, RA is centered at $2500 and Canonical OLS is centered"' `"at $2380."') ///
        xtitle("Estimate") ytitle("Density") ///
        legend(order(1 "RA Estimate" 2 "Canonical OLS")) ///
-       xline(`mean_ate = r(mean)', lcolor(black) lpattern(dash) )
-
+       xline(`mean_ate', lcolor(black) lpattern(dash) lwidth(medthick))
+	   
 graph export "kernel_density_plot.png", replace
 
+
+* Calculate mean RA estimate
+sum ra_att, meanonly
+local mean_ra_att = round(r(mean), 0.01)
+
+* Calculate mean ATT (true value)
+sum att, meanonly
+local true_att = round(r(mean), 0.01)
+
+
+
+twoway (kdensity ra_att, lcolor(black) lpattern(solid) lwidth(medthick)), ///
+       title("Distribution of RA Coefficient Estimates") ///
+       note("True ATT is solid vertical line equalling $`true_att', RA estimate is centered at $`mean_ra_att'.") ///
+       xtitle("Estimate") ytitle("Density") ///
+       legend(order(1 "RA Estimate")) ///
+       xline(`true_att', lcolor(black) lpattern(solid) lwidth(medthick)) ///
+       xline(`mean_ra_att', lcolor(gs6) lpattern(dash) lwidth(medthick))
+	   
+	   
+graph export "kernel_density_plotatt.png", replace
 capture log close
-exit	  
+exit
+
+
+capture log close
+exit
 	
 	
 	
