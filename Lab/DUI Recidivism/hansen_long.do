@@ -7,7 +7,7 @@
 clear
 capture log close
 
-* Install packages:
+* Install the following packages:
 * net install rdrobust, from(https://raw.githubusercontent.com/rdpackages/rdrobust/master/stata) replace
 * net install rddensity, from(https://raw.githubusercontent.com/rdpackages/rddensity/master/stata) replace
 * net install lpdensity, from(https://sites.google.com/site/nppackages/lpdensity/stata) replace
