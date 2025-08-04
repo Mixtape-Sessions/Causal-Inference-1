@@ -12,7 +12,6 @@ library(binsreg)
 # load the data from github
 df <- haven::read_dta("https://github.com/scunning1975/causal-inference-class/raw/master/hansen_dwi.dta")
 
-
 # 1.a. create dui treatment variable for bac1>=0.08
 df$dui = (df$bac1 > 0.08)
 
@@ -53,6 +52,16 @@ feols(
 
 
 # 3. Estimate RD of DUI on Recidivism
+
+## Linear model
+feols(
+  recidivism ~ dui + bac1 + i(dui, bac1),
+  data = df[df$bac1_orig >= 0.055 & df$bac1_orig <= 0.105, ],
+  vcov = "hc1"
+) |> 
+  etable()
+
+## RDROBUST
 est  <- rdrobust(
   y = df$recidivism, x = df$bac1, c = 0
 )
@@ -60,6 +69,24 @@ summary(est)
 
 rdplot(
   y = df$recidivism, x = df$bac1, c = 0
+)
+
+# 1. Run rdrobust to get optimal bandwidth
+est <- rdrobust(y = df$recidivism, x = df$bac1, c = 0)
+h_opt <- est$bws[1]
+
+# 2. Subset the data to the bandwidth window
+df_sub <- df[df$bac1 >= -h_opt & df$bac1 <= h_opt, ]
+
+# 3. Run rdplot on the subset
+rdplot(
+  y = df_sub$recidivism, 
+  x = df_sub$bac1, 
+  c = 0,
+  h = h_opt,
+  y.label = "Recidivism Rate",
+  x.label = "BAC",
+  title = "RDD within Optimal Bandwidth Window"
 )
 
 # 4. "donut hole" dropping close to 0.08
