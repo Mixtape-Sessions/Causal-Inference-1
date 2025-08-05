@@ -56,7 +56,7 @@ feols(
 ## Linear model
 feols(
   recidivism ~ dui + bac1 + i(dui, bac1),
-  data = df[df$bac1_orig >= 0.055 & df$bac1_orig <= 0.105, ],
+  data = df[df$bac1_orig >= 0.03 & df$bac1_orig <= 0.13, ],
   vcov = "hc1"
 ) |> 
   etable()
