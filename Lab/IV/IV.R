@@ -4,13 +4,13 @@
 ## replicate figures and tables in Hansen 2015 AER and Graddy 1995
 
 library(haven)
-library(x)
+library(fixest)
 library(tidyverse)
 
 
 # ---- 1. Fulton Fish Market `Stormy` instrument
 
-df <- haven::read_dta("https://raw.github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta")
+df <- haven::read_dta("https://github.com/Mixtape-Sessions/Causal-Inference-1/raw/main/Lab/IV/Fulton.dta")
 
 # OLS
 df |> 
