@@ -3,7 +3,7 @@
 ## Analysis of Thornton (2008) study of the demand for learning one's HIV status
 ## and its effects on a variety of health and behavioral outcomes
 
-# You will ned to remove the hashtage (#) on these and just confirm you've
+# You will ned to remove the hashtag (#) on these and just confirm you've
 # installed them.  But once you install them once, they belong to your computer
 # and all you then have to do is load them in using the library() command.  
 
@@ -102,9 +102,6 @@ ggplot(sdo_summary, aes(x = group, y = mean_got, fill = group)) +
 
 # OLS regression
 ols_model <- feols(got ~ any, data = df)
-
-# OLS regression
-ols_model <- feols(got ~ any, data = df)
 ols_est <- coef(ols_model)[["any"]]
 
 # Build a comparison table
@@ -174,6 +171,7 @@ sdo_summary2 <- df %>%
 
 # Compute SDO for anycond (already done earlier, but make sure it's in the environment)
 sdo_anycond <- with(df, mean(anycond[any == 1], na.rm = TRUE) - mean(anycond[any == 0], na.rm = TRUE))
+sdo_anycond
 
 # Define midpoint between bars
 mid_x <- 1.5
