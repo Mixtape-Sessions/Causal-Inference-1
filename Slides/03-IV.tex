@@ -574,7 +574,7 @@ Plug in covariance and write out the following:
 Substitute the causal model definition of $Y$ to get:
 		\begin{eqnarray*}
 		\widehat{\delta_{2sls} }&=& \frac{ \frac{1}{n} \sum_{i=1}^n (Z_i -\overline{Z})\{ \alpha + \delta{S}_i + \eta_i \}}{\frac{1}{n} \sum_{i=1}^n (Z_i - \overline{Z})S_i} \\
-		&=& \delta + \frac{\frac{1}{n} (Z_i - \overline{Z})\eta_i}{\frac{1}{n}\sum_{i=1}^n(Z_i - \overline{Z})S_i} \\
+		&=& \delta + \frac{\frac{1}{n} \sum_{i=1}^n (Z_i - \overline{Z})\eta_i}{\frac{1}{n}\sum_{i=1}^n(Z_i - \overline{Z})S_i} \\
 		&=& \delta + \text{"small if \emph{n} is large"}
 		\end{eqnarray*}Where did the first term go? Why did the second term become $\delta$? Why might the second term not be zero even under exclusion?
 

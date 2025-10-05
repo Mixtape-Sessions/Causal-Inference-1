@@ -73,7 +73,7 @@
 	
 	reg earnings age gpa age_sq gpa_sq interaction treat, robust	// biased
 	
-	* 2) Nearest neighbor matching without 
+	* 2) Nearest neighbor matching without bias adjustment
 
 	teffects nnmatch (earnings age gpa age_sq gpa_sq interaction) (treat), atet nn(1) metric(maha)  // biased
 
