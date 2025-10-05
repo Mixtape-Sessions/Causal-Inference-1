@@ -1,5 +1,5 @@
 # Install and load required package
-install.packages("ivDiag")
+#install.packages("ivDiag")
 library(ivDiag)
 library(haven)
 
