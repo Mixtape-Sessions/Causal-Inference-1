@@ -2545,6 +2545,110 @@ But you need an instrument for price and it must be a supply shifter only
 
 \end{frame}
 
+
+\begin{frame}{Background: An Innovative (and Controversial) Paper}
+\textbf{Angrist, Graddy, and Imbens (2000)}
+\vspace{0.3cm}
+
+\begin{itemize}
+    \item Reinterpretation of classical supply and demand frameworks (dating back to Cowles)
+    \item Based on Graddy's Princeton dissertation data from Fulton Fish Market
+    \item Collected fish prices, sales quantities, and weather conditions at sea
+    \item Instrument: stormy weather and wave height (affects fishing yields, not local demand)
+    \item Angrist and Imbens later joined to apply LATE framework to the elasticity estimates
+\end{itemize}
+\vspace{0.3cm}
+\pause
+\textbf{Reception:} Innovative but divisive. Some embraced it, others strongly criticized the approach.
+
+\vspace{0.2cm}
+Fresh perspective on what demand elasticities estimated via IV mean.
+\end{frame}
+
+\begin{frame}{What Does the IV Estimate Actually Tell Us?}
+
+\textbf{Setup:} Estimating demand elasticity for whiting fish
+\begin{itemize}
+    \item Instrument: stormy weather
+    \item Estimate: $-1.119$
+    \item Interpretation: 10\% price increase $\rightarrow$ 11.1\% quantity decrease
+\end{itemize}
+\vspace{0.5cm}
+\pause
+\textbf{LATE framework (Imbens \& Angrist, 1994; Angrist et al., 1996):}
+\begin{itemize}
+    \item This is \textbf{not} the elasticity for everyone
+    \item It's the elasticity for \textbf{compliers only}
+    \item Compliers: consumers whose purchasing responds to storm-induced price changes
+    \item We learn nothing about non-compliers from this estimate
+\end{itemize}
+\end{frame}
+
+\begin{frame}{LATE Assumptions for Valid Elasticity}
+\textbf{Four required assumptions:}
+\vspace{0.3cm}
+
+\begin{enumerate}
+    \item \textbf{Non-zero first stage:} Storms must shift prices (appears satisfied)
+    \vspace{0.2cm}
+    \item \textbf{Independence:} Storms uncorrelated with demand shifters (preferences, income, expectations)
+    \vspace{0.2cm}
+    \item \textbf{Exclusion restriction:} Storms only affect demand through price (not by changing fish mix at market, etc.)
+    \vspace{0.2cm}
+    \item \textbf{Monotonicity:} Storms shift prices in same direction for everyone (or no effect)
+\end{enumerate}
+\vspace{0.3cm}
+\pause
+If these hold $\rightarrow$ valid LATE elasticity for compliers
+
+But how close is this to the average elasticity? Depends on proportion and characteristics of compliers (unknown).
+\end{frame}
+
+\begin{frame}{The External Validity Problem}
+\textbf{Policy question:} Should a firm use this elasticity to set prices?
+\vspace{0.3cm}
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{What we estimated:}
+\begin{itemize}
+    \item Elasticity for compliers
+    \item In response to storm-induced price changes
+\end{itemize}
+\end{column}
+\pause
+\begin{column}{0.48\textwidth}
+\textbf{What firm does:}
+\begin{itemize}
+    \item Sets prices manually
+    \item No storms involved
+\end{itemize}
+\end{column}
+\end{columns}
+\vspace{0.5cm}
+\pause
+\begin{alertblock}{Key Insight}
+The elasticity from manual price changes may differ completely from the instrument-induced elasticity. Different compliers $\rightarrow$ different estimates $\rightarrow$ limited external validity.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Bottom Line}
+\begin{itemize}
+    \item IV estimates identify LATE, not average treatment effects
+    \item In demand estimation: elasticity for compliers only
+    \item Compliers are defined by the instrument
+    \item Different instruments $\rightarrow$ different compliers $\rightarrow$ different elasticities
+    \item Always ask: who are the compliers and does that matter for my question?
+    \item And then ask is the instrument associated with the policy of interest?
+\end{itemize}
+\vspace{0.5cm}
+\pause
+\begin{block}{Takeaway}
+A valid causal estimate may still have limited usefulness for policy if the compliers or the margin of variation differ from the policy context.
+\end{block}
+\end{frame}
+
+
 \begin{frame}{Discussion}
 
 \begin{itemize}
