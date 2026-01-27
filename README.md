@@ -18,7 +18,7 @@ The modern theory of causality is based on a seemingly simple idea called the "c
          
 #### Code
            
-["Perfect Doctor" PO](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Doctor-PO)
+["Perfect Doctor" PO](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Doctor-Po)
 
 [Replication of Thornton (2008)](https://github.com/Mixtape-Sessions/Causal-Inference-1/tree/main/Lab/Thornton)
 
@@ -26,9 +26,9 @@ The modern theory of causality is based on a seemingly simple idea called the "c
 
 #### Readings
 
-Mixtape chapter 3: [Directed Acyclical Graphs](https://mixtape.scunning.com/potential-outcomes.html)
+Mixtape chapter 3: [Directed Acyclical Graphs](https://mixtape.scunning.com/03-directed_acyclical_graphs)
 
-Mixtape chapter 4: [Potential Outcomes Causal Model](https://mixtape.scunning.com/potential-outcomes.html)
+Mixtape chapter 4: [Potential Outcomes Causal Model](https://mixtape.scunning.com/04-potential_outcomes)
 
 
 
@@ -50,7 +50,7 @@ In observational studies, researchers typically are not able to assume that a tr
 
 #### Readings
 
-Mixtape chapter 5: [Matching and Subclassification](https://mixtape.scunning.com/matching-and-subclassification.html)
+Mixtape chapter 5: [Matching and Subclassification](https://mixtape.scunning.com/potential-outcomes.html)
 
 
 
@@ -71,7 +71,7 @@ In settings where we are not willing to assume *selection on observables*, resea
 
 #### Readings
 
-Mixtape chapter 7: [Instrumental Variables](https://mixtape.scunning.com/instrumental-variables.html)
+Mixtape chapter 7: [Instrumental Variables](https://mixtape.scunning.com/07-instrumental_variables)
 
 
 
@@ -93,7 +93,7 @@ One of the most desired quasi-experimental designs -- desired because it is view
 
 #### Readings
 
-Mixtape chapter 6: [Regression discontinuity](https://mixtape.scunning.com/regression-discontinuity.html)
+Mixtape chapter 6: [Regression discontinuity](https://mixtape.scunning.com/06-regression_discontinuity)
 
 
 
