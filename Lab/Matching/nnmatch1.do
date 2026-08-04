@@ -67,6 +67,9 @@ gen te = y1 - y0_match if d==1
 
 * Check results
 teffects nnmatch (earnings age) (d), nn(1) atet  // 36.25
+
+
+
 predict te_nnmatch, te
 predict y0_nnmatch, po
 list unit person y1 y0 d age earnings match11 match12 y0_match y0_nnmatch te te_nnmatch if d==1
